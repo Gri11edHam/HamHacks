@@ -1,0 +1,146 @@
+{
+  "categories": {
+    "movement": {
+      "x": -2.5,
+      "y": 50.0,
+      "screen_quad": "TOP",
+      "expanded": true
+    },
+    "combat": {
+      "x": 2.0,
+      "y": 4.0,
+      "screen_quad": "TOP_LEFT",
+      "expanded": true
+    },
+    "render": {
+      "x": -2.5,
+      "y": 7.0,
+      "screen_quad": "TOP",
+      "expanded": true
+    },
+    "player": {
+      "x": 2.0,
+      "y": 60.0,
+      "screen_quad": "TOP_LEFT",
+      "expanded": true
+    },
+    "world": {
+      "x": -3.0,
+      "y": 5.0,
+      "screen_quad": "TOP_RIGHT",
+      "expanded": false
+    },
+    "misc": {
+      "x": -3.0,
+      "y": 22.0,
+      "screen_quad": "TOP_RIGHT",
+      "expanded": false
+    }
+  },
+  "modules": {
+    "Fly": {
+      "settings": {
+        "Mode": "Vanilla",
+        "Speed": 1.0,
+        "Drop Amount": 0.5,
+        "Drop Speed": 0.02,
+        "HUD Text": true,
+        "Keybind": 70
+      }
+    },
+    "Trap": {
+      "settings": {
+        "HUD Text": true,
+        "Keybind": 77
+      }
+    },
+    "Encase": {
+      "settings": {
+        "HUD Text": true,
+        "Keybind": 86
+      }
+    },
+    "Crystal Aura": {
+      "settings": {
+        "HUD Text": true,
+        "Keybind": 67
+      }
+    },
+    "Scroll Clicker": {
+      "settings": {
+        "HUD Text": true,
+        "Keybind": 59
+      }
+    },
+    "No Fall": {
+      "settings": {
+        "HUD Text": true,
+        "Keybind": 78
+      }
+    },
+    "Aimbot": {
+      "settings": {
+        "Speed": 100.0,
+        "FOV": 360.0,
+        "Aim At Entities": true,
+        "Keep Aiming At Entity": false,
+        "Aim At Blocks": false,
+        "HUD Text": true,
+        "Keybind": 82
+      }
+    },
+    "Boat Fly": {
+      "settings": {
+        "HUD Text": true,
+        "Keybind": 66
+      }
+    },
+    "Auto Elytra": {
+      "settings": {
+        "HUD Text": true,
+        "Keybind": 89
+      }
+    },
+    "Speed": {
+      "settings": {
+        "Speed": 5.0,
+        "Auto Jump": true,
+        "HUD Text": true,
+        "Keybind": 75
+      }
+    },
+    "Jesus": {
+      "settings": {
+        "HUD Text": true,
+        "Keybind": 74
+      }
+    },
+    "Click GUI": {
+      "settings": {
+        "Bar Color": -6029312,
+        "Background Color": -2147483648,
+        "Text Color": -1,
+        "HUD Text": true,
+        "Keybind": 344
+      }
+    },
+    "HUD": {
+      "settings": {
+        "Show Logo": true,
+        "Show FPS": true,
+        "Show Enabled Modules": true,
+        "Bar Color": -16735232,
+        "Background Color": -2147483648,
+        "Text Color": -1,
+        "HUD Text": false,
+        "Keybind": 259
+      }
+    },
+    "Sprint": {
+      "settings": {
+        "HUD Text": true,
+        "Keybind": 71
+      }
+    }
+  }
+}

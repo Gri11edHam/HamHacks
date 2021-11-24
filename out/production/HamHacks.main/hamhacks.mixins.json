@@ -1,0 +1,19 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "net.grilledham.hamhacks.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinClientPlayerEntity",
+		"MixinClientPlayerInteractionManager",
+		"MixinInGameHud",
+		"MixinKeyBinding",
+		"MixinMinecraftClient",
+		"MixinMouse"
+	],
+	"client": [
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

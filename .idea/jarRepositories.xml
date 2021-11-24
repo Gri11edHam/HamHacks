@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteRepositoriesConfiguration">
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="MavenRepo" />
+      <option name="name" value="MavenRepo" />
+      <option name="url" value="https://repo.maven.apache.org/maven2/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="Fabric" />
+      <option name="name" value="Fabric" />
+      <option name="url" value="https://maven.fabricmc.net/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="Mojang" />
+      <option name="name" value="Mojang" />
+      <option name="url" value="https://libraries.minecraft.net/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="UserLocalRemappedMods" />
+      <option name="name" value="UserLocalRemappedMods" />
+      <option name="url" value="file:/$PROJECT_DIR$/.gradle/loom-cache/remapped_mods/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="https://maven.terraformersmc.com/releases/com/terraformersmc/modmenu/2.0.0-beta.7/modmenu-2.0.0-beta.7.jar" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="Terraformers" />
+      <option name="name" value="Terraformers" />
+      <option name="url" value="https://maven.terraformersmc.com/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="MavenLocal" />
+      <option name="name" value="MavenLocal" />
+      <option name="url" value="file:/$MAVEN_REPOSITORY$/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="UserLocalRemappedMods" />
+      <option name="name" value="UserLocalRemappedMods" />
+      <option name="url" value="file:/$PROJECT_DIR$/../HamHacks%201.17.1/.gradle/loom-cache/remapped_mods/" />
+    </remote-repository>
+  </component>
+</project>

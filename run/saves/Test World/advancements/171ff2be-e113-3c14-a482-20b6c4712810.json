@@ -1,0 +1,21 @@
+{
+  "minecraft:end/elytra": {
+    "criteria": {
+      "elytra": "2021-11-24 15:27:40 -0500"
+    },
+    "done": true
+  },
+  "minecraft:recipes/food/cake": {
+    "criteria": {
+      "has_egg": "2021-11-24 15:32:35 -0500"
+    },
+    "done": true
+  },
+  "minecraft:adventure/adventuring_time": {
+    "criteria": {
+      "minecraft:plains": "2021-11-24 15:27:40 -0500"
+    },
+    "done": false
+  },
+  "DataVersion": 2730
+}
