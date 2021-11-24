@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "hamhacks",
+	"version": "${version}",
+	"name": "HamHacks",
+	"description": "Hacks for Minecraft 1.17",
+	"authors": [
+		"GrilledHam"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/hamhacks/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"net.grilledham.hamhacks.client.HamHacksClient"
+		],
+		"main": [
+			"net.grilledham.hamhacks.HamHacks"
+		]
+	},
+	"mixins": [
+		"hamhacks.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.11.7",
+		"fabric": "*",
+		"minecraft": ">=1.17.1"
+	}
+}
