@@ -12,7 +12,6 @@ out
 *.iws
 *.iml
 .idea
-HamHacks.iml
 
 # gradle
 build
