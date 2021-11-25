@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.event.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.Setting;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
@@ -35,6 +36,9 @@ public class Speed extends Module {
 		boolean superReturn = super.onEvent(e);
 		if(superReturn) {
 			if(e instanceof EventMotion) {
+				if(mc.player.getPose() == EntityPose.FALL_FLYING) {
+					return true;
+				}
 				float distanceForward = 0;
 				float distanceStrafe = 0;
 				if(mc.options.keyForward.isPressed()) {
