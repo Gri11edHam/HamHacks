@@ -13,11 +13,8 @@ import net.grilledham.hamhacks.modules.combat.Aimbot;
 import net.grilledham.hamhacks.modules.combat.CrystalAura;
 import net.grilledham.hamhacks.modules.combat.ScrollClicker;
 import net.grilledham.hamhacks.modules.movement.*;
+import net.grilledham.hamhacks.modules.player.*;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
-import net.grilledham.hamhacks.modules.player.AutoElytra;
-import net.grilledham.hamhacks.modules.player.Encase;
-import net.grilledham.hamhacks.modules.player.NoFall;
-import net.grilledham.hamhacks.modules.player.Trap;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.MinecraftClient;
 
@@ -54,5 +51,6 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new ClickGUI());
 		ModuleManager.register(new HUD());
 		ModuleManager.register(new Sprint());
+		ModuleManager.register(new Step());
 	}
 }
