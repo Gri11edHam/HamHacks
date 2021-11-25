@@ -20,6 +20,7 @@ public class Step extends Module {
 	public void addSettings() {
 		super.addSettings();
 		height = new Setting("Height", 1f, 0f, 10f);
+		settings.add(height);
 	}
 	
 	@Override
