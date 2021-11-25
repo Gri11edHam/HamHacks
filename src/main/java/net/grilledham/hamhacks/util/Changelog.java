@@ -3,6 +3,9 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.1.3:
+				- Bug fixes
+			
 			Update 1.1.2:
 				- Added modules:
 					: Sprint
