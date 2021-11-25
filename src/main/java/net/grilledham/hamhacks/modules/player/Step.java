@@ -1,7 +1,5 @@
 package net.grilledham.hamhacks.modules.player;
 
-import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.Setting;
@@ -19,7 +17,14 @@ public class Step extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		height = new Setting("Height", 1f, 0f, 10f);
+		height = new Setting("Height", 1f, 0f, 10f) {
+			@Override
+			protected void valueChanged() {
+				super.valueChanged();
+				toggle();
+				toggle();
+			}
+		};
 		settings.add(height);
 	}
 	
@@ -34,18 +39,5 @@ public class Step extends Module {
 	public void onDisable() {
 		super.onDisable();
 		mc.player.stepHeight = originalStepHeight;
-	}
-	
-	@Override
-	public boolean onEvent(Event e) {
-		boolean superReturn = super.onEvent(e);
-		if(superReturn) {
-			if(e instanceof EventMotion) {
-//				if(mc.player.horizontalCollision) {
-//					mc.player.stepHeight =
-//				}
-			}
-		}
-		return superReturn;
 	}
 }
