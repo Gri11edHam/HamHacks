@@ -101,7 +101,7 @@ public class ClickGUIScreen extends Screen {
 				clickedCategory = category;
 			}
 		}
-		if(dropDownHovered) {
+		if(dropDownHovered && (clickedCategory == null || clickedCategory == category)) {
 			DrawableHelper.fill(matrices, x + w, y, x + fullWidth, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				category.expand(!category.isExpanded());
@@ -136,13 +136,13 @@ public class ClickGUIScreen extends Screen {
 		matrices.pop();
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		boolean dropDownHovered = mouseX > x + w && mouseX <= x + fullWidth && mouseY > y && mouseY <= y + h;
-		if(hovered) {
+		if(hovered && (expandedModule == null || expandedModule == module)) {
 			DrawableHelper.fill(matrices, x, y, x + w, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				module.toggle();
 			}
 		}
-		if(dropDownHovered) {
+		if(dropDownHovered && (expandedModule == null || expandedModule == module)) {
 			DrawableHelper.fill(matrices, x + w, y, x + fullWidth, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				if(expandedModule == module) {
