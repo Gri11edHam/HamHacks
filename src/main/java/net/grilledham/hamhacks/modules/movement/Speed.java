@@ -44,16 +44,16 @@ public class Speed extends Module {
 				}
 				float distanceForward = 0;
 				float distanceStrafe = 0;
-				if(mc.options.keyForward.isPressed()) {
+				if(mc.player.input.pressingForward) {
 					distanceForward += 1;
 				}
-				if(mc.options.keyBack.isPressed()) {
+				if(mc.player.input.pressingBack) {
 					distanceForward -= 1;
 				}
-				if(mc.options.keyRight.isPressed()) {
+				if(mc.player.input.pressingRight) {
 					distanceStrafe -= 1;
 				}
-				if(mc.options.keyLeft.isPressed()) {
+				if(mc.player.input.pressingLeft) {
 					distanceStrafe += 1;
 				}
 				float dx = (float) (distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));

@@ -623,4 +623,9 @@ public class ClickGUIScreen extends Screen {
 		bufferBuilder.vertex(matrix, (float)startX, (float)endY, (float)0).color(rbl, gbl, bbl, abl).next();
 		bufferBuilder.vertex(matrix, (float)endX, (float)endY, (float)0).color(rbr, gbr, bbr, abr).next();
 	}
+	
+	@Override
+	public boolean isPauseScreen() {
+		return false;
+	}
 }

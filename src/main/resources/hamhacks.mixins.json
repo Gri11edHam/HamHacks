@@ -8,6 +8,7 @@
 		"MixinClientPlayerInteractionManager",
 		"MixinInGameHud",
 		"MixinKeyBinding",
+		"MixinKeyboardInput",
 		"MixinMinecraftClient",
 		"MixinMouse"
 	],
