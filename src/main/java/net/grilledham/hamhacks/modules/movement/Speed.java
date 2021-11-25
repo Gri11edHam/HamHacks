@@ -13,6 +13,7 @@ public class Speed extends Module {
 	
 	private Setting speed;
 	private Setting autoJump;
+	private Setting disableWithElytra;
 	
 	public Speed() {
 		super("Speed", Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
@@ -22,8 +23,10 @@ public class Speed extends Module {
 	public void addSettings() {
 		speed = new Setting("Speed", 2.5f, 0f, 10f);
 		autoJump = new Setting("Auto Jump", false);
+		disableWithElytra = new Setting("Disable With Elytra", true);
 		settings.add(speed);
 		settings.add(autoJump);
+		settings.add(disableWithElytra);
 	}
 	
 	@Override
@@ -36,7 +39,7 @@ public class Speed extends Module {
 		boolean superReturn = super.onEvent(e);
 		if(superReturn) {
 			if(e instanceof EventMotion) {
-				if(mc.player.getPose() == EntityPose.FALL_FLYING) {
+				if(mc.player.getPose() == EntityPose.FALL_FLYING && disableWithElytra.getBool()) {
 					return true;
 				}
 				float distanceForward = 0;
