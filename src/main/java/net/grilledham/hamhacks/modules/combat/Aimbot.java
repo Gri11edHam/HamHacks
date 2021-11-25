@@ -1,17 +1,15 @@
 package net.grilledham.hamhacks.modules.combat;
 
 import com.google.common.collect.Lists;
-import net.grilledham.hamhacks.client.HamHacksClient;
-import net.grilledham.hamhacks.client.HamHacksConfig;
 import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventRender;
 import net.grilledham.hamhacks.event.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.Setting;
 import net.grilledham.hamhacks.util.MouseUtil;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
@@ -31,6 +29,9 @@ public class Aimbot extends Module {
 	
 	private Setting aimAtEntities;
 	private Setting keepOverEntity;
+	private Setting aimAtPlayers;
+	private Setting aimAtPassive;
+	private Setting aimAtHostile;
 	private Setting aimAtBlocks;
 	
 	private Entity entityToAim = null;
@@ -44,14 +45,35 @@ public class Aimbot extends Module {
 	public void addSettings() {
 		speed = new Setting("Speed", 10.0f, 0.1f, 100f);
 		fov = new Setting("FOV", 90.0f, 0.1f, 360f);
-		aimAtEntities = new Setting("Aim At Entities", true);
+		aimAtEntities = new Setting("Aim At Entities", true) {
+			@Override
+			protected void valueChanged() {
+				super.valueChanged();
+				updateSettings();
+			}
+		};
 		keepOverEntity = new Setting("Keep Aiming At Entity", false);
+		aimAtPlayers = new Setting("Aim at Players", true);
+		aimAtPassive = new Setting("Aim at Passive Mobs", false);
+		aimAtHostile = new Setting("Aim at Hostile Mobs", false);
 		aimAtBlocks = new Setting("Aim At Blocks", false);
 		settings.add(speed);
 		settings.add(fov);
 		settings.add(aimAtEntities);
-		settings.add(keepOverEntity);
 		settings.add(aimAtBlocks);
+	}
+	
+	private void updateSettings() {
+		settings.remove(keepOverEntity);
+		settings.remove(aimAtPlayers);
+		settings.remove(aimAtPassive);
+		settings.remove(aimAtHostile);
+		if(aimAtEntities.getBool()) {
+			settings.add(settings.indexOf(aimAtEntities) + 1, keepOverEntity);
+			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtPlayers);
+			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtPassive);
+			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtHostile);
+		}
 	}
 	
 	@Override
@@ -67,15 +89,19 @@ public class Aimbot extends Module {
 						mc.player.setPitch(rotation[1]);
 						mc.player.setYaw(rotation[0]);
 					} else if(MouseUtil.mouseMoved()) {
-						entityToAim = mc.targetedEntity;
+						if((mc.targetedEntity instanceof PlayerEntity && aimAtPlayers.getBool()) || (mc.targetedEntity instanceof PassiveEntity && aimAtPassive.getBool()) || (mc.targetedEntity instanceof HostileEntity && aimAtHostile.getBool())) {
+							entityToAim = mc.targetedEntity;
+						}
 					}
 				} else {
 					Entity entity = getClosestEntityToCrosshair(Lists.newCopyOnWriteArrayList(mc.world.getEntities()).stream().filter(ent -> ent.getPos().distanceTo(mc.player.getPos()) < 6 && ent != mc.player/* && ent instanceof PlayerEntity*/).collect(Collectors.toList()));
 					if(entity != null && aimAtEntities.getBool()) {
-						float[] rotation = getRotationsNeeded(entity, null, fov.getFloat(), fov.getFloat(), speed.getFloat(), speed.getFloat());
-						
-						mc.player.setPitch(rotation[1]);
-						mc.player.setYaw(rotation[0]);
+						if((entity instanceof PlayerEntity && aimAtPlayers.getBool()) || (entity instanceof PassiveEntity && aimAtPassive.getBool()) || (entity instanceof HostileEntity && aimAtHostile.getBool())) {
+							float[] rotation = getRotationsNeeded(entity, null, fov.getFloat(), fov.getFloat(), speed.getFloat(), speed.getFloat());
+							
+							mc.player.setPitch(rotation[1]);
+							mc.player.setYaw(rotation[0]);
+						}
 					}
 				}
 				if(aimAtBlocks.getBool()) {
