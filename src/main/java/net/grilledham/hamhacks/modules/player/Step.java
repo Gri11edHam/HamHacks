@@ -21,8 +21,9 @@ public class Step extends Module {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
-				toggle();
-				toggle();
+				if(isEnabled()) {
+					mc.player.stepHeight = getFloat();
+				}
 			}
 		};
 		settings.add(height);
