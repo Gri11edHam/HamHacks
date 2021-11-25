@@ -6,10 +6,7 @@ import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
 
 import java.awt.*;
 import java.util.stream.Collectors;
@@ -27,6 +24,9 @@ public class IngameGui {
 	}
 	
 	public void render(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer) {
+		if(!HUD.getInstance().isEnabled()) {
+			return;
+		}
 		int barC = (int)HUD.getInstance().barColor.getColor();
 		int barR = barC >> 16 & 255;
 		int barG = barC >> 8 & 255;
