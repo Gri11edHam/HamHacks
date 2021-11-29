@@ -124,6 +124,7 @@ public class Setting {
 	}
 	
 	public void setValue(Object value) {
+		Object lastValue = this.value;
 		switch(type) {
 			case COLOR:
 				this.value = value;
@@ -175,7 +176,9 @@ public class Setting {
 				}
 				break;
 		}
-		valueChanged();
+		if(this.value != lastValue) {
+			valueChanged();
+		}
 	}
 	
 	public void setValue(String name, Object value) {
