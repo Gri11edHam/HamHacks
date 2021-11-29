@@ -293,6 +293,41 @@ public class Setting {
 		return type;
 	}
 	
+	@Override
+	public String toString() {
+		switch(type) {
+			case INT -> {
+				return ((int)value) + "";
+			}
+			case LIST, STRING -> {
+				return (String)value;
+			}
+			case COLOR -> {
+				return Integer.toHexString((int)value);
+			}
+			case FLOAT -> {
+				return ((float)value) + "";
+			}
+			case BOOLEAN -> {
+				return ((boolean)value) + "";
+			}
+			case KEYBIND -> {
+				return ((Keybind)value).getKey() + "";
+			}
+			case SETTING_LIST -> {
+				StringBuilder toReturn = new StringBuilder("{\n");
+				for(Setting subSetting : (ArrayList<Setting>)value) {
+					toReturn.append("\t").append(subSetting.toString()).append("\n");
+				}
+				toReturn.append("}");
+				return toReturn.toString();
+			}
+			default -> {
+				return value.toString();
+			}
+		}
+	}
+	
 	public enum Type {
 		STRING,
 		BOOLEAN,
