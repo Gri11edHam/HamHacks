@@ -21,6 +21,7 @@ import net.minecraft.text.Text;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collector;
@@ -221,12 +222,16 @@ public class HamHacksConfig {
 	}
 	
 	private static void parseSettings(JsonObject obj, List<Setting> settings) {
-		for(Setting s : settings) {
-			try {
-				parseSetting(obj, s);
-			} catch(Exception e) {
-				e.printStackTrace();
+		try {
+			for(Setting s : settings) {
+				try {
+					parseSetting(obj, s);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
+		} catch(ConcurrentModificationException e) {
+			parseSettings(obj, settings);
 		}
 	}
 	

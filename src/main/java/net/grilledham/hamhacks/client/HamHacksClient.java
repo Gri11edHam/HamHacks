@@ -2,7 +2,6 @@ package net.grilledham.hamhacks.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,7 +15,7 @@ import net.grilledham.hamhacks.modules.movement.*;
 import net.grilledham.hamhacks.modules.player.*;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.modules.render.HUD;
-import net.minecraft.client.MinecraftClient;
+import net.grilledham.hamhacks.modules.render.Tracers;
 
 @Environment(EnvType.CLIENT)
 public class HamHacksClient implements ClientModInitializer {
@@ -52,5 +51,6 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new HUD());
 		ModuleManager.register(new Sprint());
 		ModuleManager.register(new Step());
+		ModuleManager.register(new Tracers());
 	}
 }
