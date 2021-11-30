@@ -6,7 +6,6 @@ import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.Setting;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,7 +16,6 @@ import net.minecraft.util.math.Vec3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,8 +42,6 @@ public class ClickGUIScreen extends Screen {
 		for(Module.Category category : Module.Category.values()) {
 			List<Module> categoryModules = ModuleManager.getModules(category);
 			categories.put(category, categoryModules);
-			category.setPos(category.getX(), category.getY());
-			category.getBox().setScaleFactor(MinecraftClient.getInstance().options.guiScale);
 			category.resize();
 		}
 	}
@@ -54,7 +50,6 @@ public class ClickGUIScreen extends Screen {
 	public void resize(MinecraftClient client, int width, int height) {
 		super.resize(client, width, height);
 		for(Module.Category category : Module.Category.values()) {
-			category.getBox().setScaleFactor(MinecraftClient.getInstance().options.guiScale);
 			category.resize();
 		}
 	}
@@ -62,9 +57,11 @@ public class ClickGUIScreen extends Screen {
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 		super.render(matrices, mouseX, mouseY, delta);
-		for(Module.Category category : categories.keySet()) {
-			drawCategory(matrices, mouseX, mouseY, category);
+		matrices.push();
+		for(int i = 0; i < categories.keySet().size(); i++) {
+			drawCategory(matrices, mouseX, mouseY, categories.keySet().stream().toList().get(i));
 		}
+		matrices.pop();
 		if(pressed && clickedCategory != null) {
 			clickedCategory.setPos(clickedCategory.getX() + (mouseX - lastMouseX), clickedCategory.getY() + (mouseY - lastMouseY));
 		}
@@ -82,27 +79,27 @@ public class ClickGUIScreen extends Screen {
 		int w = category.getWidth() - textRenderer.fontHeight - 2;
 		int fullWidth = category.getWidth();
 		int h = category.getHeight();
-		DrawableHelper.fill(matrices, x, y, x + fullWidth, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		DrawableHelper.fill(matrices, x, y - 2, x + fullWidth, y, (int)ClickGUI.getInstance().barColor.getColor());
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, category.getText(), x + w - textRenderer.getWidth(category.getText()) - 2, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		fillRect(matrices, x, y, x + fullWidth, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x, y - 2, x + fullWidth, y, (int)ClickGUI.getInstance().barColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, category.getText(), x + w - textRenderer.getWidth(category.getText()) - 2, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
 		float translateX = x + w + 1 + textRenderer.fontHeight / 2f;
 		float translateY = y + 2 + textRenderer.fontHeight / 2f;
 		matrices.push();
 		matrices.translate(translateX, translateY, 0);
 		matrices.multiply(new Quaternion(new Vec3f(0, 0, 1), category.isExpanded() ? -90 : 0, true));
 		matrices.translate(-translateX, -translateY, 0);
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, "<", (int)(translateX - (textRenderer.getWidth("<") / 2f)), (int)(translateY - (textRenderer.fontHeight) / 2f), (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, "<", (int)(translateX - (textRenderer.getWidth("<") / 2f)), (int)(translateY - (textRenderer.fontHeight) / 2f), (int)ClickGUI.getInstance().textColor.getColor());
 		matrices.pop();
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		boolean dropDownHovered = mouseX > x + w && mouseX <= x + fullWidth && mouseY > y && mouseY <= y + h;
 		if(hovered) {
-			DrawableHelper.fill(matrices, x, y, x + w, y + h, 0x20ffffff);
+			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
 			if(pressed && clickedCategory == null) {
 				clickedCategory = category;
 			}
 		}
 		if(dropDownHovered && (clickedCategory == null || clickedCategory == category)) {
-			DrawableHelper.fill(matrices, x + w, y, x + fullWidth, y + h, 0x20ffffff);
+			fillRect(matrices, x + w, y, x + fullWidth, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				category.expand(!category.isExpanded());
 			}
@@ -114,36 +111,40 @@ public class ClickGUIScreen extends Screen {
 			int moduleY = y + h;
 			int moduleW = w - 2;
 			int moduleFullWidth = fullWidth - 2;
-			for(Module module : categories.get(category)) {
-				drawModule(matrices, mouseX, mouseY, moduleX, moduleY, moduleW, moduleFullWidth, h, module);
+			matrices.translate(0, 0, 1f);
+			setZOffset(getZOffset() + 1);
+			for(int i = 0; i < categories.get(category).size(); i++) {
+				drawModule(matrices, mouseX, mouseY, moduleX, moduleY, moduleW, moduleFullWidth, h, categories.get(category).get(i));
 				
 				moduleY += h;
 			}
+			matrices.translate(0, 0, -1f);
+			setZOffset(getZOffset() - 1);
 		}
 	}
 	
 	private void drawModule(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int fullWidth, int h, Module module) {
-		DrawableHelper.fill(matrices, x, y, x + fullWidth, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		DrawableHelper.fill(matrices, x - 2, y, x, y + h, module.isEnabled() ? 0x8000a400 : 0x80a40000);
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, module.getName(), x + w - textRenderer.getWidth(module.getName()) - 2, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		fillRect(matrices, x, y, x + fullWidth, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x - 2, y, x, y + h, module.isEnabled() ? 0x8000a400 : 0x80a40000);
+		drawStringWithShadow(matrices, textRenderer, module.getName(), x + w - textRenderer.getWidth(module.getName()) - 2, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
 		float moduleTranslateX = x + w + 1 + textRenderer.fontHeight / 2f;
 		float moduleTranslateY = y + 2 + textRenderer.fontHeight / 2f;
 		matrices.push();
 		matrices.translate(moduleTranslateX, moduleTranslateY, 0);
 		matrices.multiply(new Quaternion(new Vec3f(0, 0, 1), expandedModule == module ? -90 : 0, true));
 		matrices.translate(-moduleTranslateX, -moduleTranslateY, 0);
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, "<", (int)(moduleTranslateX - (textRenderer.getWidth("<") / 2f)), (int)(moduleTranslateY - (textRenderer.fontHeight) / 2f), (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, "<", (int)(moduleTranslateX - (textRenderer.getWidth("<") / 2f)), (int)(moduleTranslateY - (textRenderer.fontHeight) / 2f), (int)ClickGUI.getInstance().textColor.getColor());
 		matrices.pop();
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		boolean dropDownHovered = mouseX > x + w && mouseX <= x + fullWidth && mouseY > y && mouseY <= y + h;
 		if(hovered && (expandedModule == null || expandedModule == module)) {
-			DrawableHelper.fill(matrices, x, y, x + w, y + h, 0x20ffffff);
+			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				module.toggle();
 			}
 		}
 		if(dropDownHovered && (expandedModule == null || expandedModule == module)) {
-			DrawableHelper.fill(matrices, x + w, y, x + fullWidth, y + h, 0x20ffffff);
+			fillRect(matrices, x + w, y, x + fullWidth, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				if(expandedModule == module) {
 					expandedModule = null;
@@ -163,13 +164,15 @@ public class ClickGUIScreen extends Screen {
 				settingW = Math.max(settingW, getSettingWidth(setting));
 			}
 			settingW += 4;
-			try {
-				for(Setting setting : module.getSettings()) {
-					drawSetting(matrices, mouseX, mouseY, settingX, settingY, settingW, h, setting);
-					
-					settingY += h;
-				}
-			} catch(ConcurrentModificationException ignored) {}
+			matrices.translate(0, 0, 2f);
+			setZOffset(getZOffset() + 2);
+			for(int i = 0; i < module.getSettings().size(); i++) {
+				drawSetting(matrices, mouseX, mouseY, settingX, settingY, settingW, h, module.getSettings().get(i));
+				
+				settingY += h;
+			}
+			matrices.translate(0, 0, -2f);
+			setZOffset(getZOffset() - 2);
 		}
 	}
 	
@@ -186,9 +189,9 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private void drawIntSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting) {
-		DrawableHelper.fill(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
 		String text = setting.getInt() + " " + setting.getName();
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
 			int sliderX = x + w - textRenderer.getWidth(text) - 6 - 100;
@@ -196,9 +199,9 @@ public class ClickGUIScreen extends Screen {
 			int sliderW = 100;
 			int sliderH = 2;
 			float percentage = (setting.getInt() - setting.getMin()) / setting.getMax();
-			DrawableHelper.fill(matrices, sliderX, sliderY, sliderX + sliderW, sliderY + sliderH, 0x40a4a4a4);
-			DrawableHelper.fill(matrices, sliderX, sliderY, (int)(sliderX + (sliderW * percentage)), sliderY + sliderH, 0xffa4a4a4);
-			DrawableHelper.fill(matrices, (int)(sliderX + (sliderW * percentage)), sliderY - 1, (int)(sliderX + (sliderW * percentage)) + 1, sliderY + sliderH + 1, 0xffffffff);
+			fillRect(matrices, sliderX, sliderY, sliderX + sliderW, sliderY + sliderH, 0x40a4a4a4);
+			fillRect(matrices, sliderX, sliderY, (int)(sliderX + (sliderW * percentage)), sliderY + sliderH, 0xffa4a4a4);
+			fillRect(matrices, (int)(sliderX + (sliderW * percentage)), sliderY - 1, (int)(sliderX + (sliderW * percentage)) + 1, sliderY + sliderH + 1, 0xffffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS) {
 				float newPercentage = (mouseX - sliderX) / (float)sliderW;
 				int newVal = (int)((newPercentage * setting.getMax()) + setting.getMin());
@@ -208,12 +211,12 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private void drawListSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting) {
-		DrawableHelper.fill(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
 		String text = setting.getName() + " - " + setting.getString();
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
-			DrawableHelper.fill(matrices, x, y, x + w, y + h, 0x20ffffff);
+			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				if(expandedSetting == setting) {
 					expandedSetting = null;
@@ -232,16 +235,16 @@ public class ClickGUIScreen extends Screen {
 			int optionsH = h * setting.getPossibleValues().size() - 1;
 			int optionW = optionsW;
 			int optionH = h;
-			DrawableHelper.fill(matrices, optionsX, optionsY, optionsX + optionsW, optionsY + optionsH, (int)ClickGUI.getInstance().bgColor.getColor());
+			fillRect(matrices, optionsX, optionsY, optionsX + optionsW, optionsY + optionsH, (int)ClickGUI.getInstance().bgColor.getColor());
 			int i = 0;
 			for(String s : setting.getPossibleValues()) {
 				if(!s.equals(setting.getString())) {
 					int optionX = optionsX;
 					int optionY = optionsY + optionsH * i;
-					DrawableHelper.drawStringWithShadow(matrices, textRenderer, s, optionX + optionW - textRenderer.getWidth(s) - 2, optionY + 2, (int)ClickGUI.getInstance().textColor.getColor());
+					drawStringWithShadow(matrices, textRenderer, s, optionX + optionW - textRenderer.getWidth(s) - 2, optionY + 2, (int)ClickGUI.getInstance().textColor.getColor());
 					boolean optionHovered = mouseX > optionX && mouseX <= optionX + optionW && mouseY > optionY && mouseY <= optionY + optionH;
 					if(optionHovered) {
-						DrawableHelper.fill(matrices, optionX, optionY, optionX + optionW, optionY + optionH, 0x20ffffff);
+						fillRect(matrices, optionX, optionY, optionX + optionW, optionY + optionH, 0x20ffffff);
 						if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 							expandedSetting = null;
 							setting.setValue(s);
@@ -254,12 +257,12 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private void drawColorSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting) {
-		DrawableHelper.fill(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4 - 18, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
-		DrawableHelper.fill(matrices, x + w - 4 - 16, y + 2, x + w - 2, y + h - 2, (int)setting.getColor());
+		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4 - 18, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		fillRect(matrices, x + w - 4 - 16, y + 2, x + w - 2, y + h - 2, (int)setting.getColor());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
-			DrawableHelper.fill(matrices, x, y, x + w, y + h, 0x20ffffff);
+			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				if(expandedSetting != setting) {
 					expandedSetting = setting;
@@ -274,9 +277,9 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private void drawFloatSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting) {
-		DrawableHelper.fill(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
 		String text = String.format("%.2f", setting.getFloat()) + " " + setting.getName();
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
 			int sliderX = x + w - textRenderer.getWidth(text) - 6 - 100;
@@ -284,9 +287,9 @@ public class ClickGUIScreen extends Screen {
 			int sliderW = 100;
 			int sliderH = 2;
 			float percentage = (setting.getFloat() - setting.getMin()) / setting.getMax();
-			DrawableHelper.fill(matrices, sliderX, sliderY, sliderX + sliderW, sliderY + sliderH, 0x40a4a4a4);
-			DrawableHelper.fill(matrices, sliderX, sliderY, (int)(sliderX + (sliderW * percentage)), sliderY + sliderH, 0xffa4a4a4);
-			DrawableHelper.fill(matrices, (int)(sliderX + (sliderW * percentage)), sliderY - 1, (int)(sliderX + (sliderW * percentage)) + 1, sliderY + sliderH + 1, 0xffffffff);
+			fillRect(matrices, sliderX, sliderY, sliderX + sliderW, sliderY + sliderH, 0x40a4a4a4);
+			fillRect(matrices, sliderX, sliderY, (int)(sliderX + (sliderW * percentage)), sliderY + sliderH, 0xffa4a4a4);
+			fillRect(matrices, (int)(sliderX + (sliderW * percentage)), sliderY - 1, (int)(sliderX + (sliderW * percentage)) + 1, sliderY + sliderH + 1, 0xffffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS) {
 				float newPercentage = (mouseX - sliderX) / (float)sliderW;
 				float newVal = (newPercentage * setting.getMax()) + setting.getMin();
@@ -296,23 +299,23 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private void drawStringSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting) {
-		DrawableHelper.fill(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
-			DrawableHelper.fill(matrices, x, y, x + w, y + h, 0x20ffffff);
+			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 			}
 		}
 	}
 	
 	private void drawBooleanSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting) {
-		DrawableHelper.fill(matrices, x + 2, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		DrawableHelper.fill(matrices, x, y, x + 2, y + h, setting.getBool() ? 0x8000a400 : 0x80a40000);
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		fillRect(matrices, x + 2, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x, y, x + 2, y + h, setting.getBool() ? 0x8000a400 : 0x80a40000);
+		drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
-			DrawableHelper.fill(matrices, x + 2, y, x + w, y + h, 0x20ffffff);
+			fillRect(matrices, x + 2, y, x + w, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				setting.setValue(!setting.getBool());
 			}
@@ -320,12 +323,12 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private void drawKeybindSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting) {
-		DrawableHelper.fill(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
 		String text = setting.getName() + " [" + (expandedSetting == setting ? "Listening..." : setting.getKeybind().getName()) + "]";
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 2, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 2, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
-			DrawableHelper.fill(matrices, x, y, x + w, y + h, 0x20ffffff);
+			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				if(expandedSetting != setting) {
 					expandedSetting = setting;
@@ -340,7 +343,7 @@ public class ClickGUIScreen extends Screen {
 	private void drawColorPicker(MatrixStack matrices, int mouseX, int mouseY, int x, int y, Setting setting) {
 		int w = 135;
 		int h = 120;
-		DrawableHelper.fill(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
 		
 		int color = (int)setting.getColor();
 		int r = (color >> 16 & 255);
@@ -357,8 +360,8 @@ public class ClickGUIScreen extends Screen {
 		// Pointer
 		int pointerX = (int)(sbPickerX + (hsb[1] * (sbPickerW - 1)));
 		int pointerY = (int)(sbPickerY + ((1 - hsb[2]) * (sbPickerH - 1)));
-		DrawableHelper.fill(matrices, pointerX - 1, pointerY - 1, pointerX + 2, pointerY + 2, 0xff202020);
-		DrawableHelper.fill(matrices, pointerX, pointerY, pointerX + 1, pointerY + 1, 0xffffffff);
+		fillRect(matrices, pointerX - 1, pointerY - 1, pointerX + 2, pointerY + 2, 0xff202020);
+		fillRect(matrices, pointerX, pointerY, pointerX + 1, pointerY + 1, 0xffffffff);
 		
 		/* Hue Slider */
 		int hueSliderX = sbPickerX + sbPickerW + 2;
@@ -413,10 +416,10 @@ public class ClickGUIScreen extends Screen {
 		}
 		// Slider
 		int sliderY = (int)(hueSliderY + (hsb[0] * (hueSliderH - 1)));
-		DrawableHelper.fill(matrices, hueSliderX - 1, sliderY - 1, hueSliderX + hueSliderW, sliderY, 0xff202020);
-		DrawableHelper.fill(matrices, hueSliderX - 1, sliderY + 1, hueSliderX + hueSliderW, sliderY + 2, 0xff202020);
-		DrawableHelper.fill(matrices, hueSliderX - 1, sliderY - 1, hueSliderX, sliderY + 2, 0xff202020);
-		DrawableHelper.fill(matrices, hueSliderX + hueSliderW, sliderY - 1, hueSliderX + hueSliderW + 1, sliderY + 2, 0xff202020);
+		fillRect(matrices, hueSliderX - 1, sliderY - 1, hueSliderX + hueSliderW, sliderY, 0xff202020);
+		fillRect(matrices, hueSliderX - 1, sliderY + 1, hueSliderX + hueSliderW, sliderY + 2, 0xff202020);
+		fillRect(matrices, hueSliderX - 1, sliderY - 1, hueSliderX, sliderY + 2, 0xff202020);
+		fillRect(matrices, hueSliderX + hueSliderW, sliderY - 1, hueSliderX + hueSliderW + 1, sliderY + 2, 0xff202020);
 		
 		/* Alpha Slider */
 		int alphaSliderX = hueSliderX + hueSliderW + 2;
@@ -457,10 +460,10 @@ public class ClickGUIScreen extends Screen {
 		}
 		// Slider
 		sliderY = (int)(alphaSliderY + ((1 - ((float)(color >> 24 & 255) / 255.0F)) * (alphaSliderH - 1)));
-		DrawableHelper.fill(matrices, alphaSliderX - 1, sliderY - 1, alphaSliderX + alphaSliderW, sliderY, 0xff202020);
-		DrawableHelper.fill(matrices, alphaSliderX - 1, sliderY + 1, alphaSliderX + alphaSliderW, sliderY + 2, 0xff202020);
-		DrawableHelper.fill(matrices, alphaSliderX - 1, sliderY - 1, alphaSliderX, sliderY + 2, 0xff202020);
-		DrawableHelper.fill(matrices, alphaSliderX + alphaSliderW, sliderY - 1, alphaSliderX + alphaSliderW + 1, sliderY + 2, 0xff202020);
+		fillRect(matrices, alphaSliderX - 1, sliderY - 1, alphaSliderX + alphaSliderW, sliderY, 0xff202020);
+		fillRect(matrices, alphaSliderX - 1, sliderY + 1, alphaSliderX + alphaSliderW, sliderY + 2, 0xff202020);
+		fillRect(matrices, alphaSliderX - 1, sliderY - 1, alphaSliderX, sliderY + 2, 0xff202020);
+		fillRect(matrices, alphaSliderX + alphaSliderW, sliderY - 1, alphaSliderX + alphaSliderW + 1, sliderY + 2, 0xff202020);
 		
 		/* Hex Input */
 		
@@ -469,8 +472,8 @@ public class ClickGUIScreen extends Screen {
 		int chromaY = sbPickerY + sbPickerH + 2;
 		int chromaW = textRenderer.getWidth("Chroma") + textRenderer.fontHeight + 2;
 		int chromaH = textRenderer.fontHeight;
-		DrawableHelper.fill(matrices, chromaX, chromaY, chromaX + chromaH, chromaY + chromaH, setting.useChroma() ? 0x8000a400 : 0x80a40000);
-		DrawableHelper.drawStringWithShadow(matrices, textRenderer, "Chroma", chromaX + textRenderer.fontHeight + 2, chromaY, (int)ClickGUI.getInstance().textColor.getColor());
+		fillRect(matrices, chromaX, chromaY, chromaX + chromaH, chromaY + chromaH, setting.useChroma() ? 0x8000a400 : 0x80a40000);
+		drawStringWithShadow(matrices, textRenderer, "Chroma", chromaX + textRenderer.fontHeight + 2, chromaY, (int)ClickGUI.getInstance().textColor.getColor());
 		
 		/* Click Checks */
 		boolean sbHovered = mouseX >= sbPickerX && mouseX < sbPickerX + sbPickerW && mouseY >= sbPickerY && mouseY < sbPickerY + sbPickerH;
@@ -510,7 +513,7 @@ public class ClickGUIScreen extends Screen {
 			}
 		}
 		if(chromaHovered) {
-			DrawableHelper.fill(matrices, chromaX, chromaY, chromaX + chromaH, chromaY + chromaH, 0x20ffffff);
+			fillRect(matrices, chromaX, chromaY, chromaX + chromaH, chromaY + chromaH, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				setting.setChroma(!setting.useChroma());
 			}
@@ -583,7 +586,42 @@ public class ClickGUIScreen extends Screen {
 		}
 	}
 	
-	protected void fillColorGradient(MatrixStack matrices, int startX, int startY, int endX, int endY, float hue) {
+	private void fillRect(MatrixStack matrices, float x1, float y1, float x2, float y2, int color) {
+		Matrix4f matrix = matrices.peek().getModel();
+		float j;
+		if (x1 < x2) {
+			j = x1;
+			x1 = x2;
+			x2 = j;
+		}
+		
+		if (y1 < y2) {
+			j = y1;
+			y1 = y2;
+			y2 = j;
+		}
+		
+		float f = (float)(color >> 24 & 255) / 255.0F;
+		float g = (float)(color >> 16 & 255) / 255.0F;
+		float h = (float)(color >> 8 & 255) / 255.0F;
+		float k = (float)(color & 255) / 255.0F;
+		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+		RenderSystem.enableBlend();
+		RenderSystem.disableTexture();
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		bufferBuilder.vertex(matrix, x1, y2, getZOffset()).color(g, h, k, f).next();
+		bufferBuilder.vertex(matrix, x2, y2, getZOffset()).color(g, h, k, f).next();
+		bufferBuilder.vertex(matrix, x2, y1, getZOffset()).color(g, h, k, f).next();
+		bufferBuilder.vertex(matrix, x1, y1, getZOffset()).color(g, h, k, f).next();
+		bufferBuilder.end();
+		BufferRenderer.draw(bufferBuilder);
+		RenderSystem.enableTexture();
+		RenderSystem.disableBlend();
+	}
+	
+	private void fillColorGradient(MatrixStack matrices, int startX, int startY, int endX, int endY, float hue) {
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
@@ -597,7 +635,7 @@ public class ClickGUIScreen extends Screen {
 		RenderSystem.enableTexture();
 	}
 	
-	protected static void fillColorGradient(Matrix4f matrix, BufferBuilder bufferBuilder, int startX, int startY, int endX, int endY, float hue) {
+	private void fillColorGradient(Matrix4f matrix, BufferBuilder bufferBuilder, int startX, int startY, int endX, int endY, float hue) {
 		int tr = Color.HSBtoRGB(hue, 1, 1);
 		float atr = (float)(tr >> 24 & 255) / 255.0F;
 		float rtr = (float)(tr >> 16 & 255) / 255.0F;
@@ -618,10 +656,10 @@ public class ClickGUIScreen extends Screen {
 		float rbl = (float)(bl >> 16 & 255) / 255.0F;
 		float gbl = (float)(bl >> 8 & 255) / 255.0F;
 		float bbl = (float)(bl & 255) / 255.0F;
-		bufferBuilder.vertex(matrix, (float)endX, (float)startY, (float)0).color(rtr, gtr, btr, atr).next();
-		bufferBuilder.vertex(matrix, (float)startX, (float)startY, (float)0).color(rtl, gtl, btl, atl).next();
-		bufferBuilder.vertex(matrix, (float)startX, (float)endY, (float)0).color(rbl, gbl, bbl, abl).next();
-		bufferBuilder.vertex(matrix, (float)endX, (float)endY, (float)0).color(rbr, gbr, bbr, abr).next();
+		bufferBuilder.vertex(matrix, (float)endX, (float)startY, (float)getZOffset()).color(rtr, gtr, btr, atr).next();
+		bufferBuilder.vertex(matrix, (float)startX, (float)startY, (float)getZOffset()).color(rtl, gtl, btl, atl).next();
+		bufferBuilder.vertex(matrix, (float)startX, (float)endY, (float)getZOffset()).color(rbl, gbl, bbl, abl).next();
+		bufferBuilder.vertex(matrix, (float)endX, (float)endY, (float)getZOffset()).color(rbr, gbr, bbr, abr).next();
 	}
 	
 	@Override

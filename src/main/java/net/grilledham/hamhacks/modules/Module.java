@@ -1,9 +1,9 @@
 package net.grilledham.hamhacks.modules;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.grilledham.hamhacks.event.Event;
 import net.grilledham.hamhacks.gui.BoundingBox;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
-import net.grilledham.hamhacks.event.Event;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 
@@ -113,6 +113,7 @@ public class Module {
 			int y = 3;
 			TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 			for(Module.Category category : Module.Category.values()) {
+				category.getBox().resizeScreen();
 				category.getBox().setScaleFactor(MinecraftClient.getInstance().options.guiScale);
 				category.getBox().setScale(1);
 				List<Module> categoryModules = ModuleManager.getModules(category);
@@ -148,6 +149,7 @@ public class Module {
 		
 		public void resize() {
 			box.resizeScreen();
+			box.setScaleFactor(MinecraftClient.getInstance().options.guiScale);
 		}
 		
 		public void setDimensions(int width, int height) {

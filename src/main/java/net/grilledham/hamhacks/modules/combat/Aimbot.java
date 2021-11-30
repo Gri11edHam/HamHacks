@@ -60,6 +60,7 @@ public class Aimbot extends Module {
 		settings.add(fov);
 		settings.add(aimAtEntities);
 		settings.add(aimAtBlocks);
+		updateSettings();
 	}
 	
 	private void updateSettings() {
@@ -68,10 +69,10 @@ public class Aimbot extends Module {
 		settings.remove(aimAtPassive);
 		settings.remove(aimAtHostile);
 		if(aimAtEntities.getBool()) {
-			settings.add(settings.indexOf(aimAtEntities) + 1, keepOverEntity);
-			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtPlayers);
-			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtPassive);
 			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtHostile);
+			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtPassive);
+			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtPlayers);
+			settings.add(settings.indexOf(aimAtEntities) + 1, keepOverEntity);
 		}
 	}
 	
