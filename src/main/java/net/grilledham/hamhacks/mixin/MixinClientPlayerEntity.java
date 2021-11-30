@@ -10,9 +10,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayerEntity.class)
 public class MixinClientPlayerEntity {
 	
-	@Inject(method = "tickMovement", at = @At("HEAD"), cancellable = true)
-	public void moveEvent(CallbackInfo ci) {
-		EventMotion event = new EventMotion();
+	@Inject(method = "sendMovementPackets", at = @At("HEAD"), cancellable = true)
+	public void preMoveEvent(CallbackInfo ci) {
+		EventMotion event = new EventMotion(EventMotion.Type.PRE);
+		event.call();
+		if(event.canceled) {
+			ci.cancel();
+		}
+	}
+	
+	@Inject(method = "sendMovementPackets", at = @At("TAIL"), cancellable = true)
+	public void postMoveEvent(CallbackInfo ci) {
+		EventMotion event = new EventMotion(EventMotion.Type.POST);
 		event.call();
 		if(event.canceled) {
 			ci.cancel();

@@ -16,7 +16,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -38,7 +37,7 @@ public class Aimbot extends Module {
 	private HitResult blockToAim = null;
 	
 	public Aimbot() {
-		super("Aimbot", Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
+		super("Aimbot", Category.COMBAT, new Keybind(0));
 	}
 	
 	@Override

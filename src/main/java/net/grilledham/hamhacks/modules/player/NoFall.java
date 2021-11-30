@@ -17,7 +17,7 @@ public class NoFall extends Module {
 	public boolean onEvent(Event e) {
 		boolean superReturn = super.onEvent(e);
 		if(superReturn) {
-			if(e instanceof EventMotion) {
+			if(e instanceof EventMotion && ((EventMotion)e).type == EventMotion.Type.PRE) {
 				if(mc.player.fallDistance >= 3) {
 					mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
 				}

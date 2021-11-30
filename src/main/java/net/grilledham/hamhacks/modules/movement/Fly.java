@@ -68,7 +68,7 @@ public class Fly extends Module {
 	public boolean onEvent(Event e) {
 		boolean superReturn = super.onEvent(e);
 		if(superReturn) {
-			if(e instanceof EventMotion) {
+			if(e instanceof EventMotion && ((EventMotion)e).type == EventMotion.Type.PRE) {
 //				if ((mc.options.keyForward.isPressed() || mc.options.keyBack.isPressed() || mc.options.keyLeft.isPressed() || mc.options.keyRight.isPressed()) && mc.options.bobView) {
 //					switch(viewBobbing) {
 //						case 0 -> {

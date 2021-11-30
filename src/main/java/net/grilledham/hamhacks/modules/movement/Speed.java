@@ -38,7 +38,7 @@ public class Speed extends Module {
 	public boolean onEvent(Event e) {
 		boolean superReturn = super.onEvent(e);
 		if(superReturn) {
-			if(e instanceof EventMotion) {
+			if(e instanceof EventMotion && ((EventMotion)e).type == EventMotion.Type.PRE) {
 				if(mc.player.getPose() == EntityPose.FALL_FLYING && disableWithElytra.getBool()) {
 					return true;
 				}

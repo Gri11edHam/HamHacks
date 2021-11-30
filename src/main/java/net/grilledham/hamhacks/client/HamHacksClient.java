@@ -10,6 +10,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.Aimbot;
 import net.grilledham.hamhacks.modules.combat.CrystalAura;
+import net.grilledham.hamhacks.modules.combat.KillAura;
 import net.grilledham.hamhacks.modules.combat.ScrollClicker;
 import net.grilledham.hamhacks.modules.movement.*;
 import net.grilledham.hamhacks.modules.player.*;
@@ -52,5 +53,6 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new Sprint());
 		ModuleManager.register(new Step());
 		ModuleManager.register(new Tracers());
+		ModuleManager.register(new KillAura());
 	}
 }
