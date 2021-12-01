@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.modules.movement;
 
+import com.google.common.collect.Lists;
 import net.grilledham.hamhacks.event.Event;
 import net.grilledham.hamhacks.event.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
@@ -52,12 +53,12 @@ public class Fly extends Module {
 	public void onEnable() {
 		super.onEnable();
 		if(mode.getString().equalsIgnoreCase("Default")) {
-			if (!mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D)).toList().isEmpty()) {
+			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
 		}
 		if(mode.getString().equalsIgnoreCase("Vanilla")) {
-			if (!mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D)).toList().isEmpty()) {
+			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, dropAmount.getFloat(), 0));
 			}
 			height = mc.player.getPos().y;

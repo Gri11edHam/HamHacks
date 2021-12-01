@@ -111,15 +111,15 @@ public class ClickGUIScreen extends Screen {
 			int moduleY = y + h;
 			int moduleW = w - 2;
 			int moduleFullWidth = fullWidth - 2;
-			matrices.translate(0, 0, 1f);
-			setZOffset(getZOffset() + 1);
+			matrices.translate(0, 0, 10f);
+			setZOffset(getZOffset() + 10);
 			for(int i = 0; i < categories.get(category).size(); i++) {
 				drawModule(matrices, mouseX, mouseY, moduleX, moduleY, moduleW, moduleFullWidth, h, categories.get(category).get(i));
 				
 				moduleY += h;
 			}
-			matrices.translate(0, 0, -1f);
-			setZOffset(getZOffset() - 1);
+			matrices.translate(0, 0, -10f);
+			setZOffset(getZOffset() - 10);
 		}
 	}
 	
@@ -164,15 +164,15 @@ public class ClickGUIScreen extends Screen {
 				settingW = Math.max(settingW, getSettingWidth(setting));
 			}
 			settingW += 4;
-			matrices.translate(0, 0, 2f);
-			setZOffset(getZOffset() + 2);
+			matrices.translate(0, 0, 20f);
+			setZOffset(getZOffset() + 20);
 			for(int i = 0; i < module.getSettings().size(); i++) {
 				drawSetting(matrices, mouseX, mouseY, settingX, settingY, settingW, h, module.getSettings().get(i));
 				
 				settingY += h;
 			}
-			matrices.translate(0, 0, -2f);
-			setZOffset(getZOffset() - 2);
+			matrices.translate(0, 0, -20f);
+			setZOffset(getZOffset() - 20);
 		}
 	}
 	
@@ -377,7 +377,7 @@ public class ClickGUIScreen extends Screen {
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder bufferBuilder = tessellator.getBuffer();
 			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-			Matrix4f matrix = matrices.peek().getModel();
+			Matrix4f matrix = matrices.peek().getPositionMatrix();
 			int startC = Color.HSBtoRGB(0, 1, 1);
 			int endC;
 			int startX = hueSliderX;
@@ -435,7 +435,7 @@ public class ClickGUIScreen extends Screen {
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder bufferBuilder = tessellator.getBuffer();
 			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-			Matrix4f matrix = matrices.peek().getModel();
+			Matrix4f matrix = matrices.peek().getPositionMatrix();
 			int startC = 0xffffffff;
 			int endC = 0x00ffffff;
 			int startX = alphaSliderX;
@@ -587,7 +587,7 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private void fillRect(MatrixStack matrices, float x1, float y1, float x2, float y2, int color) {
-		Matrix4f matrix = matrices.peek().getModel();
+		Matrix4f matrix = matrices.peek().getPositionMatrix();
 		float j;
 		if (x1 < x2) {
 			j = x1;
@@ -629,7 +629,7 @@ public class ClickGUIScreen extends Screen {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		fillColorGradient(matrices.peek().getModel(), bufferBuilder, startX, startY, endX, endY, hue);
+		fillColorGradient(matrices.peek().getPositionMatrix(), bufferBuilder, startX, startY, endX, endY, hue);
 		tessellator.draw();
 		RenderSystem.disableBlend();
 		RenderSystem.enableTexture();

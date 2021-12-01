@@ -9,7 +9,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.WindowEventHandler;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.util.snooper.SnooperListener;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,8 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
-public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runnable> implements SnooperListener,
-		WindowEventHandler, AutoCloseable, IMinecraftClient {
+public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runnable> implements WindowEventHandler, IMinecraftClient {
 	
 	@Shadow
 	public ClientPlayerInteractionManager interactionManager;

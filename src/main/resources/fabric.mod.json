@@ -3,7 +3,7 @@
 	"id": "hamhacks",
 	"version": "${version}",
 	"name": "HamHacks",
-	"description": "Hacks for Minecraft 1.17",
+	"description": "Hacks for Minecraft 1.18",
 	"authors": [
 		"GrilledHam"
 	],
@@ -23,8 +23,8 @@
 		"hamhacks.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.11.7",
+		"fabricloader": ">=0.12.8",
 		"fabric": "*",
-		"minecraft": ">=1.17.1"
+		"minecraft": ">=1.18"
 	}
 }
