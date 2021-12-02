@@ -186,9 +186,15 @@ public class HamHacksConfig {
 		switch(s.getType()) {
 			case LIST, STRING -> obj.addProperty(s.getName(), s.getString());
 			case BOOLEAN -> obj.addProperty(s.getName(), s.getBool());
-			case COLOR, INT -> obj.addProperty(s.getName(), s.getInt());
+			case INT -> obj.addProperty(s.getName(), s.getInt());
 			case KEYBIND -> obj.addProperty(s.getName(), s.getKeybind().getKey());
 			case FLOAT -> obj.addProperty(s.getName(), s.getFloat());
+			case COLOR -> {
+				JsonObject setting = new JsonObject();
+				setting.addProperty("color", (int)s.getColor());
+				setting.addProperty("chroma", s.useChroma());
+				obj.add(s.getName(), setting);
+			}
 			case SETTING_LIST -> {
 				JsonObject setting = new JsonObject();
 				JsonArray settingList = new JsonArray();
@@ -241,8 +247,13 @@ public class HamHacksConfig {
 				switch(s.getType()) {
 					case LIST, STRING -> s.setValue(obj.get(s.getName()).getAsString());
 					case BOOLEAN -> s.setValue(obj.get(s.getName()).getAsBoolean());
-					case COLOR, INT, KEYBIND -> s.setValue(obj.get(s.getName()).getAsInt());
+					case INT, KEYBIND -> s.setValue(obj.get(s.getName()).getAsInt());
 					case FLOAT -> s.setValue(obj.get(s.getName()).getAsFloat());
+					case COLOR -> {
+						JsonObject setting = obj.get(s.getName()).getAsJsonObject();
+						s.setValue(setting.get("color").getAsInt());
+						s.setChroma(setting.get("chroma").getAsBoolean());
+					}
 					case SETTING_LIST -> {
 						JsonObject setting = obj.get(s.getName()).getAsJsonObject();
 						JsonArray settingList = setting.get("sub_settings").getAsJsonArray();
