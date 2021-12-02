@@ -10,6 +10,9 @@ import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(KeyboardInput.class)
 public class MixinKeyboardInput extends Input {
@@ -18,7 +21,8 @@ public class MixinKeyboardInput extends Input {
 	@Shadow
 	private GameOptions settings;
 	
-	public void tick(boolean slowDown) {
+	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+	public void tick(boolean slowDown, CallbackInfo ci) {
 		boolean forward = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyForward).getBound().getCode()) == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen instanceof ClickGUIScreen;
 		boolean back = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyBack).getBound().getCode()) == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen instanceof ClickGUIScreen;
 		boolean left = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyLeft).getBound().getCode()) == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen instanceof ClickGUIScreen;
@@ -37,5 +41,6 @@ public class MixinKeyboardInput extends Input {
 			this.movementSideways = (float)((double)this.movementSideways * 0.3D);
 			this.movementForward = (float)((double)this.movementForward * 0.3D);
 		}
+		ci.cancel();
 	}
 }
