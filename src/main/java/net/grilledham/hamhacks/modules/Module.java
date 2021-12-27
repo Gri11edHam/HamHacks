@@ -114,7 +114,7 @@ public class Module {
 			TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 			for(Module.Category category : Module.Category.values()) {
 				category.getBox().resizeScreen();
-				category.getBox().setScaleFactor(MinecraftClient.getInstance().options.guiScale);
+				category.getBox().setScaleFactor(2);
 				category.getBox().setScale(1);
 				List<Module> categoryModules = ModuleManager.getModules(category);
 				int categoryWidth = textRenderer.getWidth(category.getText());
@@ -149,7 +149,7 @@ public class Module {
 		
 		public void resize() {
 			box.resizeScreen();
-			box.setScaleFactor(MinecraftClient.getInstance().options.guiScale);
+			box.setScaleFactor(2);
 		}
 		
 		public void setDimensions(int width, int height) {

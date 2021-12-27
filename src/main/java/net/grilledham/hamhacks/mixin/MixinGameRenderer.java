@@ -2,7 +2,9 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.event.EventRender2D;
 import net.grilledham.hamhacks.event.EventRender3D;
+import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.resource.ResourceManager;
@@ -29,9 +31,34 @@ public class MixinGameRenderer implements SynchronousResourceReloader, AutoClose
 		event.call();
 	}
 	
+	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
+	public void modelBobbingOnly(GameRenderer instance, MatrixStack matrices, float f) {
+		if(!HUD.getInstance().modelBobbingOnly.getBool() && HUD.getInstance().isEnabled()) {
+			bobView(matrices, f);
+		}
+	}
+	
+	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobViewWhenHurt(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
+	public void noHurtCam(GameRenderer instance, MatrixStack matrices, float f) {
+		if(!HUD.getInstance().noHurtCam.getBool() && HUD.getInstance().isEnabled()) {
+			bobViewWhenHurt(matrices, f);
+		}
+	}
+	
 	@Shadow
 	public void close() {}
 	
 	@Shadow
 	public void reload(ResourceManager manager) {}
+	
+	@Shadow
+	private void bobView(MatrixStack matrices, float f) {}
+	
+	@Shadow
+	private void bobViewWhenHurt(MatrixStack matrices, float f) {}
+	
+	@Shadow
+	private double getFov(Camera camera, float tickDelta, boolean changingFov) {
+		return 0;
+	}
 }
