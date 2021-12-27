@@ -3,6 +3,15 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.1.4:
+				- Added settings to HUD module:
+					: Held Item Scale
+					: Shield Height
+					: Fire Height
+					: Model Bobbing Only
+					: No Hurt Cam
+				- Bug fixes
+			
 			Update 1.1.3:
 				- Bug fixes
 			
