@@ -23,7 +23,7 @@ public class MixinInGameOverlayRenderer {
 		return HUD.getInstance().getOverlayTransparency(original);
 	}
 	
-	@ModifyArg(method = "renderUnderwaterOverlay", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V"), index = 3)
+	@ModifyArg(method = "renderUnderwaterOverlay", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V"), index = 3, remap = false)
 	private static float renderWaterOverlay(float original) {
 		return HUD.getInstance().getOverlayTransparency(original);
 	}

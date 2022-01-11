@@ -3,6 +3,9 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.3.3:
+				- Fixed incompatibility with iris shaders
+			
 			Update 1.3.2:
 				- Updated to 1.18.1
 				- Added settings to HUD module:
@@ -14,7 +17,7 @@ public class Changelog {
 				- Bug fixes
 			
 			Update 1.3.1:
-				- Fixed incompatability with multiconnect
+				- Fixed incompatibility with multiconnect
 				- Fixed color settings not saving chroma
 			
 			Update 1.3:
