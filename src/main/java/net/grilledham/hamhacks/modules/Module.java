@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.modules;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.grilledham.hamhacks.event.Event;
+import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.gui.BoundingBox;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.minecraft.client.MinecraftClient;
@@ -60,9 +60,11 @@ public class Module {
 	}
 	
 	public void onEnable() {
+		EventManager.register(this);
 	}
 	
 	public void onDisable() {
+		EventManager.unRegister(this);
 	}
 	
 	public String getName() {
@@ -75,10 +77,6 @@ public class Module {
 	
 	public boolean shouldShowModule() {
 		return showModule.getBool();
-	}
-	
-	public boolean onEvent(Event e) {
-		return enabled.getBool() && mc.world != null && mc.player != null;
 	}
 	
 	public List<Setting> getSettings() {

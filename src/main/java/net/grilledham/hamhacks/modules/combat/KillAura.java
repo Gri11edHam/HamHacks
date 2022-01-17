@@ -1,8 +1,8 @@
 package net.grilledham.hamhacks.modules.combat;
 
-import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventMotion;
-import net.grilledham.hamhacks.event.EventTick;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventMotion;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.Setting;
@@ -48,61 +48,61 @@ public class KillAura extends Module {
 		settings.add(attackHostile);
 	}
 	
-	@Override
-	public boolean onEvent(Event e) {
-		boolean superReturn = super.onEvent(e);
-		if(superReturn) {
-			if(e instanceof EventTick) {
-				if(mc.player.getAttackCooldownProgress(0.5f) > 0.9f) {
-					Stream<LivingEntity> stream = mc.world.getEntitiesByType(new TypeFilter<Entity, LivingEntity>() {
-								@Nullable
-								@Override
-								public LivingEntity downcast(Entity entity) {
-									return (LivingEntity)entity;
-								}
-								
-								@Override
-								public Class<? extends Entity> getBaseClass() {
-									return LivingEntity.class;
-								}
-							}, new Box(mc.player.getBlockPos().add(-64, -64, -64), mc.player.getBlockPos().add(64, 64, 64)), Objects::nonNull).stream()
-							.filter(entity -> !entity.isRemoved() && entity.isAlive())
-							.filter(entity -> entity != mc.player)
-							.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-							.filter(entity -> (entity instanceof PlayerEntity && attackPlayers.getBool()) || (entity instanceof HostileEntity && attackHostile.getBool()) || (entity instanceof PassiveEntity && attackPassive.getBool()));
-					
-					List<LivingEntity> entities = stream.toList();
-					if(!entities.isEmpty()) {
-						LivingEntity closest = entities.get(0);
-						for(LivingEntity entity : entities) {
-							if(mc.player.distanceTo(entity) < mc.player.distanceTo(closest)) {
-								closest = entity;
-							}
+	@EventListener
+	public void onTick(EventTick e) {
+		if(mc.world == null) {
+			return;
+		}
+		if(mc.player.getAttackCooldownProgress(0.5f) > 0.9f) {
+			Stream<LivingEntity> stream = mc.world.getEntitiesByType(new TypeFilter<Entity, LivingEntity>() {
+						@Nullable
+						@Override
+						public LivingEntity downcast(Entity entity) {
+							return (LivingEntity)entity;
 						}
-						if(mc.player.distanceTo(closest) <= reach.getFloat()) {
-							target = closest;
-						} else {
-							target = null;
+						
+						@Override
+						public Class<? extends Entity> getBaseClass() {
+							return LivingEntity.class;
 						}
-					} else {
-						target = null;
-					}
-					if(target != null) {
-						RotationHack.faceVectorPacket(target.getPos());
+					}, new Box(mc.player.getBlockPos().add(-64, -64, -64), mc.player.getBlockPos().add(64, 64, 64)), Objects::nonNull).stream()
+					.filter(entity -> !entity.isRemoved() && entity.isAlive())
+					.filter(entity -> entity != mc.player)
+					.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
+					.filter(entity -> (entity instanceof PlayerEntity && attackPlayers.getBool()) || (entity instanceof HostileEntity && attackHostile.getBool()) || (entity instanceof PassiveEntity && attackPassive.getBool()));
+			
+			List<LivingEntity> entities = stream.toList();
+			if(!entities.isEmpty()) {
+				LivingEntity closest = entities.get(0);
+				for(LivingEntity entity : entities) {
+					if(mc.player.distanceTo(entity) < mc.player.distanceTo(closest)) {
+						closest = entity;
 					}
 				}
-			} else if(e instanceof EventMotion) {
-				if(((EventMotion)e).type == EventMotion.Type.POST) {
-					if(target == null) {
-						return true;
-					}
-					
-					mc.interactionManager.attackEntity(mc.player, target);
-					mc.player.swingHand(Hand.MAIN_HAND);
+				if(mc.player.distanceTo(closest) <= reach.getFloat()) {
+					target = closest;
+				} else {
 					target = null;
 				}
+			} else {
+				target = null;
+			}
+			if(target != null) {
+				RotationHack.faceVectorPacket(target.getPos());
 			}
 		}
-		return superReturn;
+	}
+	
+	@EventListener
+	public void onMove(EventMotion e) {
+		if(((EventMotion)e).type == EventMotion.Type.POST) {
+			if(target == null) {
+				return;
+			}
+			
+			mc.interactionManager.attackEntity(mc.player, target);
+			mc.player.swingHand(Hand.MAIN_HAND);
+			target = null;
+		}
 	}
 }

@@ -1,14 +1,10 @@
 package net.grilledham.hamhacks.modules.combat;
 
 import com.google.common.collect.Lists;
-import net.grilledham.hamhacks.client.HamHacksClient;
-import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventTick;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,7 +18,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class CrystalAura extends Module {
@@ -33,65 +28,61 @@ public class CrystalAura extends Module {
 		super("Crystal Aura", Category.COMBAT, new Keybind(GLFW.GLFW_KEY_C));
 	}
 	
-	@Override
-	public boolean onEvent(Event e) {
-		boolean superReturn = super.onEvent(e);
-		if(superReturn && updates > 2) {
-			updates = 0;
-			if(e instanceof EventTick) {
-				PlayerEntity p = null;
-				for(PlayerEntity player : mc.world.getPlayers()) {
-					if(player != mc.player) {
-						if(p == null) {
-							p = player;
-						} else if(mc.player.distanceTo(player) < mc.player.distanceTo(p)) {
-							p = player;
-						}
-					}
-				}
-				if(p != null) {
-					int slot = -1;
-					int oldSlot = mc.player.getInventory().selectedSlot;
-					for(int i = 0; i < 9; i++) {
-						ItemStack stack = mc.player.getInventory().getStack(i);
-						
-						if(stack.getItem() == Items.END_CRYSTAL) {
-							slot = i;
-						}
-					}
-					if(slot < 0) {
-						return false;
-					}
-					mc.player.getInventory().selectedSlot = slot;
-					Vec3d eyesPos = new Vec3d(mc.player.getX(), mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
-					
-					List<Vec3i> possiblePositions = Lists.newArrayList();
-					for(int x = -2; x < 3; x++) {
-						for(int y = -2; y < 4; y++) {
-							for(int z = -2; z < 3; z++) {
-								possiblePositions.add(new Vec3i(x, y, z));
-							}
-						}
-					}
-					possiblePositions.sort((o1, o2) -> {
-						if(o1.getSquaredDistance(new Vec3i(0, 0, 0)) < o2.getSquaredDistance(new Vec3i(0, 0, 0))) {
-							return 1;
-						} else if(o1.getSquaredDistance(new Vec3i(0, 0, 0)) > o2.getSquaredDistance(new Vec3i(0, 0, 0))) {
-							return -1;
-						}
-						return 0;
-					});
-					for(Vec3i possiblePosition : possiblePositions) {
-						if(tryAura(p, eyesPos, possiblePosition)) {
-							break;
-						}
-					}
-					mc.player.getInventory().selectedSlot = oldSlot;
+	@EventListener
+	public void onTick(EventTick e) {
+		updates = 0;
+		if(mc.world == null) {
+			return;
+		}
+		PlayerEntity p = null;
+		for(PlayerEntity player : mc.world.getPlayers()) {
+			if(player != mc.player) {
+				if(p == null) {
+					p = player;
+				} else if(mc.player.distanceTo(player) < mc.player.distanceTo(p)) {
+					p = player;
 				}
 			}
 		}
-		updates++;
-		return superReturn;
+		if(p != null) {
+			int slot = -1;
+			int oldSlot = mc.player.getInventory().selectedSlot;
+			for(int i = 0; i < 9; i++) {
+				ItemStack stack = mc.player.getInventory().getStack(i);
+				
+				if(stack.getItem() == Items.END_CRYSTAL) {
+					slot = i;
+				}
+			}
+			if(slot < 0) {
+				return;
+			}
+			mc.player.getInventory().selectedSlot = slot;
+			Vec3d eyesPos = new Vec3d(mc.player.getX(), mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
+			
+			List<Vec3i> possiblePositions = Lists.newArrayList();
+			for(int x = -2; x < 3; x++) {
+				for(int y = -2; y < 4; y++) {
+					for(int z = -2; z < 3; z++) {
+						possiblePositions.add(new Vec3i(x, y, z));
+					}
+				}
+			}
+			possiblePositions.sort((o1, o2) -> {
+				if(o1.getSquaredDistance(new Vec3i(0, 0, 0)) < o2.getSquaredDistance(new Vec3i(0, 0, 0))) {
+					return 1;
+				} else if(o1.getSquaredDistance(new Vec3i(0, 0, 0)) > o2.getSquaredDistance(new Vec3i(0, 0, 0))) {
+					return -1;
+				}
+				return 0;
+			});
+			for(Vec3i possiblePosition : possiblePositions) {
+				if(tryAura(p, eyesPos, possiblePosition)) {
+					break;
+				}
+			}
+			mc.player.getInventory().selectedSlot = oldSlot;
+		}
 	}
 	
 	private boolean tryAura(PlayerEntity p, Vec3d eyesPos, Vec3i offset) {

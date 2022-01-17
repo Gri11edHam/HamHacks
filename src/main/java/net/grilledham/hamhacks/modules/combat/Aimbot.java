@@ -1,8 +1,8 @@
 package net.grilledham.hamhacks.modules.combat;
 
 import com.google.common.collect.Lists;
-import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventTick;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.Setting;
@@ -76,53 +76,50 @@ public class Aimbot extends Module {
 		}
 	}
 	
-	@Override
-	public boolean onEvent(Event e) {
-		boolean superReturn = super.onEvent(e);
-		if(superReturn) {
-			if(e instanceof EventTick) {
-				if(keepOverEntity.getBool()) {
-					if(entityToAim != null && !MouseUtil.mouseMoved()) {
-						entityToAim.getPos().floorAlongAxes(EnumSet.allOf(Direction.Axis.class)).add(0.5, 0.5, 0.5);
-						float[] rotation = getRotationsNeeded(entityToAim, null, fov.getFloat(), fov.getFloat(), speed.getFloat(), speed.getFloat());
-						
-						mc.player.setPitch(rotation[1]);
-						mc.player.setYaw(rotation[0]);
-					} else if(MouseUtil.mouseMoved()) {
-						if((mc.targetedEntity instanceof PlayerEntity && aimAtPlayers.getBool()) || (mc.targetedEntity instanceof PassiveEntity && aimAtPassive.getBool()) || (mc.targetedEntity instanceof HostileEntity && aimAtHostile.getBool())) {
-							entityToAim = mc.targetedEntity;
-						}
-					}
-				} else {
-					Entity entity = getClosestEntityToCrosshair(Lists.newCopyOnWriteArrayList(mc.world.getEntities()).stream().filter(ent -> ent.getPos().distanceTo(mc.player.getPos()) < 6 && ent != mc.player/* && ent instanceof PlayerEntity*/).collect(Collectors.toList()));
-					if(entity != null && aimAtEntities.getBool()) {
-						if((entity instanceof PlayerEntity && aimAtPlayers.getBool()) || (entity instanceof PassiveEntity && aimAtPassive.getBool()) || (entity instanceof HostileEntity && aimAtHostile.getBool())) {
-							float[] rotation = getRotationsNeeded(entity, null, fov.getFloat(), fov.getFloat(), speed.getFloat(), speed.getFloat());
-							
-							mc.player.setPitch(rotation[1]);
-							mc.player.setYaw(rotation[0]);
-						}
-					}
+	@EventListener
+	public void onTick(EventTick e) {
+		if(mc.world == null) {
+			return;
+		}
+		if(keepOverEntity.getBool()) {
+			if(entityToAim != null && !MouseUtil.mouseMoved()) {
+				entityToAim.getPos().floorAlongAxes(EnumSet.allOf(Direction.Axis.class)).add(0.5, 0.5, 0.5);
+				float[] rotation = getRotationsNeeded(entityToAim, null, fov.getFloat(), fov.getFloat(), speed.getFloat(), speed.getFloat());
+				
+				mc.player.setPitch(rotation[1]);
+				mc.player.setYaw(rotation[0]);
+			} else if(MouseUtil.mouseMoved()) {
+				if((mc.targetedEntity instanceof PlayerEntity && aimAtPlayers.getBool()) || (mc.targetedEntity instanceof PassiveEntity && aimAtPassive.getBool()) || (mc.targetedEntity instanceof HostileEntity && aimAtHostile.getBool())) {
+					entityToAim = mc.targetedEntity;
 				}
-				if(aimAtBlocks.getBool()) {
-					HitResult pos = blockToAim;
-					if(pos != null && !MouseUtil.mouseMoved()) {
-						pos.getPos().floorAlongAxes(EnumSet.allOf(Direction.Axis.class)).add(0.5, 0.5, 0.5);
-						float[] rotation = getRotationsNeeded(null, pos.getPos(), 360, 360, speed.getFloat(), speed.getFloat());
-						
-						mc.player.setPitch(rotation[1]);
-						mc.player.setYaw(rotation[0]);
-					} else if(MouseUtil.mouseMoved()) {
-						if(mc.crosshairTarget.getType() == HitResult.Type.BLOCK) {
-							blockToAim = mc.crosshairTarget;
-						} else {
-							blockToAim = null;
-						}
-					}
+			}
+		} else {
+			Entity entity = getClosestEntityToCrosshair(Lists.newCopyOnWriteArrayList(mc.world.getEntities()).stream().filter(ent -> ent.getPos().distanceTo(mc.player.getPos()) < 6 && ent != mc.player/* && ent instanceof PlayerEntity*/).collect(Collectors.toList()));
+			if(entity != null && aimAtEntities.getBool()) {
+				if((entity instanceof PlayerEntity && aimAtPlayers.getBool()) || (entity instanceof PassiveEntity && aimAtPassive.getBool()) || (entity instanceof HostileEntity && aimAtHostile.getBool())) {
+					float[] rotation = getRotationsNeeded(entity, null, fov.getFloat(), fov.getFloat(), speed.getFloat(), speed.getFloat());
+					
+					mc.player.setPitch(rotation[1]);
+					mc.player.setYaw(rotation[0]);
 				}
 			}
 		}
-		return superReturn;
+		if(aimAtBlocks.getBool()) {
+			HitResult pos = blockToAim;
+			if(pos != null && !MouseUtil.mouseMoved()) {
+				pos.getPos().floorAlongAxes(EnumSet.allOf(Direction.Axis.class)).add(0.5, 0.5, 0.5);
+				float[] rotation = getRotationsNeeded(null, pos.getPos(), 360, 360, speed.getFloat(), speed.getFloat());
+				
+				mc.player.setPitch(rotation[1]);
+				mc.player.setYaw(rotation[0]);
+			} else if(MouseUtil.mouseMoved()) {
+				if(mc.crosshairTarget.getType() == HitResult.Type.BLOCK) {
+					blockToAim = mc.crosshairTarget;
+				} else {
+					blockToAim = null;
+				}
+			}
+		}
 	}
 	
 	public float[] getRotationsNeeded(Entity target, Vec3d blockPos, float fovX, float fovY, float stepX, float stepY) {

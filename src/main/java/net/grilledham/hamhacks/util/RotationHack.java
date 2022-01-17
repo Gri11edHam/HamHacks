@@ -1,6 +1,6 @@
 package net.grilledham.hamhacks.util;
 
-import net.grilledham.hamhacks.event.EventMotion;
+import net.grilledham.hamhacks.event.events.EventMotion;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.math.Vec3d;

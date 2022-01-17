@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.modules.movement;
 
-import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventMotion;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.Setting;
@@ -29,52 +29,38 @@ public class Speed extends Module {
 		settings.add(disableWithElytra);
 	}
 	
-	@Override
-	public void onEnable() {
-		super.onEnable();
-	}
-	
-	@Override
-	public boolean onEvent(Event e) {
-		boolean superReturn = super.onEvent(e);
-		if(superReturn) {
-			if(e instanceof EventMotion && ((EventMotion)e).type == EventMotion.Type.PRE) {
-				if(mc.player.getPose() == EntityPose.FALL_FLYING && disableWithElytra.getBool()) {
-					return true;
-				}
-				float distanceForward = 0;
-				float distanceStrafe = 0;
-				if(mc.player.input.pressingForward) {
-					distanceForward += 1;
-				}
-				if(mc.player.input.pressingBack) {
-					distanceForward -= 1;
-				}
-				if(mc.player.input.pressingRight) {
-					distanceStrafe -= 1;
-				}
-				if(mc.player.input.pressingLeft) {
-					distanceStrafe += 1;
-				}
-				float dx = (float) (distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));
-				float dz = (float) (distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90)));
-				dx += (float) (distanceStrafe * Math.cos(Math.toRadians(mc.player.getYaw())));
-				dz += (float) (distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
-				dx *= speed.getFloat() / 10f;
-				dz *= speed.getFloat() / 10f;
-				mc.player.setVelocity(new Vec3d(dx, mc.player.getVelocity().y, dz));
-				if(autoJump.getBool()) {
-					if(mc.player.isOnGround() && (dx != 0 && dz != 0)) {
-						mc.player.jump();
-					}
+	@EventListener
+	public void onMove(EventMotion e) {
+		if(e.type == EventMotion.Type.PRE) {
+			if(mc.player.getPose() == EntityPose.FALL_FLYING && disableWithElytra.getBool()) {
+				return;
+			}
+			float distanceForward = 0;
+			float distanceStrafe = 0;
+			if(mc.player.input.pressingForward) {
+				distanceForward += 1;
+			}
+			if(mc.player.input.pressingBack) {
+				distanceForward -= 1;
+			}
+			if(mc.player.input.pressingRight) {
+				distanceStrafe -= 1;
+			}
+			if(mc.player.input.pressingLeft) {
+				distanceStrafe += 1;
+			}
+			float dx = (float) (distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));
+			float dz = (float) (distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90)));
+			dx += (float) (distanceStrafe * Math.cos(Math.toRadians(mc.player.getYaw())));
+			dz += (float) (distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
+			dx *= speed.getFloat() / 10f;
+			dz *= speed.getFloat() / 10f;
+			mc.player.setVelocity(new Vec3d(dx, mc.player.getVelocity().y, dz));
+			if(autoJump.getBool()) {
+				if(mc.player.isOnGround() && (dx != 0 && dz != 0)) {
+					mc.player.jump();
 				}
 			}
 		}
-		return superReturn;
-	}
-	
-	@Override
-	public void onDisable() {
-		super.onDisable();
 	}
 }

@@ -1,6 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.event.EventKey;
+import net.grilledham.hamhacks.event.events.EventKey;
 import net.grilledham.hamhacks.mixininterface.IKeyBinding;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;

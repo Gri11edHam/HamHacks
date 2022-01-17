@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.modules.movement;
 
-import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventMotion;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import org.lwjgl.glfw.GLFW;
@@ -12,17 +12,13 @@ public class Sprint extends Module {
 		super("Sprint", Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_G));
 	}
 	
-	@Override
-	public boolean onEvent(Event e) {
-		boolean superReturn = super.onEvent(e);
-		if(superReturn) {
-			if(e instanceof EventMotion && ((EventMotion)e).type == EventMotion.Type.PRE) {
-				if(!mc.player.horizontalCollision && mc.player.forwardSpeed > 0) {
-					mc.player.setSprinting(true);
-				}
+	@EventListener
+	public void onMove(EventMotion e) {
+		if(e.type == EventMotion.Type.PRE) {
+			if(!mc.player.horizontalCollision && mc.player.forwardSpeed > 0) {
+				mc.player.setSprinting(true);
 			}
 		}
-		return superReturn;
 	}
 	
 	@Override

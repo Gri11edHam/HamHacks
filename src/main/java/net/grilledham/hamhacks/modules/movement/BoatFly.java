@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.modules.movement;
 
-import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventTick;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.minecraft.entity.Entity;
@@ -15,24 +15,21 @@ public class BoatFly extends Module {
 		super("Boat Fly", Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_B));
 	}
 	
-	@Override
-	public boolean onEvent(Event e) {
-		boolean superReturn = super.onEvent(e);
-		if(superReturn) {
-			if(e instanceof EventTick) {
-				if(mc.player.hasVehicle()) {
-					Entity vehicle = mc.player.getVehicle();
-					Vec3d velocity = vehicle.getVelocity();
-					double motionY = 0;
-					if(vehicle.getType() == EntityType.BOAT) {
-						motionY = mc.options.keyJump.isPressed() ? 0.3 : mc.options.keySprint.isPressed() ? -0.26 : 0.04;
-					} else if(vehicle.getType() == EntityType.HORSE || vehicle.getType() == EntityType.SKELETON_HORSE || vehicle.getType() == EntityType.ZOMBIE_HORSE || vehicle.getType() == EntityType.DONKEY || vehicle.getType() == EntityType.MULE) {
-						motionY = mc.options.keyJump.isPressed() ? 0.3 : mc.options.keySprint.isPressed() ? -0.3 : 0.00;
-					}
-					vehicle.setVelocity(new Vec3d(velocity.x, motionY, velocity.z));
-				}
-			}
+	@EventListener
+	public void onTick(EventTick e) {
+		if(mc.player == null) {
+			return;
 		}
-		return superReturn;
+		if(mc.player.hasVehicle()) {
+			Entity vehicle = mc.player.getVehicle();
+			Vec3d velocity = vehicle.getVelocity();
+			double motionY = 0;
+			if(vehicle.getType() == EntityType.BOAT) {
+				motionY = mc.options.keyJump.isPressed() ? 0.3 : mc.options.keySprint.isPressed() ? -0.26 : 0.04;
+			} else if(vehicle.getType() == EntityType.HORSE || vehicle.getType() == EntityType.SKELETON_HORSE || vehicle.getType() == EntityType.ZOMBIE_HORSE || vehicle.getType() == EntityType.DONKEY || vehicle.getType() == EntityType.MULE) {
+				motionY = mc.options.keyJump.isPressed() ? 0.3 : mc.options.keySprint.isPressed() ? -0.3 : 0.00;
+			}
+			vehicle.setVelocity(new Vec3d(velocity.x, motionY, velocity.z));
+		}
 	}
 }

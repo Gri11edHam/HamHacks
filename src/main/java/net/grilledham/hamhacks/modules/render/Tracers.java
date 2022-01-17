@@ -1,9 +1,9 @@
 package net.grilledham.hamhacks.modules.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventRender3D;
-import net.grilledham.hamhacks.event.EventTick;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventRender3D;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.Setting;
@@ -100,60 +100,60 @@ public class Tracers extends Module {
 		}
 	}
 	
-	@Override
-	public boolean onEvent(Event e) {
-		boolean superReturn = super.onEvent(e);
-		if(superReturn) {
-			if(e instanceof EventRender3D) {
-				MatrixStack matrixStack = ((EventRender3D)e).matrices;
-				float partialTicks = ((EventRender3D)e).tickDelta;
-				GL11.glEnable(GL11.GL_BLEND);
-				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-				GL11.glEnable(GL11.GL_LINE_SMOOTH);
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
-				
-				matrixStack.push();
-				applyRegionalRenderOffset(matrixStack);
-				
-				BlockPos camPos = getCameraBlockPos();
-				int regionX = (camPos.getX() >> 9) * 512;
-				int regionZ = (camPos.getZ() >> 9) * 512;
-				
-				renderTracers(matrixStack, partialTicks, regionX, regionZ);
-				
-				matrixStack.pop();
-				
-				// GL resets
-				RenderSystem.setShaderColor(1, 1, 1, 1);
-				GL11.glEnable(GL11.GL_DEPTH_TEST);
-				GL11.glDisable(GL11.GL_BLEND);
-				GL11.glDisable(GL11.GL_LINE_SMOOTH);
-			} else if(e instanceof EventTick) {
-				PlayerEntity player = mc.player;
-				ClientWorld world = mc.world;
-				
-				entities.clear();
-				Stream<LivingEntity> stream = world.getEntitiesByType(new TypeFilter<Entity, LivingEntity>() {
-							@Nullable
-							@Override
-							public LivingEntity downcast(Entity entity) {
-								return (LivingEntity)entity;
-							}
-							
-							@Override
-							public Class<? extends Entity> getBaseClass() {
-								return LivingEntity.class;
-							}
-						}, new Box(mc.player.getBlockPos().add(-64, -64, -64), mc.player.getBlockPos().add(64, 64, 64)), Objects::nonNull).stream()
-						.filter(entity -> !entity.isRemoved() && entity.isAlive())
-						.filter(entity -> entity != player)
-						.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-						.filter(entity -> (entity instanceof PlayerEntity && tracePlayers.getBool()) || (entity instanceof HostileEntity && traceHostile.getBool()) || (entity instanceof PassiveEntity && tracePassive.getBool()));
-				
-				entities.addAll(stream.toList());
-			}
+	@EventListener
+	public void onRender3D(EventRender3D e) {
+		MatrixStack matrixStack = e.matrices;
+		float partialTicks = e.tickDelta;
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glEnable(GL11.GL_LINE_SMOOTH);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		
+		matrixStack.push();
+		applyRegionalRenderOffset(matrixStack);
+		
+		BlockPos camPos = getCameraBlockPos();
+		int regionX = (camPos.getX() >> 9) * 512;
+		int regionZ = (camPos.getZ() >> 9) * 512;
+		
+		renderTracers(matrixStack, partialTicks, regionX, regionZ);
+		
+		matrixStack.pop();
+		
+		// GL resets
+		RenderSystem.setShaderColor(1, 1, 1, 1);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+	}
+	
+	@EventListener
+	public void onTick(EventTick e) {
+		if(mc.world == null) {
+			return;
 		}
-		return superReturn;
+		PlayerEntity player = mc.player;
+		ClientWorld world = mc.world;
+		
+		entities.clear();
+		Stream<LivingEntity> stream = world.getEntitiesByType(new TypeFilter<Entity, LivingEntity>() {
+					@Nullable
+					@Override
+					public LivingEntity downcast(Entity entity) {
+						return (LivingEntity)entity;
+					}
+					
+					@Override
+					public Class<? extends Entity> getBaseClass() {
+						return LivingEntity.class;
+					}
+				}, new Box(mc.player.getBlockPos().add(-64, -64, -64), mc.player.getBlockPos().add(64, 64, 64)), Objects::nonNull).stream()
+				.filter(entity -> !entity.isRemoved() && entity.isAlive())
+				.filter(entity -> entity != player)
+				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
+				.filter(entity -> (entity instanceof PlayerEntity && tracePlayers.getBool()) || (entity instanceof HostileEntity && traceHostile.getBool()) || (entity instanceof PassiveEntity && tracePassive.getBool()));
+		
+		entities.addAll(stream.toList());
 	}
 	
 	private void renderTracers(MatrixStack matrixStack, double partialTicks, int regionX, int regionZ) {

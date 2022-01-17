@@ -1,8 +1,8 @@
 package net.grilledham.hamhacks.modules.movement;
 
 import com.google.common.collect.Lists;
-import net.grilledham.hamhacks.event.Event;
-import net.grilledham.hamhacks.event.EventMotion;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.Setting;
@@ -65,11 +65,9 @@ public class Fly extends Module {
 		}
 	}
 	
-	@Override
-	public boolean onEvent(Event e) {
-		boolean superReturn = super.onEvent(e);
-		if(superReturn) {
-			if(e instanceof EventMotion && ((EventMotion)e).type == EventMotion.Type.PRE) {
+	@EventListener
+	public void onMove(EventMotion e) {
+		if(e.type == EventMotion.Type.PRE) {
 //				if ((mc.options.keyForward.isPressed() || mc.options.keyBack.isPressed() || mc.options.keyLeft.isPressed() || mc.options.keyRight.isPressed()) && mc.options.bobView) {
 //					switch(viewBobbing) {
 //						case 0 -> {
@@ -82,47 +80,45 @@ public class Fly extends Module {
 //					}
 //
 //				}
-				
-				switch(mode.getString()) {
-					case "Default" -> {
-						mc.player.getAbilities().flying = true;
-						double x = mc.player.getVelocity().x;
-						double y = mc.player.getVelocity().y;
-						double z = mc.player.getVelocity().z;
-						if(!mc.player.input.jumping && !mc.player.input.sneaking) {
-							y = 0;
-						}
-						if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
-							x = 0;
-							z = 0;
-						}
-						mc.player.setVelocity(new Vec3d(x, y, z));
+			
+			switch(mode.getString()) {
+				case "Default" -> {
+					mc.player.getAbilities().flying = true;
+					double x = mc.player.getVelocity().x;
+					double y = mc.player.getVelocity().y;
+					double z = mc.player.getVelocity().z;
+					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
+						y = 0;
 					}
-					case "Vanilla" -> {
-						mc.player.getAbilities().flying = true;
-						double x = mc.player.getVelocity().x;
-						double y = mc.player.getVelocity().y;
-						double z = mc.player.getVelocity().z;
-						if(!mc.player.input.jumping && !mc.player.input.sneaking) {
-							y = 0;
-							if(mc.player.getPos().y <= height - dropAmount.getFloat()) {
-								y = dropAmount.getFloat();
-							} else {
-								y -= dropSpeed.getFloat();
-							}
+					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
+						x = 0;
+						z = 0;
+					}
+					mc.player.setVelocity(new Vec3d(x, y, z));
+				}
+				case "Vanilla" -> {
+					mc.player.getAbilities().flying = true;
+					double x = mc.player.getVelocity().x;
+					double y = mc.player.getVelocity().y;
+					double z = mc.player.getVelocity().z;
+					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
+						y = 0;
+						if(mc.player.getPos().y <= height - dropAmount.getFloat()) {
+							y = dropAmount.getFloat();
 						} else {
-							height = mc.player.getPos().y;
+							y -= dropSpeed.getFloat();
 						}
-						if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
-							x = 0;
-							z = 0;
-						}
-						mc.player.setVelocity(new Vec3d(x, y, z));
+					} else {
+						height = mc.player.getPos().y;
 					}
+					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
+						x = 0;
+						z = 0;
+					}
+					mc.player.setVelocity(new Vec3d(x, y, z));
 				}
 			}
 		}
-		return superReturn;
 	}
 	
 	@Override

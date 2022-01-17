@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.event.EventRender2D;
-import net.grilledham.hamhacks.event.EventRender3D;
+import net.grilledham.hamhacks.event.events.EventRender2D;
+import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;

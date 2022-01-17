@@ -36,6 +36,7 @@ public class ClickGUI extends Module {
 	
 	@Override
 	public void onEnable() {
+		super.onEnable();
 		mc.setScreen(new ClickGUIScreen());
 		enabled.setValue(false);
 	}

@@ -1,5 +1,6 @@
-package net.grilledham.hamhacks.event;
+package net.grilledham.hamhacks.event.events;
 
+import net.grilledham.hamhacks.event.EventCancelable;
 import net.grilledham.hamhacks.util.RotationHack;
 
 public class EventMotion extends EventCancelable {
