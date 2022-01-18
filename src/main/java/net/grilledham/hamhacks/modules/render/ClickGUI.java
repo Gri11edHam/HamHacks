@@ -1,16 +1,18 @@
 package net.grilledham.hamhacks.modules.render;
 
-import net.grilledham.hamhacks.gui.ClickGUIScreen;
+import net.grilledham.hamhacks.gui.screens.ClickGUIScreen;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.modules.Setting;
+import net.grilledham.hamhacks.util.setting.settings.ColorSetting;
 import org.lwjgl.glfw.GLFW;
+
+import java.awt.*;
 
 public class ClickGUI extends Module {
 	
-	public Setting barColor;
-	public Setting bgColor;
-	public Setting textColor;
+	public ColorSetting barColor;
+	public ColorSetting bgColor;
+	public ColorSetting textColor;
 	
 	private static ClickGUI INSTANCE;
 	
@@ -26,9 +28,10 @@ public class ClickGUI extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		barColor = new Setting("Bar Color", 0xffa40000);
-		bgColor = new Setting("Background Color", 0x80000000);
-		textColor = new Setting("Text Color", 0xffffffff);
+		float[] barHSB = Color.RGBtoHSB(0xa4, 0, 0, new float[3]);
+		barColor = new ColorSetting("Bar Color", barHSB[0], barHSB[1], barHSB[2], 1, false);
+		bgColor = new ColorSetting("Background Color", 1, 0, 0, 0.5f, false);
+		textColor = new ColorSetting("Text Color", 1, 0, 1, 1, false);
 		settings.add(barColor);
 		settings.add(bgColor);
 		settings.add(textColor);

@@ -1,10 +1,11 @@
-package net.grilledham.hamhacks.gui;
+package net.grilledham.hamhacks.gui.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.Setting;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.setting.Setting;
+import net.grilledham.hamhacks.util.setting.settings.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
@@ -89,16 +90,16 @@ public class ClickGUIScreen extends Screen {
 		int w = category.getWidth() - textRenderer.fontHeight - 2;
 		int fullWidth = category.getWidth();
 		int h = category.getHeight();
-		fillRect(matrices, x, y, x + fullWidth, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		fillRect(matrices, x, y - 2, x + fullWidth, y, (int)ClickGUI.getInstance().barColor.getColor());
-		drawStringWithShadow(matrices, textRenderer, category.getText(), x + w - textRenderer.getWidth(category.getText()) - 2, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		fillRect(matrices, x, y, x + fullWidth, y + h, ClickGUI.getInstance().bgColor.getRGB());
+		fillRect(matrices, x, y - 2, x + fullWidth, y, ClickGUI.getInstance().barColor.getRGB());
+		drawStringWithShadow(matrices, textRenderer, category.getText(), x + w - textRenderer.getWidth(category.getText()) - 2, y + 2, ClickGUI.getInstance().textColor.getRGB());
 		float translateX = x + w + 1 + textRenderer.fontHeight / 2f;
 		float translateY = y + 2 + textRenderer.fontHeight / 2f;
 		matrices.push();
 		matrices.translate(translateX, translateY, 0);
 		matrices.multiply(new Quaternion(new Vec3f(0, 0, 1), category.isExpanded() ? -90 : 0, true));
 		matrices.translate(-translateX, -translateY, 0);
-		drawStringWithShadow(matrices, textRenderer, "<", (int)(translateX - (textRenderer.getWidth("<") / 2f)), (int)(translateY - (textRenderer.fontHeight) / 2f), (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, "<", (int)(translateX - (textRenderer.getWidth("<") / 2f)), (int)(translateY - (textRenderer.fontHeight) / 2f), ClickGUI.getInstance().textColor.getRGB());
 		matrices.pop();
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		boolean dropDownHovered = mouseX > x + w && mouseX <= x + fullWidth && mouseY > y && mouseY <= y + h;
@@ -134,16 +135,16 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private void drawModule(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int fullWidth, int h, Module module) {
-		fillRect(matrices, x, y, x + fullWidth, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x, y, x + fullWidth, y + h, ClickGUI.getInstance().bgColor.getRGB());
 		fillRect(matrices, x - 2, y, x, y + h, module.isEnabled() ? 0x8000a400 : 0x80a40000);
-		drawStringWithShadow(matrices, textRenderer, module.getName(), x + w - textRenderer.getWidth(module.getName()) - 2, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, module.getName(), x + w - textRenderer.getWidth(module.getName()) - 2, y + 2, ClickGUI.getInstance().textColor.getRGB());
 		float moduleTranslateX = x + w + 1 + textRenderer.fontHeight / 2f;
 		float moduleTranslateY = y + 2 + textRenderer.fontHeight / 2f;
 		matrices.push();
 		matrices.translate(moduleTranslateX, moduleTranslateY, 0);
 		matrices.multiply(new Quaternion(new Vec3f(0, 0, 1), expandedModule == module ? -90 : 0, true));
 		matrices.translate(-moduleTranslateX, -moduleTranslateY, 0);
-		drawStringWithShadow(matrices, textRenderer, "<", (int)(moduleTranslateX - (textRenderer.getWidth("<") / 2f)), (int)(moduleTranslateY - (textRenderer.fontHeight) / 2f), (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, "<", (int)(moduleTranslateX - (textRenderer.getWidth("<") / 2f)), (int)(moduleTranslateY - (textRenderer.fontHeight) / 2f), ClickGUI.getInstance().textColor.getRGB());
 		matrices.pop();
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		boolean dropDownHovered = mouseX > x + w && mouseX <= x + fullWidth && mouseY > y && mouseY <= y + h;
@@ -200,28 +201,36 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private void drawSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting, boolean canBeClicked) {
-		switch(setting.getType()) {
-			case INT -> drawIntSetting(matrices, mouseX, mouseY, x, y, w, h, setting, canBeClicked);
-			case LIST -> drawListSetting(matrices, mouseX, mouseY, x, y, w, h, setting, canBeClicked);
-			case COLOR -> drawColorSetting(matrices, mouseX, mouseY, x, y, w, h, setting, canBeClicked);
-			case FLOAT -> drawFloatSetting(matrices, mouseX, mouseY, x, y, w, h, setting, canBeClicked);
-			case STRING -> drawStringSetting(matrices, mouseX, mouseY, x, y, w, h, setting, canBeClicked);
-			case BOOLEAN -> drawBooleanSetting(matrices, mouseX, mouseY, x, y, w, h, setting, canBeClicked);
-			case KEYBIND -> drawKeybindSetting(matrices, mouseX, mouseY, x, y, w, h, setting, canBeClicked);
+		if(setting instanceof IntSetting) {
+			drawIntSetting(matrices, mouseX, mouseY, x, y, w, h, (IntSetting)setting, canBeClicked);
+		} else if(setting instanceof SelectionSetting) {
+			drawSelectionSetting(matrices, mouseX, mouseY, x, y, w, h, (SelectionSetting)setting, canBeClicked);
+		} else if(setting instanceof ColorSetting) {
+			drawColorSetting(matrices, mouseX, mouseY, x, y, w, h, (ColorSetting)setting, canBeClicked);
+		} else if(setting instanceof FloatSetting) {
+			drawFloatSetting(matrices, mouseX, mouseY, x, y, w, h, (FloatSetting)setting, canBeClicked);
+		} else if(setting instanceof StringSetting) {
+			drawStringSetting(matrices, mouseX, mouseY, x, y, w, h, (StringSetting)setting, canBeClicked);
+		} else if(setting instanceof BoolSetting) {
+			drawBooleanSetting(matrices, mouseX, mouseY, x, y, w, h, (BoolSetting)setting, canBeClicked);
+		} else if(setting instanceof KeySetting) {
+			drawKeybindSetting(matrices, mouseX, mouseY, x, y, w, h, (KeySetting)setting, canBeClicked);
+		} else if(setting instanceof ListSetting) {
+			//TODO
 		}
 	}
 	
-	private void drawIntSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting, boolean canBeClicked) {
-		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		String text = setting.getInt() + " " + setting.getName();
-		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+	private void drawIntSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, IntSetting setting, boolean canBeClicked) {
+		fillRect(matrices, x, y, x + w, y + h, ClickGUI.getInstance().bgColor.getRGB());
+		String text = setting.getValue() + " " + setting.getName();
+		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, ClickGUI.getInstance().textColor.getRGB());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
-			int sliderX = x + w - textRenderer.getWidth(setting.getInt() < 0 ? text : ("-" + text)) - 6 - 100;
+			int sliderX = x + w - textRenderer.getWidth(setting.getValue() < 0 ? text : ("-" + text)) - 6 - 100;
 			int sliderY = (int)(y + h / 2f - 1);
 			int sliderW = 100;
 			int sliderH = 2;
-			float percentage = (setting.getInt() - setting.getMin()) / (setting.getMax() - setting.getMin());
+			float percentage = (setting.getValue() - setting.getMin()) / (float)(setting.getMax() - setting.getMin());
 			fillRect(matrices, sliderX, sliderY, sliderX + sliderW, sliderY + sliderH, 0x40a4a4a4);
 			fillRect(matrices, sliderX, sliderY, (int)(sliderX + (sliderW * percentage)), sliderY + sliderH, 0xffa4a4a4);
 			fillRect(matrices, (int)(sliderX + (sliderW * percentage)), sliderY - 1, (int)(sliderX + (sliderW * percentage)) + 1, sliderY + sliderH + 1, 0xffffffff);
@@ -236,10 +245,10 @@ public class ClickGUIScreen extends Screen {
 		}
 	}
 	
-	private void drawListSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting, boolean canBeClicked) {
-		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		String text = setting.getName() + " - " + setting.getString();
-		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+	private void drawSelectionSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, SelectionSetting setting, boolean canBeClicked) {
+		fillRect(matrices, x, y, x + w, y + h, ClickGUI.getInstance().bgColor.getRGB());
+		String text = setting.getName() + " - " + setting.getValue();
+		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, ClickGUI.getInstance().textColor.getRGB());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
 			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
@@ -263,13 +272,13 @@ public class ClickGUIScreen extends Screen {
 			int optionsH = h * setting.getPossibleValues().size() - 1;
 			int optionW = optionsW;
 			int optionH = h;
-			fillRect(matrices, optionsX, optionsY, optionsX + optionsW, optionsY + optionsH, (int)ClickGUI.getInstance().bgColor.getColor());
+			fillRect(matrices, optionsX, optionsY, optionsX + optionsW, optionsY + optionsH, ClickGUI.getInstance().bgColor.getRGB());
 			int i = 0;
 			for(String s : setting.getPossibleValues()) {
-				if(!s.equals(setting.getString())) {
+				if(!s.equals(setting.getValue())) {
 					int optionX = optionsX;
 					int optionY = optionsY + optionsH * i;
-					drawStringWithShadow(matrices, textRenderer, s, optionX + optionW - textRenderer.getWidth(s) - 2, optionY + 2, (int)ClickGUI.getInstance().textColor.getColor());
+					drawStringWithShadow(matrices, textRenderer, s, optionX + optionW - textRenderer.getWidth(s) - 2, optionY + 2, ClickGUI.getInstance().textColor.getRGB());
 					boolean optionHovered = mouseX > optionX && mouseX <= optionX + optionW && mouseY > optionY && mouseY <= optionY + optionH;
 					if(optionHovered) {
 						fillRect(matrices, optionX, optionY, optionX + optionW, optionY + optionH, 0x20ffffff);
@@ -284,10 +293,10 @@ public class ClickGUIScreen extends Screen {
 		}
 	}
 	
-	private void drawColorSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting, boolean canBeClicked) {
-		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4 - 18, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
-		fillRect(matrices, x + w - 4 - 16, y + 2, x + w - 2, y + h - 2, (int)setting.getColor());
+	private void drawColorSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, ColorSetting setting, boolean canBeClicked) {
+		fillRect(matrices, x, y, x + w, y + h, ClickGUI.getInstance().bgColor.getRGB());
+		drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4 - 18, y + 2, ClickGUI.getInstance().textColor.getRGB());
+		fillRect(matrices, x + w - 4 - 16, y + 2, x + w - 2, y + h - 2, setting.getRGB());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
 			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
@@ -308,17 +317,17 @@ public class ClickGUIScreen extends Screen {
 		}
 	}
 	
-	private void drawFloatSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting, boolean canBeClicked) {
-		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		String text = String.format("%.2f", setting.getFloat()) + " " + setting.getName();
-		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+	private void drawFloatSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, FloatSetting setting, boolean canBeClicked) {
+		fillRect(matrices, x, y, x + w, y + h, ClickGUI.getInstance().bgColor.getRGB());
+		String text = String.format("%.2f", setting.getValue()) + " " + setting.getName();
+		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 4, y + 2, ClickGUI.getInstance().textColor.getRGB());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
-			int sliderX = x + w - textRenderer.getWidth(setting.getFloat() < 0 ? text : ("-" + text)) - 6 - 100;
+			int sliderX = x + w - textRenderer.getWidth(setting.getValue() < 0 ? text : ("-" + text)) - 6 - 100;
 			int sliderY = (int)(y + h / 2f - 1);
 			int sliderW = 100;
 			int sliderH = 2;
-			float percentage = (setting.getFloat() - setting.getMin()) / (setting.getMax() - setting.getMin());
+			float percentage = (setting.getValue() - setting.getMin()) / (setting.getMax() - setting.getMin());
 			fillRect(matrices, sliderX, sliderY, sliderX + sliderW, sliderY + sliderH, 0x40a4a4a4);
 			fillRect(matrices, sliderX, sliderY, (int)(sliderX + (sliderW * percentage)), sliderY + sliderH, 0xffa4a4a4);
 			fillRect(matrices, (int)(sliderX + (sliderW * percentage)), sliderY - 1, (int)(sliderX + (sliderW * percentage)) + 1, sliderY + sliderH + 1, 0xffffffff);
@@ -334,9 +343,9 @@ public class ClickGUIScreen extends Screen {
 		}
 	}
 	
-	private void drawStringSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting, boolean canBeClicked) {
-		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+	private void drawStringSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, StringSetting setting, boolean canBeClicked) {
+		fillRect(matrices, x, y, x + w, y + h, ClickGUI.getInstance().bgColor.getRGB());
+		drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4, y + 2, ClickGUI.getInstance().textColor.getRGB());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
 			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
@@ -347,25 +356,25 @@ public class ClickGUIScreen extends Screen {
 		}
 	}
 	
-	private void drawBooleanSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting, boolean canBeClicked) {
-		fillRect(matrices, x + 2, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
-		fillRect(matrices, x, y, x + 2, y + h, setting.getBool() ? 0x8000a400 : 0x80a40000);
-		drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+	private void drawBooleanSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, BoolSetting setting, boolean canBeClicked) {
+		fillRect(matrices, x + 2, y, x + w, y + h, ClickGUI.getInstance().bgColor.getRGB());
+		fillRect(matrices, x, y, x + 2, y + h, setting.getValue() ? 0x8000a400 : 0x80a40000);
+		drawStringWithShadow(matrices, textRenderer, setting.getName(), x + w - textRenderer.getWidth(setting.getName()) - 4, y + 2, ClickGUI.getInstance().textColor.getRGB());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
 			fillRect(matrices, x + 2, y, x + w, y + h, 0x20ffffff);
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS && !pressed) {
 				if(canBeClicked) {
-					setting.setValue(!setting.getBool());
+					setting.setValue(!setting.getValue());
 				}
 			}
 		}
 	}
 	
-	private void drawKeybindSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, Setting setting, boolean canBeClicked) {
-		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+	private void drawKeybindSetting(MatrixStack matrices, int mouseX, int mouseY, int x, int y, int w, int h, KeySetting setting, boolean canBeClicked) {
+		fillRect(matrices, x, y, x + w, y + h, ClickGUI.getInstance().bgColor.getRGB());
 		String text = setting.getName() + " [" + (expandedSetting == setting ? "Listening..." : setting.getKeybind().getName()) + "]";
-		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 2, y + 2, (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, text, x + w - textRenderer.getWidth(text) - 2, y + 2, ClickGUI.getInstance().textColor.getRGB());
 		boolean hovered = mouseX > x && mouseX <= x + w && mouseY > y && mouseY <= y + h;
 		if(hovered) {
 			fillRect(matrices, x, y, x + w, y + h, 0x20ffffff);
@@ -384,12 +393,12 @@ public class ClickGUIScreen extends Screen {
 		}
 	}
 	
-	private void drawColorPicker(MatrixStack matrices, int mouseX, int mouseY, int x, int y, Setting setting) {
+	private void drawColorPicker(MatrixStack matrices, int mouseX, int mouseY, int x, int y, ColorSetting setting) {
 		int w = 135;
 		int h = 120;
-		fillRect(matrices, x, y, x + w, y + h, (int)ClickGUI.getInstance().bgColor.getColor());
+		fillRect(matrices, x, y, x + w, y + h, ClickGUI.getInstance().bgColor.getRGB());
 		
-		int color = (int)setting.getColor();
+		int color = setting.getRGB();
 		int r = (color >> 16 & 255);
 		int g = (color >> 8 & 255);
 		int b = (color & 255);
@@ -517,7 +526,7 @@ public class ClickGUIScreen extends Screen {
 		int chromaW = textRenderer.getWidth("Chroma") + textRenderer.fontHeight + 2;
 		int chromaH = textRenderer.fontHeight;
 		fillRect(matrices, chromaX, chromaY, chromaX + chromaH, chromaY + chromaH, setting.useChroma() ? 0x8000a400 : 0x80a40000);
-		drawStringWithShadow(matrices, textRenderer, "Chroma", chromaX + textRenderer.fontHeight + 2, chromaY, (int)ClickGUI.getInstance().textColor.getColor());
+		drawStringWithShadow(matrices, textRenderer, "Chroma", chromaX + textRenderer.fontHeight + 2, chromaY, ClickGUI.getInstance().textColor.getRGB());
 		
 		/* Click Checks */
 		boolean sbHovered = mouseX >= sbPickerX && mouseX < sbPickerX + sbPickerW && mouseY >= sbPickerY && mouseY < sbPickerY + sbPickerH;
@@ -527,33 +536,22 @@ public class ClickGUIScreen extends Screen {
 		boolean chromaHovered = mouseX >= chromaX && mouseX < chromaX + chromaW && mouseY >= chromaY && mouseY < chromaY + chromaH;
 		if(sbHovered) {
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS) {
-				int oldAlpha = color >> 24 & 255;
 				float newSat = (mouseX - sbPickerX) / (float)(sbPickerW - 1);
 				float newBrt = 1 - ((mouseY - sbPickerY) / (float)(sbPickerH - 1));
-				int newColor = Color.HSBtoRGB(hsb[0], newSat, newBrt);
-				newColor = newColor & 0xffffff;
-				newColor += oldAlpha << 24;
-				setting.setValue(newColor);
+				setting.setSaturation(newSat);
+				setting.setBrightness(newBrt);
 			}
 		}
 		if(hueHovered) {
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS) {
-				int oldAlpha = color >> 24 & 255;
 				float newHue = (mouseY - hueSliderY) / (float)(hueSliderH - 1);
-				int newColor = Color.HSBtoRGB(newHue, hsb[1], hsb[2]);
-				newColor = newColor & 0xffffff;
-				newColor += oldAlpha << 24;
-				setting.setValue(newColor);
+				setting.setHue(newHue);
 			}
 		}
 		if(alphaHovered) {
 			if(GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), 0) == GLFW.GLFW_PRESS) {
-				int oldR = color >> 16 & 255;
-				int oldG = color >> 8 & 255;
-				int oldB = color & 255;
-				int newAlpha = (int)((1 - ((mouseY - alphaSliderY) / (float)(alphaSliderH - 1))) * 255);
-				int newColor = new Color(oldR, oldG, oldB, newAlpha).getRGB();
-				setting.setValue(newColor);
+				float newAlpha = 1 - ((mouseY - alphaSliderY) / (float)(alphaSliderH - 1));
+				setting.setAlpha(newAlpha);
 			}
 		}
 		if(chromaHovered) {
@@ -567,22 +565,14 @@ public class ClickGUIScreen extends Screen {
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if(expandedSetting != null) {
-			switch(expandedSetting.getType()) {
-				case COLOR -> {
-				
+			if(expandedSetting instanceof KeySetting) {
+				if(keyCode == GLFW.GLFW_KEY_ESCAPE) {
+					((KeySetting)expandedSetting).getKeybind().setKey(0);
+				} else {
+					((KeySetting)expandedSetting).getKeybind().setKey(keyCode);
 				}
-				case STRING -> {
-				
-				}
-				case KEYBIND -> {
-					if(keyCode == GLFW.GLFW_KEY_ESCAPE) {
-						expandedSetting.getKeybind().setKey(0);
-					} else {
-						expandedSetting.getKeybind().setKey(keyCode);
-					}
-					expandedSetting = null;
-					return true;
-				}
+				expandedSetting = null;
+				return true;
 			}
 		}
 		return super.keyPressed(keyCode, scanCode, modifiers);
@@ -591,8 +581,8 @@ public class ClickGUIScreen extends Screen {
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if(expandedSetting != null) {
-			if(expandedSetting.getType() == Setting.Type.KEYBIND) {
-				expandedSetting.getKeybind().setKey(button, true);
+			if(expandedSetting instanceof KeySetting) {
+				((KeySetting)expandedSetting).getKeybind().setKey(button, true);
 				expandedSetting = null;
 				pressed = true;
 				return true;
@@ -602,44 +592,38 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	private int getSettingWidth(Setting setting) {
-		switch(setting.getType()) {
-			case INT -> {
-				return textRenderer.getWidth((setting.getInt() < 0 ? setting.getInt() : -setting.getInt()) + " " + setting.getName()) + 8 + 100;
-			}
-			case LIST -> {
-				return textRenderer.getWidth(setting.getName()) + 6 + textRenderer.getWidth(" - " + setting.getString()) + textRenderer.fontHeight;
-			}
-			case COLOR -> {
-				return textRenderer.getWidth(setting.getName()) + 6 + 18;
-			}
-			case FLOAT -> {
-				return textRenderer.getWidth(String.format("%.2f", setting.getFloat() < 0 ? setting.getFloat() : -setting.getFloat()) + " " + setting.getName()) + 8 + 100;
-			}
-			case STRING -> {
-				return textRenderer.getWidth(setting.getName()) + 6 + 100;
-			}
-			case BOOLEAN -> {
-				return textRenderer.getWidth(setting.getName()) + 6;
-			}
-			case KEYBIND -> {
-				return textRenderer.getWidth(setting.getName() + " [" + (expandedSetting == setting ? "Listening..." : setting.getKeybind().getName()) + "]") + 4;
-			}
-			default -> {
-				return textRenderer.getWidth(setting.getName()) + 4;
-			}
+		if(setting instanceof IntSetting s) {
+			return textRenderer.getWidth((s.getValue() < 0 ? s.getValue() : -s.getValue()) + " " + s.getName()) + 8 + 100;
+		} else if(setting instanceof SelectionSetting s) {
+			return textRenderer.getWidth(s.getName()) + 6 + textRenderer.getWidth(" - " + s.getValue()) + textRenderer.fontHeight;
+		} else if(setting instanceof ColorSetting s) {
+			return textRenderer.getWidth(s.getName()) + 6 + 18;
+		} else if(setting instanceof FloatSetting s) {
+			return textRenderer.getWidth(String.format("%.2f", s.getValue() < 0 ? s.getValue() : -s.getValue()) + " " + s.getName()) + 8 + 100;
+		} else if(setting instanceof StringSetting s) {
+			return textRenderer.getWidth(s.getName()) + 6 + 100;
+		} else if(setting instanceof BoolSetting s) {
+			return textRenderer.getWidth(s.getName()) + 6;
+		} else if(setting instanceof KeySetting s) {
+			return textRenderer.getWidth(s.getName() + " [" + (expandedSetting == s ? "Listening..." : s.getKeybind().getName()) + "]") + 4;
+		} else if(setting instanceof ListSetting s) {
+			// TODO
+			return 0;
+		} else {
+			return textRenderer.getWidth(setting.getName()) + 4;
 		}
 	}
 	
 	private void fillRect(MatrixStack matrices, float x1, float y1, float x2, float y2, int color) {
 		Matrix4f matrix = matrices.peek().getPositionMatrix();
 		float j;
-		if (x1 < x2) {
+		if(x1 < x2) {
 			j = x1;
 			x1 = x2;
 			x2 = j;
 		}
 		
-		if (y1 < y2) {
+		if(y1 < y2) {
 			j = y1;
 			y1 = y2;
 			y2 = j;

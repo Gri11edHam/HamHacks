@@ -1,4 +1,4 @@
-package net.grilledham.hamhacks.gui;
+package net.grilledham.hamhacks.gui.overlays;
 
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
@@ -27,49 +27,34 @@ public class IngameGui {
 		if(!HUD.getInstance().isEnabled()) {
 			return;
 		}
-		int barC = (int)HUD.getInstance().barColor.getColor();
-		int barR = barC >> 16 & 255;
-		int barG = barC >> 8 & 255;
-		int barB = barC & 255;
-		int barA = barC >> 24 & 255;
-		float[] barHSB = Color.RGBtoHSB(barR, barG, barB, null);
-		int bgC = (int)HUD.getInstance().bgColor.getColor();
-		int bgR = bgC >> 16 & 255;
-		int bgG = bgC >> 8 & 255;
-		int bgB = bgC & 255;
-		int bgA = bgC >> 24 & 255;
-		float[] bgHSB = Color.RGBtoHSB(bgR, bgG, bgB, null);
-		int textC = (int)HUD.getInstance().textColor.getColor();
-		int textR = textC >> 16 & 255;
-		int textG = textC >> 8 & 255;
-		int textB = textC & 255;
-		int textA = textC >> 24 & 255;
-		float[] textHSB = Color.RGBtoHSB(textR, textG, textB, null);
+		Float[] barC = HUD.getInstance().barColor.getValue();
+		Float[] bgC = HUD.getInstance().bgColor.getValue();
+		Float[] textC = HUD.getInstance().textColor.getValue();
 		
 		int i = 0;
 		int yAdd = 0;
-		if(HUD.getInstance().showLogo.getBool()) {
+		if(HUD.getInstance().showLogo.getValue()) {
 			float finalBarHue;
 			if(HUD.getInstance().barColor.useChroma()) {
-				finalBarHue = (barHSB[0] - (i * 0.025f)) % 1f;
+				finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 			} else {
-				finalBarHue = barHSB[0];
+				finalBarHue = barC[0];
 			}
 			float finalBGHue;
 			if(HUD.getInstance().bgColor.useChroma()) {
-				finalBGHue = (bgHSB[0] - (i * 0.025f)) % 1f;
+				finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 			} else {
-				finalBGHue = bgHSB[0];
+				finalBGHue = bgC[0];
 			}
 			float finalTextHue;
 			if(HUD.getInstance().textColor.useChroma()) {
-				finalTextHue = (textHSB[0] - (i * 0.025f)) % 1f;
+				finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 			} else {
-				finalTextHue = textHSB[0];
+				finalTextHue = textC[0];
 			}
-			int barColor = (Color.HSBtoRGB(finalBarHue, barHSB[1], barHSB[2]) & 0xffffff) + (barA << 24);
-			int bgColor = (Color.HSBtoRGB(finalBGHue, bgHSB[1], bgHSB[2]) & 0xffffff) + (bgA << 24);
-			int textColor = (Color.HSBtoRGB(finalTextHue, textHSB[1], textHSB[2])) + (textA << 24);
+			int barColor = (int)((Color.HSBtoRGB(finalBarHue, barC[1], barC[2]) & 0xffffff) + (barC[3] * 255));
+			int bgColor = (int)((Color.HSBtoRGB(finalBGHue, bgC[1], bgC[2]) & 0xffffff) + (bgC[3] * 255));
+			int textColor = (int)((Color.HSBtoRGB(finalTextHue, textC[1], textC[2])) + (textC[3] * 255));
 			int textX = 2;
 			int textY = (fontRenderer.fontHeight + 2) * i + 2;
 			String text = "§4§o§lHamHacks";
@@ -84,28 +69,28 @@ public class IngameGui {
 			yAdd += (fontRenderer.fontHeight * 2) + 4;
 			i++;
 		}
-		if(HUD.getInstance().showFPS.getBool()) {
+		if(HUD.getInstance().showFPS.getValue()) {
 			float finalBarHue;
 			if(HUD.getInstance().barColor.useChroma()) {
-				finalBarHue = (barHSB[0] - (i * 0.025f)) % 1f;
+				finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 			} else {
-				finalBarHue = barHSB[0];
+				finalBarHue = barC[0];
 			}
 			float finalBGHue;
 			if(HUD.getInstance().bgColor.useChroma()) {
-				finalBGHue = (bgHSB[0] - (i * 0.025f)) % 1f;
+				finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 			} else {
-				finalBGHue = bgHSB[0];
+				finalBGHue = bgC[0];
 			}
 			float finalTextHue;
 			if(HUD.getInstance().textColor.useChroma()) {
-				finalTextHue = (textHSB[0] - (i * 0.025f)) % 1f;
+				finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 			} else {
-				finalTextHue = textHSB[0];
+				finalTextHue = textC[0];
 			}
-			int barColor = (Color.HSBtoRGB(finalBarHue, barHSB[1], barHSB[2]) & 0xffffff) + (barA << 24);
-			int bgColor = (Color.HSBtoRGB(finalBGHue, bgHSB[1], bgHSB[2]) & 0xffffff) + (bgA << 24);
-			int textColor = (Color.HSBtoRGB(finalTextHue, textHSB[1], textHSB[2])) + (textA << 24);
+			int barColor = (Color.HSBtoRGB(finalBarHue, barC[1], barC[2]) & 0xffffff) + ((int)(barC[3] * 255) << 24);
+			int bgColor = (Color.HSBtoRGB(finalBGHue, bgC[1], bgC[2]) & 0xffffff) + ((int)(bgC[3] * 255) << 24);
+			int textColor = (Color.HSBtoRGB(finalTextHue, textC[1], textC[2])) + ((int)(textC[3] * 255) << 24);
 			int textX = 2;
 			int textY = yAdd + 2;
 			String fps = MinecraftClient.getInstance().fpsDebugString;
@@ -116,31 +101,31 @@ public class IngameGui {
 			yAdd += fontRenderer.fontHeight + 4;
 			i++;
 		}
-		if(HUD.getInstance().showModules.getBool()) {
+		if(HUD.getInstance().showModules.getValue()) {
 			int j = 0;
 			for(Module m : ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getName()), MinecraftClient.getInstance().textRenderer.getWidth(a.getName()))).collect(Collectors.toList())) {
 				if(m.isEnabled() && m.shouldShowModule()) {
 					float finalBarHue;
 					if(HUD.getInstance().barColor.useChroma()) {
-						finalBarHue = (barHSB[0] - (i * 0.025f)) % 1f;
+						finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 					} else {
-						finalBarHue = barHSB[0];
+						finalBarHue = barC[0];
 					}
 					float finalBGHue;
 					if(HUD.getInstance().bgColor.useChroma()) {
-						finalBGHue = (bgHSB[0] - (i * 0.025f)) % 1f;
+						finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 					} else {
-						finalBGHue = bgHSB[0];
+						finalBGHue = bgC[0];
 					}
 					float finalTextHue;
 					if(HUD.getInstance().textColor.useChroma()) {
-						finalTextHue = (textHSB[0] - (i * 0.025f)) % 1f;
+						finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 					} else {
-						finalTextHue = textHSB[0];
+						finalTextHue = textC[0];
 					}
-					int barColor = (Color.HSBtoRGB(finalBarHue, barHSB[1], barHSB[2]) & 0xffffff) + (barA << 24);
-					int bgColor = (Color.HSBtoRGB(finalBGHue, bgHSB[1], bgHSB[2]) & 0xffffff) + (bgA << 24);
-					int textColor = (Color.HSBtoRGB(finalTextHue, textHSB[1], textHSB[2])) + (textA << 24);
+					int barColor = (Color.HSBtoRGB(finalBarHue, barC[1], barC[2]) & 0xffffff) + ((int)(barC[3] * 255) << 24);
+					int bgColor = (Color.HSBtoRGB(finalBGHue, bgC[1], bgC[2]) & 0xffffff) + ((int)(bgC[3] * 255) << 24);
+					int textColor = (Color.HSBtoRGB(finalTextHue, textC[1], textC[2])) + ((int)(textC[3] * 255) << 24);
 					int textX = MinecraftClient.getInstance().getWindow().getScaledWidth() - fontRenderer.getWidth(m.getName()) - 2;
 					int textY = (fontRenderer.fontHeight + 2) * j + 2;
 					DrawableHelper.fill(matrices, textX - 2, textY - 2, textX + fontRenderer.getWidth(m.getName()) + 2, textY + fontRenderer.fontHeight, bgColor);

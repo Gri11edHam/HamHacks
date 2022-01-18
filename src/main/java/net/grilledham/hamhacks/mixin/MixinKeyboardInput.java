@@ -1,6 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.gui.ClickGUIScreen;
+import net.grilledham.hamhacks.gui.screens.ClickGUIScreen;
 import net.grilledham.hamhacks.mixininterface.IKeyBinding;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;

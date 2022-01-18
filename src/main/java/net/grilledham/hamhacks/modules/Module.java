@@ -4,6 +4,9 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.gui.BoundingBox;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
+import net.grilledham.hamhacks.util.setting.Setting;
+import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
+import net.grilledham.hamhacks.util.setting.settings.KeySetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 
@@ -13,10 +16,10 @@ import java.util.List;
 public class Module {
 	
 	protected String name;
-	protected Setting enabled = new Setting("Enabled", false);
+	protected BoolSetting enabled = new BoolSetting("Enabled", false);
 	protected Category category;
-	protected Setting key;
-	protected Setting showModule = new Setting("HUD Text", true);
+	protected KeySetting key;
+	protected BoolSetting showModule = new BoolSetting("HUD Text", true);
 	
 	protected List<Setting> settings = new ArrayList<>();
 	
@@ -26,7 +29,7 @@ public class Module {
 	public Module(String name, Category category, Keybind key) {
 		this.name = name;
 		this.category = category;
-		this.key = new Setting("Keybind", key);
+		this.key = new KeySetting("Keybind", key);
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if(key.wasPressed()) {
@@ -39,8 +42,8 @@ public class Module {
 	}
 	
 	public void toggle() {
-		enabled.setValue(!enabled.getBool());
-		if(enabled.getBool()) {
+		enabled.setValue(!enabled.getValue());
+		if(enabled.getValue()) {
 			onEnable();
 		} else {
 			onDisable();
@@ -49,7 +52,7 @@ public class Module {
 	
 	public void setEnabled(boolean enabled) {
 		this.enabled.setValue(enabled);
-		if(this.enabled.getBool()) {
+		if(this.enabled.getValue()) {
 			onEnable();
 		} else {
 			onDisable();
@@ -72,11 +75,11 @@ public class Module {
 	}
 	
 	public boolean isEnabled() {
-		return this.enabled.getBool();
+		return this.enabled.getValue();
 	}
 	
 	public boolean shouldShowModule() {
-		return showModule.getBool();
+		return showModule.getValue();
 	}
 	
 	public List<Setting> getSettings() {

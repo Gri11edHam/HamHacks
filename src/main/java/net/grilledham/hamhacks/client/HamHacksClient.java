@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.grilledham.hamhacks.gui.IngameGui;
+import net.grilledham.hamhacks.gui.overlays.IngameGui;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.Aimbot;

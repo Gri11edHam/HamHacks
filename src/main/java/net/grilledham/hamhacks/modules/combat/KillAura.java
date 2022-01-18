@@ -5,8 +5,9 @@ import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.modules.Setting;
 import net.grilledham.hamhacks.util.RotationHack;
+import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
+import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -24,10 +25,10 @@ import java.util.stream.Stream;
 
 public class KillAura extends Module {
 	
-	private Setting reach;
-	private Setting attackPlayers;
-	private Setting attackPassive;
-	private Setting attackHostile;
+	private FloatSetting reach;
+	private BoolSetting attackPlayers;
+	private BoolSetting attackPassive;
+	private BoolSetting attackHostile;
 	
 	private LivingEntity target;
 	
@@ -38,10 +39,10 @@ public class KillAura extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		reach = new Setting("Reach", 3f, 1f, 8f);
-		attackPlayers = new Setting("Attack Players", true);
-		attackPassive = new Setting("Attack Passive Mobs", false);
-		attackHostile = new Setting("Attack Hostile Mobs", false);
+		reach = new FloatSetting("Reach", 3f, 1f, 8f);
+		attackPlayers = new BoolSetting("Attack Players", true);
+		attackPassive = new BoolSetting("Attack Passive Mobs", false);
+		attackHostile = new BoolSetting("Attack Hostile Mobs", false);
 		settings.add(reach);
 		settings.add(attackPlayers);
 		settings.add(attackPassive);
@@ -69,7 +70,7 @@ public class KillAura extends Module {
 					.filter(entity -> !entity.isRemoved() && entity.isAlive())
 					.filter(entity -> entity != mc.player)
 					.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-					.filter(entity -> (entity instanceof PlayerEntity && attackPlayers.getBool()) || (entity instanceof HostileEntity && attackHostile.getBool()) || (entity instanceof PassiveEntity && attackPassive.getBool()));
+					.filter(entity -> (entity instanceof PlayerEntity && attackPlayers.getValue()) || (entity instanceof HostileEntity && attackHostile.getValue()) || (entity instanceof PassiveEntity && attackPassive.getValue()));
 			
 			List<LivingEntity> entities = stream.toList();
 			if(!entities.isEmpty()) {
@@ -79,7 +80,7 @@ public class KillAura extends Module {
 						closest = entity;
 					}
 				}
-				if(mc.player.distanceTo(closest) <= reach.getFloat()) {
+				if(mc.player.distanceTo(closest) <= reach.getValue()) {
 					target = closest;
 				} else {
 					target = null;

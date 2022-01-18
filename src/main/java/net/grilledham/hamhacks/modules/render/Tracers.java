@@ -6,7 +6,8 @@ import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.modules.Setting;
+import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
+import net.grilledham.hamhacks.util.setting.settings.ColorSetting;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
@@ -28,15 +29,15 @@ public class Tracers extends Module {
 	
 	private final ArrayList<LivingEntity> entities = new ArrayList<>();
 	
-	private Setting tracePlayers;
-	private Setting playerClose;
-	private Setting playerFar;
-	private Setting traceHostile;
-	private Setting hostileClose;
-	private Setting hostileFar;
-	private Setting tracePassive;
-	private Setting passiveClose;
-	private Setting passiveFar;
+	private BoolSetting tracePlayers;
+	private ColorSetting playerClose;
+	private ColorSetting playerFar;
+	private BoolSetting traceHostile;
+	private ColorSetting hostileClose;
+	private ColorSetting hostileFar;
+	private BoolSetting tracePassive;
+	private ColorSetting passiveClose;
+	private ColorSetting passiveFar;
 	
 	public Tracers() {
 		super("Tracers", Category.RENDER, new Keybind(0));
@@ -45,33 +46,33 @@ public class Tracers extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		tracePlayers = new Setting("Player Tracer", true) {
+		tracePlayers = new BoolSetting("Player Tracer", true) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
 				updateSettings();
 			}
 		};
-		playerClose = new Setting("Player Color (Close)", 0x80ff0000);
-		playerFar = new Setting("Player Color (Far)", 0x8000ff00);
-		traceHostile = new Setting("Hostile Tracer", false) {
+		playerClose = new ColorSetting("Player Color (Close)", 1, 1, 1, 0.5f, false);
+		playerFar = new ColorSetting("Player Color (Far)", 1 / 3f, 1, 1, 0.5f, false);
+		traceHostile = new BoolSetting("Hostile Tracer", false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
 				updateSettings();
 			}
 		};
-		hostileClose = new Setting("Hostile Color (Close)", 0x80ff0000);
-		hostileFar = new Setting("Hostile Color (Far)", 0x8000ff00);
-		tracePassive = new Setting("Passive Tracer", false) {
+		hostileClose = new ColorSetting("Hostile Color (Close)", 1, 1, 1, 0.5f, false);
+		hostileFar = new ColorSetting("Hostile Color (Far)", 1 / 3f, 1, 1, 0.5f, false);
+		tracePassive = new BoolSetting("Passive Tracer", false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
 				updateSettings();
 			}
 		};
-		passiveClose = new Setting("Passive Color (Close)", 0x80ff0000);
-		passiveFar = new Setting("Passive Color (Far)", 0x8000ff00);
+		passiveClose = new ColorSetting("Passive Color (Close)", 1, 1, 1, 0.5f, false);
+		passiveFar = new ColorSetting("Passive Color (Far)", 1 / 3f, 1, 1, 0.5f, false);
 		
 		settings.add(tracePlayers);
 		settings.add(traceHostile);
@@ -86,15 +87,15 @@ public class Tracers extends Module {
 		settings.remove(hostileFar);
 		settings.remove(passiveClose);
 		settings.remove(passiveFar);
-		if(tracePlayers.getBool()) {
+		if(tracePlayers.getValue()) {
 			settings.add(settings.indexOf(tracePlayers) + 1, playerFar);
 			settings.add(settings.indexOf(tracePlayers) + 1, playerClose);
 		}
-		if(traceHostile.getBool()) {
+		if(traceHostile.getValue()) {
 			settings.add(settings.indexOf(traceHostile) + 1, hostileFar);
 			settings.add(settings.indexOf(traceHostile) + 1, hostileClose);
 		}
-		if(tracePassive.getBool()) {
+		if(tracePassive.getValue()) {
 			settings.add(settings.indexOf(tracePassive) + 1, passiveFar);
 			settings.add(settings.indexOf(tracePassive) + 1, passiveClose);
 		}
@@ -151,7 +152,7 @@ public class Tracers extends Module {
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
 				.filter(entity -> entity != player)
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-				.filter(entity -> (entity instanceof PlayerEntity && tracePlayers.getBool()) || (entity instanceof HostileEntity && traceHostile.getBool()) || (entity instanceof PassiveEntity && tracePassive.getBool()));
+				.filter(entity -> (entity instanceof PlayerEntity && tracePlayers.getValue()) || (entity instanceof HostileEntity && traceHostile.getValue()) || (entity instanceof PassiveEntity && tracePassive.getValue()));
 		
 		entities.addAll(stream.toList());
 	}
@@ -175,14 +176,14 @@ public class Tracers extends Module {
 			int cClose;
 			int cFar;
 			if(e instanceof PlayerEntity) {
-				cClose = (int)playerClose.getColor();
-				cFar = (int)playerFar.getColor();
+				cClose = playerClose.getRGB();
+				cFar = playerFar.getRGB();
 			} else if(e instanceof HostileEntity) {
-				cClose = (int)hostileClose.getColor();
-				cFar = (int)hostileFar.getColor();
+				cClose = hostileClose.getRGB();
+				cFar = hostileFar.getRGB();
 			} else if(e instanceof PassiveEntity) {
-				cClose = (int)passiveClose.getColor();
-				cFar = (int)passiveFar.getColor();
+				cClose = passiveClose.getRGB();
+				cFar = passiveFar.getRGB();
 			} else {
 				cClose = 0x80ff0000;
 				cFar = 0x8000ff00;

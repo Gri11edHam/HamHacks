@@ -1,9 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.gui.IngameGui;
-import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.modules.ModuleManager;
-import net.minecraft.client.MinecraftClient;
+import net.grilledham.hamhacks.gui.overlays.IngameGui;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;

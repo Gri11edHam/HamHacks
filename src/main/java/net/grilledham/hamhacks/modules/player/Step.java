@@ -2,11 +2,11 @@ package net.grilledham.hamhacks.modules.player;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.modules.Setting;
+import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
 
 public class Step extends Module {
 	
-	private Setting height;
+	private FloatSetting height;
 	
 	private float originalStepHeight;
 	
@@ -17,12 +17,12 @@ public class Step extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		height = new Setting("Height", 1f, 0f, 10f) {
+		height = new FloatSetting("Height", 1f, 0f, 10f) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
 				if(isEnabled()) {
-					mc.player.stepHeight = getFloat();
+					mc.player.stepHeight = getValue();
 				}
 			}
 		};
@@ -33,7 +33,7 @@ public class Step extends Module {
 	public void onEnable() {
 		super.onEnable();
 		originalStepHeight = mc.player.stepHeight;
-		mc.player.stepHeight = height.getFloat();
+		mc.player.stepHeight = height.getValue();
 	}
 	
 	@Override

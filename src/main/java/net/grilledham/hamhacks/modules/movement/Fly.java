@@ -5,20 +5,19 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.modules.Setting;
+import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
+import net.grilledham.hamhacks.util.setting.settings.SelectionSetting;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.List;
 
 public class Fly extends Module {
 	
 	private float updates = 0;
 	
-	private Setting mode;
-	private Setting speed;
-	private Setting dropAmount;
-	private Setting dropSpeed;
+	private SelectionSetting mode;
+	private FloatSetting speed;
+	private FloatSetting dropAmount;
+	private FloatSetting dropSpeed;
 	
 	private long lastTime;
 	
@@ -28,20 +27,20 @@ public class Fly extends Module {
 	
 	@Override
 	public void addSettings() {
-		mode = new Setting("Mode", "Default", List.of(new String[]{"Default", "Vanilla"})) {
+		mode = new SelectionSetting("Mode", "Default", "Default", "Vanilla") {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
 				settings.remove(dropAmount);
-				if(getString().equalsIgnoreCase("Vanilla")) {
+				if(getValue().equalsIgnoreCase("Vanilla")) {
 					settings.add(settings.indexOf(speed) + 1, dropAmount);
 					settings.add(settings.indexOf(dropAmount) + 1, dropSpeed);
 				}
 			}
 		};
-		speed = new Setting("Speed", 1f, 0f, 10f);
-		dropAmount = new Setting("Drop Amount", 0.5f, 0f, 5f);
-		dropSpeed = new Setting("Drop Speed", 0.02f, 0f, 1f);
+		speed = new FloatSetting("Speed", 1f, 0f, 10f);
+		dropAmount = new FloatSetting("Drop Amount", 0.5f, 0f, 5f);
+		dropSpeed = new FloatSetting("Drop Speed", 0.02f, 0f, 1f);
 		settings.add(mode);
 		settings.add(speed);
 	}
@@ -52,14 +51,14 @@ public class Fly extends Module {
 	@Override
 	public void onEnable() {
 		super.onEnable();
-		if(mode.getString().equalsIgnoreCase("Default")) {
+		if(mode.getValue().equalsIgnoreCase("Default")) {
 			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
 		}
-		if(mode.getString().equalsIgnoreCase("Vanilla")) {
+		if(mode.getValue().equalsIgnoreCase("Vanilla")) {
 			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
-				mc.player.setPosition(mc.player.getPos().add(0, dropAmount.getFloat(), 0));
+				mc.player.setPosition(mc.player.getPos().add(0, dropAmount.getValue(), 0));
 			}
 			height = mc.player.getPos().y;
 		}
@@ -81,7 +80,7 @@ public class Fly extends Module {
 //
 //				}
 			
-			switch(mode.getString()) {
+			switch(mode.getValue()) {
 				case "Default" -> {
 					mc.player.getAbilities().flying = true;
 					double x = mc.player.getVelocity().x;
@@ -103,10 +102,10 @@ public class Fly extends Module {
 					double z = mc.player.getVelocity().z;
 					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
 						y = 0;
-						if(mc.player.getPos().y <= height - dropAmount.getFloat()) {
-							y = dropAmount.getFloat();
+						if(mc.player.getPos().y <= height - dropAmount.getValue()) {
+							y = dropAmount.getValue();
 						} else {
-							y -= dropSpeed.getFloat();
+							y -= dropSpeed.getValue();
 						}
 					} else {
 						height = mc.player.getPos().y;
@@ -124,9 +123,9 @@ public class Fly extends Module {
 	@Override
 	public void onDisable() {
 		super.onDisable();
-		if(mode.getString().equalsIgnoreCase("Default")) {
+		if(mode.getValue().equalsIgnoreCase("Default")) {
 			mc.player.getAbilities().flying = false;
-		} else if (mode.getString().equalsIgnoreCase("Vanilla")) {
+		} else if (mode.getValue().equalsIgnoreCase("Vanilla")) {
 			mc.player.getAbilities().flying = false;
 		}
 	}

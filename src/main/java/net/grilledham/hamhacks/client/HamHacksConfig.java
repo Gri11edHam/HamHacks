@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.client;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
@@ -9,18 +8,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.grilledham.hamhacks.gui.BoundingBox;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.Setting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.Option;
-import net.minecraft.text.Text;
+import net.grilledham.hamhacks.util.setting.Setting;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Locale;
@@ -28,70 +18,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class HamHacksConfig {
-	
-	public static Option[] asOptions() {
-		List<Option> options = new ArrayList<>();
-		for(Module m : ModuleManager.getModules()) {
-			for(Setting s : m.getSettings()) {
-				switch(s.getType()) {
-					case INT -> options.add(new Option(s.getName()) {
-						@Override
-						public ClickableWidget createButton(GameOptions options, int x, int y, int width) {
-							return new SliderWidget(x, y, width, 20, Text.of(s.getName() + ": " + s.getInt()), (s.getInt() - s.getMin()) / s.getMax()) {
-								@Override
-								protected void updateMessage() {
-									setMessage(Text.of(s.getName() + ": " + s.getInt()));
-								}
-								
-								@Override
-								protected void applyValue() {
-									s.setValue((int)(value * s.getMax() + s.getMin()));
-								}
-							};
-						}
-					});
-					case FLOAT -> options.add(new Option(s.getName()) {
-						@Override
-						public ClickableWidget createButton(GameOptions options, int x, int y, int width) {
-							return new SliderWidget(x, y, width, 20, Text.of(s.getName() + ": " + String.format("%.2f", s.getFloat())), (s.getFloat() - s.getMin()) / s.getMax()) {
-								@Override
-								protected void updateMessage() {
-									setMessage(Text.of(s.getName() + ": " + String.format("%.2f", s.getFloat())));
-								}
-								
-								@Override
-								protected void applyValue() {
-									s.setValue(value * s.getMax() + s.getMin());
-								}
-							};
-						}
-					});
-					case BOOLEAN -> options.add(new Option(s.getName()) {
-						@Override
-						public ClickableWidget createButton(GameOptions options, int x, int y, int width) {
-							return new ButtonWidget(x, y, width, 20, Text.of(s.getName() + ": " + (s.getBool() ? "\u00a7aOn" : "\u00a7cOff")),  button -> {
-								s.setValue(!s.getBool());
-								button.setMessage(Text.of(s.getName() + ": " + (s.getBool() ? "\u00a7aOn" : "\u00a7cOff")));
-							});
-						}
-					});
-					case STRING -> options.add(new Option(s.getName()) {
-						@Override
-						public ClickableWidget createButton(GameOptions options, int x, int y, int width) {
-							return new TextFieldWidget(MinecraftClient.getInstance().textRenderer, x, y, width, 20, Text.of(s.getString())) {
-								@Override
-								public void write(String text) {
-									super.write(text);
-									s.setValue(getText());
-								}
-							};
-						}
-					});
-				}
-			}
-		}
-		return options.toArray(Option[]::new);
-	}
 	
 	@Expose(serialize = false)
 	private static File file;
@@ -183,26 +109,7 @@ public class HamHacksConfig {
 	}
 	
 	private static void addSetting(JsonObject obj, Setting s) {
-		switch(s.getType()) {
-			case LIST, STRING -> obj.addProperty(s.getName(), s.getString());
-			case BOOLEAN -> obj.addProperty(s.getName(), s.getBool());
-			case INT -> obj.addProperty(s.getName(), s.getInt());
-			case KEYBIND -> obj.addProperty(s.getName(), s.getKeybind().getKey());
-			case FLOAT -> obj.addProperty(s.getName(), s.getFloat());
-			case COLOR -> {
-				JsonObject setting = new JsonObject();
-				setting.addProperty("color", (int)s.getColor());
-				setting.addProperty("chroma", s.useChroma());
-				obj.add(s.getName(), setting);
-			}
-			case SETTING_LIST -> {
-				JsonObject setting = new JsonObject();
-				JsonArray settingList = new JsonArray();
-				addSettings(settingList, s.getSubSettings());
-				setting.add("sub_settings", settingList);
-				obj.add(s.getName(), setting);
-			}
-		}
+		obj.add(s.getName(), s.getAsJsonObject().get(s.getName()).getAsJsonObject());
 	}
 	
 	private static void parseSettings(JsonObject obj) {
@@ -244,38 +151,9 @@ public class HamHacksConfig {
 	private static void parseSetting(JsonObject obj, Setting s) {
 		if(obj.has(s.getName())) {
 			try {
-				switch(s.getType()) {
-					case LIST, STRING -> s.setValue(obj.get(s.getName()).getAsString());
-					case BOOLEAN -> s.setValue(obj.get(s.getName()).getAsBoolean());
-					case INT, KEYBIND -> s.setValue(obj.get(s.getName()).getAsInt());
-					case FLOAT -> s.setValue(obj.get(s.getName()).getAsFloat());
-					case COLOR -> {
-						JsonObject setting = obj.get(s.getName()).getAsJsonObject();
-						s.setValue(setting.get("color").getAsInt());
-						s.setChroma(setting.get("chroma").getAsBoolean());
-					}
-					case SETTING_LIST -> {
-						JsonObject setting = obj.get(s.getName()).getAsJsonObject();
-						JsonArray settingList = setting.get("sub_settings").getAsJsonArray();
-						s.getSubSettings().clear();
-						parseSettingList(settingList, s);
-					}
-				}
+				s.set(obj.get(s.getName()));
 			} catch(Exception e) {
 				e.printStackTrace();
-			}
-		}
-	}
-	
-	private static void parseSettingList(JsonArray settingList, Setting s) {
-		for(JsonElement e : settingList) {
-			JsonObject obj = e.getAsJsonObject();
-			try {
-				String name = obj.get("name").getAsString();
-				s.addSubSetting(name);
-				parseSetting(obj, s.getSubSetting(name));
-			} catch(Exception e1) {
-				e1.printStackTrace();
 			}
 		}
 	}
