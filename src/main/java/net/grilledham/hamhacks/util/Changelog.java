@@ -3,6 +3,13 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.4:
+				- Overhauled event system
+				- Overhauled GUI
+				- Overhauled settings
+				- Added changelog button to title screen
+				- Bug fixes
+			
 			Update 1.3.3:
 				- Fixed incompatibility with iris shaders
 			
