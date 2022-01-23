@@ -16,5 +16,7 @@
 	"category.hamhacks.world": "World",
 	"category.hamhacks.misc": "Misc",
 	"menu.hamhacks.options": "HamHacks Options",
-	"menu.hamhacks.clickgui": "Click GUI"
+	"menu.hamhacks.clickgui": "Click GUI",
+	"menu.hamhacks.clickgui.module": "Click GUI Module",
+	"menu.hamhacks.changelog": "Changelog GUI"
 }

@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
 import net.fabricmc.loader.api.FabricLoader;
-import net.grilledham.hamhacks.gui.BoundingBox;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.setting.Setting;
@@ -66,9 +65,8 @@ public class HamHacksConfig {
 			JsonObject categories = new JsonObject();
 			for(Module.Category category : Module.Category.values()) {
 				JsonObject cObj = new JsonObject();
-				cObj.addProperty("x", category.getBox().getAnchorX());
-				cObj.addProperty("y", category.getBox().getAnchorY());
-				cObj.addProperty("screen_quad", category.getBox().getScreenQuad().name());
+				cObj.addProperty("x", category.getX());
+				cObj.addProperty("y", category.getY());
 				cObj.addProperty("expanded", category.isExpanded());
 				categories.add(category.name().toLowerCase(Locale.ROOT), cObj);
 			}
@@ -109,14 +107,14 @@ public class HamHacksConfig {
 	}
 	
 	private static void addSetting(JsonObject obj, Setting s) {
-		obj.add(s.getName(), s.getAsJsonObject().get(s.getName()).getAsJsonObject());
+		obj.add(s.getName(), s.getAsJsonObject().get(s.getName()));
 	}
 	
 	private static void parseSettings(JsonObject obj) {
 		JsonObject categories = obj.getAsJsonObject("categories");
 		for(Module.Category category : Module.Category.values()) {
 			JsonObject cObj = categories.getAsJsonObject(category.name().toLowerCase(Locale.ROOT));
-			category.getBox().setAnchor(cObj.get("x").getAsInt(), cObj.get("y").getAsInt(), BoundingBox.ScreenQuad.valueOf(cObj.get("screen_quad").getAsString()));
+			category.setPos(cObj.get("x").getAsInt(), cObj.get("y").getAsInt());
 			category.expand(cObj.get("expanded").getAsBoolean());
 		}
 		JsonObject modules = obj.getAsJsonObject("modules");

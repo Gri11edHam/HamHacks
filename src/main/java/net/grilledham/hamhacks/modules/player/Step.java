@@ -26,7 +26,7 @@ public class Step extends Module {
 				}
 			}
 		};
-		settings.add(height);
+		addSetting(height);
 	}
 	
 	@Override
@@ -39,6 +39,9 @@ public class Step extends Module {
 	@Override
 	public void onDisable() {
 		super.onDisable();
+		if(mc.player == null) {
+			return;
+		}
 		mc.player.stepHeight = originalStepHeight;
 	}
 }

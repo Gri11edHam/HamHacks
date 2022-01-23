@@ -2,6 +2,8 @@ package net.grilledham.hamhacks.util.setting;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.grilledham.hamhacks.gui.screens.ModuleSettingsScreen;
+import net.minecraft.client.MinecraftClient;
 
 public abstract class Setting<T> {
 	
@@ -10,6 +12,8 @@ public abstract class Setting<T> {
 	protected String toolTip;
 	
 	protected JsonObject value;
+	
+	protected T def;
 	
 	/**
 	 * @param name The name of the setting
@@ -42,7 +46,17 @@ public abstract class Setting<T> {
 	protected void valueChanged() {
 	}
 	
+	public void updateScreenIfOpen() {
+		if(MinecraftClient.getInstance().currentScreen instanceof ModuleSettingsScreen) {
+			MinecraftClient.getInstance().currentScreen.init(MinecraftClient.getInstance(), MinecraftClient.getInstance().getWindow().getScaledWidth(), MinecraftClient.getInstance().getWindow().getScaledHeight());
+		}
+	}
+	
 	public abstract T getValue();
+	
+	public void reset() {
+		setValue(def);
+	}
 	
 	public String getToolTip() {
 		return toolTip;
@@ -54,6 +68,7 @@ public abstract class Setting<T> {
 	
 	public void set(JsonElement el) {
 		value.add(name, el);
+		valueChanged();
 	}
 	
 	public JsonObject getAsJsonObject() {

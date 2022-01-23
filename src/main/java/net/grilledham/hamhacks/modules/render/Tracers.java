@@ -51,6 +51,7 @@ public class Tracers extends Module {
 			protected void valueChanged() {
 				super.valueChanged();
 				updateSettings();
+				updateScreenIfOpen();
 			}
 		};
 		playerClose = new ColorSetting("Player Color (Close)", 1, 1, 1, 0.5f, false);
@@ -60,6 +61,7 @@ public class Tracers extends Module {
 			protected void valueChanged() {
 				super.valueChanged();
 				updateSettings();
+				updateScreenIfOpen();
 			}
 		};
 		hostileClose = new ColorSetting("Hostile Color (Close)", 1, 1, 1, 0.5f, false);
@@ -69,35 +71,42 @@ public class Tracers extends Module {
 			protected void valueChanged() {
 				super.valueChanged();
 				updateSettings();
+				updateScreenIfOpen();
 			}
 		};
 		passiveClose = new ColorSetting("Passive Color (Close)", 1, 1, 1, 0.5f, false);
 		passiveFar = new ColorSetting("Passive Color (Far)", 1 / 3f, 1, 1, 0.5f, false);
 		
-		settings.add(tracePlayers);
-		settings.add(traceHostile);
-		settings.add(tracePassive);
+		addSetting(tracePlayers);
+		addSetting(playerClose);
+		addSetting(playerFar);
+		addSetting(traceHostile);
+		addSetting(hostileClose);
+		addSetting(hostileFar);
+		addSetting(tracePassive);
+		addSetting(passiveClose);
+		addSetting(passiveFar);
 		updateSettings();
 	}
 	
 	private void updateSettings() {
-		settings.remove(playerClose);
-		settings.remove(playerFar);
-		settings.remove(hostileClose);
-		settings.remove(hostileFar);
-		settings.remove(passiveClose);
-		settings.remove(passiveFar);
+		hideSetting(playerClose);
+		hideSetting(playerFar);
+		hideSetting(hostileClose);
+		hideSetting(hostileFar);
+		hideSetting(passiveClose);
+		hideSetting(passiveFar);
 		if(tracePlayers.getValue()) {
-			settings.add(settings.indexOf(tracePlayers) + 1, playerFar);
-			settings.add(settings.indexOf(tracePlayers) + 1, playerClose);
+			showSetting(playerFar, shownSettings.indexOf(tracePlayers) + 1);
+			showSetting(playerClose, shownSettings.indexOf(tracePlayers) + 1);
 		}
 		if(traceHostile.getValue()) {
-			settings.add(settings.indexOf(traceHostile) + 1, hostileFar);
-			settings.add(settings.indexOf(traceHostile) + 1, hostileClose);
+			showSetting(hostileFar, shownSettings.indexOf(traceHostile) + 1);
+			showSetting(hostileClose, shownSettings.indexOf(traceHostile) + 1);
 		}
 		if(tracePassive.getValue()) {
-			settings.add(settings.indexOf(tracePassive) + 1, passiveFar);
-			settings.add(settings.indexOf(tracePassive) + 1, passiveClose);
+			showSetting(passiveFar, shownSettings.indexOf(tracePassive) + 1);
+			showSetting(passiveClose, shownSettings.indexOf(tracePassive) + 1);
 		}
 	}
 	

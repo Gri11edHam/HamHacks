@@ -2,7 +2,6 @@ package net.grilledham.hamhacks.modules;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.grilledham.hamhacks.event.EventManager;
-import net.grilledham.hamhacks.gui.BoundingBox;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.util.setting.Setting;
 import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
@@ -16,11 +15,22 @@ import java.util.List;
 public class Module {
 	
 	protected String name;
-	protected BoolSetting enabled = new BoolSetting("Enabled", false);
+	protected BoolSetting enabled = new BoolSetting("Enabled", false) {
+		@Override
+		protected void valueChanged() {
+			super.valueChanged();
+			if(getValue()) {
+				onEnable();
+			} else {
+				onDisable();
+			}
+		}
+	};
 	protected Category category;
 	protected KeySetting key;
 	protected BoolSetting showModule = new BoolSetting("HUD Text", true);
 	
+	protected List<Setting> shownSettings = new ArrayList<>();
 	protected List<Setting> settings = new ArrayList<>();
 	
 	protected MinecraftClient mc = MinecraftClient.getInstance();
@@ -37,26 +47,30 @@ public class Module {
 			}
 		});
 		addSettings();
-		settings.add(this.showModule);
-		settings.add(this.key);
+		addSetting(this.showModule);
+		addSetting(this.key);
+		addSetting(this.enabled);
+	}
+	
+	protected void addSetting(Setting s) {
+		settings.add(s);
+		shownSettings.add(s);
+	}
+	
+	protected void showSetting(Setting s, int index) {
+		shownSettings.add(index, s);
+	}
+	
+	protected void hideSetting(Setting s) {
+		shownSettings.remove(s);
 	}
 	
 	public void toggle() {
 		enabled.setValue(!enabled.getValue());
-		if(enabled.getValue()) {
-			onEnable();
-		} else {
-			onDisable();
-		}
 	}
 	
 	public void setEnabled(boolean enabled) {
 		this.enabled.setValue(enabled);
-		if(this.enabled.getValue()) {
-			onEnable();
-		} else {
-			onDisable();
-		}
 	}
 	
 	public void addSettings() {
@@ -82,6 +96,10 @@ public class Module {
 		return showModule.getValue();
 	}
 	
+	public List<Setting> getShownSettings() {
+		return shownSettings;
+	}
+	
 	public List<Setting> getSettings() {
 		return settings;
 	}
@@ -99,7 +117,10 @@ public class Module {
 		MISC("Misc");
 		
 		private final String text;
-		private final BoundingBox box;
+		private int x;
+		private int y;
+		private int width;
+		private int height;
 		
 		private boolean expanded = false;
 		
@@ -114,30 +135,27 @@ public class Module {
 			int y = 3;
 			TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 			for(Module.Category category : Module.Category.values()) {
-				category.getBox().resizeScreen();
-				category.getBox().setScaleFactor(2);
-				category.getBox().setScale(1);
 				List<Module> categoryModules = ModuleManager.getModules(category);
 				int categoryWidth = textRenderer.getWidth(category.getText());
 				for(Module module : categoryModules) {
 					categoryWidth = Math.max(textRenderer.getWidth(module.getName()), categoryWidth);
 				}
-				categoryWidth += 4;
-				categoryWidth += textRenderer.fontHeight;
+				categoryWidth += 2;
 				category.setPos(x, y);
-				category.setDimensions(categoryWidth, textRenderer.fontHeight + 4);
+				category.setDimensions(categoryWidth + 4, 17);
 				if(x + categoryWidth + 2 > MinecraftClient.getInstance().getWindow().getScaledWidth()) {
 					x = 1;
-					y += textRenderer.fontHeight + 6;
+					y += 19;
 				} else {
-					x += categoryWidth + 2;
+					x += categoryWidth + 6;
 				}
 			}
 		}
 		
 		Category(String text) {
 			this.text = text;
-			box = new BoundingBox(0, 0, 0, 0, BoundingBox.ScreenQuad.TOP_LEFT);
+			x = 0;
+			y = 0;
 		}
 		
 		public String getText() {
@@ -145,16 +163,13 @@ public class Module {
 		}
 		
 		public void setPos(int x, int y) {
-			box.move(x - box.getX(), y - box.getY());
-		}
-		
-		public void resize() {
-			box.resizeScreen();
-			box.setScaleFactor(2);
+			this.x = x;
+			this.y = y;
 		}
 		
 		public void setDimensions(int width, int height) {
-			box.resize(width, height);
+			this.width = width;
+			this.height = height;
 		}
 		
 		public void expand(boolean expanded) {
@@ -166,23 +181,19 @@ public class Module {
 		}
 		
 		public int getX() {
-			return (int)box.getX();
+			return x;
 		}
 		
 		public int getY() {
-			return (int)box.getY();
+			return y;
 		}
 		
 		public int getWidth() {
-			return (int)box.getWidth();
+			return width;
 		}
 		
 		public int getHeight() {
-			return (int)box.getHeight();
-		}
-		
-		public BoundingBox getBox() {
-			return box;
+			return height;
 		}
 		
 		public Category fromText(String text) {

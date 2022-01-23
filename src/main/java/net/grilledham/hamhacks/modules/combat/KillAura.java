@@ -43,10 +43,10 @@ public class KillAura extends Module {
 		attackPlayers = new BoolSetting("Attack Players", true);
 		attackPassive = new BoolSetting("Attack Passive Mobs", false);
 		attackHostile = new BoolSetting("Attack Hostile Mobs", false);
-		settings.add(reach);
-		settings.add(attackPlayers);
-		settings.add(attackPassive);
-		settings.add(attackHostile);
+		addSetting(reach);
+		addSetting(attackPlayers);
+		addSetting(attackPassive);
+		addSetting(attackHostile);
 	}
 	
 	@EventListener

@@ -50,6 +50,7 @@ public class Aimbot extends Module {
 			protected void valueChanged() {
 				super.valueChanged();
 				updateSettings();
+				updateScreenIfOpen();
 			}
 		};
 		keepOverEntity = new BoolSetting("Keep Aiming At Entity", false);
@@ -57,23 +58,27 @@ public class Aimbot extends Module {
 		aimAtPassive = new BoolSetting("Aim at Passive Mobs", false);
 		aimAtHostile = new BoolSetting("Aim at Hostile Mobs", false);
 		aimAtBlocks = new BoolSetting("Aim At Blocks", false);
-		settings.add(speed);
-		settings.add(fov);
-		settings.add(aimAtEntities);
-		settings.add(aimAtBlocks);
+		addSetting(speed);
+		addSetting(fov);
+		addSetting(aimAtEntities);
+		addSetting(keepOverEntity);
+		addSetting(aimAtPlayers);
+		addSetting(aimAtPassive);
+		addSetting(aimAtHostile);
+		addSetting(aimAtBlocks);
 		updateSettings();
 	}
 	
 	private void updateSettings() {
-		settings.remove(keepOverEntity);
-		settings.remove(aimAtPlayers);
-		settings.remove(aimAtPassive);
-		settings.remove(aimAtHostile);
+		hideSetting(keepOverEntity);
+		hideSetting(aimAtPlayers);
+		hideSetting(aimAtPassive);
+		hideSetting(aimAtHostile);
 		if(aimAtEntities.getValue()) {
-			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtHostile);
-			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtPassive);
-			settings.add(settings.indexOf(aimAtEntities) + 1, aimAtPlayers);
-			settings.add(settings.indexOf(aimAtEntities) + 1, keepOverEntity);
+			showSetting(aimAtHostile, shownSettings.indexOf(aimAtEntities) + 1);
+			showSetting(aimAtPassive, shownSettings.indexOf(aimAtEntities) + 1);
+			showSetting(aimAtPlayers, shownSettings.indexOf(aimAtEntities) + 1);
+			showSetting(keepOverEntity, shownSettings.indexOf(aimAtEntities) + 1);
 		}
 	}
 	

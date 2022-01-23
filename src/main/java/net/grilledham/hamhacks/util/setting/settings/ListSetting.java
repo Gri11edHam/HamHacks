@@ -6,6 +6,7 @@ import com.google.gson.JsonPrimitive;
 import net.grilledham.hamhacks.util.setting.Setting;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ListSetting extends Setting<List<String>> {
@@ -17,6 +18,7 @@ public class ListSetting extends Setting<List<String>> {
 			arr.add(s);
 		}
 		value.add(name, arr);
+		def = Arrays.stream(vals).toList();
 	}
 	
 	@Override
@@ -56,5 +58,9 @@ public class ListSetting extends Setting<List<String>> {
 		for(int i = 0; i < value.get(name).getAsJsonArray().size(); i++) {
 			value.get(name).getAsJsonArray().remove(i);
 		}
+	}
+	
+	public void set(int i, String val) {
+		value.get(name).getAsJsonArray().set(i, new JsonPrimitive(val));
 	}
 }

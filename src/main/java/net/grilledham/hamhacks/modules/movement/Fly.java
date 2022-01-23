@@ -31,18 +31,22 @@ public class Fly extends Module {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
-				settings.remove(dropAmount);
+				hideSetting(dropAmount);
+				hideSetting(dropSpeed);
 				if(getValue().equalsIgnoreCase("Vanilla")) {
-					settings.add(settings.indexOf(speed) + 1, dropAmount);
-					settings.add(settings.indexOf(dropAmount) + 1, dropSpeed);
+					showSetting(dropAmount, shownSettings.indexOf(speed) + 1);
+					showSetting(dropSpeed, shownSettings.indexOf(dropAmount) + 1);
 				}
+				updateScreenIfOpen();
 			}
 		};
 		speed = new FloatSetting("Speed", 1f, 0f, 10f);
 		dropAmount = new FloatSetting("Drop Amount", 0.5f, 0f, 5f);
 		dropSpeed = new FloatSetting("Drop Speed", 0.02f, 0f, 1f);
-		settings.add(mode);
-		settings.add(speed);
+		addSetting(mode);
+		addSetting(speed);
+		addSetting(dropAmount);
+		addSetting(dropSpeed);
 	}
 	
 	private double height;
@@ -123,6 +127,9 @@ public class Fly extends Module {
 	@Override
 	public void onDisable() {
 		super.onDisable();
+		if(mc.player == null) {
+			return;
+		}
 		if(mode.getValue().equalsIgnoreCase("Default")) {
 			mc.player.getAbilities().flying = false;
 		} else if (mode.getValue().equalsIgnoreCase("Vanilla")) {

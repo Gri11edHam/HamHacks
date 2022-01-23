@@ -46,15 +46,6 @@ public class ClickGUIScreen extends Screen {
 		for(Module.Category category : Module.Category.values()) {
 			List<Module> categoryModules = ModuleManager.getModules(category);
 			categories.put(category, categoryModules);
-			category.resize();
-		}
-	}
-	
-	@Override
-	public void resize(MinecraftClient client, int width, int height) {
-		super.resize(client, width, height);
-		for(Module.Category category : Module.Category.values()) {
-			category.resize();
 		}
 	}
 	
@@ -66,9 +57,6 @@ public class ClickGUIScreen extends Screen {
 		matrices.scale(2 / currentScale, 2 / currentScale, 2 / currentScale);
 		mouseX *= currentScale / 2;
 		mouseY *= currentScale / 2;
-		for(Module.Category category : Module.Category.values()) {
-			category.getBox().setScaleFactor(2);
-		}
 		for(int i = 0; i < categories.keySet().size(); i++) {
 			drawCategory(matrices, mouseX, mouseY, categories.keySet().stream().toList().get(i));
 		}
@@ -171,7 +159,7 @@ public class ClickGUIScreen extends Screen {
 			int settingX = x + fullWidth;
 			int settingY = y;
 			int settingW = 0;
-			for(Setting setting : module.getSettings()) {
+			for(Setting setting : module.getShownSettings()) {
 				settingW = Math.max(settingW, getSettingWidth(setting));
 			}
 			settingW += 4;
@@ -180,8 +168,8 @@ public class ClickGUIScreen extends Screen {
 			settingClicked = false;
 			int clickedID = -1;
 			boolean wasSettingClicked = false;
-			for(int i = 0; i < module.getSettings().size(); i++) {
-				drawSetting(matrices, mouseX, mouseY, settingX, settingY, settingW, h, module.getSettings().get(i), settingID == i || settingID == -1);
+			for(int i = 0; i < module.getShownSettings().size(); i++) {
+				drawSetting(matrices, mouseX, mouseY, settingX, settingY, settingW, h, module.getShownSettings().get(i), settingID == i || settingID == -1);
 				
 				if(settingClicked && !wasSettingClicked) {
 					clickedID = i;

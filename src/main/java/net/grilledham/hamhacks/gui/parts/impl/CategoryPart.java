@@ -1,0 +1,161 @@
+package net.grilledham.hamhacks.gui.parts.impl;
+
+import net.grilledham.hamhacks.gui.parts.GuiPart;
+import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.RenderUtil;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.math.MatrixStack;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CategoryPart extends GuiPart {
+	
+	private final Module.Category category;
+	
+	private float openCloseAnimation;
+	private float hoverAnimation;
+	
+	private final List<ModulePart> moduleParts = new ArrayList<>();
+	
+	private boolean dragging = false;
+	private int lastMouseX = 0;
+	private int lastMouseY = 0;
+	
+	public CategoryPart(Screen parent, Module.Category category) {
+		super(category.getX(), category.getY(), category.getWidth(), category.getHeight());
+		this.category = category;
+		openCloseAnimation = category.isExpanded() ? 1 : 0;
+		int i = 0;
+		for(Module m : ModuleManager.getModules(category)) {
+			moduleParts.add(new ModulePart(parent, x, y + height + (16 * i), width, 16, m));
+			i++;
+		}
+	}
+	
+	@Override
+	public void render(MatrixStack stack, int mx, int my, float partialTicks) {
+		stack.push();
+		
+		float scissorHeight = height + (16 * moduleParts.size()) * (1 - openCloseAnimation);
+		
+		RenderUtil.pushScissor(x, y, width, scissorHeight, ClickGUI.getInstance().scale.getValue());
+		RenderUtil.applyScissor();
+		RenderUtil.preRender();
+		
+		int bgC = ClickGUI.getInstance().bgColor.getRGB();
+		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
+		bgC = RenderUtil.mix((bgC & 0xff000000) + 0xffffff, bgC, hoverAnimation);
+		RenderUtil.drawRect(stack, x + 1, y + 1, width - 1, height - 1, bgC);
+		
+		RenderUtil.drawRect(stack, x + 1, y, width - 1, 1, ClickGUI.getInstance().barColor.getRGB());
+		
+		RenderUtil.drawRect(stack, x, y, 1, height, ClickGUI.getInstance().barColor.getRGB());
+		
+		mc.textRenderer.drawWithShadow(stack, category.getText(), x + 3, y + 5, ClickGUI.getInstance().textColor.getRGB());
+		
+		for(ModulePart modulePart : moduleParts) {
+			modulePart.draw(stack, mx, my, partialTicks);
+		}
+		
+		RenderUtil.popScissor();
+		RenderUtil.postRender();
+		
+		stack.pop();
+		
+		if(dragging) {
+			moveBy(mx - lastMouseX, my - lastMouseY);
+			for(ModulePart module : moduleParts) {
+				module.moveBy(mx - lastMouseX, my - lastMouseY);
+			}
+			category.setPos(x, y);
+			lastMouseX = mx;
+			lastMouseY = my;
+		}
+		
+		if(category.isExpanded()) {
+			openCloseAnimation += partialTicks / 5;
+		} else {
+			openCloseAnimation -= partialTicks / 5;
+		}
+		openCloseAnimation = Math.min(1, Math.max(0, openCloseAnimation));
+		
+		if(hovered) {
+			hoverAnimation += partialTicks / 5;
+		} else {
+			hoverAnimation -= partialTicks / 5;
+		}
+		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
+	}
+	
+	@Override
+	public boolean click(double mx, double my, int button) {
+		if(mx >= x && mx < x + width && my >= y && my < y + height) {
+			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+				dragging = true;
+				lastMouseX = (int)mx;
+				lastMouseY = (int)my;
+			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+			
+			}
+			return true;
+		}
+		if(openCloseAnimation <= 0.5f) {
+			for(ModulePart module : moduleParts) {
+				if(module.click(mx, my, button)) {
+					return true;
+				}
+			}
+		}
+		return super.click(mx, my, button);
+	}
+	
+	@Override
+	public boolean release(double mx, double my, int button) {
+		boolean wasDragging = dragging;
+		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			dragging = false;
+		}
+		if(mx >= x && mx < x + width && my >= y && my < y + height) {
+			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			
+			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+				category.expand(!category.isExpanded());
+			}
+			return true;
+		}
+		if(!wasDragging) {
+			if(openCloseAnimation <= 0.5f) {
+				for(ModulePart module : moduleParts) {
+					if(module.release(mx, my, button)) {
+						return true;
+					}
+				}
+			}
+		}
+		return super.release(mx, my, button);
+	}
+	
+	@Override
+	public boolean drag(double mx, double my, int button, double dx, double dy) {
+		if(mx >= x && mx < x + width && my >= y && my < y + height) {
+			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			
+			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+			
+			}
+			return true;
+		}
+		if(openCloseAnimation <= 0.5f) {
+			for(ModulePart module : moduleParts) {
+				if(module.drag(mx, my, button, dx, dy)) {
+					return true;
+				}
+			}
+		}
+		return super.drag(mx, my, button, dx, dy);
+	}
+}

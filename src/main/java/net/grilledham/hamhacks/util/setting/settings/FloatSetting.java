@@ -12,11 +12,14 @@ public class FloatSetting extends Setting<Float> {
 		obj.addProperty("min", min);
 		obj.addProperty("max", max);
 		value.add(name, obj);
+		def = val;
 	}
 	
 	@Override
 	protected void updateValue(Float value) {
-		this.value.get(name).getAsJsonObject().addProperty("value", value);
+		if(value >= this.value.get(name).getAsJsonObject().get("min").getAsFloat() && value <= this.value.get(name).getAsJsonObject().get("max").getAsFloat()) {
+			this.value.get(name).getAsJsonObject().addProperty("value", value);
+		}
 	}
 	
 	@Override

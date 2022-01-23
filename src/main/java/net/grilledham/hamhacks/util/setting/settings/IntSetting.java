@@ -12,11 +12,14 @@ public class IntSetting extends Setting<Integer> {
 		obj.addProperty("min", min);
 		obj.addProperty("max", max);
 		value.add(name, obj);
+		def = val;
 	}
 	
 	@Override
 	protected void updateValue(Integer value) {
-		this.value.get(name).getAsJsonObject().addProperty("value", value);
+		if(value >= this.value.get(name).getAsJsonObject().get("min").getAsInt() && value <= this.value.get(name).getAsJsonObject().get("max").getAsInt()) {
+			this.value.get(name).getAsJsonObject().addProperty("value", value);
+		}
 	}
 	
 	@Override

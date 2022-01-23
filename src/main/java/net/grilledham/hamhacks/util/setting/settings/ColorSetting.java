@@ -8,6 +8,8 @@ import java.awt.*;
 
 public class ColorSetting extends Setting<Float[]> {
 	
+	private final boolean defChroma;
+	
 	public ColorSetting(String name, float h, float s, float b, float a, boolean chroma) {
 		super(name);
 		JsonObject obj = new JsonObject();
@@ -17,6 +19,8 @@ public class ColorSetting extends Setting<Float[]> {
 		obj.addProperty("alpha", a);
 		obj.addProperty("chroma", chroma);
 		value.add(name, obj);
+		def = new Float[] {h, s, b, a};
+		defChroma = chroma;
 	}
 	
 	@Override
@@ -33,6 +37,12 @@ public class ColorSetting extends Setting<Float[]> {
 		} else {
 			throw new IllegalArgumentException("Expected 3 or 4 floats but found " + value.length);
 		}
+	}
+	
+	@Override
+	public void reset() {
+		super.reset();
+		setChroma(defChroma);
 	}
 	
 	public void setHue(float hue) {
@@ -93,5 +103,14 @@ public class ColorSetting extends Setting<Float[]> {
 	public int getRGB() {
 		Float[] val = getValue();
 		return (Color.HSBtoRGB(val[0], val[1], val[2]) & 0xffffff) + ((int)(val[3] * 0xff) << 24);
+	}
+	
+	public void setRGB(int rgb) {
+		setAlpha((rgb >> 24) / 255f);
+		float[] hsb = new float[4];
+		Color.RGBtoHSB(rgb >> 16 & 255, rgb >> 8 & 255, rgb & 255, hsb);
+		setHue(hsb[0]);
+		setSaturation(hsb[1]);
+		setBrightness(hsb[2]);
 	}
 }

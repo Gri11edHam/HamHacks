@@ -13,6 +13,7 @@ public class KeySetting extends Setting<Integer> {
 		super(name);
 		value.addProperty(name, keybind.getKey());
 		this.keybind = keybind;
+		def = keybind.getKey();
 	}
 	
 	@Override

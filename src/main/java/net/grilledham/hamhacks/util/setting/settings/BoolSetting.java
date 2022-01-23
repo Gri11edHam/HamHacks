@@ -7,6 +7,7 @@ public class BoolSetting extends Setting<Boolean> {
 	public BoolSetting(String name, boolean bool) {
 		super(name);
 		value.addProperty(name, bool);
+		def = bool;
 	}
 	
 	@Override

@@ -25,6 +25,7 @@ public class SelectionSetting extends Setting<String> {
 		}
 		obj.add("values", values);
 		value.add(name, obj);
+		def = val;
 	}
 	
 	@Override

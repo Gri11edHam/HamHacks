@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.gui.screens.ClickGUIScreen;
 import net.grilledham.hamhacks.mixininterface.IKeyBinding;
+import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.input.KeyboardInput;
@@ -23,12 +23,12 @@ public class MixinKeyboardInput extends Input {
 	
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
 	public void tick(boolean slowDown, CallbackInfo ci) {
-		boolean forward = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyForward).getBound().getCode()) == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen instanceof ClickGUIScreen;
-		boolean back = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyBack).getBound().getCode()) == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen instanceof ClickGUIScreen;
-		boolean left = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyLeft).getBound().getCode()) == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen instanceof ClickGUIScreen;
-		boolean right = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyRight).getBound().getCode()) == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen instanceof ClickGUIScreen;
-		boolean jump = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyJump).getBound().getCode()) == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen instanceof ClickGUIScreen;
-		boolean sneak = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keySneak).getBound().getCode()) == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen instanceof ClickGUIScreen;
+		boolean forward = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyForward).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen);
+		boolean back = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyBack).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen);
+		boolean left = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyLeft).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen);
+		boolean right = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyRight).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen);
+		boolean jump = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keyJump).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen);
+		boolean sneak = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.keySneak).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen);
 		this.pressingForward = this.settings.keyForward.isPressed() || forward;
 		this.pressingBack = this.settings.keyBack.isPressed() || back;
 		this.pressingLeft = this.settings.keyLeft.isPressed() || left;

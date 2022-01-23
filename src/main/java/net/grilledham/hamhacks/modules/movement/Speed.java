@@ -25,9 +25,9 @@ public class Speed extends Module {
 		speed = new FloatSetting("Speed", 2.5f, 0f, 10f);
 		autoJump = new BoolSetting("Auto Jump", false);
 		disableWithElytra = new BoolSetting("Disable With Elytra", true);
-		settings.add(speed);
-		settings.add(autoJump);
-		settings.add(disableWithElytra);
+		addSetting(speed);
+		addSetting(autoJump);
+		addSetting(disableWithElytra);
 	}
 	
 	@EventListener

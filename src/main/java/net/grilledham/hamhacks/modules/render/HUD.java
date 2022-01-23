@@ -12,8 +12,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
-import java.awt.*;
-
 public class HUD extends Module {
 	
 	public BoolSetting showLogo;
@@ -57,25 +55,24 @@ public class HUD extends Module {
 		modelBobbingOnly = new BoolSetting("Model Bobbing Only", false);
 		noHurtCam = new BoolSetting("No Hurt Cam", false);
 		
-		float[] barHSB = Color.RGBtoHSB(0xa4, 0, 0, new float[3]);
-		barColor = new ColorSetting("Bar Color", barHSB[0], barHSB[1], barHSB[2], 1, true);
+		barColor = new ColorSetting("Bar Color", 1, 1, 1, 1, true);
 		bgColor = new ColorSetting("Background Color", 1, 0, 0, 0.5f, false);
 		textColor = new ColorSetting("Text Color", 1, 1, 1, 1, true);
 		
-		settings.add(showLogo);
-		settings.add(showFPS);
-		settings.add(showModules);
+		addSetting(showLogo);
+		addSetting(showFPS);
+		addSetting(showModules);
 		
-		settings.add(heldItemScale);
-		settings.add(shieldHeightModifier);
-		settings.add(fireHeightModifier);
-		settings.add(overlayTransparency);
-		settings.add(modelBobbingOnly);
-		settings.add(noHurtCam);
+		addSetting(heldItemScale);
+		addSetting(shieldHeightModifier);
+		addSetting(fireHeightModifier);
+		addSetting(overlayTransparency);
+		addSetting(modelBobbingOnly);
+		addSetting(noHurtCam);
 		
-		settings.add(barColor);
-		settings.add(bgColor);
-		settings.add(textColor);
+		addSetting(barColor);
+		addSetting(bgColor);
+		addSetting(textColor);
 	}
 	
 	public void applyHandTransform(LivingEntity entity, ItemStack stack, ModelTransformation.Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {

@@ -7,6 +7,7 @@ public class StringSetting extends Setting<String> {
 	public StringSetting(String name, String str) {
 		super(name);
 		value.addProperty(name, str);
+		def = str;
 	}
 	
 	@Override
