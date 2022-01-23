@@ -13,7 +13,8 @@
 		"MixinKeyBinding",
 		"MixinKeyboardInput",
 		"MixinMinecraftClient",
-		"MixinMouse"
+		"MixinMouse",
+		"MixinTitleScreen"
 	],
 	"client": [
 	]
