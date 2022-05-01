@@ -89,7 +89,7 @@ public class KillAura extends Module {
 				target = null;
 			}
 			if(target != null) {
-				RotationHack.faceVectorPacket(target.getPos());
+				RotationHack.faceVectorPacket(target.getEyePos(), (int)mc.player.getAttackCooldownProgressPerTick());
 			}
 		}
 	}

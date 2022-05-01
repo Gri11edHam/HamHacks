@@ -7,6 +7,9 @@ import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
 import net.grilledham.hamhacks.util.setting.settings.SelectionSetting;
+import net.minecraft.block.Material;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
@@ -106,19 +109,51 @@ public class Fly extends Module {
 					double z = mc.player.getVelocity().z;
 					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
 						y = 0;
-						if(mc.player.getPos().y <= height - dropAmount.getValue()) {
-							y = dropAmount.getValue();
-						} else {
-							y -= dropSpeed.getValue();
-						}
-					} else {
-						height = mc.player.getPos().y;
 					}
 					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
 						x = 0;
 						z = 0;
 					}
 					mc.player.setVelocity(new Vec3d(x, y, z));
+					
+					if(updates >= 0.5f) {
+						updates = 0;
+					}
+					
+					boolean isAboveBlock = false;
+					for(int xAdd = -1; xAdd < 2; xAdd++) {
+						for(int zAdd = -1; zAdd < 2; zAdd++) {
+							if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 1, 0.3f * zAdd))).getMaterial() != Material.AIR) {
+								isAboveBlock = true;
+								break;
+							}
+						}
+					}
+					if(!isAboveBlock) {
+						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y - updates, mc.player.getPos().z, true));
+					}
+					
+					updates += (System.currentTimeMillis() - lastTime) / 1000f;
+					lastTime = System.currentTimeMillis();
+//					mc.player.getAbilities().flying = true;
+//					double x = mc.player.getVelocity().x;
+//					double y = mc.player.getVelocity().y;
+//					double z = mc.player.getVelocity().z;
+//					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
+//						y = 0;
+//						if(mc.player.getPos().y <= height - dropAmount.getValue()) {
+//							y = dropAmount.getValue();
+//						} else {
+//							y -= dropSpeed.getValue();
+//						}
+//					} else {
+//						height = mc.player.getPos().y;
+//					}
+//					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
+//						x = 0;
+//						z = 0;
+//					}
+//					mc.player.setVelocity(new Vec3d(x, y, z));
 				}
 			}
 		}
