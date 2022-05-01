@@ -76,7 +76,7 @@ public class NewClickGUIScreen extends Screen {
 	}
 	
 	@Override
-	public void onClose() {
+	public void close() {
 		client.setScreen(last);
 	}
 

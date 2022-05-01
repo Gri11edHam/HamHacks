@@ -19,10 +19,10 @@ public class ScrollClicker extends Module {
 		double vertical = ((EventScroll)e).vertical;
 		double horizontal = ((EventScroll)e).horizontal;
 		if(vertical < 0 || horizontal < 0) {
-			KeyBinding.onKeyPressed(mc.options.keyAttack.getDefaultKey());
+			KeyBinding.onKeyPressed(mc.options.attackKey.getDefaultKey());
 		}
 		if(vertical > 0 || horizontal > 0) {
-			KeyBinding.onKeyPressed(mc.options.keyUse.getDefaultKey());
+			KeyBinding.onKeyPressed(mc.options.useKey.getDefaultKey());
 		}
 	}
 }

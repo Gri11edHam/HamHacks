@@ -19,7 +19,7 @@ public class Jesus extends Module {
 			return;
 		}
 		if(mc.world.getBlockState(mc.player.getBlockPos().add(0, 0, 0)).getFluidState().getFluid() != Fluids.EMPTY) {
-			mc.player.setVelocity(mc.player.getVelocity().x, mc.options.keyJump.isPressed() ? 0.2 : mc.options.keySneak.isPressed() ? -0.2 : mc.player.isTouchingWater() ? 0.05 : 0, mc.player.getVelocity().z);
+			mc.player.setVelocity(mc.player.getVelocity().x, mc.options.jumpKey.isPressed() ? 0.2 : mc.options.sneakKey.isPressed() ? -0.2 : mc.player.isTouchingWater() ? 0.05 : 0, mc.player.getVelocity().z);
 			mc.player.setOnGround(true);
 		}
 	}

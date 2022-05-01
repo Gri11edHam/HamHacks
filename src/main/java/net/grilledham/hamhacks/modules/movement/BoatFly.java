@@ -25,9 +25,9 @@ public class BoatFly extends Module {
 			Vec3d velocity = vehicle.getVelocity();
 			double motionY = 0;
 			if(vehicle.getType() == EntityType.BOAT) {
-				motionY = mc.options.keyJump.isPressed() ? 0.3 : mc.options.keySprint.isPressed() ? -0.26 : 0.04;
+				motionY = mc.options.jumpKey.isPressed() ? 0.3 : mc.options.sprintKey.isPressed() ? -0.26 : 0.04;
 			} else if(vehicle.getType() == EntityType.HORSE || vehicle.getType() == EntityType.SKELETON_HORSE || vehicle.getType() == EntityType.ZOMBIE_HORSE || vehicle.getType() == EntityType.DONKEY || vehicle.getType() == EntityType.MULE) {
-				motionY = mc.options.keyJump.isPressed() ? 0.3 : mc.options.keySprint.isPressed() ? -0.3 : 0.00;
+				motionY = mc.options.jumpKey.isPressed() ? 0.3 : mc.options.sprintKey.isPressed() ? -0.3 : 0.00;
 			}
 			vehicle.setVelocity(new Vec3d(velocity.x, motionY, velocity.z));
 		}

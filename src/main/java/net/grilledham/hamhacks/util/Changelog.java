@@ -3,6 +3,13 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.4.1:
+				- Updated to 1.18.2
+				- Improved vanilla fly bypass
+				- Improved server-side rotations
+				- Added module:
+					: Reach
+				
 			Update 1.4:
 				- Overhauled event system
 				- Overhauled GUI

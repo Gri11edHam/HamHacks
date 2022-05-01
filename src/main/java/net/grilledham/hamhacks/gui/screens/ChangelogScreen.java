@@ -20,7 +20,7 @@ public class ChangelogScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		backButton = new ButtonPart("Back", width / 2 - 100, height - 32, 200, 20, this::onClose);
+		backButton = new ButtonPart("Back", width / 2 - 100, height - 32, 200, 20, this::close);
 	}
 	
 	@Override
@@ -60,7 +60,7 @@ public class ChangelogScreen extends Screen {
 	}
 	
 	@Override
-	public void onClose() {
+	public void close() {
 		client.setScreen(last);
 	}
 }
