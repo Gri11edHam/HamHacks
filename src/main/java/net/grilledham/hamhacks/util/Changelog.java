@@ -9,6 +9,7 @@ public class Changelog {
 				- Improved server-side rotations
 				- Added module:
 					: Reach
+				- Bug fixes
 				
 			Update 1.4:
 				- Overhauled event system
