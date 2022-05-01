@@ -8,10 +8,7 @@ import net.fabricmc.api.Environment;
 import net.grilledham.hamhacks.gui.overlays.IngameGui;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.combat.Aimbot;
-import net.grilledham.hamhacks.modules.combat.CrystalAura;
-import net.grilledham.hamhacks.modules.combat.KillAura;
-import net.grilledham.hamhacks.modules.combat.ScrollClicker;
+import net.grilledham.hamhacks.modules.combat.*;
 import net.grilledham.hamhacks.modules.movement.*;
 import net.grilledham.hamhacks.modules.player.*;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
@@ -56,6 +53,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new Step());
 		ModuleManager.register(new Tracers());
 		ModuleManager.register(new KillAura());
+		ModuleManager.register(new Reach());
 		
 //		ModuleManager.register(new TestModule()); // For testing
 	}

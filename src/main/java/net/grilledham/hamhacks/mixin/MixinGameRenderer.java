@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.event.events.EventRender2D;
 import net.grilledham.hamhacks.event.events.EventRender3D;
+import net.grilledham.hamhacks.modules.combat.Reach;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.GameRenderer;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -44,6 +46,30 @@ public class MixinGameRenderer implements SynchronousResourceReloader, AutoClose
 		if(!(!HUD.getInstance().noHurtCam.getValue() && HUD.getInstance().isEnabled())) {
 			ci.cancel();
 		}
+	}
+	
+	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 3)
+	public double modifyReach(double d) {
+		if(Reach.getInstance() == null) {
+			return d;
+		}
+		return Reach.getInstance().isEnabled() ? Reach.getInstance().range.getValue() : d;
+	}
+	
+	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 8)
+	public double modifyReachSquared(double e) {
+		if(Reach.getInstance() == null) {
+			return e;
+		}
+		return Reach.getInstance().isEnabled() ? Reach.getInstance().range.getValue() * Reach.getInstance().range.getValue() : e;
+	}
+	
+	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 6)
+	public boolean setAlwaysExtendedReach(boolean bl) {
+		if(Reach.getInstance() == null) {
+			return bl;
+		}
+		return !Reach.getInstance().isEnabled() && bl;
 	}
 	
 	@Shadow
