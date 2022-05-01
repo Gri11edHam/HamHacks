@@ -24,6 +24,8 @@ public class Sprint extends Module {
 	@Override
 	public void onDisable() {
 		super.onDisable();
-		mc.player.setSprinting(false);
+		if(mc.player != null) {
+			mc.player.setSprinting(false);
+		}
 	}
 }
