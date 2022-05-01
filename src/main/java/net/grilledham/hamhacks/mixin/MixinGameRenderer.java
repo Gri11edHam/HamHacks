@@ -49,19 +49,19 @@ public class MixinGameRenderer implements SynchronousResourceReloader, AutoClose
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 3)
-	public double modifyReach(double d) {
+	public double modifyBlockReach(double d) {
 		if(Reach.getInstance() == null) {
 			return d;
 		}
-		return Reach.getInstance().isEnabled() ? Reach.getInstance().range.getValue() : d;
+		return Reach.getInstance().isEnabled() ? Reach.getInstance().blockRange.getValue() : d;
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 8)
-	public double modifyReachSquared(double e) {
+	public double modifyEntityReach(double e) {
 		if(Reach.getInstance() == null) {
 			return e;
 		}
-		return Reach.getInstance().isEnabled() ? Reach.getInstance().range.getValue() * Reach.getInstance().range.getValue() : e;
+		return Reach.getInstance().isEnabled() ? Reach.getInstance().entityRange.getValue() * Reach.getInstance().entityRange.getValue() : e;
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 6)

@@ -6,7 +6,8 @@ import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
 
 public class Reach extends Module {
 	
-	public FloatSetting range;
+	public FloatSetting entityRange;
+	public FloatSetting blockRange;
 	
 	private static Reach INSTANCE;
 	
@@ -17,8 +18,10 @@ public class Reach extends Module {
 	
 	@Override
 	public void addSettings() {
-		range = new FloatSetting("Range", 3.2f, 0, 8);
-		addSetting(range);
+		entityRange = new FloatSetting("Entity Range", 3.0f, 0, 8);
+		blockRange = new FloatSetting("Block Range", 4.5f, 0, 8);
+		addSetting(entityRange);
+		addSetting(blockRange);
 	}
 	
 	public static Reach getInstance() {
