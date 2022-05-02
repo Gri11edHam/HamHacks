@@ -36,6 +36,9 @@ public class Module {
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
 	
+	protected BoolSetting forceDisabled = new BoolSetting("internal.forcedisabled", false);
+	protected boolean wasEnabled;
+	
 	public Module(String name, Category category, Keybind key) {
 		this.name = name;
 		this.category = category;
@@ -50,6 +53,8 @@ public class Module {
 		addSetting(this.showModule);
 		addSetting(this.key);
 		addSetting(this.enabled);
+		addSetting(this.forceDisabled);
+		hideSetting(this.forceDisabled);
 	}
 	
 	protected void addSetting(Setting s) {
@@ -66,11 +71,26 @@ public class Module {
 	}
 	
 	public void toggle() {
-		enabled.setValue(!enabled.getValue());
+		if(!this.forceDisabled.getValue()) {
+			enabled.setValue(!enabled.getValue());
+		}
 	}
 	
 	public void setEnabled(boolean enabled) {
-		this.enabled.setValue(enabled);
+		if(!this.forceDisabled.getValue()) {
+			this.enabled.setValue(enabled);
+		}
+	}
+	
+	public void forceDisable() {
+		wasEnabled = isEnabled();
+		setEnabled(false);
+		forceDisabled.setValue(true);
+	}
+	
+	public void reEnable() {
+		forceDisabled.setValue(false);
+		setEnabled(wasEnabled);
 	}
 	
 	public void addSettings() {

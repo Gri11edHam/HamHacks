@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
 import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
 import net.grilledham.hamhacks.util.setting.settings.SelectionSetting;
 import net.minecraft.block.Material;
@@ -19,8 +20,7 @@ public class Fly extends Module {
 	
 	private SelectionSetting mode;
 	private FloatSetting speed;
-	private FloatSetting dropAmount;
-	private FloatSetting dropSpeed;
+	private BoolSetting smoothMovement;
 	
 	private long lastTime;
 	
@@ -30,34 +30,21 @@ public class Fly extends Module {
 	
 	@Override
 	public void addSettings() {
-		mode = new SelectionSetting("Mode", "Default", "Default", "Vanilla") {
-			@Override
-			protected void valueChanged() {
-				super.valueChanged();
-				hideSetting(dropAmount);
-				hideSetting(dropSpeed);
-				if(getValue().equalsIgnoreCase("Vanilla")) {
-					showSetting(dropAmount, shownSettings.indexOf(speed) + 1);
-					showSetting(dropSpeed, shownSettings.indexOf(dropAmount) + 1);
-				}
-				updateScreenIfOpen();
-			}
-		};
+		mode = new SelectionSetting("Mode", "Default", "Default", "Vanilla");
 		speed = new FloatSetting("Speed", 1f, 0f, 10f);
-		dropAmount = new FloatSetting("Drop Amount", 0.5f, 0f, 5f);
-		dropSpeed = new FloatSetting("Drop Speed", 0.02f, 0f, 1f);
+		smoothMovement = new BoolSetting("Smooth Movement", true);
 		addSetting(mode);
 		addSetting(speed);
-		addSetting(dropAmount);
-		addSetting(dropSpeed);
+		addSetting(smoothMovement);
 	}
-	
-	private double height;
-	private int viewBobbing = 0;
 	
 	@Override
 	public void onEnable() {
 		super.onEnable();
+		Speed.getInstance().forceDisable();
+		if(mc.player == null) {
+			return;
+		}
 		if(mode.getValue().equalsIgnoreCase("Default")) {
 			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
@@ -65,56 +52,54 @@ public class Fly extends Module {
 		}
 		if(mode.getValue().equalsIgnoreCase("Vanilla")) {
 			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
-				mc.player.setPosition(mc.player.getPos().add(0, dropAmount.getValue(), 0));
+				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
-			height = mc.player.getPos().y;
 		}
 	}
 	
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
-//				if ((mc.options.keyForward.isPressed() || mc.options.keyBack.isPressed() || mc.options.keyLeft.isPressed() || mc.options.keyRight.isPressed()) && mc.options.bobView) {
-//					switch(viewBobbing) {
-//						case 0 -> {
-//							mc.player.setYaw(0.105f);
-//							mc.player.setPitch(0.105f);
-//							viewBobbing++;
-//						}
-//						case 1 -> viewBobbing++;
-//						case 2 -> viewBobbing = 0;
-//					}
-//
-//				}
-			
 			switch(mode.getValue()) {
 				case "Default" -> {
-					mc.player.getAbilities().flying = true;
-					double x = mc.player.getVelocity().x;
-					double y = mc.player.getVelocity().y;
-					double z = mc.player.getVelocity().z;
-					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
-						y = 0;
+					if(smoothMovement.getValue()) {
+						moveSmooth();
+					} else {
+						move();
 					}
-					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
-						x = 0;
-						z = 0;
-					}
-					mc.player.setVelocity(new Vec3d(x, y, z));
+					
+//					mc.player.getAbilities().flying = true;
+//					double x = mc.player.getVelocity().x;
+//					double y = mc.player.getVelocity().y;
+//					double z = mc.player.getVelocity().z;
+//					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
+//						y = 0;
+//					}
+//					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
+//						x = 0;
+//						z = 0;
+//					}
+//					mc.player.setVelocity(new Vec3d(x, y, z));
 				}
 				case "Vanilla" -> {
-					mc.player.getAbilities().flying = true;
-					double x = mc.player.getVelocity().x;
-					double y = mc.player.getVelocity().y;
-					double z = mc.player.getVelocity().z;
-					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
-						y = 0;
+					if(smoothMovement.getValue()) {
+						moveSmooth();
+					} else {
+						move();
 					}
-					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
-						x = 0;
-						z = 0;
-					}
-					mc.player.setVelocity(new Vec3d(x, y, z));
+					
+//					mc.player.getAbilities().flying = true;
+//					double x = mc.player.getVelocity().x;
+//					double y = mc.player.getVelocity().y;
+//					double z = mc.player.getVelocity().z;
+//					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
+//						y = 0;
+//					}
+//					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
+//						x = 0;
+//						z = 0;
+//					}
+//					mc.player.setVelocity(new Vec3d(x, y, z));
 					
 					if(updates >= 0.5f) {
 						updates = 0;
@@ -135,33 +120,115 @@ public class Fly extends Module {
 					
 					updates += (System.currentTimeMillis() - lastTime) / 1000f;
 					lastTime = System.currentTimeMillis();
-//					mc.player.getAbilities().flying = true;
-//					double x = mc.player.getVelocity().x;
-//					double y = mc.player.getVelocity().y;
-//					double z = mc.player.getVelocity().z;
-//					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
-//						y = 0;
-//						if(mc.player.getPos().y <= height - dropAmount.getValue()) {
-//							y = dropAmount.getValue();
-//						} else {
-//							y -= dropSpeed.getValue();
-//						}
-//					} else {
-//						height = mc.player.getPos().y;
-//					}
-//					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
-//						x = 0;
-//						z = 0;
-//					}
-//					mc.player.setVelocity(new Vec3d(x, y, z));
 				}
 			}
 		}
 	}
 	
+	private void move() {
+		mc.player.getAbilities().flying = true;
+		float distanceForward = 0;
+		float distanceStrafe = 0;
+		float distanceVertical = 0;
+		if(mc.player.input.pressingForward) {
+			distanceForward += 1;
+		}
+		if(mc.player.input.pressingBack) {
+			distanceForward -= 1;
+		}
+		if(mc.player.input.pressingRight) {
+			distanceStrafe -= 1;
+		}
+		if(mc.player.input.pressingLeft) {
+			distanceStrafe += 1;
+		}
+		if(mc.player.input.jumping) {
+			distanceVertical += 1;
+		}
+		if(mc.player.input.sneaking) {
+			distanceVertical -= 1;
+		}
+		float dx = (float) (distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));
+		float dy = distanceVertical;
+		float dz = (float) (distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90)));
+		dx += (float) (distanceStrafe * Math.cos(Math.toRadians(mc.player.getYaw())));
+		dz += (float) (distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
+		dx *= speed.getValue();
+		dy *= speed.getValue();
+		dz *= speed.getValue();
+		mc.player.setVelocity(new Vec3d(dx, dy, dz));
+	}
+	
+	private float lastDx = 0;
+	private float lastDy = 0;
+	private float lastDz = 0;
+	
+	private void moveSmooth() {
+		mc.player.getAbilities().flying = true;
+		float distanceForward = 0;
+		float distanceStrafe = 0;
+		float distanceVertical = 0;
+		if(mc.player.input.pressingForward) {
+			distanceForward += 1;
+		}
+		if(mc.player.input.pressingBack) {
+			distanceForward -= 1;
+		}
+		if(mc.player.input.pressingRight) {
+			distanceStrafe -= 1;
+		}
+		if(mc.player.input.pressingLeft) {
+			distanceStrafe += 1;
+		}
+		if(mc.player.input.jumping) {
+			distanceVertical += 1;
+		}
+		if(mc.player.input.sneaking) {
+			distanceVertical -= 1;
+		}
+		float dx = (float) (distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));
+		float dy = distanceVertical;
+		float dz = (float) (distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90)));
+		dx += (float) (distanceStrafe * Math.cos(Math.toRadians(mc.player.getYaw())));
+		dz += (float) (distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
+		dx = lastDx + (dx / 10f);
+		dy = lastDy + (dy / 10f);
+		dz = lastDz + (dz / 10f);
+		dx *= speed.getValue();
+		dy *= speed.getValue();
+		dz *= speed.getValue();
+		if(dx > speed.getValue()) {
+			dx = speed.getValue();
+		} else if(dx < -speed.getValue()) {
+			dx = -speed.getValue();
+		}
+		if(dy > speed.getValue()) {
+			dy = speed.getValue();
+		} else if(dy < -speed.getValue()) {
+			dy = -speed.getValue();
+		}
+		if(dz > speed.getValue()) {
+			dz = speed.getValue();
+		} else if(dz < -speed.getValue()) {
+			dz = -speed.getValue();
+		}
+		if(!mc.player.input.jumping && !mc.player.input.sneaking) {
+			dy = 0;
+		}
+		if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
+			dx = 0;
+			dz = 0;
+		}
+		mc.player.setVelocity(new Vec3d(dx, dy, dz));
+		lastDx = dx;
+		lastDy = dy;
+		lastDz = dz;
+	}
+	
 	@Override
 	public void onDisable() {
 		super.onDisable();
+		Speed.getInstance().reEnable();
 		if(mc.player == null) {
 			return;
 		}

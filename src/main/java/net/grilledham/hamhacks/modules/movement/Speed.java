@@ -16,8 +16,11 @@ public class Speed extends Module {
 	private BoolSetting autoJump;
 	private BoolSetting disableWithElytra;
 	
+	private static Speed INSTANCE;
+	
 	public Speed() {
 		super("Speed", Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
+		INSTANCE = this;
 	}
 	
 	@Override
@@ -63,5 +66,9 @@ public class Speed extends Module {
 				}
 			}
 		}
+	}
+	
+	public static Speed getInstance() {
+		return INSTANCE;
 	}
 }
