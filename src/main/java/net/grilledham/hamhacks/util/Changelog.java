@@ -3,6 +3,17 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.4.2:
+				- Added the ability for modules to force-disable other modules
+				- Removed unnecessary settings in Fly
+				- Added settings to Fly module:
+					: Smooth Movement
+				- Split "Range" into "Block Range" (vanilla: 4.5) and "Entity Range" (vanilla: 3.0) in Reach module
+				- Added options to show ping, tps, and last server response time in the HUD
+				- Added Full Changelog screen
+				- Fixed translations not being used and updated translations
+				- Bug fixes
+			
 			Update 1.4.1:
 				- Updated to 1.18.2
 				- Improved vanilla fly bypass
