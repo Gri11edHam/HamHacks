@@ -63,7 +63,7 @@ public class FullChangelogScreen extends Screen {
 	
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-		scroll += amount;
+		scroll += amount * 10;
 		return true;
 	}
 	
