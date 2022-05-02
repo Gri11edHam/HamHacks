@@ -16,6 +16,9 @@ public class HUD extends Module {
 	
 	public BoolSetting showLogo;
 	public BoolSetting showFPS;
+	public BoolSetting showPing;
+	public BoolSetting showTPS;
+	public BoolSetting showTimeSinceLastTick;
 	public BoolSetting showModules;
 	
 	public FloatSetting heldItemScale;
@@ -46,6 +49,9 @@ public class HUD extends Module {
 		super.addSettings();
 		showLogo = new BoolSetting("Show Logo", true);
 		showFPS = new BoolSetting("Show FPS", true);
+		showPing = new BoolSetting("Show Ping", true);
+		showTPS = new BoolSetting("Show TPS", true);
+		showTimeSinceLastTick = new BoolSetting("Show Time Since Last Tick", true);
 		showModules = new BoolSetting("Show Enabled Modules", true);
 		
 		heldItemScale = new FloatSetting("Held Item Scale", 1f, 0.1f, 2f);
@@ -61,6 +67,9 @@ public class HUD extends Module {
 		
 		addSetting(showLogo);
 		addSetting(showFPS);
+		addSetting(showPing);
+		addSetting(showTPS);
+		addSetting(showTimeSinceLastTick);
 		addSetting(showModules);
 		
 		addSetting(heldItemScale);

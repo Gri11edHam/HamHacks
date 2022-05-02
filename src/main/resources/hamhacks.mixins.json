@@ -4,6 +4,7 @@
 	"package": "net.grilledham.hamhacks.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
+		"MixinClientConnection",
 		"MixinClientPlayerEntity",
 		"MixinClientPlayerInteractionManager",
 		"MixinGameRenderer",

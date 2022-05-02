@@ -14,6 +14,7 @@ import net.grilledham.hamhacks.modules.player.*;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.modules.render.Tracers;
+import net.grilledham.hamhacks.util.ConnectionUtil;
 import net.grilledham.hamhacks.util.RotationHack;
 
 @Environment(EnvType.CLIENT)
@@ -28,6 +29,7 @@ public class HamHacksClient implements ClientModInitializer {
 	
 	public static void init() {
 		RotationHack.init();
+		ConnectionUtil.init();
 		registerModules();
 		Module.Category.init();
 		HamHacksConfig.initializeConfig();
