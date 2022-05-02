@@ -7,6 +7,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.ColorSetting;
 import net.grilledham.hamhacks.util.setting.settings.IntSetting;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.TranslatableText;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
@@ -21,7 +22,7 @@ public class ClickGUI extends Module {
 	private static ClickGUI INSTANCE;
 	
 	public ClickGUI() {
-		super("Click GUI", Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
+		super(new TranslatableText("module.hamhacks.clickgui"), Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
 		INSTANCE = this;
 	}
 	

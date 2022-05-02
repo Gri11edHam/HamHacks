@@ -7,6 +7,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
 import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
@@ -19,7 +20,7 @@ public class Speed extends Module {
 	private static Speed INSTANCE;
 	
 	public Speed() {
-		super("Speed", Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
+		super(new TranslatableText("module.hamhacks.speed"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
 		INSTANCE = this;
 	}
 	

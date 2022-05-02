@@ -11,6 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.text.TranslatableText;
 
 public class HUD extends Module {
 	
@@ -35,7 +36,7 @@ public class HUD extends Module {
 	private static HUD INSTANCE;
 	
 	public HUD() {
-		super("HUD", Category.RENDER, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.hud"), Category.RENDER, new Keybind(0));
 		setEnabled(true);
 		INSTANCE = this;
 	}

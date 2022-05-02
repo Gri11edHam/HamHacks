@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.modules.combat;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
+import net.minecraft.text.TranslatableText;
 
 public class Reach extends Module {
 	
@@ -12,7 +13,7 @@ public class Reach extends Module {
 	private static Reach INSTANCE;
 	
 	public Reach() {
-		super("Reach", Category.COMBAT, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.reach"), Category.COMBAT, new Keybind(0));
 		INSTANCE = this;
 	}
 	

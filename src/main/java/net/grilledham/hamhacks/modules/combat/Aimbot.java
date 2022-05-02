@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -38,7 +39,7 @@ public class Aimbot extends Module {
 	private HitResult blockToAim = null;
 	
 	public Aimbot() {
-		super("Aimbot", Category.COMBAT, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.aimbot"), Category.COMBAT, new Keybind(0));
 	}
 	
 	@Override

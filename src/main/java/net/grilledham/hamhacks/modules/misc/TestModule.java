@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.modules.misc;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.*;
+import net.minecraft.text.TranslatableText;
 
 public class TestModule extends Module {
 	
@@ -16,7 +17,7 @@ public class TestModule extends Module {
 	private StringSetting testString;
 	
 	public TestModule() {
-		super("Test", Category.MISC, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.test"), Category.MISC, new Keybind(0));
 	}
 	
 	@Override

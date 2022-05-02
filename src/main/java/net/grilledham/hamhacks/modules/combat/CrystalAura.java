@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -25,7 +26,7 @@ public class CrystalAura extends Module {
 	private int updates = 0;
 	
 	public CrystalAura() {
-		super("Crystal Aura", Category.COMBAT, new Keybind(GLFW.GLFW_KEY_C));
+		super(new TranslatableText("module.hamhacks.crystalaura"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_C));
 	}
 	
 	@EventListener

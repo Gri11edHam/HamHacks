@@ -8,13 +8,15 @@ import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
 import net.grilledham.hamhacks.util.setting.settings.KeySetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Module {
 	
-	protected String name;
+	protected Text name;
 	protected BoolSetting enabled = new BoolSetting("Enabled", false) {
 		@Override
 		protected void valueChanged() {
@@ -30,8 +32,8 @@ public class Module {
 	protected KeySetting key;
 	protected BoolSetting showModule = new BoolSetting("HUD Text", true);
 	
-	protected List<Setting> shownSettings = new ArrayList<>();
-	protected List<Setting> settings = new ArrayList<>();
+	protected List<Setting<?>> shownSettings = new ArrayList<>();
+	protected List<Setting<?>> settings = new ArrayList<>();
 	
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
@@ -39,7 +41,7 @@ public class Module {
 	protected BoolSetting forceDisabled = new BoolSetting("internal.forcedisabled", false);
 	protected boolean wasEnabled;
 	
-	public Module(String name, Category category, Keybind key) {
+	public Module(Text name, Category category, Keybind key) {
 		this.name = name;
 		this.category = category;
 		this.key = new KeySetting("Keybind", key);
@@ -57,16 +59,16 @@ public class Module {
 		hideSetting(this.forceDisabled);
 	}
 	
-	protected void addSetting(Setting s) {
+	protected void addSetting(Setting<?> s) {
 		settings.add(s);
 		shownSettings.add(s);
 	}
 	
-	protected void showSetting(Setting s, int index) {
+	protected void showSetting(Setting<?> s, int index) {
 		shownSettings.add(index, s);
 	}
 	
-	protected void hideSetting(Setting s) {
+	protected void hideSetting(Setting<?> s) {
 		shownSettings.remove(s);
 	}
 	
@@ -105,7 +107,7 @@ public class Module {
 	}
 	
 	public String getName() {
-		return this.name;
+		return this.name.getString();
 	}
 	
 	public boolean isEnabled() {
@@ -116,11 +118,11 @@ public class Module {
 		return showModule.getValue();
 	}
 	
-	public List<Setting> getShownSettings() {
+	public List<Setting<?>> getShownSettings() {
 		return shownSettings;
 	}
 	
-	public List<Setting> getSettings() {
+	public List<Setting<?>> getSettings() {
 		return settings;
 	}
 	
@@ -129,14 +131,14 @@ public class Module {
 	}
 	
 	public enum Category {
-		MOVEMENT("Movement"),
-		COMBAT("Combat"),
-		RENDER("Render"),
-		PLAYER("Player"),
-		WORLD("World"),
-		MISC("Misc");
+		MOVEMENT(new TranslatableText("category.hamhacks.movement")),
+		COMBAT(new TranslatableText("category.hamhacks.combat")),
+		RENDER(new TranslatableText("category.hamhacks.render")),
+		PLAYER(new TranslatableText("category.hamhacks.player")),
+		WORLD(new TranslatableText("category.hamhacks.world")),
+		MISC(new TranslatableText("category.hamhacks.misc"));
 		
-		private final String text;
+		private final Text text;
 		private int x;
 		private int y;
 		private int width;
@@ -172,14 +174,27 @@ public class Module {
 			}
 		}
 		
-		Category(String text) {
+		public static void updateLanguage() {
+			TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+			for(Module.Category category : Module.Category.values()) {
+				List<Module> categoryModules = ModuleManager.getModules(category);
+				int categoryWidth = textRenderer.getWidth(category.getText());
+				for(Module module : categoryModules) {
+					categoryWidth = Math.max(textRenderer.getWidth(module.getName()), categoryWidth);
+				}
+				categoryWidth += 2;
+				category.setDimensions(categoryWidth + 4, 17);
+			}
+		}
+		
+		Category(Text text) {
 			this.text = text;
 			x = 0;
 			y = 0;
 		}
 		
 		public String getText() {
-			return text;
+			return text.getString();
 		}
 		
 		public void setPos(int x, int y) {
@@ -218,7 +233,7 @@ public class Module {
 		
 		public Category fromText(String text) {
 			for(Category category : values()) {
-				if(category.text.equals(text)) {
+				if(((TranslatableText)category.text).getKey().equals(text)) {
 					return category;
 				}
 			}

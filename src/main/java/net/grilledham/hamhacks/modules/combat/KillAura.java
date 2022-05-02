@@ -13,6 +13,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
@@ -33,7 +34,7 @@ public class KillAura extends Module {
 	private LivingEntity target;
 	
 	public KillAura() {
-		super("Kill Aura", Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
+		super(new TranslatableText("module.hamhacks.killaura"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
 	}
 	
 	@Override

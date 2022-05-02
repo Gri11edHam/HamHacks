@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.modules.player;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
+import net.minecraft.text.TranslatableText;
 
 public class Step extends Module {
 	
@@ -11,7 +12,7 @@ public class Step extends Module {
 	private float originalStepHeight;
 	
 	public Step() {
-		super("Step", Category.PLAYER, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.step"), Category.PLAYER, new Keybind(0));
 	}
 	
 	@Override

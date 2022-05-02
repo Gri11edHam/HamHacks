@@ -16,6 +16,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.*;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +41,7 @@ public class Tracers extends Module {
 	private ColorSetting passiveFar;
 	
 	public Tracers() {
-		super("Tracers", Category.RENDER, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.tracers"), Category.RENDER, new Keybind(0));
 	}
 	
 	@Override

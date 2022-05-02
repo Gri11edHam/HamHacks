@@ -5,12 +5,13 @@ import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.text.TranslatableText;
 import org.lwjgl.glfw.GLFW;
 
 public class NoFall extends Module {
 	
 	public NoFall() {
-		super("No Fall", Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
+		super(new TranslatableText("module.hamhacks.nofall"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
 	}
 	
 	@EventListener

@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -15,7 +16,7 @@ import org.lwjgl.glfw.GLFW;
 public class Trap extends Module {
 	
 	public Trap() {
-		super("Trap", Category.PLAYER, new Keybind(GLFW.GLFW_KEY_M));
+		super(new TranslatableText("module.hamhacks.trap"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_M));
 	}
 	
 	@Override

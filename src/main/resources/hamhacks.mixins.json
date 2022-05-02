@@ -13,6 +13,7 @@
 		"MixinInGameOverlayRenderer",
 		"MixinKeyBinding",
 		"MixinKeyboardInput",
+		"MixinLanguageManager",
 		"MixinMinecraftClient",
 		"MixinMouse",
 		"MixinTitleScreen"

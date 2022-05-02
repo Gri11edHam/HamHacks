@@ -6,13 +6,14 @@ import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
 public class BoatFly extends Module {
 	
 	public BoatFly() {
-		super("Boat Fly", Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_B));
+		super(new TranslatableText("module.hamhacks.boatfly"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_B));
 	}
 	
 	@EventListener

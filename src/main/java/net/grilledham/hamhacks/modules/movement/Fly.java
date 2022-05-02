@@ -10,6 +10,7 @@ import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
 import net.grilledham.hamhacks.util.setting.settings.SelectionSetting;
 import net.minecraft.block.Material;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
@@ -25,7 +26,7 @@ public class Fly extends Module {
 	private long lastTime;
 	
 	public Fly() {
-		super("Fly", Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_F));
+		super(new TranslatableText("module.hamhacks.fly"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_F));
 	}
 	
 	@Override

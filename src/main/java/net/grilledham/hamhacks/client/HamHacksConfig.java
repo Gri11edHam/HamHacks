@@ -87,16 +87,16 @@ public class HamHacksConfig {
 		}
 	}
 	
-	private static void addSettings(JsonObject obj, List<Setting> settings) {
-		for(Setting s : settings) {
+	private static void addSettings(JsonObject obj, List<Setting<?>> settings) {
+		for(Setting<?> s : settings) {
 			if(s != null) {
 				addSetting(obj, s);
 			}
 		}
 	}
 	
-	private static void addSettings(JsonArray obj, List<Setting> settings) {
-		for(Setting s : settings) {
+	private static void addSettings(JsonArray obj, List<Setting<?>> settings) {
+		for(Setting<?> s : settings) {
 			if(s != null) {
 				JsonObject setting = new JsonObject();
 				setting.addProperty("name", s.getName());
@@ -106,7 +106,7 @@ public class HamHacksConfig {
 		}
 	}
 	
-	private static void addSetting(JsonObject obj, Setting s) {
+	private static void addSetting(JsonObject obj, Setting<?> s) {
 		obj.add(s.getName(), s.getAsJsonObject().get(s.getName()));
 	}
 	
@@ -132,9 +132,9 @@ public class HamHacksConfig {
 		}
 	}
 	
-	private static void parseSettings(JsonObject obj, List<Setting> settings) {
+	private static void parseSettings(JsonObject obj, List<Setting<?>> settings) {
 		try {
-			for(Setting s : settings) {
+			for(Setting<?> s : settings) {
 				try {
 					parseSetting(obj, s);
 				} catch(Exception e) {
@@ -146,7 +146,7 @@ public class HamHacksConfig {
 		}
 	}
 	
-	private static void parseSetting(JsonObject obj, Setting s) {
+	private static void parseSetting(JsonObject obj, Setting<?> s) {
 		if(obj.has(s.getName())) {
 			try {
 				s.set(obj.get(s.getName()));
