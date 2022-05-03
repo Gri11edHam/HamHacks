@@ -48,7 +48,7 @@ public class CategoryPart extends GuiPart {
 		
 		int bgC = ClickGUI.getInstance().bgColor.getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix((bgC & 0xff000000) + 0xffffff, bgC, hoverAnimation);
+		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation);
 		RenderUtil.drawRect(stack, x + 1, y + 1, width - 1, height - 1, bgC);
 		
 		RenderUtil.drawRect(stack, x + 1, y, width - 1, 1, ClickGUI.getInstance().accentColor.getRGB());

@@ -30,7 +30,7 @@ public class ModulePart extends GuiPart {
 		
 		int bgC = ClickGUI.getInstance().bgColor.getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix((bgC & 0xff000000) + 0xffffff, bgC, hoverAnimation);
+		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation);
 		RenderUtil.drawRect(stack, x + 1, y, width - 1, height, bgC);
 		
 		int barC = (ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation);

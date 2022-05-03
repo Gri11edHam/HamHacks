@@ -28,7 +28,7 @@ public class KeySettingPart extends GuiPart {
 		
 		int bgC = ClickGUI.getInstance().bgColor.getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix((ClickGUI.getInstance().bgColor.getRGB() & 0xff000000) + 0xffffff, bgC, hoverAnimation);
+		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation);
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
 		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());

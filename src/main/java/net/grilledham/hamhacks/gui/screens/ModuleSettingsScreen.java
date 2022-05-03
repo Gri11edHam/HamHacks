@@ -80,7 +80,7 @@ public class ModuleSettingsScreen extends Screen {
 						
 						int bgC = ClickGUI.getInstance().bgColor.getRGB();
 						boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-						bgC = RenderUtil.mix((bgC & 0xff000000) + 0xffffff, bgC, hovered ? 1 : 0);
+						bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hovered ? 1 : 0);
 						RenderUtil.drawRect(stack, x, y, width, height, bgC);
 						
 						mc.textRenderer.drawWithShadow(stack, "uhhhh", x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());

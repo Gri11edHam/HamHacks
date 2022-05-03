@@ -16,6 +16,7 @@ public class ClickGUI extends Module {
 	
 	public ColorSetting accentColor;
 	public ColorSetting bgColor;
+	public ColorSetting bgColorHovered;
 	public ColorSetting textColor;
 	public IntSetting scale;
 	
@@ -35,11 +36,13 @@ public class ClickGUI extends Module {
 		super.addSettings();
 		float[] barHSB = Color.RGBtoHSB(0xa4, 0, 0, new float[3]);
 		accentColor = new ColorSetting(new TranslatableText("setting.clickgui.accentcolor"), barHSB[0], barHSB[1], barHSB[2], 1, false);
-		bgColor = new ColorSetting(new TranslatableText("setting.clickgui.backgroundcolor"), 1, 0, 0, 0.5f, false);
-		textColor = new ColorSetting(new TranslatableText("setting.clickgui.textcolor"), 1, 0, 1, 1, false);
+		bgColor = new ColorSetting(new TranslatableText("setting.clickgui.backgroundcolor"), 0, 0, 0, 0.5f, false);
+		bgColorHovered = new ColorSetting(new TranslatableText("setting.clickgui.backgroundcolorhovered"), 0, 0, 1, 0.5f, false);
+		textColor = new ColorSetting(new TranslatableText("setting.clickgui.textcolor"), 0, 0, 1, 1, false);
 		scale = new IntSetting(new TranslatableText("setting.clickgui.scale"), 2, 1, 5);
 		addSetting(accentColor);
 		addSetting(bgColor);
+		addSetting(bgColorHovered);
 		addSetting(textColor);
 		addSetting(scale);
 	}

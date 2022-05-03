@@ -96,7 +96,7 @@ public class ListSettingPart extends GuiPart {
 		RenderUtil.drawRect(stack, x, y, width - height, height, bgC);
 		
 		boolean hovered = mx >= x + width - height && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix((ClickGUI.getInstance().bgColor.getRGB() & 0xff000000) + 0xffffff, bgC, hoverAnimation);
+		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation);
 		RenderUtil.drawRect(stack, x + width - height, y, height, height, bgC);
 		
 		int outlineC = 0xffcccccc;

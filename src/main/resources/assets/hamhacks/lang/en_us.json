@@ -50,6 +50,7 @@
 	"module.hamhacks.clickgui": "Click GUI",
 	"setting.clickgui.accentcolor": "Accent Color",
 	"setting.clickgui.backgroundcolor": "Background Color",
+	"setting.clickgui.backgroundcolorhovered": "Background Color (Hovered)",
 	"setting.clickgui.textcolor": "Text Color",
 	"setting.clickgui.scale": "Scale",
 
@@ -84,7 +85,7 @@
 	"setting.generic.enabled": "Enabled",
 	"setting.generic.showmodule": "HUD Text",
 	"setting.generic.keybind": "Keybind",
-	
+
 	"setting.colorsettingpart.chroma": "Chroma",
 
 	"category.hamhacks.movement": "Movement",

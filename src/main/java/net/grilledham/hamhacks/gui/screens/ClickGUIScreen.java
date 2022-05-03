@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated(since = "1.5")
 public class ClickGUIScreen extends Screen {
 	
 	private final Map<Module.Category, List<Module>> categories = new HashMap<>();
