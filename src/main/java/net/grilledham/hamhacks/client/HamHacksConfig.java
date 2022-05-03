@@ -62,6 +62,7 @@ public class HamHacksConfig {
 					!file.createNewFile())
 				return;
 			JsonObject object = new JsonObject();
+			object.addProperty("config_version", HamHacksClient.CONFIG_VERSION);
 			JsonObject categories = new JsonObject();
 			for(Module.Category category : Module.Category.values()) {
 				JsonObject cObj = new JsonObject();
@@ -111,6 +112,19 @@ public class HamHacksConfig {
 	}
 	
 	private static void parseSettings(JsonObject obj) {
+		int configVersion = obj.has("config_version") ? obj.get("config_version").getAsInt() : -1; // Just log the config version for now (might be used in the future)
+		if(configVersion == -1) {
+			HamHacksClient.LOGGER.warn("Warning: The config was saved in an older version. Unfortunately, your settings will be lost");
+		} else if(configVersion < HamHacksClient.CONFIG_VERSION) {
+			HamHacksClient.LOGGER.warn("Warning: The config was saved in an older version. Some or all of your settings will be lost.");
+			HamHacksClient.LOGGER.warn(configVersion + " < " + HamHacksClient.CONFIG_VERSION);
+		} else if(configVersion > HamHacksClient.CONFIG_VERSION) {
+			HamHacksClient.LOGGER.warn("Warning: The config was saved in a newer version. Some or all of your settings will be lost.");
+			HamHacksClient.LOGGER.warn(configVersion + " > " + HamHacksClient.CONFIG_VERSION);
+		} else {
+			HamHacksClient.LOGGER.info("Loading config. Version: " + configVersion);
+		}
+		
 		JsonObject categories = obj.getAsJsonObject("categories");
 		for(Module.Category category : Module.Category.values()) {
 			JsonObject cObj = categories.getAsJsonObject(category.name().toLowerCase(Locale.ROOT));

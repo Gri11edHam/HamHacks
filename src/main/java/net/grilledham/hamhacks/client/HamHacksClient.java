@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,12 +17,16 @@ import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.modules.render.Tracers;
 import net.grilledham.hamhacks.util.ConnectionUtil;
 import net.grilledham.hamhacks.util.RotationHack;
+import org.slf4j.Logger;
 
 @Environment(EnvType.CLIENT)
 public class HamHacksClient implements ClientModInitializer {
 	
 	public static final String MOD_ID = "hamhacks";
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+	public static final int CONFIG_VERSION = 0;
+	
+	public static final Logger LOGGER = LogUtils.getLogger();
 	
 	@Override
 	public void onInitializeClient() {
