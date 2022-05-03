@@ -98,7 +98,7 @@ public class IngameGui {
 		}
 		if(HUD.getInstance().showTimeSinceLastTick.getValue()) {
 			float timeSinceLastTick = ConnectionUtil.getTimeSinceLastTick() / 1000f;
-			if(timeSinceLastTick >= 1) {
+			if(timeSinceLastTick >= 2) {
 				String timeSinceLastTickString = String.format("Seconds Since Last Tick: %.2f", timeSinceLastTick);
 				yAdd += drawLeftAligned(matrices, tickDelta, fontRenderer, timeSinceLastTickString, i, yAdd);
 				i++;
