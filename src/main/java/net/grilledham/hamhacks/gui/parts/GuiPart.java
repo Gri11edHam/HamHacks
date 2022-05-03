@@ -74,6 +74,10 @@ public abstract class GuiPart {
 		return false;
 	}
 	
+	public boolean scroll(double mx, double my, double delta) {
+		return false;
+	}
+	
 	public int getX() {
 		return x;
 	}

@@ -9,9 +9,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CategoryPart extends GuiPart {
 	
 	private final Module.Category category;
@@ -19,7 +16,7 @@ public class CategoryPart extends GuiPart {
 	private float openCloseAnimation;
 	private float hoverAnimation;
 	
-	private final List<ModulePart> moduleParts = new ArrayList<>();
+	private final ScrollablePart scrollArea;
 	
 	private boolean dragging = false;
 	private int lastMouseX = 0;
@@ -30,8 +27,9 @@ public class CategoryPart extends GuiPart {
 		this.category = category;
 		openCloseAnimation = category.isExpanded() ? 1 : 0;
 		int i = 0;
+		scrollArea = new ScrollablePart(x, y + height, width, 16 * 8);
 		for(Module m : ModuleManager.getModules(category)) {
-			moduleParts.add(new ModulePart(parent, x, y + height + (16 * i), width, 16, m));
+			scrollArea.addPart(new ModulePart(parent, x, y + height + (16 * i), width, 16, m));
 			i++;
 		}
 	}
@@ -40,7 +38,7 @@ public class CategoryPart extends GuiPart {
 	public void render(MatrixStack stack, int mx, int my, float partialTicks) {
 		stack.push();
 		
-		float scissorHeight = height + (16 * moduleParts.size()) * (1 - openCloseAnimation);
+		float scissorHeight = height + scrollArea.getHeight() * (1 - openCloseAnimation);
 		
 		RenderUtil.pushScissor(x, y, width, scissorHeight, ClickGUI.getInstance().scale.getValue());
 		RenderUtil.applyScissor();
@@ -57,9 +55,7 @@ public class CategoryPart extends GuiPart {
 		
 		mc.textRenderer.drawWithShadow(stack, category.getText(), x + 3, y + 5, ClickGUI.getInstance().textColor.getRGB());
 		
-		for(ModulePart modulePart : moduleParts) {
-			modulePart.draw(stack, mx, my, partialTicks);
-		}
+		scrollArea.draw(stack, mx, my, partialTicks);
 		
 		RenderUtil.popScissor();
 		RenderUtil.postRender();
@@ -68,9 +64,7 @@ public class CategoryPart extends GuiPart {
 		
 		if(dragging) {
 			moveBy(mx - lastMouseX, my - lastMouseY);
-			for(ModulePart module : moduleParts) {
-				module.moveBy(mx - lastMouseX, my - lastMouseY);
-			}
+			scrollArea.moveBy(mx - lastMouseX, my - lastMouseY);
 			category.setPos(x, y);
 			lastMouseX = mx;
 			lastMouseY = my;
@@ -92,6 +86,11 @@ public class CategoryPart extends GuiPart {
 	}
 	
 	@Override
+	protected void renderTop(MatrixStack stack, int mx, int my, float partialTicks) {
+		scrollArea.drawTop(stack, mx, my, partialTicks);
+	}
+	
+	@Override
 	public boolean click(double mx, double my, int button) {
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
@@ -104,10 +103,8 @@ public class CategoryPart extends GuiPart {
 			return true;
 		}
 		if(openCloseAnimation <= 0.5f) {
-			for(ModulePart module : moduleParts) {
-				if(module.click(mx, my, button)) {
-					return true;
-				}
+			if(scrollArea.click(mx, my, button)) {
+				return true;
 			}
 		}
 		return super.click(mx, my, button);
@@ -129,10 +126,8 @@ public class CategoryPart extends GuiPart {
 		}
 		if(!wasDragging) {
 			if(openCloseAnimation <= 0.5f) {
-				for(ModulePart module : moduleParts) {
-					if(module.release(mx, my, button)) {
-						return true;
-					}
+				if(scrollArea.release(mx, my, button)) {
+					return true;
 				}
 			}
 		}
@@ -150,12 +145,18 @@ public class CategoryPart extends GuiPart {
 			return true;
 		}
 		if(openCloseAnimation <= 0.5f) {
-			for(ModulePart module : moduleParts) {
-				if(module.drag(mx, my, button, dx, dy)) {
-					return true;
-				}
+			if(scrollArea.drag(mx, my, button, dx, dy)) {
+				return true;
 			}
 		}
 		return super.drag(mx, my, button, dx, dy);
+	}
+	
+	@Override
+	public boolean scroll(double mx, double my, double delta) {
+		if(scrollArea.scroll(mx, my, delta)) {
+			return true;
+		}
+		return super.scroll(mx, my, delta);
 	}
 }

@@ -19,9 +19,8 @@ public class ModuleSettingsScreen extends Screen {
 	private final Screen last;
 	private final Module module;
 	
-	private int scissorHeight = 0;
-	
-	private final List<GuiPart> settingParts = new ArrayList<>();
+	private GuiPart topPart;
+	private ScrollablePart scrollArea;
 	
 	public ModuleSettingsScreen(Screen last, Module module) {
 		super(new TranslatableText("menu.hamhacks.clickgui.module"));
@@ -32,13 +31,10 @@ public class ModuleSettingsScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		settingParts.clear();
 		width = (int)((width * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue());
 		height = (int)((height * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue());
 		int maxWidth = 0;
-		int totalHeight = 0;
-		GuiPart part;
-		settingParts.add(part = new GuiPart(0, 0, client.textRenderer.getWidth(module.getName()) + 2, 16) {
+		topPart = new GuiPart(0, 0, client.textRenderer.getWidth(module.getName()) + 2, 16) {
 			@Override
 			public void render(MatrixStack stack, int mx, int my, float partialTicks) {
 				stack.push();
@@ -52,9 +48,11 @@ public class ModuleSettingsScreen extends Screen {
 				RenderUtil.postRender();
 				stack.pop();
 			}
-		});
-		totalHeight += part.getHeight();
-		for(Setting s : module.getShownSettings()) {
+		};
+		List<GuiPart> settingParts = new ArrayList<>();
+		GuiPart part;
+		int totalHeight = 0;
+		for(Setting<?> s : module.getShownSettings()) {
 			if(s instanceof BoolSetting) {
 				settingParts.add(part = new BoolSettingPart(0, 0, (BoolSetting)s));
 			} else if(s instanceof ColorSetting) {
@@ -96,10 +94,17 @@ public class ModuleSettingsScreen extends Screen {
 			totalHeight += part.getHeight();
 		}
 		int yAdd = 0;
+		scrollArea = new ScrollablePart(0, 0, 0, (int)(Math.min(height * (2 / 3f), totalHeight)));
+		scrollArea.clearParts();
+		scrollArea.moveTo(width / 2 - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))));
+		scrollArea.resize(maxWidth, 0);
+		topPart.moveTo(width / 2 - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topPart.getHeight());
+		topPart.resize(maxWidth, topPart.getHeight());
 		for(GuiPart guiPart : settingParts) {
 			guiPart.moveTo(width / 2 - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f)) + yAdd));
 			guiPart.resize(maxWidth, guiPart.getHeight());
 			yAdd += guiPart.getHeight();
+			scrollArea.addPart(guiPart);
 		}
 	}
 	
@@ -112,12 +117,12 @@ public class ModuleSettingsScreen extends Screen {
 		matrices.scale(scaleFactor, scaleFactor, scaleFactor);
 		
 		super.render(matrices, mouseX, mouseY, delta);
-		for(int i = 0; i < settingParts.size(); i++) {
-			settingParts.get(i).draw(matrices, mouseX, mouseY, delta);
-		}
-		for(int i = 0; i < settingParts.size(); i++) {
-			settingParts.get(i).drawTop(matrices, mouseX, mouseY, delta);
-		}
+		
+		topPart.draw(matrices, mouseX, mouseY, delta);
+		scrollArea.draw(matrices, mouseX, mouseY, delta);
+		topPart.drawTop(matrices, mouseX, mouseY, delta);
+		scrollArea.drawTop(matrices, mouseX, mouseY, delta);
+		
 		matrices.pop();
 	}
 	
@@ -125,10 +130,8 @@ public class ModuleSettingsScreen extends Screen {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
 		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
-		for(int i = 0; i < settingParts.size(); i++) {
-			if(settingParts.get(i).click(mouseX, mouseY, button)) {
-				return true;
-			}
+		if(scrollArea.click(mouseX, mouseY, button)) {
+			return true;
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
@@ -137,10 +140,8 @@ public class ModuleSettingsScreen extends Screen {
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
 		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
 		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
-		for(int i = 0; i < settingParts.size(); i++) {
-			if(settingParts.get(i).release(mouseX, mouseY, button)) {
-				return true;
-			}
+		if(scrollArea.release(mouseX, mouseY, button)) {
+			return true;
 		}
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
@@ -149,32 +150,34 @@ public class ModuleSettingsScreen extends Screen {
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
 		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
 		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
-		for(int i = 0; i < settingParts.size(); i++) {
-			if(settingParts.get(i).drag(mouseX, mouseY, button, deltaX, deltaY)) {
-				return true;
-			}
+		if(scrollArea.drag(mouseX, mouseY, button, deltaX, deltaY)) {
+			return true;
 		}
 		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
 	}
 	
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		for(int i = 0; i < settingParts.size(); i++) {
-			if(settingParts.get(i).type(keyCode, scanCode, modifiers)) {
-				return true;
-			}
+		if(scrollArea.type(keyCode, scanCode, modifiers)) {
+			return true;
 		}
 		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 	
 	@Override
 	public boolean charTyped(char chr, int modifiers) {
-		for(int i = 0; i < settingParts.size(); i++) {
-			if(settingParts.get(i).typeChar(chr, modifiers)) {
-				return true;
-			}
+		if(scrollArea.typeChar(chr, modifiers)) {
+			return true;
 		}
 		return super.charTyped(chr, modifiers);
+	}
+	
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+		if(scrollArea.scroll(mouseX, mouseY, amount)) {
+			return true;
+		}
+		return super.mouseScrolled(mouseX, mouseY, amount);
 	}
 	
 	@Override

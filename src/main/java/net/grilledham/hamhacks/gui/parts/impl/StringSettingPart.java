@@ -57,7 +57,7 @@ public class StringSettingPart extends GuiPart {
 		
 		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
 		
-		RenderUtil.pushScissor(x + width - 102, y, 100, height, ClickGUI.getInstance().scale.getValue());
+		RenderUtil.adjustScissor(x + width - 102, y, 100, height, ClickGUI.getInstance().scale.getValue());
 		RenderUtil.applyScissor();
 		
 		mc.textRenderer.drawWithShadow(stack, setting.getValue(), x + width - mc.textRenderer.getWidth(setting.getValue()) - 2 + mc.textRenderer.getWidth(setting.getValue().substring(stringScroll)), y + 4, ClickGUI.getInstance().textColor.getRGB());

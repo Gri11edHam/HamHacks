@@ -16,19 +16,39 @@ public class RenderUtil {
 	
 	// 0 - x, 1 - y, 2 - width, 3 - height, 4 - scale
 	private static final List<Float[]> scissorStack = new ArrayList<>();
+	private static float SCISSOR_TRANSLATION_X = 0;
+	private static float SCISSOR_TRANSLATION_Y = 0;
 	
 	private static int zLevel = 0;
 	
 	private RenderUtil() {}
 	
+	public static void translateScissor(float x, float y) {
+		SCISSOR_TRANSLATION_X += x;
+		SCISSOR_TRANSLATION_Y += y;
+	}
+	
 	public static void pushScissor(float x, float y, float width, float height, float scale) {
-		scissorStack.add(0, new Float[] {x, y, width, height, scale});
+		scissorStack.add(0, new Float[] {x + SCISSOR_TRANSLATION_X, y + SCISSOR_TRANSLATION_Y, width, height, scale});
+	}
+	
+	public static void adjustScissor(float x, float y, float width, float height, float scale) {
+		if(!scissorStack.isEmpty()) {
+			x = Math.max(x, scissorStack.get(0)[0]);
+			y = Math.max(y, scissorStack.get(0)[1]);
+			float x1 = Math.min(x + width, scissorStack.get(0)[0] + scissorStack.get(0)[2]);
+			float y1 = Math.min(y + height, scissorStack.get(0)[1] + scissorStack.get(0)[3]);
+			width = x1 - x;
+			height = y1 - y;
+		}
+		scissorStack.add(0, new Float[] {x + SCISSOR_TRANSLATION_X, y + SCISSOR_TRANSLATION_Y, width, height, scale});
 	}
 	
 	public static void popScissor() {
 		scissorStack.remove(0);
-		if(scissorStack.isEmpty()) {
-			RenderSystem.disableScissor();
+		RenderSystem.disableScissor();
+		if(!scissorStack.isEmpty()) {
+			applyScissor();
 		}
 	}
 	
@@ -38,7 +58,9 @@ public class RenderUtil {
 		int y = (int)(scissorStack.get(0)[1] * scaleFactor);
 		int w = (int)(scissorStack.get(0)[2] * scaleFactor);
 		int h = (int)(scissorStack.get(0)[3] * scaleFactor);
-		RenderSystem.enableScissor(x, mc.getWindow().getHeight() - y - h, w, h);
+		if(!(w < 0 || h < 0)) {
+			RenderSystem.enableScissor(x, mc.getWindow().getHeight() - y - h, w, h);
+		}
 	}
 	
 	public static int mix(int c1, int c2, float by) {
