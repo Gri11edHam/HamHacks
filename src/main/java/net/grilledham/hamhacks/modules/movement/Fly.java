@@ -90,7 +90,7 @@ public class Fly extends Module {
 						}
 					}
 					if(!isAboveBlock) {
-						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y - updates, mc.player.getPos().z, true));
+						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y - updates, mc.player.getPos().z, mc.player.isOnGround()));
 					}
 					
 					updates += (System.currentTimeMillis() - lastTime) / 1000f;
