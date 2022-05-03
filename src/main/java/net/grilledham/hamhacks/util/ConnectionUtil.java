@@ -10,6 +10,7 @@ import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
 public class ConnectionUtil {
 	
 	private static float tickRate;
+	private static float calcTickRate;
 	
 	private static long lastPacketReceivedAt;
 	private static long joinedGameAt;
@@ -28,6 +29,7 @@ public class ConnectionUtil {
 			long now = System.currentTimeMillis();
 			float elapsedTime = (now - lastPacketReceivedAt) / 1000f;
 			tickRate = 20 / elapsedTime;
+			calcTickRate = tickRate;
 			lastPacketReceivedAt = System.currentTimeMillis();
 		}
 	}
@@ -46,6 +48,15 @@ public class ConnectionUtil {
 		}
 		if(System.currentTimeMillis() - joinedGameAt < 2000) {
 			return 20;
+		}
+		
+		float elapsedTime = (System.currentTimeMillis() - lastPacketReceivedAt) / 1000f;
+		if(elapsedTime != 0) {
+			calcTickRate = tickRate / elapsedTime;
+		}
+		
+		if(elapsedTime > 2) {
+			return calcTickRate;
 		}
 		
 		return tickRate;
