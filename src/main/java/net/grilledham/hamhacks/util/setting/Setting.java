@@ -4,12 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.grilledham.hamhacks.gui.screens.ModuleSettingsScreen;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 public abstract class Setting<T> {
 	
-	protected final String name;
+	protected final Text name;
 	
-	protected String toolTip;
+	protected Text toolTip;
 	
 	protected JsonObject value;
 	
@@ -18,7 +20,7 @@ public abstract class Setting<T> {
 	/**
 	 * @param name The name of the setting
 	 */
-	public Setting(String name) {
+	public Setting(Text name) {
 		this.name = name;
 		value = new JsonObject();
 	}
@@ -27,7 +29,7 @@ public abstract class Setting<T> {
 	 * Allows you give the user more information about this setting
 	 * @param toolTip What should the user know about this setting
 	 */
-	public void setToolTip(String toolTip) {
+	public void setToolTip(Text toolTip) {
 		this.toolTip = toolTip;
 	}
 	
@@ -59,15 +61,19 @@ public abstract class Setting<T> {
 	}
 	
 	public String getToolTip() {
-		return toolTip;
+		return toolTip.getString();
 	}
 	
 	public String getName() {
-		return name;
+		return name.getString();
+	}
+	
+	public String getKey() {
+		return ((TranslatableText)name).getKey();
 	}
 	
 	public void set(JsonElement el) {
-		value.add(name, el);
+		value.add(((TranslatableText)name).getKey(), el);
 		valueChanged();
 	}
 	

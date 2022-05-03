@@ -25,7 +25,7 @@ public class HamHacksConfig {
 		if (file != null) {
 			return;
 		}
-		file = new File(FabricLoader.getInstance().getConfigDir().toFile(), HamHacksClient.MOD_ID + ".json");
+		file = new File(FabricLoader.getInstance().getGameDir().toFile(), HamHacksClient.MOD_ID + "/config.json");
 	}
 	
 	public static void initializeConfig() {
@@ -77,7 +77,7 @@ public class HamHacksConfig {
 				JsonObject modSettings = new JsonObject();
 				addSettings(modSettings, m.getSettings());
 				mod.add("settings", modSettings);
-				modules.add(m.getName(), mod);
+				modules.add(m.getConfigName(), mod);
 			}
 			object.add("modules", modules);
 			writeToFile(file, object);
@@ -107,7 +107,7 @@ public class HamHacksConfig {
 	}
 	
 	private static void addSetting(JsonObject obj, Setting<?> s) {
-		obj.add(s.getName(), s.getAsJsonObject().get(s.getName()));
+		obj.add(s.getKey(), s.getAsJsonObject().get(s.getKey()));
 	}
 	
 	private static void parseSettings(JsonObject obj) {
@@ -147,9 +147,9 @@ public class HamHacksConfig {
 	}
 	
 	private static void parseSetting(JsonObject obj, Setting<?> s) {
-		if(obj.has(s.getName())) {
+		if(obj.has(s.getKey())) {
 			try {
-				s.set(obj.get(s.getName()));
+				s.set(obj.get(s.getKey()));
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

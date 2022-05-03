@@ -29,7 +29,7 @@ public class IngameGui {
 		if(!HUD.getInstance().isEnabled()) {
 			return;
 		}
-		Float[] barC = HUD.getInstance().barColor.getValue();
+		Float[] barC = HUD.getInstance().accentColor.getValue();
 		Float[] bgC = HUD.getInstance().bgColor.getValue();
 		Float[] textC = HUD.getInstance().textColor.getValue();
 		
@@ -37,7 +37,7 @@ public class IngameGui {
 		int yAdd = 0;
 		if(HUD.getInstance().showLogo.getValue()) {
 			float finalBarHue;
-			if(HUD.getInstance().barColor.useChroma()) {
+			if(HUD.getInstance().accentColor.useChroma()) {
 				finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 			} else {
 				finalBarHue = barC[0];
@@ -116,11 +116,11 @@ public class IngameGui {
 	}
 	
 	private int drawLeftAligned(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer, String text, int i, int yAdd) {
-		Float[] barC = HUD.getInstance().barColor.getValue();
+		Float[] barC = HUD.getInstance().accentColor.getValue();
 		Float[] bgC = HUD.getInstance().bgColor.getValue();
 		Float[] textC = HUD.getInstance().textColor.getValue();
 		float finalBarHue;
-		if(HUD.getInstance().barColor.useChroma()) {
+		if(HUD.getInstance().accentColor.useChroma()) {
 			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBarHue = barC[0];
@@ -149,11 +149,11 @@ public class IngameGui {
 	}
 	
 	private int drawRightAligned(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer, String text, int i, int yAdd) {
-		Float[] barC = HUD.getInstance().barColor.getValue();
+		Float[] barC = HUD.getInstance().accentColor.getValue();
 		Float[] bgC = HUD.getInstance().bgColor.getValue();
 		Float[] textC = HUD.getInstance().textColor.getValue();
 		float finalBarHue;
-		if(HUD.getInstance().barColor.useChroma()) {
+		if(HUD.getInstance().accentColor.useChroma()) {
 			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBarHue = barC[0];

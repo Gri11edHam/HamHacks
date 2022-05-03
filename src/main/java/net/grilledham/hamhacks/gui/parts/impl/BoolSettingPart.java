@@ -36,7 +36,7 @@ public class BoolSettingPart extends GuiPart {
 		RenderUtil.drawHRect(stack, x + width - 14, y + 2, 12, 12, outlineC);
 		
 		boolean hovered = mx >= x + width - 12 && mx < x + width - 4 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((ClickGUI.getInstance().barColor.getRGB() & 0xff000000) + 0xffffff, (ClickGUI.getInstance().barColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation), hoverAnimation / 4);
+		int boxC = RenderUtil.mix((ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + 0xffffff, (ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation), hoverAnimation / 4);
 		RenderUtil.drawRect(stack, x + width - 12, y + 4, 8, 8, boxC);
 		
 		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());

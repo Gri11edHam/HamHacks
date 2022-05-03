@@ -14,7 +14,7 @@ import java.awt.*;
 
 public class ClickGUI extends Module {
 	
-	public ColorSetting barColor;
+	public ColorSetting accentColor;
 	public ColorSetting bgColor;
 	public ColorSetting textColor;
 	public IntSetting scale;
@@ -34,11 +34,11 @@ public class ClickGUI extends Module {
 	public void addSettings() {
 		super.addSettings();
 		float[] barHSB = Color.RGBtoHSB(0xa4, 0, 0, new float[3]);
-		barColor = new ColorSetting("Bar Color", barHSB[0], barHSB[1], barHSB[2], 1, false);
-		bgColor = new ColorSetting("Background Color", 1, 0, 0, 0.5f, false);
-		textColor = new ColorSetting("Text Color", 1, 0, 1, 1, false);
-		scale = new IntSetting("Scale", 2, 1, 5);
-		addSetting(barColor);
+		accentColor = new ColorSetting(new TranslatableText("setting.clickgui.accentcolor"), barHSB[0], barHSB[1], barHSB[2], 1, false);
+		bgColor = new ColorSetting(new TranslatableText("setting.clickgui.backgroundcolor"), 1, 0, 0, 0.5f, false);
+		textColor = new ColorSetting(new TranslatableText("setting.clickgui.textcolor"), 1, 0, 1, 1, false);
+		scale = new IntSetting(new TranslatableText("setting.clickgui.scale"), 2, 1, 5);
+		addSetting(accentColor);
 		addSetting(bgColor);
 		addSetting(textColor);
 		addSetting(scale);

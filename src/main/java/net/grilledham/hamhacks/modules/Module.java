@@ -17,7 +17,7 @@ import java.util.List;
 public class Module {
 	
 	protected Text name;
-	protected BoolSetting enabled = new BoolSetting("Enabled", false) {
+	protected BoolSetting enabled = new BoolSetting(new TranslatableText("setting.generic.enabled"), false) {
 		@Override
 		protected void valueChanged() {
 			super.valueChanged();
@@ -30,7 +30,7 @@ public class Module {
 	};
 	protected Category category;
 	protected KeySetting key;
-	protected BoolSetting showModule = new BoolSetting("HUD Text", true);
+	protected BoolSetting showModule = new BoolSetting(new TranslatableText("setting.generic.showmodule"), true);
 	
 	protected List<Setting<?>> shownSettings = new ArrayList<>();
 	protected List<Setting<?>> settings = new ArrayList<>();
@@ -38,13 +38,13 @@ public class Module {
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
 	
-	protected BoolSetting forceDisabled = new BoolSetting("internal.forcedisabled", false);
+	protected BoolSetting forceDisabled = new BoolSetting(new TranslatableText("setting.generic.internal.forcedisabled"), false);
 	protected boolean wasEnabled;
 	
 	public Module(Text name, Category category, Keybind key) {
 		this.name = name;
 		this.category = category;
-		this.key = new KeySetting("Keybind", key);
+		this.key = new KeySetting(new TranslatableText("setting.generic.keybind"), key);
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if(key.wasPressed()) {
@@ -128,6 +128,10 @@ public class Module {
 	
 	public Keybind getKey() {
 		return key.getKeybind();
+	}
+	
+	public String getConfigName() {
+		return ((TranslatableText)name).getKey();
 	}
 	
 	public enum Category {

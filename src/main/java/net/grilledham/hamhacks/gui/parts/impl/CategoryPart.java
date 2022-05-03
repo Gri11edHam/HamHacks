@@ -51,9 +51,9 @@ public class CategoryPart extends GuiPart {
 		bgC = RenderUtil.mix((bgC & 0xff000000) + 0xffffff, bgC, hoverAnimation);
 		RenderUtil.drawRect(stack, x + 1, y + 1, width - 1, height - 1, bgC);
 		
-		RenderUtil.drawRect(stack, x + 1, y, width - 1, 1, ClickGUI.getInstance().barColor.getRGB());
+		RenderUtil.drawRect(stack, x + 1, y, width - 1, 1, ClickGUI.getInstance().accentColor.getRGB());
 		
-		RenderUtil.drawRect(stack, x, y, 1, height, ClickGUI.getInstance().barColor.getRGB());
+		RenderUtil.drawRect(stack, x, y, 1, height, ClickGUI.getInstance().accentColor.getRGB());
 		
 		mc.textRenderer.drawWithShadow(stack, category.getText(), x + 3, y + 5, ClickGUI.getInstance().textColor.getRGB());
 		

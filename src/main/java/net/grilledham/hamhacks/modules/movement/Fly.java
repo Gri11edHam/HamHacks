@@ -31,9 +31,9 @@ public class Fly extends Module {
 	
 	@Override
 	public void addSettings() {
-		mode = new SelectionSetting("Mode", "Default", "Default", "Vanilla");
-		speed = new FloatSetting("Speed", 1f, 0f, 10f);
-		smoothMovement = new BoolSetting("Smooth Movement", true);
+		mode = new SelectionSetting(new TranslatableText("setting.fly.mode"), new TranslatableText("setting.fly.mode.default"), new TranslatableText("setting.fly.mode.default"), new TranslatableText("setting.fly.mode.vanilla"));
+		speed = new FloatSetting(new TranslatableText("setting.fly.speed"), 1f, 0f, 10f);
+		smoothMovement = new BoolSetting(new TranslatableText("setting.fly.smoothmovement"), true);
 		addSetting(mode);
 		addSetting(speed);
 		addSetting(smoothMovement);
@@ -46,12 +46,12 @@ public class Fly extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		if(mode.getValue().equalsIgnoreCase("Default")) {
+		if(((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.default")) {
 			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
 		}
-		if(mode.getValue().equalsIgnoreCase("Vanilla")) {
+		if(((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.vanilla")) {
 			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
@@ -61,46 +61,20 @@ public class Fly extends Module {
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
-			switch(mode.getValue()) {
-				case "Default" -> {
+			switch(((TranslatableText)mode.getValue()).getKey()) {
+				case "setting.fly.mode.default" -> {
 					if(smoothMovement.getValue()) {
 						moveSmooth();
 					} else {
 						move();
 					}
-					
-//					mc.player.getAbilities().flying = true;
-//					double x = mc.player.getVelocity().x;
-//					double y = mc.player.getVelocity().y;
-//					double z = mc.player.getVelocity().z;
-//					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
-//						y = 0;
-//					}
-//					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
-//						x = 0;
-//						z = 0;
-//					}
-//					mc.player.setVelocity(new Vec3d(x, y, z));
 				}
-				case "Vanilla" -> {
+				case "setting.fly.mode.vanilla" -> {
 					if(smoothMovement.getValue()) {
 						moveSmooth();
 					} else {
 						move();
 					}
-					
-//					mc.player.getAbilities().flying = true;
-//					double x = mc.player.getVelocity().x;
-//					double y = mc.player.getVelocity().y;
-//					double z = mc.player.getVelocity().z;
-//					if(!mc.player.input.jumping && !mc.player.input.sneaking) {
-//						y = 0;
-//					}
-//					if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
-//						x = 0;
-//						z = 0;
-//					}
-//					mc.player.setVelocity(new Vec3d(x, y, z));
 					
 					if(updates >= 0.5f) {
 						updates = 0;
@@ -233,9 +207,9 @@ public class Fly extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		if(mode.getValue().equalsIgnoreCase("Default")) {
+		if(((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.default")) {
 			mc.player.getAbilities().flying = false;
-		} else if (mode.getValue().equalsIgnoreCase("Vanilla")) {
+		} else if (((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.vanilla")) {
 			mc.player.getAbilities().flying = false;
 		}
 	}

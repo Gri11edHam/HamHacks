@@ -26,9 +26,9 @@ public class Speed extends Module {
 	
 	@Override
 	public void addSettings() {
-		speed = new FloatSetting("Speed", 2.5f, 0f, 10f);
-		autoJump = new BoolSetting("Auto Jump", false);
-		disableWithElytra = new BoolSetting("Disable With Elytra", true);
+		speed = new FloatSetting(new TranslatableText("setting.speed.speed"), 2.5f, 0f, 10f);
+		autoJump = new BoolSetting(new TranslatableText("setting.speed.autojump"), false);
+		disableWithElytra = new BoolSetting(new TranslatableText("setting.speed.disablewithelytra"), true);
 		addSetting(speed);
 		addSetting(autoJump);
 		addSetting(disableWithElytra);

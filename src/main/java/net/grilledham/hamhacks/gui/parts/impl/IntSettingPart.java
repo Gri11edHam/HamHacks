@@ -6,6 +6,7 @@ import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.settings.IntSetting;
 import net.grilledham.hamhacks.util.setting.settings.StringSetting;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.TranslatableText;
 import org.lwjgl.glfw.GLFW;
 
 public class IntSettingPart extends GuiPart {
@@ -22,7 +23,7 @@ public class IntSettingPart extends GuiPart {
 	
 	public IntSettingPart(int x, int y, IntSetting setting) {
 		super(x, y, 16, 16);
-		strVal = new StringSetting("", setting.getValue().toString());
+		strVal = new StringSetting(new TranslatableText(""), setting.getValue().toString());
 		editor = new StringSettingPart(x + width - 207, y, strVal) {
 			@Override
 			public boolean type(int code, int scanCode, int modifiers) {
@@ -61,7 +62,7 @@ public class IntSettingPart extends GuiPart {
 		RenderUtil.drawHRect(stack, x + width - 206, y + 2, 204, 12, outlineC);
 		
 		boolean hovered = mx >= x + width - 204 && mx < x + width - 4 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((ClickGUI.getInstance().barColor.getRGB() & 0xff000000) + 0xffffff, ClickGUI.getInstance().barColor.getRGB(), hoverAnimation / 4);
+		int boxC = RenderUtil.mix((ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + 0xffffff, ClickGUI.getInstance().accentColor.getRGB(), hoverAnimation / 4);
 		float sliderPercentage = (sliderAnimation - setting.getMin()) / (setting.getMax() - setting.getMin());
 		RenderUtil.drawRect(stack, x + width - 204, y + 4, (200 * sliderPercentage), 8, boxC);
 		

@@ -18,7 +18,7 @@ public class Step extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		height = new FloatSetting("Height", 1f, 0f, 10f) {
+		height = new FloatSetting(new TranslatableText("setting.step.height"), 1f, 0f, 10f) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();

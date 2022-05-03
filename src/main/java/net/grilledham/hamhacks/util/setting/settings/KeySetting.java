@@ -4,14 +4,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.util.setting.Setting;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 public class KeySetting extends Setting<Integer> {
 	
 	private final Keybind keybind;
 	
-	public KeySetting(String name, Keybind keybind) {
+	public KeySetting(Text name, Keybind keybind) {
 		super(name);
-		value.addProperty(name, keybind.getKey());
+		value.addProperty(((TranslatableText)name).getKey(), keybind.getKey());
 		this.keybind = keybind;
 		def = keybind.getKey();
 	}
@@ -19,7 +21,7 @@ public class KeySetting extends Setting<Integer> {
 	@Override
 	protected void updateValue(Integer value) {
 		keybind.setKey(value);
-		this.value.addProperty(name, keybind.getKey());
+		this.value.addProperty(((TranslatableText)name).getKey(), keybind.getKey());
 	}
 	
 	@Override
@@ -39,7 +41,7 @@ public class KeySetting extends Setting<Integer> {
 	
 	@Override
 	public JsonObject getAsJsonObject() {
-		value.addProperty(name, keybind.getKey());
+		value.addProperty(((TranslatableText)name).getKey(), keybind.getKey());
 		return super.getAsJsonObject();
 	}
 }

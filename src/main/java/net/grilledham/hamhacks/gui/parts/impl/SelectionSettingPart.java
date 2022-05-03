@@ -6,6 +6,7 @@ import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.settings.SelectionSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -29,8 +30,8 @@ public class SelectionSettingPart extends GuiPart {
 		this.setting = setting;
 		maxWidth = 0;
 		GuiPart part;
-		for(String s : setting.getPossibleValues()) {
-			parts.add(part = new ButtonPart(s, 0, 0, mc.textRenderer.getWidth(s) + 4, 16, () -> setting.setValue(s)));
+		for(Text s : setting.getPossibleValues()) {
+			parts.add(part = new ButtonPart(s.getString(), 0, 0, mc.textRenderer.getWidth(s) + 4, 16, () -> setting.setValue(s)));
 			if(maxWidth < part.getWidth()) {
 				maxWidth = part.getWidth();
 			}

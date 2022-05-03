@@ -28,12 +28,12 @@ public class Aimbot extends Module {
 	private FloatSetting speed;
 	private FloatSetting fov;
 	
-	private BoolSetting aimAtEntities;
-	private BoolSetting keepOverEntity;
-	private BoolSetting aimAtPlayers;
-	private BoolSetting aimAtPassive;
-	private BoolSetting aimAtHostile;
-	private BoolSetting aimAtBlocks;
+	private BoolSetting targetEntities;
+	private BoolSetting keepAiming;
+	private BoolSetting targetPlayers;
+	private BoolSetting targetPassive;
+	private BoolSetting targetHostile;
+	private BoolSetting targetBlocks;
 	
 	private Entity entityToAim = null;
 	private HitResult blockToAim = null;
@@ -44,9 +44,9 @@ public class Aimbot extends Module {
 	
 	@Override
 	public void addSettings() {
-		speed = new FloatSetting("Speed", 10.0f, 0.1f, 100f);
-		fov = new FloatSetting("FOV", 90.0f, 0.1f, 360f);
-		aimAtEntities = new BoolSetting("Aim At Entities", true) {
+		speed = new FloatSetting(new TranslatableText("setting.aimbot.speed"), 10.0f, 0.1f, 100f);
+		fov = new FloatSetting(new TranslatableText("setting.aimbot.fov"), 90.0f, 0.1f, 360f);
+		targetEntities = new BoolSetting(new TranslatableText("setting.aimbot.targetentities"), true) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -54,32 +54,32 @@ public class Aimbot extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		keepOverEntity = new BoolSetting("Keep Aiming At Entity", false);
-		aimAtPlayers = new BoolSetting("Aim at Players", true);
-		aimAtPassive = new BoolSetting("Aim at Passive Mobs", false);
-		aimAtHostile = new BoolSetting("Aim at Hostile Mobs", false);
-		aimAtBlocks = new BoolSetting("Aim At Blocks", false);
+		keepAiming = new BoolSetting(new TranslatableText("setting.aimbot.keepaiming"), false);
+		targetPlayers = new BoolSetting(new TranslatableText("setting.aimbot.targetplayers"), true);
+		targetPassive = new BoolSetting(new TranslatableText("setting.aimbot.targetpassive"), false);
+		targetHostile = new BoolSetting(new TranslatableText("setting.aimbot.targethostile"), false);
+		targetBlocks = new BoolSetting(new TranslatableText("setting.aimbot.targetblocks"), false);
 		addSetting(speed);
 		addSetting(fov);
-		addSetting(aimAtEntities);
-		addSetting(keepOverEntity);
-		addSetting(aimAtPlayers);
-		addSetting(aimAtPassive);
-		addSetting(aimAtHostile);
-		addSetting(aimAtBlocks);
+		addSetting(targetEntities);
+		addSetting(keepAiming);
+		addSetting(targetPlayers);
+		addSetting(targetPassive);
+		addSetting(targetHostile);
+		addSetting(targetBlocks);
 		updateSettings();
 	}
 	
 	private void updateSettings() {
-		hideSetting(keepOverEntity);
-		hideSetting(aimAtPlayers);
-		hideSetting(aimAtPassive);
-		hideSetting(aimAtHostile);
-		if(aimAtEntities.getValue()) {
-			showSetting(aimAtHostile, shownSettings.indexOf(aimAtEntities) + 1);
-			showSetting(aimAtPassive, shownSettings.indexOf(aimAtEntities) + 1);
-			showSetting(aimAtPlayers, shownSettings.indexOf(aimAtEntities) + 1);
-			showSetting(keepOverEntity, shownSettings.indexOf(aimAtEntities) + 1);
+		hideSetting(keepAiming);
+		hideSetting(targetPlayers);
+		hideSetting(targetPassive);
+		hideSetting(targetHostile);
+		if(targetEntities.getValue()) {
+			showSetting(targetHostile, shownSettings.indexOf(targetEntities) + 1);
+			showSetting(targetPassive, shownSettings.indexOf(targetEntities) + 1);
+			showSetting(targetPlayers, shownSettings.indexOf(targetEntities) + 1);
+			showSetting(keepAiming, shownSettings.indexOf(targetEntities) + 1);
 		}
 	}
 	
@@ -88,7 +88,7 @@ public class Aimbot extends Module {
 		if(mc.world == null) {
 			return;
 		}
-		if(keepOverEntity.getValue()) {
+		if(keepAiming.getValue()) {
 			if(entityToAim != null && !MouseUtil.mouseMoved()) {
 				entityToAim.getPos().floorAlongAxes(EnumSet.allOf(Direction.Axis.class)).add(0.5, 0.5, 0.5);
 				float[] rotation = getRotationsNeeded(entityToAim, null, fov.getValue(), fov.getValue(), speed.getValue(), speed.getValue());
@@ -96,14 +96,14 @@ public class Aimbot extends Module {
 				mc.player.setPitch(rotation[1]);
 				mc.player.setYaw(rotation[0]);
 			} else if(MouseUtil.mouseMoved()) {
-				if((mc.targetedEntity instanceof PlayerEntity && aimAtPlayers.getValue()) || (mc.targetedEntity instanceof PassiveEntity && aimAtPassive.getValue()) || (mc.targetedEntity instanceof HostileEntity && aimAtHostile.getValue())) {
+				if((mc.targetedEntity instanceof PlayerEntity && targetPlayers.getValue()) || (mc.targetedEntity instanceof PassiveEntity && targetPassive.getValue()) || (mc.targetedEntity instanceof HostileEntity && targetHostile.getValue())) {
 					entityToAim = mc.targetedEntity;
 				}
 			}
 		} else {
 			Entity entity = getClosestEntityToCrosshair(Lists.newCopyOnWriteArrayList(mc.world.getEntities()).stream().filter(ent -> ent.getPos().distanceTo(mc.player.getPos()) < 6 && ent != mc.player/* && ent instanceof PlayerEntity*/).collect(Collectors.toList()));
-			if(entity != null && aimAtEntities.getValue()) {
-				if((entity instanceof PlayerEntity && aimAtPlayers.getValue()) || (entity instanceof PassiveEntity && aimAtPassive.getValue()) || (entity instanceof HostileEntity && aimAtHostile.getValue())) {
+			if(entity != null && targetEntities.getValue()) {
+				if((entity instanceof PlayerEntity && targetPlayers.getValue()) || (entity instanceof PassiveEntity && targetPassive.getValue()) || (entity instanceof HostileEntity && targetHostile.getValue())) {
 					float[] rotation = getRotationsNeeded(entity, null, fov.getValue(), fov.getValue(), speed.getValue(), speed.getValue());
 					
 					mc.player.setPitch(rotation[1]);
@@ -111,7 +111,7 @@ public class Aimbot extends Module {
 				}
 			}
 		}
-		if(aimAtBlocks.getValue()) {
+		if(targetBlocks.getValue()) {
 			HitResult pos = blockToAim;
 			if(pos != null && !MouseUtil.mouseMoved()) {
 				pos.getPos().floorAlongAxes(EnumSet.allOf(Direction.Axis.class)).add(0.5, 0.5, 0.5);

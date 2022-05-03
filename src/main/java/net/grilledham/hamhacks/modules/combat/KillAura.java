@@ -26,10 +26,10 @@ import java.util.stream.Stream;
 
 public class KillAura extends Module {
 	
-	private FloatSetting reach;
-	private BoolSetting attackPlayers;
-	private BoolSetting attackPassive;
-	private BoolSetting attackHostile;
+	private FloatSetting range;
+	private BoolSetting targetPlayers;
+	private BoolSetting targetPassive;
+	private BoolSetting targetHostile;
 	
 	private LivingEntity target;
 	
@@ -40,14 +40,14 @@ public class KillAura extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		reach = new FloatSetting("Reach", 3f, 1f, 8f);
-		attackPlayers = new BoolSetting("Attack Players", true);
-		attackPassive = new BoolSetting("Attack Passive Mobs", false);
-		attackHostile = new BoolSetting("Attack Hostile Mobs", false);
-		addSetting(reach);
-		addSetting(attackPlayers);
-		addSetting(attackPassive);
-		addSetting(attackHostile);
+		range = new FloatSetting(new TranslatableText("setting.killaura.range"), 3f, 1f, 8f);
+		targetPlayers = new BoolSetting(new TranslatableText("setting.killaura.targetplayers"), true);
+		targetPassive = new BoolSetting(new TranslatableText("setting.killaura.targetpassive"), false);
+		targetHostile = new BoolSetting(new TranslatableText("setting.killaura.targethostile"), false);
+		addSetting(range);
+		addSetting(targetPlayers);
+		addSetting(targetPassive);
+		addSetting(targetHostile);
 	}
 	
 	@EventListener
@@ -71,7 +71,7 @@ public class KillAura extends Module {
 					.filter(entity -> !entity.isRemoved() && entity.isAlive())
 					.filter(entity -> entity != mc.player)
 					.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-					.filter(entity -> (entity instanceof PlayerEntity && attackPlayers.getValue()) || (entity instanceof HostileEntity && attackHostile.getValue()) || (entity instanceof PassiveEntity && attackPassive.getValue()));
+					.filter(entity -> (entity instanceof PlayerEntity && targetPlayers.getValue()) || (entity instanceof HostileEntity && targetHostile.getValue()) || (entity instanceof PassiveEntity && targetPassive.getValue()));
 			
 			List<LivingEntity> entities = stream.toList();
 			if(!entities.isEmpty()) {
@@ -81,7 +81,7 @@ public class KillAura extends Module {
 						closest = entity;
 					}
 				}
-				if(mc.player.distanceTo(closest) <= reach.getValue()) {
+				if(mc.player.distanceTo(closest) <= range.getValue()) {
 					target = closest;
 				} else {
 					target = null;

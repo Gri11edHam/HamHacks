@@ -33,7 +33,7 @@ public class ModulePart extends GuiPart {
 		bgC = RenderUtil.mix((bgC & 0xff000000) + 0xffffff, bgC, hoverAnimation);
 		RenderUtil.drawRect(stack, x + 1, y, width - 1, height, bgC);
 		
-		int barC = (ClickGUI.getInstance().barColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation);
+		int barC = (ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation);
 		RenderUtil.drawRect(stack, x, y, 1, height, barC);
 		
 		mc.textRenderer.drawWithShadow(stack, module.getName(), x + 3, y + 4, ClickGUI.getInstance().textColor.getRGB());

@@ -47,7 +47,7 @@ public class Tracers extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		tracePlayers = new BoolSetting("Player Tracer", true) {
+		tracePlayers = new BoolSetting(new TranslatableText("setting.tracers.traceplayers"), true) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -55,9 +55,9 @@ public class Tracers extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		playerClose = new ColorSetting("Player Color (Close)", 1, 1, 1, 0.5f, false);
-		playerFar = new ColorSetting("Player Color (Far)", 1 / 3f, 1, 1, 0.5f, false);
-		traceHostile = new BoolSetting("Hostile Tracer", false) {
+		playerClose = new ColorSetting(new TranslatableText("setting.tracers.playercolorclose"), 1, 1, 1, 0.5f, false);
+		playerFar = new ColorSetting(new TranslatableText("setting.tracers.playercolorfar"), 1 / 3f, 1, 1, 0.5f, false);
+		traceHostile = new BoolSetting(new TranslatableText("setting.tracers.tracehostile"), false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -65,9 +65,9 @@ public class Tracers extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		hostileClose = new ColorSetting("Hostile Color (Close)", 1, 1, 1, 0.5f, false);
-		hostileFar = new ColorSetting("Hostile Color (Far)", 1 / 3f, 1, 1, 0.5f, false);
-		tracePassive = new BoolSetting("Passive Tracer", false) {
+		hostileClose = new ColorSetting(new TranslatableText("setting.tracers.hostilecolorclose"), 1, 1, 1, 0.5f, false);
+		hostileFar = new ColorSetting(new TranslatableText("setting.tracers.hostilecolorfar"), 1 / 3f, 1, 1, 0.5f, false);
+		tracePassive = new BoolSetting(new TranslatableText("setting.tracers.tracepassive"), false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -75,8 +75,8 @@ public class Tracers extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		passiveClose = new ColorSetting("Passive Color (Close)", 1, 1, 1, 0.5f, false);
-		passiveFar = new ColorSetting("Passive Color (Far)", 1 / 3f, 1, 1, 0.5f, false);
+		passiveClose = new ColorSetting(new TranslatableText("setting.tracers.passivecolorclose"), 1, 1, 1, 0.5f, false);
+		passiveFar = new ColorSetting(new TranslatableText("setting.tracers.passivecolorfar"), 1 / 3f, 1, 1, 0.5f, false);
 		
 		addSetting(tracePlayers);
 		addSetting(playerClose);

@@ -29,7 +29,7 @@ public class HUD extends Module {
 	public BoolSetting modelBobbingOnly;
 	public BoolSetting noHurtCam;
 	
-	public ColorSetting barColor;
+	public ColorSetting accentColor;
 	public ColorSetting bgColor;
 	public ColorSetting textColor;
 	
@@ -48,23 +48,23 @@ public class HUD extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		showLogo = new BoolSetting("Show Logo", true);
-		showFPS = new BoolSetting("Show FPS", true);
-		showPing = new BoolSetting("Show Ping", true);
-		showTPS = new BoolSetting("Show TPS", true);
-		showTimeSinceLastTick = new BoolSetting("Show Time Since Last Tick", true);
-		showModules = new BoolSetting("Show Enabled Modules", true);
+		showLogo = new BoolSetting(new TranslatableText("setting.hud.showlogo"), true);
+		showFPS = new BoolSetting(new TranslatableText("setting.hud.showfps"), true);
+		showPing = new BoolSetting(new TranslatableText("setting.hud.showping"), true);
+		showTPS = new BoolSetting(new TranslatableText("setting.hud.showtps"), true);
+		showTimeSinceLastTick = new BoolSetting(new TranslatableText("setting.hud.showtimesincelasttick"), true);
+		showModules = new BoolSetting(new TranslatableText("setting.hud.showmodules"), true);
 		
-		heldItemScale = new FloatSetting("Held Item Scale", 1f, 0.1f, 2f);
-		shieldHeightModifier = new FloatSetting("Shield Height", 0f, -0.5f, 0.5f);
-		fireHeightModifier = new FloatSetting("Fire Height", 0f, -0.5f, 0.5f);
-		overlayTransparency = new FloatSetting("Overlay Transparency", 1f, 0f, 1f);
-		modelBobbingOnly = new BoolSetting("Model Bobbing Only", false);
-		noHurtCam = new BoolSetting("No Hurt Cam", false);
+		heldItemScale = new FloatSetting(new TranslatableText("setting.hud.helditemscale"), 1f, 0.1f, 2f);
+		shieldHeightModifier = new FloatSetting(new TranslatableText("setting.hud.shieldheight"), 0f, -0.5f, 0.5f);
+		fireHeightModifier = new FloatSetting(new TranslatableText("setting.hud.fireheight"), 0f, -0.5f, 0.5f);
+		overlayTransparency = new FloatSetting(new TranslatableText("setting.hud.overlaytransparency"), 1f, 0f, 1f);
+		modelBobbingOnly = new BoolSetting(new TranslatableText("setting.hud.modelbobbingonly"), false);
+		noHurtCam = new BoolSetting(new TranslatableText("setting.hud.nohurtcam"), false);
 		
-		barColor = new ColorSetting("Bar Color", 1, 1, 1, 1, true);
-		bgColor = new ColorSetting("Background Color", 1, 0, 0, 0.5f, false);
-		textColor = new ColorSetting("Text Color", 1, 1, 1, 1, true);
+		accentColor = new ColorSetting(new TranslatableText("setting.hud.accentcolor"), 1, 1, 1, 1, true);
+		bgColor = new ColorSetting(new TranslatableText("setting.hud.backgroundcolor"), 1, 0, 0, 0.5f, false);
+		textColor = new ColorSetting(new TranslatableText("setting.hud.textcolor"), 1, 1, 1, 1, true);
 		
 		addSetting(showLogo);
 		addSetting(showFPS);
@@ -80,7 +80,7 @@ public class HUD extends Module {
 		addSetting(modelBobbingOnly);
 		addSetting(noHurtCam);
 		
-		addSetting(barColor);
+		addSetting(accentColor);
 		addSetting(bgColor);
 		addSetting(textColor);
 	}

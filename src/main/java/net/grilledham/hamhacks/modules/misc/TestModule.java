@@ -23,7 +23,7 @@ public class TestModule extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		testBool = new BoolSetting("Test Bool", false) {
+		testBool = new BoolSetting(new TranslatableText("setting.test.testbool"), false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -31,13 +31,13 @@ public class TestModule extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		testColor = new ColorSetting("Test Color", 1, 1, 1, 1, false);
-		testFloat = new FloatSetting("Test Float", 0.5f, 0f, 1f);
-		testInt = new IntSetting("Test Int", 100, 0, 200);
-		testKey = new KeySetting("Test Key", new Keybind(0));
-		testList = new ListSetting("Test List", "Test1", "Test2");
-		testSelector = new SelectionSetting("Test Selector", "Test1", "Test1", "Test2", "Test3");
-		testString = new StringSetting("Test String", "Test");
+		testColor = new ColorSetting(new TranslatableText("setting.test.testcolor"), 1, 1, 1, 1, false);
+		testFloat = new FloatSetting(new TranslatableText("setting.test.testfloat"), 0.5f, 0f, 1f);
+		testInt = new IntSetting(new TranslatableText("setting.test.testint"), 100, 0, 200);
+		testKey = new KeySetting(new TranslatableText("setting.test.testkey"), new Keybind(0));
+		testList = new ListSetting(new TranslatableText("setting.test.testlist"), "Test1", "Test2");
+		testSelector = new SelectionSetting(new TranslatableText("setting.test.testselector"), new TranslatableText("setting.test.testselector.test1"), new TranslatableText("setting.test.testselector.test1"), new TranslatableText("setting.test.testselector.test2"), new TranslatableText("setting.test.testselector.test3"));
+		testString = new StringSetting(new TranslatableText("setting.test.teststring"), "Test");
 		addSetting(testBool);
 		addSetting(testColor);
 		addSetting(testFloat);

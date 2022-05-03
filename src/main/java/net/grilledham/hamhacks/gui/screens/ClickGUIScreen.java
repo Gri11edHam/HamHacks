@@ -10,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
@@ -79,7 +80,7 @@ public class ClickGUIScreen extends Screen {
 		int fullWidth = category.getWidth();
 		int h = category.getHeight();
 		fillRect(matrices, x, y, x + fullWidth, y + h, ClickGUI.getInstance().bgColor.getRGB());
-		fillRect(matrices, x, y - 2, x + fullWidth, y, ClickGUI.getInstance().barColor.getRGB());
+		fillRect(matrices, x, y - 2, x + fullWidth, y, ClickGUI.getInstance().accentColor.getRGB());
 		drawStringWithShadow(matrices, textRenderer, category.getText(), x + w - textRenderer.getWidth(category.getText()) - 2, y + 2, ClickGUI.getInstance().textColor.getRGB());
 		float translateX = x + w + 1 + textRenderer.fontHeight / 2f;
 		float translateY = y + 2 + textRenderer.fontHeight / 2f;
@@ -254,7 +255,7 @@ public class ClickGUIScreen extends Screen {
 			int optionsX = x + w;
 			int optionsY = y;
 			int optionsW = 0;
-			for(String s : setting.getPossibleValues()) {
+			for(Text s : setting.getPossibleValues()) {
 				optionsW = Math.max(optionsW, textRenderer.getWidth(s) + 4);
 			}
 			int optionsH = h * setting.getPossibleValues().size() - 1;
@@ -262,11 +263,11 @@ public class ClickGUIScreen extends Screen {
 			int optionH = h;
 			fillRect(matrices, optionsX, optionsY, optionsX + optionsW, optionsY + optionsH, ClickGUI.getInstance().bgColor.getRGB());
 			int i = 0;
-			for(String s : setting.getPossibleValues()) {
+			for(Text s : setting.getPossibleValues()) {
 				if(!s.equals(setting.getValue())) {
 					int optionX = optionsX;
 					int optionY = optionsY + optionsH * i;
-					drawStringWithShadow(matrices, textRenderer, s, optionX + optionW - textRenderer.getWidth(s) - 2, optionY + 2, ClickGUI.getInstance().textColor.getRGB());
+					drawStringWithShadow(matrices, textRenderer, s.getString(), optionX + optionW - textRenderer.getWidth(s) - 2, optionY + 2, ClickGUI.getInstance().textColor.getRGB());
 					boolean optionHovered = mouseX > optionX && mouseX <= optionX + optionW && mouseY > optionY && mouseY <= optionY + optionH;
 					if(optionHovered) {
 						fillRect(matrices, optionX, optionY, optionX + optionW, optionY + optionH, 0x20ffffff);

@@ -19,8 +19,8 @@ public class Reach extends Module {
 	
 	@Override
 	public void addSettings() {
-		entityRange = new FloatSetting("Entity Range", 3.0f, 0, 8);
-		blockRange = new FloatSetting("Block Range", 4.5f, 0, 8);
+		entityRange = new FloatSetting(new TranslatableText("setting.reach.entityrange"), 3.0f, 0, 8);
+		blockRange = new FloatSetting(new TranslatableText("setting.reach.blockrange"), 4.5f, 0, 8);
 		addSetting(entityRange);
 		addSetting(blockRange);
 	}

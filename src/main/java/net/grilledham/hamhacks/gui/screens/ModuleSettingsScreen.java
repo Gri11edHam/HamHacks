@@ -44,7 +44,7 @@ public class ModuleSettingsScreen extends Screen {
 				stack.push();
 				RenderUtil.preRender();
 				
-				int bgC = ClickGUI.getInstance().barColor.getRGB();
+				int bgC = ClickGUI.getInstance().accentColor.getRGB();
 				RenderUtil.drawRect(stack, x, y, width, height, bgC);
 				
 				mc.textRenderer.drawWithShadow(stack, module.getName(), x + width / 2f - mc.textRenderer.getWidth(module.getName()) / 2f, y + 4, ClickGUI.getInstance().textColor.getRGB());
