@@ -195,9 +195,9 @@ public class Fly extends Module {
 			dz = 0;
 		}
 		mc.player.setVelocity(new Vec3d(dx, dy, dz));
-		lastDx = dx;
-		lastDy = dy;
-		lastDz = dz;
+		lastDx = dx * (9 / 10f);
+		lastDy = dy * (9 / 10f);
+		lastDz = dz * (9 / 10f);
 	}
 	
 	@Override
