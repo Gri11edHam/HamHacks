@@ -2,7 +2,9 @@ package net.grilledham.hamhacks.mixin;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import net.grilledham.hamhacks.event.events.EventPacketReceived;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import net.grilledham.hamhacks.event.events.EventPacket;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
 import net.minecraft.network.listener.PacketListener;
@@ -17,7 +19,16 @@ public abstract class MixinClientConnection extends SimpleChannelInboundHandler<
 	
 	@Inject(method = "handlePacket", at = @At("HEAD"), cancellable = true)
 	private static <T extends PacketListener> void handlePacket(Packet<T> packet, PacketListener listener, CallbackInfo ci) {
-		EventPacketReceived event = new EventPacketReceived(packet, listener);
+		EventPacket.EventPacketReceived event = new EventPacket.EventPacketReceived(packet, listener);
+		event.call();
+		if(event.canceled) {
+			ci.cancel();
+		}
+	}
+	
+	@Inject(method = "send(Lnet/minecraft/network/Packet;Lio/netty/util/concurrent/GenericFutureListener;)V", at = @At("HEAD"), cancellable = true)
+	public void send(Packet<?> packet, GenericFutureListener<? extends Future<? super Void>> callback, CallbackInfo ci) {
+		EventPacket.EventPacketSent event = new EventPacket.EventPacketSent(packet, callback);
 		event.call();
 		if(event.canceled) {
 			ci.cancel();

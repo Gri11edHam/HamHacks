@@ -20,4 +20,8 @@ public class ModuleManager {
 	public static List<Module> getModules(Module.Category category) {
 		return modules.stream().filter(module -> module.category == category).collect(Collectors.toList());
 	}
+	
+	public static Module getModule(String name) {
+		return modules.stream().filter(module -> module.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+	}
 }

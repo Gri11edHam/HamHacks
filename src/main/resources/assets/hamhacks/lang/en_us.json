@@ -82,6 +82,8 @@
 	"setting.tracers.passivecolorclose": "Passive Mob Color (Close)",
 	"setting.tracers.passivecolorfar": "Passive Mob Color (Far)",
 
+	"module.hamhacks.command": "Commands",
+
 	"setting.generic.enabled": "Enabled",
 	"setting.generic.showmodule": "HUD Text",
 	"setting.generic.keybind": "Keybind",

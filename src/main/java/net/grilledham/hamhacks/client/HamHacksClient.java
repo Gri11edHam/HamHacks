@@ -6,10 +6,12 @@ import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.grilledham.hamhacks.command.CommandManager;
 import net.grilledham.hamhacks.gui.overlays.IngameGui;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.*;
+import net.grilledham.hamhacks.modules.misc.CommandModule;
 import net.grilledham.hamhacks.modules.movement.*;
 import net.grilledham.hamhacks.modules.player.*;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
@@ -37,6 +39,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ConnectionUtil.init();
 		registerModules();
 		Module.Category.init();
+		CommandManager.init();
 		HamHacksConfig.initializeConfig();
 		IngameGui.register();
 		Runtime.getRuntime().addShutdownHook(new Thread(HamHacksConfig::save));
@@ -61,6 +64,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new Tracers());
 		ModuleManager.register(new KillAura());
 		ModuleManager.register(new Reach());
+		ModuleManager.register(new CommandModule());
 		
 //		ModuleManager.register(new TestModule()); // For testing
 	}

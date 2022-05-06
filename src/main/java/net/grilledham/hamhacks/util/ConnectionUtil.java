@@ -2,7 +2,7 @@ package net.grilledham.hamhacks.util;
 
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.EventManager;
-import net.grilledham.hamhacks.event.events.EventPacketReceived;
+import net.grilledham.hamhacks.event.events.EventPacket;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
@@ -20,7 +20,7 @@ public class ConnectionUtil {
 	}
 	
 	@EventListener
-	public void packetReceived(EventPacketReceived e) {
+	public void packetReceived(EventPacket.EventPacketReceived e) {
 		if(e.packet instanceof GameJoinS2CPacket) {
 			tickRate = 0;
 			lastPacketReceivedAt = joinedGameAt = System.currentTimeMillis();

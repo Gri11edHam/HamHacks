@@ -206,7 +206,7 @@ public class ClickGUIScreen extends Screen {
 		} else if(setting instanceof KeySetting) {
 			drawKeybindSetting(matrices, mouseX, mouseY, x, y, w, h, (KeySetting)setting, canBeClicked);
 		} else if(setting instanceof ListSetting) {
-			//TODO
+		
 		}
 	}
 	
@@ -597,7 +597,7 @@ public class ClickGUIScreen extends Screen {
 		} else if(setting instanceof KeySetting s) {
 			return textRenderer.getWidth(s.getName() + " [" + (expandedSetting == s ? "Listening..." : s.getKeybind().getName()) + "]") + 4;
 		} else if(setting instanceof ListSetting s) {
-			// TODO
+			
 			return 0;
 		} else {
 			return textRenderer.getWidth(setting.getName()) + 4;
