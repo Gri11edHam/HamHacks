@@ -204,6 +204,9 @@ public class Fly extends Module {
 	public void onDisable() {
 		super.onDisable();
 		Speed.getInstance().reEnable();
+		lastDx = 0;
+		lastDy = 0;
+		lastDz = 0;
 		if(mc.player == null) {
 			return;
 		}
