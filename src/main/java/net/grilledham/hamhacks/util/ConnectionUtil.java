@@ -28,7 +28,7 @@ public class ConnectionUtil {
 		if(e.packet instanceof WorldTimeUpdateS2CPacket) {
 			long now = System.currentTimeMillis();
 			float elapsedTime = (now - lastPacketReceivedAt) / 1000f;
-			tickRate = 20 / elapsedTime;
+			tickRate = Math.min(Math.max(20 / elapsedTime, 0), 20);
 			calcTickRate = tickRate;
 			lastPacketReceivedAt = System.currentTimeMillis();
 		}
