@@ -3,6 +3,14 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.5:
+				- Added translations to module settings
+				- Added config versions
+				- Added more customizations to the Click GUI
+				- Added scrolling to the Click GUI
+				- Added commands
+				- Bug fixes
+			
 			Update 1.4.2:
 				- Added the ability for modules to force-disable other modules
 				- Removed unnecessary settings in Fly
