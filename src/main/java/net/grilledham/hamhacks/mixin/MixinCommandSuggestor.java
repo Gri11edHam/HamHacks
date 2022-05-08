@@ -27,8 +27,6 @@ public abstract class MixinCommandSuggestor {
 	
 	@Shadow @Nullable private ParseResults<CommandSource> parse;
 	
-	@Shadow @Final private boolean suggestingWhenEmpty;
-	
 	@Shadow @Nullable CommandSuggestor.SuggestionWindow window;
 	
 	@Shadow boolean completingSuggestions;
@@ -51,7 +49,7 @@ public abstract class MixinCommandSuggestor {
 			}
 			
 			int cursor = this.textField.getCursor();
-			int pos = this.suggestingWhenEmpty ? stringReader.getCursor() : 1;
+			int pos = 1;
 			if (cursor >= pos && (this.window == null || !this.completingSuggestions)) {
 				this.pendingSuggestions = commandDispatcher.getCompletionSuggestions(this.parse, cursor);
 				this.pendingSuggestions.thenRun(() -> {
