@@ -9,6 +9,11 @@ public class Changelog {
 				- Added more customizations to the Click GUI
 				- Added scrolling to the Click GUI
 				- Added commands
+				- Added settings to Speed module:
+					: In Air Multiplier
+					: On Ice Multiplier
+					: In Tunnel Multiplier
+					: In Water Multiplier
 				- Bug fixes
 			
 			Update 1.4.2:
