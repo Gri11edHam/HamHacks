@@ -10,7 +10,11 @@
 	"module.hamhacks.encase": "Encase",
 	"module.hamhacks.crystalaura": "Crystal Aura",
 	"module.hamhacks.scrollclick": "Scroll Clicker",
+
 	"module.hamhacks.nofall": "No Fall",
+	"setting.nofall.mode": "Mode",
+	"setting.nofall.mode.packet": "Packet",
+	"setting.nofall.mode.momentum": "Momentum",
 
 	"module.hamhacks.aimbot": "Aimbot",
 	"setting.aimbot.speed": "Speed",
