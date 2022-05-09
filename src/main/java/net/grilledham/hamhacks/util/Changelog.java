@@ -14,6 +14,8 @@ public class Changelog {
 					: On Ice Multiplier
 					: In Tunnel Multiplier
 					: In Water Multiplier
+				- Added settings to No Fall module:
+					: Mode
 				- Bug fixes
 			
 			Update 1.4.2:
