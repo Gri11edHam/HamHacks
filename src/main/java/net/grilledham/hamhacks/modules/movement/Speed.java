@@ -17,10 +17,10 @@ public class Speed extends Module {
 	
 	private FloatSetting speed;
 	private BoolSetting autoJump;
-	private BoolSetting fasterInAir;
-	private BoolSetting fasterOnIce;
-	private BoolSetting slowerInWater;
-	private BoolSetting fasterInTunnel;
+	private FloatSetting inAirMult;
+	private FloatSetting onIceMult;
+	private FloatSetting inWaterMult;
+	private FloatSetting inTunnelMult;
 	private BoolSetting disableWithElytra;
 	
 	private static Speed INSTANCE;
@@ -34,17 +34,17 @@ public class Speed extends Module {
 	public void addSettings() {
 		speed = new FloatSetting(new TranslatableText("setting.speed.speed"), 2.5f, 0f, 10f);
 		autoJump = new BoolSetting(new TranslatableText("setting.speed.autojump"), false);
-		fasterInAir = new BoolSetting(new TranslatableText("setting.speed.fasterinair"), true);
-		fasterOnIce = new BoolSetting(new TranslatableText("setting.speed.fasteronice"), true);
-		fasterInTunnel = new BoolSetting(new TranslatableText("setting.speed.fasterintunnel"), true);
-		slowerInWater = new BoolSetting(new TranslatableText("setting.speed.slowerinwater"), true);
+		inAirMult = new FloatSetting(new TranslatableText("setting.speed.inairmultiplier"), 1.7f, 0.25f, 4);
+		onIceMult = new FloatSetting(new TranslatableText("setting.speed.onicemultiplier"), 2, 0.25f, 4);
+		inTunnelMult = new FloatSetting(new TranslatableText("setting.speed.intunnelmultiplier"), 1.7f, 0.25f, 4);
+		inWaterMult = new FloatSetting(new TranslatableText("setting.speed.inwatermultiplier"), 0.6f, 0.25f, 4);
 		disableWithElytra = new BoolSetting(new TranslatableText("setting.speed.disablewithelytra"), true);
 		addSetting(speed);
 		addSetting(autoJump);
-		addSetting(fasterInAir);
-		addSetting(fasterOnIce);
-		addSetting(fasterInTunnel);
-		addSetting(slowerInWater);
+		addSetting(inAirMult);
+		addSetting(onIceMult);
+		addSetting(inTunnelMult);
+		addSetting(inWaterMult);
 		addSetting(disableWithElytra);
 	}
 	
@@ -78,21 +78,21 @@ public class Speed extends Module {
 			dz += (float) (distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
 			dx *= speed.getValue() / 10f;
 			dz *= speed.getValue() / 10f;
-			if(fasterInAir.getValue() && checkBlockBelow(Material.AIR)) {
-				dx *= 1.7;
-				dz *= 1.7;
+			if(checkBlockBelow(Material.AIR)) {
+				dx *= inAirMult.getValue();
+				dz *= inAirMult.getValue();
 			}
-			if(fasterOnIce.getValue() && (checkBlockBelow(Material.ICE) || checkBlockBelow(Material.DENSE_ICE))) {
-				dx *= 2.2;
-				dz *= 2.2;
+			if(checkBlockBelow(Material.ICE) || checkBlockBelow(Material.DENSE_ICE)) {
+				dx *= onIceMult.getValue();
+				dz *= onIceMult.getValue();
 			}
-			if(fasterInTunnel.getValue() && !(checkBlockAbove(Material.AIR) || checkBlockAbove(Material.WATER))) {
-				dx *= 1.8;
-				dz *= 1.8;
+			if(!(checkBlockAbove(Material.AIR) || checkBlockAbove(Material.WATER) || checkBlockAbove(Material.BUBBLE_COLUMN))) {
+				dx *= inTunnelMult.getValue();
+				dz *= inTunnelMult.getValue();
 			}
-			if(slowerInWater.getValue() && mc.player.isTouchingWater()) {
-				dx /= 1.5;
-				dz /= 1.5;
+			if(mc.player.isTouchingWater()) {
+				dx *= inWaterMult.getValue();
+				dz *= inWaterMult.getValue();
 			}
 			if(mc.player.isSneaking()) {
 				dx /= 1.5;
@@ -108,29 +108,25 @@ public class Speed extends Module {
 	}
 	
 	private boolean checkBlockAbove(Material material) {
-		boolean isBelowBlock = false;
 		for(int xAdd = -1; xAdd < 2; xAdd++) {
 			for(int zAdd = -1; zAdd < 2; zAdd++) {
-				if(mc.world.getBlockState(new BlockPos(mc.player.getPos().add(0.3f * xAdd, 2.01, 0.3f * zAdd))).getMaterial() == material) {
-					isBelowBlock = true;
-					break;
+				if(mc.world.getBlockState(new BlockPos(mc.player.getPos().add(0.3f * xAdd, 2.01, 0.3f * zAdd))).getMaterial() != material) {
+					return false;
 				}
 			}
 		}
-		return isBelowBlock;
+		return true;
 	}
 	
 	private boolean checkBlockBelow(Material material) {
-		boolean isAboveBlock = false;
 		for(int xAdd = -1; xAdd < 2; xAdd++) {
 			for(int zAdd = -1; zAdd < 2; zAdd++) {
-				if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 0.01, 0.3f * zAdd))).getMaterial() == material) {
-					isAboveBlock = true;
-					break;
+				if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 0.01, 0.3f * zAdd))).getMaterial() != material) {
+					return false;
 				}
 			}
 		}
-		return isAboveBlock;
+		return true;
 	}
 	
 	public static Speed getInstance() {
