@@ -4,7 +4,10 @@
 	"setting.fly.mode": "Mode",
 	"setting.fly.mode.default": "Default",
 	"setting.fly.mode.vanilla": "Vanilla",
+	"setting.fly.mode.jetpack": "Jetpack",
 	"setting.fly.smoothmovement": "Smooth Movement",
+	"setting.fly.jetpackspeed": "Jetpack Speed",
+	"setting.fly.autoland": "Auto Land",
 
 	"module.hamhacks.trap": "Trap",
 	"module.hamhacks.encase": "Encase",

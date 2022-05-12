@@ -13,6 +13,7 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import org.lwjgl.glfw.GLFW;
 
 public class Fly extends Module {
@@ -22,6 +23,10 @@ public class Fly extends Module {
 	private SelectionSetting mode;
 	private FloatSetting speed;
 	private BoolSetting smoothMovement;
+	private FloatSetting jetpackSpeed;
+	private BoolSetting autoLand;
+	
+	private boolean landing = false;
 	
 	private long lastTime;
 	
@@ -31,12 +36,38 @@ public class Fly extends Module {
 	
 	@Override
 	public void addSettings() {
-		mode = new SelectionSetting(new TranslatableText("setting.fly.mode"), new TranslatableText("setting.fly.mode.default"), new TranslatableText("setting.fly.mode.default"), new TranslatableText("setting.fly.mode.vanilla"));
+		mode = new SelectionSetting(new TranslatableText("setting.fly.mode"), new TranslatableText("setting.fly.mode.default"), new TranslatableText("setting.fly.mode.default"), new TranslatableText("setting.fly.mode.vanilla"), new TranslatableText("setting.fly.mode.jetpack")) {
+			@Override
+			protected void valueChanged() {
+				super.valueChanged();
+				updateSettings();
+				updateScreenIfOpen();
+			}
+		};
 		speed = new FloatSetting(new TranslatableText("setting.fly.speed"), 1f, 0f, 10f);
 		smoothMovement = new BoolSetting(new TranslatableText("setting.fly.smoothmovement"), true);
+		jetpackSpeed = new FloatSetting(new TranslatableText("setting.fly.jetpackspeed"), 0.2f, 0.1f, 1f);
+		autoLand = new BoolSetting(new TranslatableText("setting.fly.autoland"), false);
 		addSetting(mode);
 		addSetting(speed);
 		addSetting(smoothMovement);
+		addSetting(jetpackSpeed);
+		addSetting(autoLand);
+		updateSettings();
+	}
+	
+	private void updateSettings() {
+		hideSetting(speed);
+		hideSetting(smoothMovement);
+		hideSetting(jetpackSpeed);
+		hideSetting(autoLand);
+		if(((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.jetpack")) {
+			showSetting(autoLand, 1);
+			showSetting(jetpackSpeed, 1);
+		} else {
+			showSetting(smoothMovement, 1);
+			showSetting(speed, 1);
+		}
 	}
 	
 	@Override
@@ -95,6 +126,20 @@ public class Fly extends Module {
 					
 					updates += (System.currentTimeMillis() - lastTime) / 1000f;
 					lastTime = System.currentTimeMillis();
+				}
+				case "setting.fly.mode.jetpack" -> {
+					mc.player.addVelocity(0, mc.player.input.jumping ? jetpackSpeed.getValue() : 0, 0);
+					if(autoLand.getValue()) {
+						if(mc.world.getBlockState(mc.player.getBlockPos().add(0, 20 * mc.player.getVelocity().getY(), 0)).getMaterial() != Material.AIR) {
+							if(mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 3, 0))).getBlock().canMobSpawnInside()) {
+								landing = true;
+								mc.player.addVelocity(0, -mc.player.getVelocity().getY() * 0.1, 0);
+							} else if(landing && !mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 1, 0))).getBlock().canMobSpawnInside()) {
+								landing = false;
+								mc.player.addVelocity(0, -mc.player.getVelocity().getY() * 1.2, 0);
+							}
+						}
+					}
 				}
 			}
 		}
