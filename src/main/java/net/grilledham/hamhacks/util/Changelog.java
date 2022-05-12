@@ -16,6 +16,8 @@ public class Changelog {
 					: In Water Multiplier
 				- Added settings to No Fall module:
 					: Mode
+				- Added option to "Mode" in Fly module:
+					: Jetpack
 				- Bug fixes
 			
 			Update 1.4.2:
