@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.modules.combat.Reach;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.resource.ResourceManager;
@@ -18,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
-public class MixinGameRenderer implements SynchronousResourceReloader, AutoCloseable {
+public abstract class MixinGameRenderer implements SynchronousResourceReloader, AutoCloseable {
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "net.minecraft.client.gui.hud.InGameHud.render(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void render2DEvent(InGameHud instance, MatrixStack matrices, float tickDelta) {
@@ -34,11 +35,9 @@ public class MixinGameRenderer implements SynchronousResourceReloader, AutoClose
 		event.call();
 	}
 	
-	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
-	public void modelBobbingOnly(GameRenderer instance, MatrixStack matrices, float f) {
-		if(!HUD.getInstance().modelBobbingOnly.getValue() && HUD.getInstance().isEnabled()) {
-			bobView(matrices, f);
-		}
+	@Redirect(method = "renderWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/client/option/GameOptions;bobView:Z"))
+	public boolean modelBobbingOnly(GameOptions instance) {
+		return instance.bobView && !HUD.getInstance().modelBobbingOnly.getValue() && HUD.getInstance().isEnabled();
 	}
 	
 	@Inject(method = "bobViewWhenHurt", at = @At("HEAD"), cancellable = true)
@@ -73,11 +72,10 @@ public class MixinGameRenderer implements SynchronousResourceReloader, AutoClose
 	}
 	
 	@Shadow
-	public void close() {}
+	public abstract void close();
 	
 	@Shadow
-	public void reload(ResourceManager manager) {}
+	public abstract void reload(ResourceManager manager);
 	
-	@Shadow
-	private void bobView(MatrixStack matrices, float f) {}
+	@Shadow protected abstract void bobView(MatrixStack matrices, float tickDelta);
 }
