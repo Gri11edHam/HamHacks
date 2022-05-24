@@ -65,6 +65,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new KillAura());
 		ModuleManager.register(new Reach());
 		ModuleManager.register(new CommandModule());
+		ModuleManager.register(new InstantKillBow());
 		
 //		ModuleManager.register(new TestModule()); // For testing
 	}

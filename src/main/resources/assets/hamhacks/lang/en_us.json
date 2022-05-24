@@ -95,6 +95,9 @@
 
 	"module.hamhacks.command": "Commands",
 
+	"module.hamhacks.instantkillbow": "Instant Kill Bow",
+	"setting.instantkillbow.iterations": "Iterations",
+
 	"setting.generic.enabled": "Enabled",
 	"setting.generic.showmodule": "HUD Text",
 	"setting.generic.keybind": "Keybind",
