@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
-import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.settings.StringSetting;
@@ -8,7 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-public class StringSettingPart extends GuiPart {
+public class StringSettingPart extends SettingPart {
 	
 	private float cursorAnimation = 0;
 	private boolean cursorShown = false;
@@ -29,7 +28,7 @@ public class StringSettingPart extends GuiPart {
 	protected boolean drawBackground = true;
 	
 	public StringSettingPart(int x, int y, StringSetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 106, 16);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 106, setting);
 		this.setting = setting;
 		cursorPos = setting.getValue().length();
 		stringScroll = cursorPos;
@@ -128,6 +127,7 @@ public class StringSettingPart extends GuiPart {
 	
 	@Override
 	public boolean release(double mx, double my, int button) {
+		super.release(mx, my, button);
 		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			dragging = false;
 		}

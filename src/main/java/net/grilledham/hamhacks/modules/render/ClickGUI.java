@@ -23,7 +23,7 @@ public class ClickGUI extends Module {
 	private static ClickGUI INSTANCE;
 	
 	public ClickGUI() {
-		super(new TranslatableText("module.hamhacks.clickgui"), Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
+		super(new TranslatableText("module.hamhacks.clickgui"), new TranslatableText("module.hamhacks.clickgui.tooltip"), Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
 		INSTANCE = this;
 	}
 	

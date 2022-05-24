@@ -36,6 +36,9 @@ public class NewClickGUIScreen extends Screen {
 		for(CategoryPart category : categories) {
 			category.draw(matrices, mouseX, mouseY, delta);
 		}
+		for(CategoryPart category : categories) {
+			category.drawTop(matrices, mouseX, mouseY, delta);
+		}
 		matrices.pop();
 	}
 	

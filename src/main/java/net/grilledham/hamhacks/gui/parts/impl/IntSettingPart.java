@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
-import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.settings.IntSetting;
@@ -9,7 +8,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.TranslatableText;
 import org.lwjgl.glfw.GLFW;
 
-public class IntSettingPart extends GuiPart {
+public class IntSettingPart extends SettingPart {
 	
 	private float hoverAnimation;
 	private float sliderAnimation;
@@ -22,7 +21,7 @@ public class IntSettingPart extends GuiPart {
 	private final StringSetting strVal;
 	
 	public IntSettingPart(int x, int y, IntSetting setting) {
-		super(x, y, 16, 16);
+		super(x, y, 16, setting);
 		strVal = new StringSetting(new TranslatableText(""), setting.getValue().toString());
 		editor = new StringSettingPart(x + width - 207, y, strVal) {
 			@Override
@@ -127,6 +126,7 @@ public class IntSettingPart extends GuiPart {
 	
 	@Override
 	public boolean release(double mx, double my, int button) {
+		super.release(mx, my, button);
 		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			dragging = false;
 		}

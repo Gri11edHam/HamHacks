@@ -16,7 +16,7 @@ import org.lwjgl.glfw.GLFW;
 public class Trap extends Module {
 	
 	public Trap() {
-		super(new TranslatableText("module.hamhacks.trap"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_M));
+		super(new TranslatableText("module.hamhacks.trap"), new TranslatableText("module.hamhacks.trap.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_M));
 	}
 	
 	@Override

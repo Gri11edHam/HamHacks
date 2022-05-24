@@ -12,7 +12,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectionSettingPart extends GuiPart {
+public class SelectionSettingPart extends SettingPart {
 	
 	private float hoverAnimation;
 	private float selectionAnimation;
@@ -26,7 +26,7 @@ public class SelectionSettingPart extends GuiPart {
 	private int maxWidth;
 	
 	public SelectionSettingPart(int x, int y, SelectionSetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()), 16);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()), setting);
 		this.setting = setting;
 		maxWidth = 0;
 		GuiPart part;
@@ -123,6 +123,7 @@ public class SelectionSettingPart extends GuiPart {
 		RenderUtil.postRender();
 		RenderUtil.popScissor();
 		stack.pop();
+		super.renderTop(stack, mx, my, partialTicks);
 	}
 	
 	@Override
@@ -143,6 +144,7 @@ public class SelectionSettingPart extends GuiPart {
 	
 	@Override
 	public boolean release(double mx, double my, int button) {
+		super.release(mx, my, button);
 		if(selected) {
 			selected = false;
 			for(GuiPart part : parts) {

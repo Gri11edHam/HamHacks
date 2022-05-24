@@ -10,7 +10,7 @@ import org.lwjgl.glfw.GLFW;
 public class AutoElytra extends Module {
 	
 	public AutoElytra() {
-		super(new TranslatableText("module.hamhacks.autoelytra"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_Y));
+		super(new TranslatableText("module.hamhacks.autoelytra"), new TranslatableText("module.hamhacks.autoelytra.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_Y));
 	}
 	
 	@EventListener

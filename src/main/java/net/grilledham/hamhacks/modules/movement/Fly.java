@@ -31,7 +31,7 @@ public class Fly extends Module {
 	private long lastTime;
 	
 	public Fly() {
-		super(new TranslatableText("module.hamhacks.fly"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_F));
+		super(new TranslatableText("module.hamhacks.fly"), new TranslatableText("module.hamhacks.fly.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_F));
 	}
 	
 	@Override
@@ -44,10 +44,15 @@ public class Fly extends Module {
 				updateScreenIfOpen();
 			}
 		};
+		mode.setToolTip(new TranslatableText("setting.fly.mode.tooltip"));
 		speed = new FloatSetting(new TranslatableText("setting.fly.speed"), 1f, 0f, 10f);
+		speed.setToolTip(new TranslatableText("setting.fly.speed.tooltip"));
 		smoothMovement = new BoolSetting(new TranslatableText("setting.fly.smoothmovement"), true);
+		smoothMovement.setToolTip(new TranslatableText("setting.fly.smoothmovement.tooltip"));
 		jetpackSpeed = new FloatSetting(new TranslatableText("setting.fly.jetpackspeed"), 0.2f, 0.1f, 1f);
+		jetpackSpeed.setToolTip(new TranslatableText("setting.fly.jetpackspeed.tooltip"));
 		autoLand = new BoolSetting(new TranslatableText("setting.fly.autoland"), false);
+		autoLand.setToolTip(new TranslatableText("setting.fly.autoland.tooltip"));
 		addSetting(mode);
 		addSetting(speed);
 		addSetting(smoothMovement);

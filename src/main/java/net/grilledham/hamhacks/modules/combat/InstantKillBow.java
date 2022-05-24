@@ -11,16 +11,18 @@ public class InstantKillBow extends Module {
 	
 	private static InstantKillBow INSTANCE;
 	
-	private final IntSetting iterations = new IntSetting(new TranslatableText("setting.instantkillbow.iterations"), 100, 100, 1000);
+	private IntSetting iterations;
 	
 	public InstantKillBow() {
-		super(new TranslatableText("module.hamhacks.instantkillbow"), Category.COMBAT, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.instantkillbow"), new TranslatableText("module.hamhacks.instantkillbow.tooltip"), Category.COMBAT, new Keybind(0));
 		INSTANCE = this;
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
+		iterations = new IntSetting(new TranslatableText("setting.instantkillbow.iterations"), 100, 100, 1000);
+		iterations.setToolTip(new TranslatableText("setting.instantkillbow.iterations.tooltip"));
 		addSetting(iterations);
 	}
 	

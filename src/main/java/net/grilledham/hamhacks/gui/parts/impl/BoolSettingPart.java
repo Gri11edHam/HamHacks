@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
-import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
@@ -8,7 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-public class BoolSettingPart extends GuiPart {
+public class BoolSettingPart extends SettingPart {
 	
 	private float hoverAnimation;
 	private float enableAnimation;
@@ -18,7 +17,7 @@ public class BoolSettingPart extends GuiPart {
 	protected boolean drawBackground = true;
 	
 	public BoolSettingPart(int x, int y, BoolSetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 22, 16);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 22, setting);
 		this.setting = setting;
 	}
 	
@@ -61,6 +60,7 @@ public class BoolSettingPart extends GuiPart {
 	
 	@Override
 	public boolean release(double mx, double my, int button) {
+		super.release(mx, my, button);
 		if(mx >= x + width - 12 && mx < x + width - 4 && my >= y + 4 && my < y + 12) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				setting.setValue(!setting.getValue());

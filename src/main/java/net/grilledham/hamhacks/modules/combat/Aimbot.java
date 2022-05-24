@@ -39,13 +39,15 @@ public class Aimbot extends Module {
 	private HitResult blockToAim = null;
 	
 	public Aimbot() {
-		super(new TranslatableText("module.hamhacks.aimbot"), Category.COMBAT, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.aimbot"), new TranslatableText("module.hamhacks.aimbot.tooltip"), Category.COMBAT, new Keybind(0));
 	}
 	
 	@Override
 	public void addSettings() {
 		speed = new FloatSetting(new TranslatableText("setting.aimbot.speed"), 10.0f, 0.1f, 100f);
+		speed.setToolTip(new TranslatableText("setting.aimbot.speed.tooltip"));
 		fov = new FloatSetting(new TranslatableText("setting.aimbot.fov"), 90.0f, 0.1f, 360f);
+		fov.setToolTip(new TranslatableText("setting.aimbot.fov.tooltip"));
 		targetEntities = new BoolSetting(new TranslatableText("setting.aimbot.targetentities"), true) {
 			@Override
 			protected void valueChanged() {
@@ -55,6 +57,7 @@ public class Aimbot extends Module {
 			}
 		};
 		keepAiming = new BoolSetting(new TranslatableText("setting.aimbot.keepaiming"), false);
+		keepAiming.setToolTip(new TranslatableText("setting.aimbot.keepaiming.tooltip"));
 		targetPlayers = new BoolSetting(new TranslatableText("setting.aimbot.targetplayers"), true);
 		targetPassive = new BoolSetting(new TranslatableText("setting.aimbot.targetpassive"), false);
 		targetHostile = new BoolSetting(new TranslatableText("setting.aimbot.targethostile"), false);

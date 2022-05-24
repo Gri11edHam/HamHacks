@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -8,6 +9,8 @@ import net.minecraft.util.math.Matrix4f;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class RenderUtil {
@@ -258,5 +261,46 @@ public class RenderUtil {
 	public static void postRender() {
 		RenderSystem.disableBlend();
 		RenderSystem.enableTexture();
+	}
+	
+	public static void drawToolTip(MatrixStack stack, String title, String tooltip, float mx, float my) {
+		String[] lines = tooltip.split("\n");
+		
+		float w = mc.textRenderer.getWidth(Arrays.stream(lines).sorted(Comparator.comparingInt(s -> mc.textRenderer.getWidth((String)s)).reversed()).toList().get(0)) + 8;
+		float h = (lines.length + (!title.equals("") ? 1 : 0)) * (mc.textRenderer.fontHeight + 2) + 8;
+		float x = mx - 4;
+		float y = my - 2 - h;
+		
+		boolean shift = false;
+		if(y < 0) {
+			y = my + 4;
+			x = mx + 4;
+			shift = true;
+		}
+		if(x + w > mc.getWindow().getScaledWidth()) {
+			x -= w - (shift ? 4 : 8);
+		}
+		
+		pushScissor(x, y, w, h, (float)ClickGUI.getInstance().scale.getValue());
+		applyScissor();
+		
+		preRender();
+		
+		drawRect(stack, x, y, w, h, 0x80000000);
+		drawHRect(stack, x, y, w, h, 0xff4040d0);
+		
+		postRender();
+		
+		float yAdd = 0;
+		if(!title.equals("")) {
+			mc.textRenderer.drawWithShadow(stack, title, x + 4, y + 4 + yAdd, 0xffffff20);
+			yAdd += mc.textRenderer.fontHeight + 2;
+		}
+		for(String s : lines) {
+			mc.textRenderer.drawWithShadow(stack, s, x + 4, y + 4 + yAdd, -1);
+			yAdd += mc.textRenderer.fontHeight + 2;
+		}
+		
+		popScissor();
 	}
 }

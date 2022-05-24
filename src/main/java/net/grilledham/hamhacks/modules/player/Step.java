@@ -12,7 +12,7 @@ public class Step extends Module {
 	private float originalStepHeight;
 	
 	public Step() {
-		super(new TranslatableText("module.hamhacks.step"), Category.PLAYER, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.step"), new TranslatableText("module.hamhacks.step.tooltip"), Category.PLAYER, new Keybind(0));
 	}
 	
 	@Override

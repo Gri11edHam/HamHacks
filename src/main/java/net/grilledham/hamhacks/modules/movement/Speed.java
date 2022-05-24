@@ -26,7 +26,7 @@ public class Speed extends Module {
 	private static Speed INSTANCE;
 	
 	public Speed() {
-		super(new TranslatableText("module.hamhacks.speed"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
+		super(new TranslatableText("module.hamhacks.speed"), new TranslatableText("module.hamhacks.speed.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
 		INSTANCE = this;
 	}
 	
@@ -34,10 +34,15 @@ public class Speed extends Module {
 	public void addSettings() {
 		speed = new FloatSetting(new TranslatableText("setting.speed.speed"), 2.5f, 0f, 10f);
 		autoJump = new BoolSetting(new TranslatableText("setting.speed.autojump"), false);
+		autoJump.setToolTip(new TranslatableText("setting.speed.autojump.tooltip"));
 		inAirMult = new FloatSetting(new TranslatableText("setting.speed.inairmultiplier"), 1.7f, 0.25f, 4);
+		inAirMult.setToolTip(new TranslatableText("setting.speed.inairmultiplier.tooltip"));
 		onIceMult = new FloatSetting(new TranslatableText("setting.speed.onicemultiplier"), 2, 0.25f, 4);
+		onIceMult.setToolTip(new TranslatableText("setting.speed.onicemultiplier.tooltip"));
 		inTunnelMult = new FloatSetting(new TranslatableText("setting.speed.intunnelmultiplier"), 1.7f, 0.25f, 4);
+		inTunnelMult.setToolTip(new TranslatableText("setting.speed.intunnelmultiplier.tooltip"));
 		inWaterMult = new FloatSetting(new TranslatableText("setting.speed.inwatermultiplier"), 0.6f, 0.25f, 4);
+		inWaterMult.setToolTip(new TranslatableText("setting.speed.inwatermultiplier.tooltip"));
 		disableWithElytra = new BoolSetting(new TranslatableText("setting.speed.disablewithelytra"), true);
 		addSetting(speed);
 		addSetting(autoJump);

@@ -26,7 +26,7 @@ public class CrystalAura extends Module {
 	private int updates = 0;
 	
 	public CrystalAura() {
-		super(new TranslatableText("module.hamhacks.crystalaura"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_C));
+		super(new TranslatableText("module.hamhacks.crystalaura"), new TranslatableText("module.hamhacks.crystalaura.tooltip"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_C));
 	}
 	
 	@EventListener

@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
-import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
@@ -12,7 +11,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.HexFormat;
 
-public class ColorSettingPart extends GuiPart {
+public class ColorSettingPart extends SettingPart {
 	
 	private float hoverAnimation;
 	private float selectionAnimation;
@@ -32,7 +31,7 @@ public class ColorSettingPart extends GuiPart {
 	private double dragStartY = -1;
 	
 	public ColorSettingPart(int x, int y, ColorSetting setting) {
-		super(x, y, 16, 16);
+		super(x, y, 16, setting);
 		this.setting = setting;
 		chroma = new BoolSetting(new TranslatableText("setting.colorsettingpart.chroma"), setting.useChroma()) {
 			@Override
@@ -194,6 +193,7 @@ public class ColorSettingPart extends GuiPart {
 				}
 			}
 		}
+		super.renderTop(stack, mx, my, partialTicks);
 	}
 	
 	@Override
@@ -236,6 +236,7 @@ public class ColorSettingPart extends GuiPart {
 	
 	@Override
 	public boolean release(double mx, double my, int button) {
+		super.release(mx, my, button);
 		boolean wasDragging = dragging;
 		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			dragging = false;

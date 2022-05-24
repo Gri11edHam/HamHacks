@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
-import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.settings.KeySetting;
@@ -8,7 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-public class KeySettingPart extends GuiPart {
+public class KeySettingPart extends SettingPart {
 	
 	private float hoverAnimation;
 	
@@ -17,7 +16,7 @@ public class KeySettingPart extends GuiPart {
 	private boolean listening = false;
 	
 	public KeySettingPart(int x, int y, KeySetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName() + "    [________________]") + 4, 16);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName() + "    [________________]") + 4, setting);
 		this.setting = setting;
 	}
 	
@@ -61,6 +60,7 @@ public class KeySettingPart extends GuiPart {
 	
 	@Override
 	public boolean release(double mx, double my, int button) {
+		super.release(mx, my, button);
 		if(listening) {
 			setting.getKeybind().setKey(button, true);
 			listening = false;

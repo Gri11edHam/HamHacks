@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
-import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.settings.ListSetting;
@@ -15,7 +14,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListSettingPart extends GuiPart {
+public class ListSettingPart extends SettingPart {
 	
 	private float hoverAnimation;
 	private float selectionAnimation;
@@ -33,7 +32,7 @@ public class ListSettingPart extends GuiPart {
 	float maxWidth = 0;
 	
 	public ListSettingPart(int x, int y, ListSetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 18, 16);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 18, setting);
 		this.setting = setting;
 		updateList();
 	}
@@ -153,6 +152,7 @@ public class ListSettingPart extends GuiPart {
 		RenderUtil.postRender();
 		RenderUtil.popScissor();
 		stack.pop();
+		super.renderTop(stack, mx, my, partialTicks);
 	}
 	
 	@Override
@@ -178,6 +178,7 @@ public class ListSettingPart extends GuiPart {
 	
 	@Override
 	public boolean release(double mx, double my, int button) {
+		super.release(mx, my, button);
 		for(int i = 0; i < strings.size(); i++) {
 			setting.set(i, strings.get(i).getValue());
 		}

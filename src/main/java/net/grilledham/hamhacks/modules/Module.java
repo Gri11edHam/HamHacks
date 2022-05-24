@@ -17,6 +17,8 @@ import java.util.List;
 public class Module {
 	
 	protected Text name;
+	
+	protected Text toolTip;
 	protected BoolSetting enabled = new BoolSetting(new TranslatableText("setting.generic.enabled"), false) {
 		@Override
 		protected void valueChanged() {
@@ -42,7 +44,12 @@ public class Module {
 	protected boolean wasEnabled;
 	
 	public Module(Text name, Category category, Keybind key) {
+		this(name, null, category, key);
+	}
+	
+	public Module(Text name, Text toolTip, Category category, Keybind key) {
 		this.name = name;
+		this.toolTip = toolTip;
 		this.category = category;
 		this.key = new KeySetting(new TranslatableText("setting.generic.keybind"), key);
 		
@@ -108,6 +115,14 @@ public class Module {
 	
 	public String getName() {
 		return this.name.getString();
+	}
+	
+	public String getToolTip() {
+		return this.toolTip.getString();
+	}
+	
+	public boolean hasToolTip() {
+		return this.toolTip != null;
 	}
 	
 	public boolean isEnabled() {

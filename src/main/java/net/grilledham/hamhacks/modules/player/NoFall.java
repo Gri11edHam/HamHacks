@@ -19,12 +19,13 @@ public class NoFall extends Module {
 	private long lastTime;
 	
 	public NoFall() {
-		super(new TranslatableText("module.hamhacks.nofall"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
+		super(new TranslatableText("module.hamhacks.nofall"), new TranslatableText("module.hamhacks.nofall.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
 	}
 	
 	@Override
 	public void addSettings() {
 		mode = new SelectionSetting(new TranslatableText("setting.nofall.mode"), new TranslatableText("setting.nofall.mode.packet"), new TranslatableText("setting.nofall.mode.packet"), new TranslatableText("setting.nofall.mode.momentum"));
+		mode.setToolTip(new TranslatableText("setting.nofall.mode.tooltip"));
 		addSetting(mode);
 	}
 	

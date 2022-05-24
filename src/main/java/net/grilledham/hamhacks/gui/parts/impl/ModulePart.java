@@ -14,6 +14,10 @@ public class ModulePart extends GuiPart {
 	private float hoverAnimation;
 	private float enableAnimation;
 	
+	private float tooltipAnimation;
+	
+	private boolean hasClicked = false;
+	
 	private final Module module;
 	private final Screen parent;
 	
@@ -54,11 +58,32 @@ public class ModulePart extends GuiPart {
 			enableAnimation -= partialTicks / 5;
 		}
 		enableAnimation = Math.min(1, Math.max(0, enableAnimation));
+		
+		if(hovered) {
+			tooltipAnimation += partialTicks / 20;
+		} else {
+			tooltipAnimation -= partialTicks / 20;
+		}
+		tooltipAnimation = Math.min(1, Math.max(0, tooltipAnimation));
+		if(tooltipAnimation < 1) {
+			hasClicked = false;
+		}
+	}
+	
+	@Override
+	protected void renderTop(MatrixStack stack, int mx, int my, float partialTicks) {
+		super.renderTop(stack, mx, my, partialTicks);
+		if(module.hasToolTip()) {
+			if(tooltipAnimation >= 1 && !hasClicked) {
+				RenderUtil.drawToolTip(stack, module.getName(), module.getToolTip(), mx, my);
+			}
+		}
 	}
 	
 	@Override
 	public boolean release(double mx, double my, int button) {
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
+			hasClicked = true;
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				module.toggle();
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {

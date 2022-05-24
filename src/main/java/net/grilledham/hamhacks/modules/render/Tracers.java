@@ -41,7 +41,7 @@ public class Tracers extends Module {
 	private ColorSetting passiveFar;
 	
 	public Tracers() {
-		super(new TranslatableText("module.hamhacks.tracers"), Category.RENDER, new Keybind(0));
+		super(new TranslatableText("module.hamhacks.tracers"), new TranslatableText("module.hamhacks.tracers.tooltip"), Category.RENDER, new Keybind(0));
 	}
 	
 	@Override
