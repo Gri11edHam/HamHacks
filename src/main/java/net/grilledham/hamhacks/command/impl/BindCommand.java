@@ -6,7 +6,7 @@ import net.grilledham.hamhacks.command.Command;
 import net.grilledham.hamhacks.gui.screens.BindModuleScreen;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.minecraft.client.MinecraftClient;
+import net.grilledham.hamhacks.util.ChatUtil;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
 
@@ -25,8 +25,7 @@ public class BindCommand extends Command {
 			if(module == null) {
 				error(Text.of("\"" + ctx.getArgument("module", String.class) + "\" does not exist"));
 			} else {
-				MinecraftClient.getInstance().setScreen(new BindModuleScreen(module));
-				info(Text.of("Bound " + module.getName() + " to " + module.getKey().getName()));
+				ChatUtil.openFromChat(new BindModuleScreen(module));
 			}
 			return SINGLE_SUCCESS;
 		})/*.suggests((ctx, b) -> {

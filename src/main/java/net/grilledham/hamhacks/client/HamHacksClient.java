@@ -17,6 +17,7 @@ import net.grilledham.hamhacks.modules.player.*;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.modules.render.Tracers;
+import net.grilledham.hamhacks.util.ChatUtil;
 import net.grilledham.hamhacks.util.ConnectionUtil;
 import net.grilledham.hamhacks.util.RotationHack;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class HamHacksClient implements ClientModInitializer {
 	public static void init() {
 		RotationHack.init();
 		ConnectionUtil.init();
+		ChatUtil.init();
 		registerModules();
 		Module.Category.init();
 		CommandManager.init();

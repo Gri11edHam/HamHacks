@@ -1,10 +1,23 @@
 package net.grilledham.hamhacks.util;
 
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.EventManager;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
 public class ChatUtil {
+	
+	private ChatUtil() {}
+	
+	public static void init() {
+		EventManager.register(new ChatUtil());
+	}
+	
+	private static Screen toOpen = null;
+	private static int ticksWaited = 0;
 	
 	public static void sendMsg(Text prefix, Text message, Object... args) {
 		String newMessage = message.getString();
@@ -76,5 +89,22 @@ public class ChatUtil {
 		}
 		message = Text.of(newMessage);
 		sendMsg(prefix, message, Formatting.RED);
+	}
+	
+	public static void openFromChat(Screen screen) {
+		toOpen = screen;
+	}
+	
+	@EventListener
+	public void onTick(EventTick event) {
+		if(toOpen != null) {
+			if(ticksWaited >= 0) { // increase in case it doesn't open
+				MinecraftClient.getInstance().setScreen(toOpen);
+				toOpen = null;
+				ticksWaited = 0;
+			} else {
+				ticksWaited++;
+			}
+		}
 	}
 }
