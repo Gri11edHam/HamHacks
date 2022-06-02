@@ -21,7 +21,7 @@ public class InstantKillBow extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		iterations = new IntSetting(new TranslatableText("setting.instantkillbow.iterations"), 100, 100, 1000);
+		iterations = new IntSetting(new TranslatableText("setting.instantkillbow.iterations"), 100, 10, 500);
 		iterations.setToolTip(new TranslatableText("setting.instantkillbow.iterations.tooltip"));
 		addSetting(iterations);
 	}
