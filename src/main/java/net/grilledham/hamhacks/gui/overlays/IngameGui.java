@@ -84,7 +84,7 @@ public class IngameGui {
 				if(playerListEntry != null) {
 					int latency = playerListEntry.getLatency();
 					if(MinecraftClient.getInstance().getCurrentServerEntry() != null) {
-						ping = (latency < 0 ? MinecraftClient.getInstance().getCurrentServerEntry().ping : latency) + " ms";
+						ping = (latency <= 0 ? MinecraftClient.getInstance().getCurrentServerEntry().ping : latency) + " ms";
 					}
 				}
 			}
