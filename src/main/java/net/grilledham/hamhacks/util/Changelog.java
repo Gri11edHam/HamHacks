@@ -9,6 +9,8 @@ public class Changelog {
 				- Added more customizations to the Click GUI
 				- Added scrolling to the Click GUI
 				- Added commands
+				- Added module:
+					: Instant Kill Bow
 				- Added settings to Speed module:
 					: In Air Multiplier
 					: On Ice Multiplier
@@ -18,6 +20,7 @@ public class Changelog {
 					: Mode
 				- Added option to "Mode" in Fly module:
 					: Jetpack
+				- Added descriptions and tooltips
 				- Bug fixes
 			
 			Update 1.4.2:
