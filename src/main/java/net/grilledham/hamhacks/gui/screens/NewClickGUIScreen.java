@@ -5,7 +5,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class NewClickGUIScreen extends Screen {
 	private final List<CategoryPart> categories = new ArrayList<>();
 	
 	public NewClickGUIScreen(Screen last) {
-		super(new TranslatableText("menu.hamhacks.clickgui"));
+		super(Text.translatable("menu.hamhacks.clickgui"));
 		this.last = last;
 		for(Module.Category category : Module.Category.values()) {
 			categories.add(new CategoryPart(this, category));

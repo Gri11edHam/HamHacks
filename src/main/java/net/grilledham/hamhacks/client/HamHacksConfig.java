@@ -46,7 +46,7 @@ public class HamHacksConfig {
 				return;
 			String builder = String.join("", options);
 			if (builder.trim().length() > 0)
-				parseSettings(new JsonParser().parse(builder.trim()).getAsJsonObject());
+				parseSettings(JsonParser.parseString(builder.trim()).getAsJsonObject());
 			f.close();
 		} catch (Exception ex) {
 			System.out.printf("Could not load config file! (\"%s\")%n", file.getName());

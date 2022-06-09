@@ -3,7 +3,7 @@ package net.grilledham.hamhacks.modules.misc;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.*;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public class TestModule extends Module {
 	
@@ -17,13 +17,13 @@ public class TestModule extends Module {
 	private StringSetting testString;
 	
 	public TestModule() {
-		super(new TranslatableText("module.hamhacks.test"), new TranslatableText("module.hamhacks.test.tooltip"), Category.MISC, new Keybind(0));
+		super(Text.translatable("module.hamhacks.test"), Text.translatable("module.hamhacks.test.tooltip"), Category.MISC, new Keybind(0));
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		testBool = new BoolSetting(new TranslatableText("setting.test.testbool"), false) {
+		testBool = new BoolSetting(Text.translatable("setting.test.testbool"), false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -31,13 +31,13 @@ public class TestModule extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		testColor = new ColorSetting(new TranslatableText("setting.test.testcolor"), 1, 1, 1, 1, false);
-		testFloat = new FloatSetting(new TranslatableText("setting.test.testfloat"), 0.5f, 0f, 1f);
-		testInt = new IntSetting(new TranslatableText("setting.test.testint"), 100, 0, 200);
-		testKey = new KeySetting(new TranslatableText("setting.test.testkey"), new Keybind(0));
-		testList = new ListSetting(new TranslatableText("setting.test.testlist"), "Test1", "Test2");
-		testSelector = new SelectionSetting(new TranslatableText("setting.test.testselector"), new TranslatableText("setting.test.testselector.test1"), new TranslatableText("setting.test.testselector.test1"), new TranslatableText("setting.test.testselector.test2"), new TranslatableText("setting.test.testselector.test3"));
-		testString = new StringSetting(new TranslatableText("setting.test.teststring"), "Test");
+		testColor = new ColorSetting(Text.translatable("setting.test.testcolor"), 1, 1, 1, 1, false);
+		testFloat = new FloatSetting(Text.translatable("setting.test.testfloat"), 0.5f, 0f, 1f);
+		testInt = new IntSetting(Text.translatable("setting.test.testint"), 100, 0, 200);
+		testKey = new KeySetting(Text.translatable("setting.test.testkey"), new Keybind(0));
+		testList = new ListSetting(Text.translatable("setting.test.testlist"), "Test1", "Test2");
+		testSelector = new SelectionSetting(Text.translatable("setting.test.testselector"), Text.translatable("setting.test.testselector.test1"), Text.translatable("setting.test.testselector.test1"), Text.translatable("setting.test.testselector.test2"), Text.translatable("setting.test.testselector.test3"));
+		testString = new StringSetting(Text.translatable("setting.test.teststring"), "Test");
 		addSetting(testBool);
 		addSetting(testColor);
 		addSetting(testFloat);

@@ -5,13 +5,13 @@ import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class Jesus extends Module {
 	
 	public Jesus() {
-		super(new TranslatableText("module.hamhacks.jesus"), new TranslatableText("module.hamhacks.jesus.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_J));
+		super(Text.translatable("module.hamhacks.jesus"), Text.translatable("module.hamhacks.jesus.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_J));
 	}
 	
 	@EventListener

@@ -6,7 +6,7 @@ import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
 import net.grilledham.hamhacks.util.setting.settings.ColorSetting;
 import net.grilledham.hamhacks.util.setting.settings.StringSetting;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HexFormat;
@@ -33,7 +33,7 @@ public class ColorSettingPart extends SettingPart {
 	public ColorSettingPart(int x, int y, ColorSetting setting) {
 		super(x, y, 16, setting);
 		this.setting = setting;
-		chroma = new BoolSetting(new TranslatableText("setting.colorsettingpart.chroma"), setting.useChroma()) {
+		chroma = new BoolSetting(Text.translatable("setting.colorsettingpart.chroma"), setting.useChroma()) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -46,7 +46,7 @@ public class ColorSettingPart extends SettingPart {
 		while(hex.length() < 8) {
 			hex.insert(0, "0");
 		}
-		hexVal = new StringSetting(new TranslatableText(""), hex.toString());
+		hexVal = new StringSetting(Text.translatable(""), hex.toString());
 		hexValPart = new StringSettingPart(x, y, hexVal) {
 			@Override
 			public boolean type(int code, int scanCode, int modifiers) {

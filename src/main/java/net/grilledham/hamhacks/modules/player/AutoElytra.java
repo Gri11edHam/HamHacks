@@ -4,13 +4,13 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class AutoElytra extends Module {
 	
 	public AutoElytra() {
-		super(new TranslatableText("module.hamhacks.autoelytra"), new TranslatableText("module.hamhacks.autoelytra.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_Y));
+		super(Text.translatable("module.hamhacks.autoelytra"), Text.translatable("module.hamhacks.autoelytra.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_Y));
 	}
 	
 	@EventListener

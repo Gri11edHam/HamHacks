@@ -5,7 +5,9 @@ import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class ChatUtil {
@@ -29,7 +31,7 @@ public class ChatUtil {
 	}
 	
 	public static void sendMsg(Text prefix, Text message, Formatting... formatting) {
-		BaseText text = new LiteralText("");
+		MutableText text = Text.literal("");
 		if(prefix != null) {
 			text.append(prefix);
 		}

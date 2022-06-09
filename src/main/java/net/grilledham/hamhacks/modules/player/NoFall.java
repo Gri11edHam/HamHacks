@@ -7,7 +7,8 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.SelectionSetting;
 import net.minecraft.block.Material;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.glfw.GLFW;
 
@@ -19,20 +20,20 @@ public class NoFall extends Module {
 	private long lastTime;
 	
 	public NoFall() {
-		super(new TranslatableText("module.hamhacks.nofall"), new TranslatableText("module.hamhacks.nofall.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
+		super(Text.translatable("module.hamhacks.nofall"), Text.translatable("module.hamhacks.nofall.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
 	}
 	
 	@Override
 	public void addSettings() {
-		mode = new SelectionSetting(new TranslatableText("setting.nofall.mode"), new TranslatableText("setting.nofall.mode.packet"), new TranslatableText("setting.nofall.mode.packet"), new TranslatableText("setting.nofall.mode.momentum"));
-		mode.setToolTip(new TranslatableText("setting.nofall.mode.tooltip"));
+		mode = new SelectionSetting(Text.translatable("setting.nofall.mode"), Text.translatable("setting.nofall.mode.packet"), Text.translatable("setting.nofall.mode.packet"), Text.translatable("setting.nofall.mode.momentum"));
+		mode.setToolTip(Text.translatable("setting.nofall.mode.tooltip"));
 		addSetting(mode);
 	}
 	
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
-			switch(((TranslatableText)mode.getValue()).getKey()) {
+			switch(((TranslatableTextContent)mode.getValue().getContent()).getKey()) {
 				case "setting.nofall.mode.packet" -> {
 					if(mc.player.fallDistance >= 3) {
 						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));

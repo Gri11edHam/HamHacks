@@ -8,7 +8,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import org.lwjgl.glfw.GLFW;
 
@@ -19,7 +18,7 @@ public class BindModuleScreen extends Screen {
 	private boolean isFirstClick = true;
 	
 	public BindModuleScreen(Module module) {
-		super(new TranslatableText("menu.hamhacks.bindmodule"));
+		super(Text.translatable("menu.hamhacks.bindmodule"));
 		this.module = module;
 	}
 	

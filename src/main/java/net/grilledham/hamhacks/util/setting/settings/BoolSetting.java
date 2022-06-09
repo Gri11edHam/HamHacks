@@ -2,23 +2,23 @@ package net.grilledham.hamhacks.util.setting.settings;
 
 import net.grilledham.hamhacks.util.setting.Setting;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 
 public class BoolSetting extends Setting<Boolean> {
 	
 	public BoolSetting(Text name, boolean bool) {
 		super(name);
-		value.addProperty(((TranslatableText)name).getKey(), bool);
+		value.addProperty(((TranslatableTextContent)name.getContent()).getKey(), bool);
 		def = bool;
 	}
 	
 	@Override
 	protected void updateValue(Boolean value) {
-		this.value.addProperty(((TranslatableText)name).getKey(), value);
+		this.value.addProperty(((TranslatableTextContent)name.getContent()).getKey(), value);
 	}
 	
 	@Override
 	public Boolean getValue() {
-		return value.get(((TranslatableText)name).getKey()).getAsBoolean();
+		return value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsBoolean();
 	}
 }

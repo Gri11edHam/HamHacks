@@ -8,7 +8,7 @@ import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
 import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
 import net.minecraft.block.Material;
 import net.minecraft.entity.EntityPose;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
@@ -26,24 +26,24 @@ public class Speed extends Module {
 	private static Speed INSTANCE;
 	
 	public Speed() {
-		super(new TranslatableText("module.hamhacks.speed"), new TranslatableText("module.hamhacks.speed.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
+		super(Text.translatable("module.hamhacks.speed"), Text.translatable("module.hamhacks.speed.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
 		INSTANCE = this;
 	}
 	
 	@Override
 	public void addSettings() {
-		speed = new FloatSetting(new TranslatableText("setting.speed.speed"), 2.5f, 0f, 10f);
-		autoJump = new BoolSetting(new TranslatableText("setting.speed.autojump"), false);
-		autoJump.setToolTip(new TranslatableText("setting.speed.autojump.tooltip"));
-		inAirMult = new FloatSetting(new TranslatableText("setting.speed.inairmultiplier"), 1.7f, 0.25f, 4);
-		inAirMult.setToolTip(new TranslatableText("setting.speed.inairmultiplier.tooltip"));
-		onIceMult = new FloatSetting(new TranslatableText("setting.speed.onicemultiplier"), 2, 0.25f, 4);
-		onIceMult.setToolTip(new TranslatableText("setting.speed.onicemultiplier.tooltip"));
-		inTunnelMult = new FloatSetting(new TranslatableText("setting.speed.intunnelmultiplier"), 1.7f, 0.25f, 4);
-		inTunnelMult.setToolTip(new TranslatableText("setting.speed.intunnelmultiplier.tooltip"));
-		inWaterMult = new FloatSetting(new TranslatableText("setting.speed.inwatermultiplier"), 0.6f, 0.25f, 4);
-		inWaterMult.setToolTip(new TranslatableText("setting.speed.inwatermultiplier.tooltip"));
-		disableWithElytra = new BoolSetting(new TranslatableText("setting.speed.disablewithelytra"), true);
+		speed = new FloatSetting(Text.translatable("setting.speed.speed"), 2.5f, 0f, 10f);
+		autoJump = new BoolSetting(Text.translatable("setting.speed.autojump"), false);
+		autoJump.setToolTip(Text.translatable("setting.speed.autojump.tooltip"));
+		inAirMult = new FloatSetting(Text.translatable("setting.speed.inairmultiplier"), 1.7f, 0.25f, 4);
+		inAirMult.setToolTip(Text.translatable("setting.speed.inairmultiplier.tooltip"));
+		onIceMult = new FloatSetting(Text.translatable("setting.speed.onicemultiplier"), 2, 0.25f, 4);
+		onIceMult.setToolTip(Text.translatable("setting.speed.onicemultiplier.tooltip"));
+		inTunnelMult = new FloatSetting(Text.translatable("setting.speed.intunnelmultiplier"), 1.7f, 0.25f, 4);
+		inTunnelMult.setToolTip(Text.translatable("setting.speed.intunnelmultiplier.tooltip"));
+		inWaterMult = new FloatSetting(Text.translatable("setting.speed.inwatermultiplier"), 0.6f, 0.25f, 4);
+		inWaterMult.setToolTip(Text.translatable("setting.speed.inwatermultiplier.tooltip"));
+		disableWithElytra = new BoolSetting(Text.translatable("setting.speed.disablewithelytra"), true);
 		addSetting(speed);
 		addSetting(autoJump);
 		addSetting(inAirMult);

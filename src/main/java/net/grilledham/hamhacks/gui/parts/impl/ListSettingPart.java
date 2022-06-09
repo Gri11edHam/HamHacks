@@ -6,7 +6,7 @@ import net.grilledham.hamhacks.util.setting.settings.ListSetting;
 import net.grilledham.hamhacks.util.setting.settings.StringSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 import org.lwjgl.glfw.GLFW;
@@ -46,7 +46,7 @@ public class ListSettingPart extends SettingPart {
 		for(String s : setting.getValue()) {
 			int finalI = i;
 			StringSetting strSet;
-			strings.add(strSet = new StringSetting(new TranslatableText("setting.listsettingpart.internal.stringsetting"), s));
+			strings.add(strSet = new StringSetting(Text.translatable("setting.listsettingpart.internal.stringsetting"), s));
 			StringSettingPart strSetPart;
 			stringParts.add(strSetPart = new StringSettingPart(x, y, strSet));
 			strSetPart.drawBackground = false;

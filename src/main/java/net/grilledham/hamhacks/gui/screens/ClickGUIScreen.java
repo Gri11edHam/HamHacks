@@ -11,7 +11,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
@@ -39,7 +38,7 @@ public class ClickGUIScreen extends Screen {
 	private static boolean settingClicked = false;
 	
 	public ClickGUIScreen() {
-		super(new TranslatableText("menu.hamhacks.clickgui"));
+		super(Text.translatable("menu.hamhacks.clickgui"));
 	}
 	
 	@Override
@@ -633,8 +632,7 @@ public class ClickGUIScreen extends Screen {
 		bufferBuilder.vertex(matrix, x2, y2, getZOffset()).color(g, h, k, f).next();
 		bufferBuilder.vertex(matrix, x2, y1, getZOffset()).color(g, h, k, f).next();
 		bufferBuilder.vertex(matrix, x1, y1, getZOffset()).color(g, h, k, f).next();
-		bufferBuilder.end();
-		BufferRenderer.draw(bufferBuilder);
+		BufferRenderer.drawWithShader(bufferBuilder.end());
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}

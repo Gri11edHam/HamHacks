@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import net.grilledham.hamhacks.util.ChromaUtil;
 import net.grilledham.hamhacks.util.setting.Setting;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 
 import java.awt.*;
 
@@ -20,7 +20,7 @@ public class ColorSetting extends Setting<Float[]> {
 		obj.addProperty("brightness", b);
 		obj.addProperty("alpha", a);
 		obj.addProperty("chroma", chroma);
-		value.add(((TranslatableText)name).getKey(), obj);
+		value.add(((TranslatableTextContent)name.getContent()).getKey(), obj);
 		def = new Float[] {h, s, b, a};
 		defChroma = chroma;
 	}
@@ -48,27 +48,27 @@ public class ColorSetting extends Setting<Float[]> {
 	}
 	
 	public void setHue(float hue) {
-		this.value.get(((TranslatableText)name).getKey()).getAsJsonObject().addProperty("hue", hue);
+		this.value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().addProperty("hue", hue);
 	}
 	
 	public void setSaturation(float saturation) {
-		this.value.get(((TranslatableText)name).getKey()).getAsJsonObject().addProperty("saturation", saturation);
+		this.value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().addProperty("saturation", saturation);
 	}
 	
 	public void setBrightness(float brightness) {
-		this.value.get(((TranslatableText)name).getKey()).getAsJsonObject().addProperty("brightness", brightness);
+		this.value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().addProperty("brightness", brightness);
 	}
 	
 	public void setAlpha(float alpha) {
-		this.value.get(((TranslatableText)name).getKey()).getAsJsonObject().addProperty("alpha", alpha);
+		this.value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().addProperty("alpha", alpha);
 	}
 	
 	public void setChroma(boolean chroma) {
-		this.value.get(((TranslatableText)name).getKey()).getAsJsonObject().addProperty("chroma", chroma);
+		this.value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().addProperty("chroma", chroma);
 	}
 	
 	public boolean useChroma() {
-		return value.get(((TranslatableText)name).getKey()).getAsJsonObject().get("chroma").getAsBoolean();
+		return value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().get("chroma").getAsBoolean();
 	}
 	
 	@Override
@@ -78,28 +78,28 @@ public class ColorSetting extends Setting<Float[]> {
 	
 	public float getHue() {
 		float hue;
-		if(value.get(((TranslatableText)name).getKey()).getAsJsonObject().get("chroma").getAsBoolean()) {
+		if(value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().get("chroma").getAsBoolean()) {
 			int c = ChromaUtil.getColor();
 			int r = c >> 16 & 0xff;
 			int g = c >> 8 & 0xff;
 			int b = c & 0xff;
 			hue = Color.RGBtoHSB(r, g, b, new float[3])[0];
 		} else {
-			hue = value.get(((TranslatableText)name).getKey()).getAsJsonObject().get("hue").getAsFloat();
+			hue = value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().get("hue").getAsFloat();
 		}
 		return hue;
 	}
 	
 	public float getSaturation() {
-		return value.get(((TranslatableText)name).getKey()).getAsJsonObject().get("saturation").getAsFloat();
+		return value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().get("saturation").getAsFloat();
 	}
 	
 	public float getBrightness() {
-		return value.get(((TranslatableText)name).getKey()).getAsJsonObject().get("brightness").getAsFloat();
+		return value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().get("brightness").getAsFloat();
 	}
 	
 	public float getAlpha() {
-		return value.get(((TranslatableText)name).getKey()).getAsJsonObject().get("alpha").getAsFloat();
+		return value.get(((TranslatableTextContent)name.getContent()).getKey()).getAsJsonObject().get("alpha").getAsFloat();
 	}
 	
 	public int getRGB() {

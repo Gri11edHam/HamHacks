@@ -5,7 +5,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.IntSetting;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public class InstantKillBow extends Module {
 	
@@ -14,15 +14,15 @@ public class InstantKillBow extends Module {
 	private IntSetting iterations;
 	
 	public InstantKillBow() {
-		super(new TranslatableText("module.hamhacks.instantkillbow"), new TranslatableText("module.hamhacks.instantkillbow.tooltip"), Category.COMBAT, new Keybind(0));
+		super(Text.translatable("module.hamhacks.instantkillbow"), Text.translatable("module.hamhacks.instantkillbow.tooltip"), Category.COMBAT, new Keybind(0));
 		INSTANCE = this;
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		iterations = new IntSetting(new TranslatableText("setting.instantkillbow.iterations"), 100, 10, 500);
-		iterations.setToolTip(new TranslatableText("setting.instantkillbow.iterations.tooltip"));
+		iterations = new IntSetting(Text.translatable("setting.instantkillbow.iterations"), 100, 10, 500);
+		iterations.setToolTip(Text.translatable("setting.instantkillbow.iterations.tooltip"));
 		addSetting(iterations);
 	}
 	

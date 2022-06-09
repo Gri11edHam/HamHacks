@@ -5,7 +5,6 @@ import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.modules.combat.Reach;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.resource.ResourceManager;
@@ -35,9 +34,11 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		event.call();
 	}
 	
-	@Redirect(method = "renderWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/client/option/GameOptions;bobView:Z"))
-	public boolean modelBobbingOnly(GameOptions instance) {
-		return instance.bobView && !HUD.getInstance().modelBobbingOnly.getValue() && HUD.getInstance().isEnabled();
+	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
+	public void modelBobbingOnly(GameRenderer instance, MatrixStack matrices, float tickDelta) {
+		if(!HUD.getInstance().modelBobbingOnly.getValue() && HUD.getInstance().isEnabled()) {
+			bobView(matrices, tickDelta);
+		}
 	}
 	
 	@Inject(method = "bobViewWhenHurt", at = @At("HEAD"), cancellable = true)

@@ -4,13 +4,13 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class Sprint extends Module {
 	
 	public Sprint() {
-		super(new TranslatableText("module.hamhacks.sprint"), new TranslatableText("module.hamhacks.sprint.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_G));
+		super(Text.translatable("module.hamhacks.sprint"), Text.translatable("module.hamhacks.sprint.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_G));
 	}
 	
 	@EventListener

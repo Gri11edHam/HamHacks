@@ -5,7 +5,7 @@ import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.settings.IntSetting;
 import net.grilledham.hamhacks.util.setting.settings.StringSetting;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class IntSettingPart extends SettingPart {
@@ -22,7 +22,7 @@ public class IntSettingPart extends SettingPart {
 	
 	public IntSettingPart(int x, int y, IntSetting setting) {
 		super(x, y, 16, setting);
-		strVal = new StringSetting(new TranslatableText(""), setting.getValue().toString());
+		strVal = new StringSetting(Text.translatable(""), setting.getValue().toString());
 		editor = new StringSettingPart(x + width - 207, y, strVal) {
 			@Override
 			public boolean type(int code, int scanCode, int modifiers) {

@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import net.grilledham.hamhacks.gui.screens.ModuleSettingsScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 
 public abstract class Setting<T> {
 	
@@ -73,11 +73,11 @@ public abstract class Setting<T> {
 	}
 	
 	public String getKey() {
-		return ((TranslatableText)name).getKey();
+		return ((TranslatableTextContent)name.getContent()).getKey();
 	}
 	
 	public void set(JsonElement el) {
-		value.add(((TranslatableText)name).getKey(), el);
+		value.add(((TranslatableTextContent)name.getContent()).getKey(), el);
 		valueChanged();
 	}
 	

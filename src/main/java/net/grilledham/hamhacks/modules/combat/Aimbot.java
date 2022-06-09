@@ -12,7 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -39,16 +39,16 @@ public class Aimbot extends Module {
 	private HitResult blockToAim = null;
 	
 	public Aimbot() {
-		super(new TranslatableText("module.hamhacks.aimbot"), new TranslatableText("module.hamhacks.aimbot.tooltip"), Category.COMBAT, new Keybind(0));
+		super(Text.translatable("module.hamhacks.aimbot"), Text.translatable("module.hamhacks.aimbot.tooltip"), Category.COMBAT, new Keybind(0));
 	}
 	
 	@Override
 	public void addSettings() {
-		speed = new FloatSetting(new TranslatableText("setting.aimbot.speed"), 10.0f, 0.1f, 100f);
-		speed.setToolTip(new TranslatableText("setting.aimbot.speed.tooltip"));
-		fov = new FloatSetting(new TranslatableText("setting.aimbot.fov"), 90.0f, 0.1f, 360f);
-		fov.setToolTip(new TranslatableText("setting.aimbot.fov.tooltip"));
-		targetEntities = new BoolSetting(new TranslatableText("setting.aimbot.targetentities"), true) {
+		speed = new FloatSetting(Text.translatable("setting.aimbot.speed"), 10.0f, 0.1f, 100f);
+		speed.setToolTip(Text.translatable("setting.aimbot.speed.tooltip"));
+		fov = new FloatSetting(Text.translatable("setting.aimbot.fov"), 90.0f, 0.1f, 360f);
+		fov.setToolTip(Text.translatable("setting.aimbot.fov.tooltip"));
+		targetEntities = new BoolSetting(Text.translatable("setting.aimbot.targetentities"), true) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -56,12 +56,12 @@ public class Aimbot extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		keepAiming = new BoolSetting(new TranslatableText("setting.aimbot.keepaiming"), false);
-		keepAiming.setToolTip(new TranslatableText("setting.aimbot.keepaiming.tooltip"));
-		targetPlayers = new BoolSetting(new TranslatableText("setting.aimbot.targetplayers"), true);
-		targetPassive = new BoolSetting(new TranslatableText("setting.aimbot.targetpassive"), false);
-		targetHostile = new BoolSetting(new TranslatableText("setting.aimbot.targethostile"), false);
-		targetBlocks = new BoolSetting(new TranslatableText("setting.aimbot.targetblocks"), false);
+		keepAiming = new BoolSetting(Text.translatable("setting.aimbot.keepaiming"), false);
+		keepAiming.setToolTip(Text.translatable("setting.aimbot.keepaiming.tooltip"));
+		targetPlayers = new BoolSetting(Text.translatable("setting.aimbot.targetplayers"), true);
+		targetPassive = new BoolSetting(Text.translatable("setting.aimbot.targetpassive"), false);
+		targetHostile = new BoolSetting(Text.translatable("setting.aimbot.targethostile"), false);
+		targetBlocks = new BoolSetting(Text.translatable("setting.aimbot.targetblocks"), false);
 		addSetting(speed);
 		addSetting(fov);
 		addSetting(targetEntities);

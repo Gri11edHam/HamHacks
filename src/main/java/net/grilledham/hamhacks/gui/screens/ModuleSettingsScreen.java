@@ -9,7 +9,7 @@ import net.grilledham.hamhacks.util.setting.Setting;
 import net.grilledham.hamhacks.util.setting.settings.*;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class ModuleSettingsScreen extends Screen {
 	private ScrollablePart scrollArea;
 	
 	public ModuleSettingsScreen(Screen last, Module module) {
-		super(new TranslatableText("menu.hamhacks.clickgui.module"));
+		super(Text.translatable("menu.hamhacks.clickgui.module"));
 		this.last = last;
 		this.module = module;
 	}

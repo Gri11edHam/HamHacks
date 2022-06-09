@@ -13,7 +13,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
@@ -34,16 +34,16 @@ public class KillAura extends Module {
 	private LivingEntity target;
 	
 	public KillAura() {
-		super(new TranslatableText("module.hamhacks.killaura"), new TranslatableText("module.hamhacks.killaura.tooltip"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
+		super(Text.translatable("module.hamhacks.killaura"), Text.translatable("module.hamhacks.killaura.tooltip"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		range = new FloatSetting(new TranslatableText("setting.killaura.range"), 3f, 1f, 8f);
-		targetPlayers = new BoolSetting(new TranslatableText("setting.killaura.targetplayers"), true);
-		targetPassive = new BoolSetting(new TranslatableText("setting.killaura.targetpassive"), false);
-		targetHostile = new BoolSetting(new TranslatableText("setting.killaura.targethostile"), false);
+		range = new FloatSetting(Text.translatable("setting.killaura.range"), 3f, 1f, 8f);
+		targetPlayers = new BoolSetting(Text.translatable("setting.killaura.targetplayers"), true);
+		targetPassive = new BoolSetting(Text.translatable("setting.killaura.targetpassive"), false);
+		targetHostile = new BoolSetting(Text.translatable("setting.killaura.targethostile"), false);
 		addSetting(range);
 		addSetting(targetPlayers);
 		addSetting(targetPassive);

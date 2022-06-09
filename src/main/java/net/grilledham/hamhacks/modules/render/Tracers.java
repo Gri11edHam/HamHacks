@@ -16,7 +16,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.*;
 import org.jetbrains.annotations.Nullable;
@@ -41,13 +41,13 @@ public class Tracers extends Module {
 	private ColorSetting passiveFar;
 	
 	public Tracers() {
-		super(new TranslatableText("module.hamhacks.tracers"), new TranslatableText("module.hamhacks.tracers.tooltip"), Category.RENDER, new Keybind(0));
+		super(Text.translatable("module.hamhacks.tracers"), Text.translatable("module.hamhacks.tracers.tooltip"), Category.RENDER, new Keybind(0));
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		tracePlayers = new BoolSetting(new TranslatableText("setting.tracers.traceplayers"), true) {
+		tracePlayers = new BoolSetting(Text.translatable("setting.tracers.traceplayers"), true) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -55,9 +55,9 @@ public class Tracers extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		playerClose = new ColorSetting(new TranslatableText("setting.tracers.playercolorclose"), 1, 1, 1, 0.5f, false);
-		playerFar = new ColorSetting(new TranslatableText("setting.tracers.playercolorfar"), 1 / 3f, 1, 1, 0.5f, false);
-		traceHostile = new BoolSetting(new TranslatableText("setting.tracers.tracehostile"), false) {
+		playerClose = new ColorSetting(Text.translatable("setting.tracers.playercolorclose"), 1, 1, 1, 0.5f, false);
+		playerFar = new ColorSetting(Text.translatable("setting.tracers.playercolorfar"), 1 / 3f, 1, 1, 0.5f, false);
+		traceHostile = new BoolSetting(Text.translatable("setting.tracers.tracehostile"), false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -65,9 +65,9 @@ public class Tracers extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		hostileClose = new ColorSetting(new TranslatableText("setting.tracers.hostilecolorclose"), 1, 1, 1, 0.5f, false);
-		hostileFar = new ColorSetting(new TranslatableText("setting.tracers.hostilecolorfar"), 1 / 3f, 1, 1, 0.5f, false);
-		tracePassive = new BoolSetting(new TranslatableText("setting.tracers.tracepassive"), false) {
+		hostileClose = new ColorSetting(Text.translatable("setting.tracers.hostilecolorclose"), 1, 1, 1, 0.5f, false);
+		hostileFar = new ColorSetting(Text.translatable("setting.tracers.hostilecolorfar"), 1 / 3f, 1, 1, 0.5f, false);
+		tracePassive = new BoolSetting(Text.translatable("setting.tracers.tracepassive"), false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -75,8 +75,8 @@ public class Tracers extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		passiveClose = new ColorSetting(new TranslatableText("setting.tracers.passivecolorclose"), 1, 1, 1, 0.5f, false);
-		passiveFar = new ColorSetting(new TranslatableText("setting.tracers.passivecolorfar"), 1 / 3f, 1, 1, 0.5f, false);
+		passiveClose = new ColorSetting(Text.translatable("setting.tracers.passivecolorclose"), 1, 1, 1, 0.5f, false);
+		passiveFar = new ColorSetting(Text.translatable("setting.tracers.passivecolorfar"), 1 / 3f, 1, 1, 0.5f, false);
 		
 		addSetting(tracePlayers);
 		addSetting(playerClose);
@@ -208,8 +208,7 @@ public class Tracers extends Module {
 			bufferBuilder.vertex(matrix, (float)end.x, (float)end.y, (float)end.z).color(r, g, b, a).next();
 		}
 		
-		bufferBuilder.end();
-		BufferRenderer.draw(bufferBuilder);
+		BufferRenderer.drawWithShader(bufferBuilder.end());
 	}
 	
 	private void applyRegionalRenderOffset(MatrixStack matrixStack) {

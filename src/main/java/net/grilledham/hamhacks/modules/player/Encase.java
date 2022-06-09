@@ -5,7 +5,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -15,7 +15,7 @@ import org.lwjgl.glfw.GLFW;
 public class Encase extends Module {
 	
 	public Encase() {
-		super(new TranslatableText("module.hamhacks.encase"), new TranslatableText("module.hamhacks.encase.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_V));
+		super(Text.translatable("module.hamhacks.encase"), Text.translatable("module.hamhacks.encase.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_V));
 	}
 	
 	@Override

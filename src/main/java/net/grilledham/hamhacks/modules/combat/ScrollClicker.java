@@ -5,13 +5,13 @@ import net.grilledham.hamhacks.event.events.EventScroll;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class ScrollClicker extends Module {
 	
 	public ScrollClicker() {
-		super(new TranslatableText("module.hamhacks.scrollclick"), new TranslatableText("module.hamhacks.scrollclick.tooltip"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_L));
+		super(Text.translatable("module.hamhacks.scrollclick"), Text.translatable("module.hamhacks.scrollclick.tooltip"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_L));
 	}
 	
 	@EventListener

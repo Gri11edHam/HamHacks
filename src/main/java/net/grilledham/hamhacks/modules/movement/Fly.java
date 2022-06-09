@@ -10,7 +10,8 @@ import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
 import net.grilledham.hamhacks.util.setting.settings.SelectionSetting;
 import net.minecraft.block.Material;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
@@ -31,12 +32,12 @@ public class Fly extends Module {
 	private long lastTime;
 	
 	public Fly() {
-		super(new TranslatableText("module.hamhacks.fly"), new TranslatableText("module.hamhacks.fly.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_F));
+		super(Text.translatable("module.hamhacks.fly"), Text.translatable("module.hamhacks.fly.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_F));
 	}
 	
 	@Override
 	public void addSettings() {
-		mode = new SelectionSetting(new TranslatableText("setting.fly.mode"), new TranslatableText("setting.fly.mode.default"), new TranslatableText("setting.fly.mode.default"), new TranslatableText("setting.fly.mode.vanilla"), new TranslatableText("setting.fly.mode.jetpack")) {
+		mode = new SelectionSetting(Text.translatable("setting.fly.mode"), Text.translatable("setting.fly.mode.default"), Text.translatable("setting.fly.mode.default"), Text.translatable("setting.fly.mode.vanilla"), Text.translatable("setting.fly.mode.jetpack")) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -44,15 +45,15 @@ public class Fly extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		mode.setToolTip(new TranslatableText("setting.fly.mode.tooltip"));
-		speed = new FloatSetting(new TranslatableText("setting.fly.speed"), 1f, 0f, 10f);
-		speed.setToolTip(new TranslatableText("setting.fly.speed.tooltip"));
-		smoothMovement = new BoolSetting(new TranslatableText("setting.fly.smoothmovement"), true);
-		smoothMovement.setToolTip(new TranslatableText("setting.fly.smoothmovement.tooltip"));
-		jetpackSpeed = new FloatSetting(new TranslatableText("setting.fly.jetpackspeed"), 0.2f, 0.1f, 1f);
-		jetpackSpeed.setToolTip(new TranslatableText("setting.fly.jetpackspeed.tooltip"));
-		autoLand = new BoolSetting(new TranslatableText("setting.fly.autoland"), false);
-		autoLand.setToolTip(new TranslatableText("setting.fly.autoland.tooltip"));
+		mode.setToolTip(Text.translatable("setting.fly.mode.tooltip"));
+		speed = new FloatSetting(Text.translatable("setting.fly.speed"), 1f, 0f, 10f);
+		speed.setToolTip(Text.translatable("setting.fly.speed.tooltip"));
+		smoothMovement = new BoolSetting(Text.translatable("setting.fly.smoothmovement"), true);
+		smoothMovement.setToolTip(Text.translatable("setting.fly.smoothmovement.tooltip"));
+		jetpackSpeed = new FloatSetting(Text.translatable("setting.fly.jetpackspeed"), 0.2f, 0.1f, 1f);
+		jetpackSpeed.setToolTip(Text.translatable("setting.fly.jetpackspeed.tooltip"));
+		autoLand = new BoolSetting(Text.translatable("setting.fly.autoland"), false);
+		autoLand.setToolTip(Text.translatable("setting.fly.autoland.tooltip"));
 		addSetting(mode);
 		addSetting(speed);
 		addSetting(smoothMovement);
@@ -66,7 +67,7 @@ public class Fly extends Module {
 		hideSetting(smoothMovement);
 		hideSetting(jetpackSpeed);
 		hideSetting(autoLand);
-		if(((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.jetpack")) {
+		if(((TranslatableTextContent)mode.getValue().getContent()).getKey().equalsIgnoreCase("setting.fly.mode.jetpack")) {
 			showSetting(autoLand, 1);
 			showSetting(jetpackSpeed, 1);
 		} else {
@@ -82,12 +83,12 @@ public class Fly extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		if(((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.default")) {
+		if(((TranslatableTextContent)mode.getValue().getContent()).getKey().equalsIgnoreCase("setting.fly.mode.default")) {
 			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
 		}
-		if(((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.vanilla")) {
+		if(((TranslatableTextContent)mode.getValue().getContent()).getKey().equalsIgnoreCase("setting.fly.mode.vanilla")) {
 			if (!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
@@ -97,7 +98,7 @@ public class Fly extends Module {
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
-			switch(((TranslatableText)mode.getValue()).getKey()) {
+			switch(((TranslatableTextContent)mode.getValue().getContent()).getKey()) {
 				case "setting.fly.mode.default" -> {
 					if(smoothMovement.getValue()) {
 						moveSmooth();
@@ -260,9 +261,9 @@ public class Fly extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		if(((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.default")) {
+		if(((TranslatableTextContent)mode.getValue().getContent()).getKey().equalsIgnoreCase("setting.fly.mode.default")) {
 			mc.player.getAbilities().flying = false;
-		} else if (((TranslatableText)mode.getValue()).getKey().equalsIgnoreCase("setting.fly.mode.vanilla")) {
+		} else if (((TranslatableTextContent)mode.getValue().getContent()).getKey().equalsIgnoreCase("setting.fly.mode.vanilla")) {
 			mc.player.getAbilities().flying = false;
 		}
 	}

@@ -7,7 +7,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.ColorSetting;
 import net.grilledham.hamhacks.util.setting.settings.IntSetting;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
@@ -23,7 +23,7 @@ public class ClickGUI extends Module {
 	private static ClickGUI INSTANCE;
 	
 	public ClickGUI() {
-		super(new TranslatableText("module.hamhacks.clickgui"), new TranslatableText("module.hamhacks.clickgui.tooltip"), Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
+		super(Text.translatable("module.hamhacks.clickgui"), Text.translatable("module.hamhacks.clickgui.tooltip"), Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
 		INSTANCE = this;
 	}
 	
@@ -35,11 +35,11 @@ public class ClickGUI extends Module {
 	public void addSettings() {
 		super.addSettings();
 		float[] barHSB = Color.RGBtoHSB(0xa4, 0, 0, new float[3]);
-		accentColor = new ColorSetting(new TranslatableText("setting.clickgui.accentcolor"), barHSB[0], barHSB[1], barHSB[2], 1, false);
-		bgColor = new ColorSetting(new TranslatableText("setting.clickgui.backgroundcolor"), 0, 0, 0, 0.5f, false);
-		bgColorHovered = new ColorSetting(new TranslatableText("setting.clickgui.backgroundcolorhovered"), 0, 0, 1, 0.5f, false);
-		textColor = new ColorSetting(new TranslatableText("setting.clickgui.textcolor"), 0, 0, 1, 1, false);
-		scale = new IntSetting(new TranslatableText("setting.clickgui.scale"), 2, 1, 5);
+		accentColor = new ColorSetting(Text.translatable("setting.clickgui.accentcolor"), barHSB[0], barHSB[1], barHSB[2], 1, false);
+		bgColor = new ColorSetting(Text.translatable("setting.clickgui.backgroundcolor"), 0, 0, 0, 0.5f, false);
+		bgColorHovered = new ColorSetting(Text.translatable("setting.clickgui.backgroundcolorhovered"), 0, 0, 1, 0.5f, false);
+		textColor = new ColorSetting(Text.translatable("setting.clickgui.textcolor"), 0, 0, 1, 1, false);
+		scale = new IntSetting(Text.translatable("setting.clickgui.scale"), 2, 1, 5);
 		addSetting(accentColor);
 		addSetting(bgColor);
 		addSetting(bgColorHovered);

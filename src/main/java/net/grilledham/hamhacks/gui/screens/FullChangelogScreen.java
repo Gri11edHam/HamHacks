@@ -4,7 +4,7 @@ import net.grilledham.hamhacks.gui.parts.impl.ButtonPart;
 import net.grilledham.hamhacks.util.Changelog;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public class FullChangelogScreen extends Screen {
 	
@@ -15,7 +15,7 @@ public class FullChangelogScreen extends Screen {
 	private ButtonPart backButton;
 	
 	protected FullChangelogScreen(Screen last) {
-		super(new TranslatableText("menu.hamhacks.fullchangelog"));
+		super(Text.translatable("menu.hamhacks.fullchangelog"));
 		this.last = last;
 	}
 	

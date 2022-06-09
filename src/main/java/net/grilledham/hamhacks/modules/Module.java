@@ -9,7 +9,7 @@ import net.grilledham.hamhacks.util.setting.settings.KeySetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class Module {
 	protected Text name;
 	
 	protected Text toolTip;
-	protected BoolSetting enabled = new BoolSetting(new TranslatableText("setting.generic.enabled"), false) {
+	protected BoolSetting enabled = new BoolSetting(Text.translatable("setting.generic.enabled"), false) {
 		@Override
 		protected void valueChanged() {
 			super.valueChanged();
@@ -32,7 +32,7 @@ public class Module {
 	};
 	protected Category category;
 	protected KeySetting key;
-	protected BoolSetting showModule = new BoolSetting(new TranslatableText("setting.generic.showmodule"), true);
+	protected BoolSetting showModule = new BoolSetting(Text.translatable("setting.generic.showmodule"), true);
 	
 	protected List<Setting<?>> shownSettings = new ArrayList<>();
 	protected List<Setting<?>> settings = new ArrayList<>();
@@ -40,7 +40,7 @@ public class Module {
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
 	
-	protected BoolSetting forceDisabled = new BoolSetting(new TranslatableText("setting.generic.internal.forcedisabled"), false);
+	protected BoolSetting forceDisabled = new BoolSetting(Text.translatable("setting.generic.internal.forcedisabled"), false);
 	protected boolean wasEnabled;
 	
 	public Module(Text name, Category category, Keybind key) {
@@ -51,7 +51,7 @@ public class Module {
 		this.name = name;
 		this.toolTip = toolTip;
 		this.category = category;
-		this.key = new KeySetting(new TranslatableText("setting.generic.keybind"), key);
+		this.key = new KeySetting(Text.translatable("setting.generic.keybind"), key);
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if(key.wasPressed()) {
@@ -146,16 +146,16 @@ public class Module {
 	}
 	
 	public String getConfigName() {
-		return ((TranslatableText)name).getKey();
+		return ((TranslatableTextContent)name).getKey();
 	}
 	
 	public enum Category {
-		MOVEMENT(new TranslatableText("category.hamhacks.movement")),
-		COMBAT(new TranslatableText("category.hamhacks.combat")),
-		RENDER(new TranslatableText("category.hamhacks.render")),
-		PLAYER(new TranslatableText("category.hamhacks.player")),
-		WORLD(new TranslatableText("category.hamhacks.world")),
-		MISC(new TranslatableText("category.hamhacks.misc"));
+		MOVEMENT(Text.translatable("category.hamhacks.movement")),
+		COMBAT(Text.translatable("category.hamhacks.combat")),
+		RENDER(Text.translatable("category.hamhacks.render")),
+		PLAYER(Text.translatable("category.hamhacks.player")),
+		WORLD(Text.translatable("category.hamhacks.world")),
+		MISC(Text.translatable("category.hamhacks.misc"));
 		
 		private final Text text;
 		private int x;
@@ -252,7 +252,7 @@ public class Module {
 		
 		public Category fromText(String text) {
 			for(Category category : values()) {
-				if(((TranslatableText)category.text).getKey().equals(text)) {
+				if(((TranslatableTextContent)category.text.getContent()).getKey().equals(text)) {
 					return category;
 				}
 			}
