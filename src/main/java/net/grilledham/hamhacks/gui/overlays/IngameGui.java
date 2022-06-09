@@ -8,6 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.*;
@@ -83,8 +84,9 @@ public class IngameGui {
 				PlayerListEntry playerListEntry = MinecraftClient.getInstance().player.networkHandler.getPlayerListEntry(MinecraftClient.getInstance().player.getUuid());
 				if(playerListEntry != null) {
 					int latency = playerListEntry.getLatency();
-					if(MinecraftClient.getInstance().getCurrentServerEntry() != null) {
-						ping = (latency <= 0 ? MinecraftClient.getInstance().getCurrentServerEntry().ping : latency) + " ms";
+					ServerInfo serverInfo = ConnectionUtil.getServerInfo();
+					if(serverInfo != null) {
+						ping = (latency <= 0 ? serverInfo.ping : latency) + " ms";
 					}
 				}
 			}

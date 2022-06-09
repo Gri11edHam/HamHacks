@@ -4,6 +4,7 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.event.events.EventPacket;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
 
@@ -15,8 +16,21 @@ public class ConnectionUtil {
 	private static long lastPacketReceivedAt;
 	private static long joinedGameAt;
 	
+	private static ServerInfo serverInfo = null;
+	private static long lastUpdate;
+	
 	public static void init() {
 		EventManager.register(new ConnectionUtil());
+	}
+	
+	public static ServerInfo getServerInfo() {
+		if(serverInfo == null || System.currentTimeMillis() - lastUpdate > 30000) {
+			if(MinecraftClient.getInstance().getCurrentServerEntry() != null) {
+				serverInfo = new ServerInfo("current connection", MinecraftClient.getInstance().getCurrentServerEntry().address, MinecraftClient.getInstance().getCurrentServerEntry().isLocal());
+			}
+			lastUpdate = System.currentTimeMillis();
+		}
+		return serverInfo;
 	}
 	
 	@EventListener
