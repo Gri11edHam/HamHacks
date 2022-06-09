@@ -26,7 +26,7 @@ public class HamHacksClient implements ClientModInitializer {
 	
 	public static final String MOD_ID = "hamhacks";
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	public static final int CONFIG_VERSION = 0;
+	public static final int CONFIG_VERSION = 1;
 	
 	public static final Logger LOGGER = LogUtils.getLogger();
 	

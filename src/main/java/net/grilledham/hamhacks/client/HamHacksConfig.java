@@ -8,6 +8,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.setting.Setting;
+import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
+import net.grilledham.hamhacks.util.setting.settings.IntSetting;
 
 import java.io.*;
 import java.util.ConcurrentModificationException;
@@ -139,31 +141,41 @@ public class HamHacksConfig {
 					continue;
 				}
 				JsonObject modSettings = mod.getAsJsonObject("settings");
-				parseSettings(modSettings, m.getSettings());
+				parseSettings(modSettings, m.getSettings(), configVersion);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	private static void parseSettings(JsonObject obj, List<Setting<?>> settings) {
+	private static void parseSettings(JsonObject obj, List<Setting<?>> settings, int configVersion) {
 		try {
 			for(Setting<?> s : settings) {
 				try {
-					parseSetting(obj, s);
+					parseSetting(obj, s, configVersion);
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
 			}
 		} catch(ConcurrentModificationException e) {
-			parseSettings(obj, settings);
+			parseSettings(obj, settings, configVersion);
 		}
 	}
 	
-	private static void parseSetting(JsonObject obj, Setting<?> s) {
+	private static void parseSetting(JsonObject obj, Setting<?> s, int configVersion) {
 		if(obj.has(s.getKey())) {
 			try {
-				s.set(obj.get(s.getKey()));
+				if(configVersion < HamHacksClient.CONFIG_VERSION && HamHacksClient.CONFIG_VERSION == 1) {
+					if(s instanceof IntSetting) {
+						((IntSetting)s).setValue(obj.get(s.getKey()).getAsJsonObject().get("value").getAsInt());
+					} else if(s instanceof FloatSetting) {
+						((FloatSetting)s).setValue(obj.get(s.getKey()).getAsJsonObject().get("value").getAsFloat());
+					} else {
+						s.set(obj.get(s.getKey()));
+					}
+				} else {
+					s.set(obj.get(s.getKey()));
+				}
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
