@@ -33,12 +33,17 @@ public class MixinClientPlayerEntity {
 		}
 	}
 	
-	@Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
-	public void sendMessage(String message, CallbackInfo ci) {
+	@Inject(method = "sendChatMessage(Ljava/lang/String;Lnet/minecraft/text/Text;)V", at = @At("HEAD"), cancellable = true)
+	public void sendMessage(String message, Text preview, CallbackInfo ci) {
 		String prefix = CommandModule.getInstance().getKey().getName();
-		if(message.startsWith(prefix)) {
+		boolean previewIsCommand = preview != null && preview.getString().startsWith(prefix);
+		if(message.startsWith(prefix) || previewIsCommand) {
 			try {
-				CommandManager.dispatch(message.substring(prefix.length()));
+				if(previewIsCommand) {
+					CommandManager.dispatch(preview.getString().substring(prefix.length()));
+				} else {
+					CommandManager.dispatch(message.substring(prefix.length()));
+				}
 			} catch(CommandSyntaxException e) {
 				ChatUtil.error(Text.of(e.getMessage()));
 			}
