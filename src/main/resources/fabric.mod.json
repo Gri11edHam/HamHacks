@@ -3,7 +3,7 @@
 	"id": "hamhacks",
 	"version": "${version}",
 	"name": "HamHacks",
-	"description": "Hacks for Minecraft 1.18",
+	"description": "Cheats and utilities for Minecraft",
 	"authors": [
 		"GrilledHam"
 	],
@@ -25,6 +25,6 @@
 	"depends": {
 		"fabricloader": ">=0.12.12",
 		"fabric": "*",
-		"minecraft": ">=1.18.0"
+		"minecraft": ">=1.19.0"
 	}
 }
