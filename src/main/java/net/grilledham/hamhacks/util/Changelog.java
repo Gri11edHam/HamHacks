@@ -3,6 +3,11 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.5.2:
+				- Re-added commands after 1.19 broke them
+				- Added a mod icon
+				- Bug fixes
+			
 			Update 1.5.1:
 				- Updated to 1.19
 				- Bug fixes
