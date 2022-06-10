@@ -41,4 +41,9 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 		new EventTick().call();
 		MouseUtil.checkForMouseMove();
 	}
+	
+	@Inject(method = "stop", at = @At("HEAD"))
+	public void shutdown(CallbackInfo ci) {
+		HamHacksClient.shutdown();
+	}
 }

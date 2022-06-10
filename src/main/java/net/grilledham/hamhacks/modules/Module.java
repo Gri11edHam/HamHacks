@@ -146,7 +146,7 @@ public class Module {
 	}
 	
 	public String getConfigName() {
-		return ((TranslatableTextContent)name).getKey();
+		return ((TranslatableTextContent)name.getContent()).getKey();
 	}
 	
 	public enum Category {

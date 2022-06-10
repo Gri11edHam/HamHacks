@@ -43,7 +43,10 @@ public class HamHacksClient implements ClientModInitializer {
 		CommandManager.init();
 		HamHacksConfig.initializeConfig();
 		IngameGui.register();
-		Runtime.getRuntime().addShutdownHook(new Thread(HamHacksConfig::save));
+	}
+	
+	public static void shutdown() {
+		HamHacksConfig.save();
 	}
 	
 	private static void registerModules() {
