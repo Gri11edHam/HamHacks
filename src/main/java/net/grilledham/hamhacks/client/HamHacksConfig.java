@@ -114,7 +114,7 @@ public class HamHacksConfig {
 	}
 	
 	private static void parseSettings(JsonObject obj) {
-		int configVersion = obj.has("config_version") ? obj.get("config_version").getAsInt() : -1; // Just log the config version for now (might be used in the future)
+		int configVersion = obj.has("config_version") ? obj.get("config_version").getAsInt() : -1;
 		if(configVersion == -1) {
 			HamHacksClient.LOGGER.warn("Warning: The config was saved in an older version. Unfortunately, your settings will be lost");
 		} else if(configVersion < HamHacksClient.CONFIG_VERSION) {
@@ -125,6 +125,21 @@ public class HamHacksConfig {
 			HamHacksClient.LOGGER.warn(configVersion + " > " + HamHacksClient.CONFIG_VERSION);
 		} else {
 			HamHacksClient.LOGGER.info("Loading config. Version: " + configVersion);
+		}
+		
+		switch(configVersion) {
+			case 0:
+				for(Module m : ModuleManager.getModules()) {
+					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(m.getName()).getAsJsonObject("settings");
+					for(Setting<?> s : m.getSettings()) {
+						if(s instanceof IntSetting) {
+							settings.addProperty(s.getKey(), settings.get(s.getKey()).getAsJsonObject().get("value").getAsInt());
+						} else if(s instanceof FloatSetting) {
+							settings.addProperty(s.getKey(), settings.get(s.getKey()).getAsJsonObject().get("value").getAsFloat());
+						}
+					}
+				}
+			// Add more switch cases for new config changes
 		}
 		
 		JsonObject categories = obj.getAsJsonObject("categories");
@@ -141,41 +156,31 @@ public class HamHacksConfig {
 					continue;
 				}
 				JsonObject modSettings = mod.getAsJsonObject("settings");
-				parseSettings(modSettings, m.getSettings(), configVersion);
+				parseSettings(modSettings, m.getSettings());
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	private static void parseSettings(JsonObject obj, List<Setting<?>> settings, int configVersion) {
+	private static void parseSettings(JsonObject obj, List<Setting<?>> settings) {
 		try {
 			for(Setting<?> s : settings) {
 				try {
-					parseSetting(obj, s, configVersion);
+					parseSetting(obj, s);
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
 			}
 		} catch(ConcurrentModificationException e) {
-			parseSettings(obj, settings, configVersion);
+			parseSettings(obj, settings);
 		}
 	}
 	
-	private static void parseSetting(JsonObject obj, Setting<?> s, int configVersion) {
+	private static void parseSetting(JsonObject obj, Setting<?> s) {
 		if(obj.has(s.getKey())) {
 			try {
-				if(configVersion < HamHacksClient.CONFIG_VERSION && HamHacksClient.CONFIG_VERSION == 1) {
-					if(s instanceof IntSetting) {
-						((IntSetting)s).setValue(obj.get(s.getKey()).getAsJsonObject().get("value").getAsInt());
-					} else if(s instanceof FloatSetting) {
-						((FloatSetting)s).setValue(obj.get(s.getKey()).getAsJsonObject().get("value").getAsFloat());
-					} else {
-						s.set(obj.get(s.getKey()));
-					}
-				} else {
-					s.set(obj.get(s.getKey()));
-				}
+				s.set(obj.get(s.getKey()));
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
