@@ -27,10 +27,9 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		event.call();
 	}
 	
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "net.minecraft.client.render.GameRenderer.renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V"))
-	public void render3DEvent(GameRenderer instance, float tickDelta, long limitTime, MatrixStack matrices) {
-		instance.renderWorld(tickDelta, limitTime, matrices);
-		EventRender3D event = new EventRender3D(tickDelta, limitTime, matrices);
+	@Inject(method = "renderWorld", at = @At("HEAD"))
+	public void render3DEvent(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo ci) {
+		EventRender3D event = new EventRender3D(tickDelta, matrices);
 		event.call();
 	}
 	

@@ -158,7 +158,7 @@ public class Tracers extends Module {
 					public Class<? extends Entity> getBaseClass() {
 						return LivingEntity.class;
 					}
-				}, new Box(mc.player.getBlockPos().add(-64, -64, -64), mc.player.getBlockPos().add(64, 64, 64)), Objects::nonNull).stream()
+				}, new Box(mc.player.getBlockPos().add(-256, -256, -256), mc.player.getBlockPos().add(256, 256, 256)), Objects::nonNull).stream()
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
 				.filter(entity -> entity != player)
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
