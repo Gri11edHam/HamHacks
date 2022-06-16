@@ -15,6 +15,7 @@
 		"MixinKeyBinding",
 		"MixinKeyboardInput",
 		"MixinLanguageManager",
+		"MixinLightmapTextureManager",
 		"MixinMinecraftClient",
 		"MixinMouse",
 		"MixinTitleScreen"

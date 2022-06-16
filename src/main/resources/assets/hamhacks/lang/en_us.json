@@ -136,6 +136,12 @@
 	"setting.instantkillbow.iterations": "Iterations",
 	"setting.instantkillbow.iterations.tooltip": "How many times should the module update\nyour position (might cause kicks from some servers)",
 
+	"module.hamhacks.fullbright": "Fullbright",
+	"module.hamhacks.fullbright.tooltip": "Increases your brightness so you can see better",
+	"setting.fullbright.brightness": "Brightness",
+	"setting.fullbright.smoothtransition": "Smooth Transition",
+	"setting.fullbright.smoothtransition.tooltip": "Should the transition be smooth when enabling/disabling this module",
+
 	"setting.generic.enabled": "Enabled",
 	"setting.generic.showmodule": "HUD Text",
 	"setting.generic.keybind": "Keybind",
