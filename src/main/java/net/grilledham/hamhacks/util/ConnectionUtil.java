@@ -24,11 +24,11 @@ public class ConnectionUtil {
 	}
 	
 	public static ServerInfo getServerInfo() {
-		if(serverInfo == null || System.currentTimeMillis() - lastUpdate > 30000) {
-			if(MinecraftClient.getInstance().getCurrentServerEntry() != null) {
+		if(MinecraftClient.getInstance().getCurrentServerEntry() != null) {
+			if(serverInfo == null || System.currentTimeMillis() - lastUpdate > 30000 || !serverInfo.address.equalsIgnoreCase(MinecraftClient.getInstance().getCurrentServerEntry().address)) {
 				serverInfo = new ServerInfo("current connection", MinecraftClient.getInstance().getCurrentServerEntry().address, MinecraftClient.getInstance().getCurrentServerEntry().isLocal());
+				lastUpdate = System.currentTimeMillis();
 			}
-			lastUpdate = System.currentTimeMillis();
 		}
 		return serverInfo;
 	}

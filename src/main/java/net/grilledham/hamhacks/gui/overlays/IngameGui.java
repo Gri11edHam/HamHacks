@@ -87,6 +87,8 @@ public class IngameGui {
 					ServerInfo serverInfo = ConnectionUtil.getServerInfo();
 					if(serverInfo != null) {
 						ping = (latency <= 0 ? serverInfo.ping : latency) + " ms";
+					} else {
+						ping = latency + " ms";
 					}
 				}
 			}
