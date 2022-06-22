@@ -18,15 +18,15 @@ import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.modules.render.Fullbright;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.modules.render.Tracers;
-import net.grilledham.hamhacks.util.ChatUtil;
-import net.grilledham.hamhacks.util.ConnectionUtil;
-import net.grilledham.hamhacks.util.RotationHack;
+import net.grilledham.hamhacks.util.*;
 import org.slf4j.Logger;
 
 @Environment(EnvType.CLIENT)
 public class HamHacksClient implements ClientModInitializer {
 	
 	public static final String MOD_ID = "hamhacks";
+	public static final Version VERSION = new Version("1.6");
+	
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final int CONFIG_VERSION = 1;
 	
@@ -37,6 +37,8 @@ public class HamHacksClient implements ClientModInitializer {
 	}
 	
 	public static void init() {
+		LOGGER.info("Initializing HamHacks v" + VERSION.getVersion(0, true));
+		Updater.init();
 		RotationHack.init();
 		ConnectionUtil.init();
 		ChatUtil.init();
@@ -49,6 +51,7 @@ public class HamHacksClient implements ClientModInitializer {
 	
 	public static void shutdown() {
 		HamHacksConfig.save();
+		LOGGER.info("Bye for now :)");
 	}
 	
 	private static void registerModules() {

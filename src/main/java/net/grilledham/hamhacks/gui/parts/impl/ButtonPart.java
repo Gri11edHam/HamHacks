@@ -10,13 +10,17 @@ public class ButtonPart extends GuiPart {
 	
 	private float hoverAnimation;
 	
-	private final String text;
+	private String text;
 	private final Runnable onClick;
 	
 	public ButtonPart(String text, int x, int y, int width, int height, Runnable onClick) {
 		super(x, y, width, height);
 		this.text = text;
 		this.onClick = onClick;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
 	}
 	
 	@Override
