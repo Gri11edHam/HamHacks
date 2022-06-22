@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.modules;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -14,7 +13,7 @@ public class Keybind {
 	public static final int MOUSE_SHIFT = 100;
 	
 	private int code;
-	private int defaultCode;
+	private final int defaultCode;
 	
 	private boolean isPressed = false;
 	private boolean wasPressed = false;
@@ -63,12 +62,17 @@ public class Keybind {
 	
 	public void checkKeyState() {
 		boolean pressed;
-		if(code < 0) {
-			pressed = GLFW.glfwGetMouseButton(MinecraftClient.getInstance().getWindow().getHandle(), code + MOUSE_SHIFT) == GLFW.GLFW_PRESS;
-		} else if(code != 0) {
-			pressed = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), code) == GLFW.GLFW_PRESS;
-		} else {
+		long handle = MinecraftClient.getInstance().getWindow().getHandle();
+		if(GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS) {
 			pressed = false;
+		} else {
+			if(code < 0) {
+				pressed = GLFW.glfwGetMouseButton(handle, code + MOUSE_SHIFT) == GLFW.GLFW_PRESS;
+			} else if(code != 0) {
+				pressed = GLFW.glfwGetKey(handle, code) == GLFW.GLFW_PRESS;
+			} else {
+				pressed = false;
+			}
 		}
 		if(isPressed && pressed) {
 			wasPressed = false;
