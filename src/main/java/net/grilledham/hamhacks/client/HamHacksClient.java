@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 public class HamHacksClient implements ClientModInitializer {
 	
 	public static final String MOD_ID = "hamhacks";
-	public static final Version VERSION = new Version("1.6");
+	public static final Version VERSION = new Version("1.5");
 	
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final int CONFIG_VERSION = 1;

@@ -17,6 +17,8 @@ public class Updater {
 	private static Version latestVersion;
 	private static String downloadURL;
 	
+	private static boolean hasUpdated = false;
+	
 	public static void init() {
 		Gson json = HamHacksClient.GSON;
 		try {
@@ -41,7 +43,7 @@ public class Updater {
 		if(latestVersion == null) {
 			latestVersion = new Version("0");
 		}
-		return latestVersion.isNewerThan(HamHacksClient.VERSION);
+		return latestVersion.isNewerThan(HamHacksClient.VERSION) && !hasUpdated;
 	}
 	
 	public static Version getLatest() {
@@ -57,7 +59,7 @@ public class Updater {
 			InputStream is;
 			FileHelper.writeFile(is = FileHelper.getStreamFromURL(downloadURL), newVersion);
 			is.close();
-			MinecraftClient.getInstance().scheduleStop();
+			hasUpdated = true;
 			// Manually delete the old version for now
 		} catch(IOException e) {
 			throw new RuntimeException(e);

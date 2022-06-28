@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.gui.parts.impl.ButtonPart;
 import net.grilledham.hamhacks.gui.screens.ChangelogScreen;
+import net.grilledham.hamhacks.gui.screens.UpdateScreen;
 import net.grilledham.hamhacks.util.Updater;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -22,7 +23,11 @@ public class MixinTitleScreen extends Screen {
 		MinecraftClient.getInstance().setScreen(new ChangelogScreen($this));
 	});
 	
-	private final ButtonPart updateButton = new ButtonPart("Update", 2, 24, 100, 20, Updater::update);
+	private final ButtonPart updateButton = new ButtonPart("Update", 2, 24, 100, 20, () -> {
+		Updater.update();
+		TitleScreen $this = (TitleScreen)(Object)this;
+		MinecraftClient.getInstance().setScreen(new UpdateScreen($this));
+	});
 	
 	private MixinTitleScreen() {
 		super(Text.translatable(""));

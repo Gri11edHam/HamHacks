@@ -160,5 +160,6 @@
 	"menu.hamhacks.clickgui.module": "Click GUI Module",
 	"menu.hamhacks.changelog": "Changelog GUI",
 	"menu.hamhacks.fullchangelog": "Full Changelog GUI",
-	"menu.hamhacks.bindmodule": "Bind Module GUI"
+	"menu.hamhacks.bindmodule": "Bind Module GUI",
+	"menu.hamhacks.update": "Update GUI"
 }
