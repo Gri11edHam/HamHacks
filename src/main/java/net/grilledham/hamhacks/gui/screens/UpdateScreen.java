@@ -34,7 +34,7 @@ public class UpdateScreen extends Screen {
 		
 		String s = "Would you like to close Minecraft now or continue playing?";
 		client.textRenderer.drawWithShadow(matrices, s, width / 2f - client.textRenderer.getWidth(s) / 2f, height / 2f - 30 - client.textRenderer.fontHeight / 2f, -1);
-		String s2 = "(You will have to manually delete the old version next time you play)";
+		String s2 = "(The mod won't be fully updated until you restart your game)";
 		client.textRenderer.drawWithShadow(matrices, s2, width / 2f - client.textRenderer.getWidth(s2) / 2f, height / 2f - 20 - client.textRenderer.fontHeight / 2f, -1);
 		
 		continueButton.draw(matrices, mouseX, mouseY, delta);
