@@ -1,6 +1,8 @@
 package net.grilledham.hamhacks.modules;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.EventManager;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -21,11 +23,14 @@ public class Keybind {
 	public Keybind(int defaultCode) {
 		this.code = defaultCode;
 		this.defaultCode = defaultCode;
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if(MinecraftClient.getInstance().currentScreen == null) {
-				checkKeyState();
-			}
-		});
+		EventManager.register(this);
+	}
+	
+	@EventListener
+	public void onTick(EventTick e) {
+		if(MinecraftClient.getInstance().currentScreen == null) {
+			checkKeyState();
+		}
 	}
 	
 	/**

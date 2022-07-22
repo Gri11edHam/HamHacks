@@ -22,15 +22,8 @@ public abstract class Setting<T> {
 	 */
 	public Setting(Text name) {
 		this.name = name;
+		this.toolTip = Text.translatable(getKey() + ".tooltip");
 		value = new JsonObject();
-	}
-	
-	/**
-	 * Allows you give the user more information about this setting
-	 * @param toolTip What should the user know about this setting
-	 */
-	public void setToolTip(Text toolTip) {
-		this.toolTip = toolTip;
 	}
 	
 	public void setValue(T value) {
@@ -65,7 +58,7 @@ public abstract class Setting<T> {
 	}
 	
 	public boolean hasToolTip() {
-		return toolTip != null;
+		return getToolTip().equals(getKey() + ".tooltip");
 	}
 	
 	public String getName() {

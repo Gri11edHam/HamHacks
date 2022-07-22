@@ -7,7 +7,10 @@
 	"authors": [
 		"GrilledHam"
 	],
-	"contact": {},
+	"contact": {
+		"sources": "https://github.com/Gri11edHam/HamHacks",
+		"issues": "https://github.com/TerraformersMC/HamHacks/issues"
+	},
 	"license": "MIT",
 	"icon": "assets/hamhacks/icon.png",
 	"environment": "client",
@@ -24,7 +27,6 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.12.12",
-		"fabric": "*",
 		"minecraft": ">=1.19.0"
 	}
 }

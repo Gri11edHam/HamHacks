@@ -45,15 +45,10 @@ public class Fly extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		mode.setToolTip(Text.translatable("setting.fly.mode.tooltip"));
 		speed = new FloatSetting(Text.translatable("setting.fly.speed"), 1f, 0f, 10f);
-		speed.setToolTip(Text.translatable("setting.fly.speed.tooltip"));
 		smoothMovement = new BoolSetting(Text.translatable("setting.fly.smoothmovement"), true);
-		smoothMovement.setToolTip(Text.translatable("setting.fly.smoothmovement.tooltip"));
 		jetpackSpeed = new FloatSetting(Text.translatable("setting.fly.jetpackspeed"), 0.2f, 0.1f, 1f);
-		jetpackSpeed.setToolTip(Text.translatable("setting.fly.jetpackspeed.tooltip"));
 		autoLand = new BoolSetting(Text.translatable("setting.fly.autoland"), false);
-		autoLand.setToolTip(Text.translatable("setting.fly.autoland.tooltip"));
 		addSetting(mode);
 		addSetting(speed);
 		addSetting(smoothMovement);

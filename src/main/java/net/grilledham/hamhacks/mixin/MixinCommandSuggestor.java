@@ -6,7 +6,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.suggestion.Suggestions;
 import net.grilledham.hamhacks.command.CommandManager;
 import net.grilledham.hamhacks.modules.misc.CommandModule;
-import net.minecraft.client.gui.screen.CommandSuggestor;
+import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.command.CommandSource;
 import org.jetbrains.annotations.Nullable;
@@ -20,20 +20,20 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.concurrent.CompletableFuture;
 
-@Mixin(CommandSuggestor.class)
+@Mixin(ChatInputSuggestor.class)
 public abstract class MixinCommandSuggestor {
 	
 	@Shadow @Final TextFieldWidget textField;
 	
 	@Shadow @Nullable private ParseResults<CommandSource> parse;
 	
-	@Shadow @Nullable CommandSuggestor.SuggestionWindow window;
+	@Shadow @Nullable private ChatInputSuggestor.SuggestionWindow window;
 	
 	@Shadow boolean completingSuggestions;
 	
 	@Shadow @Nullable private CompletableFuture<Suggestions> pendingSuggestions;
 	
-	@Shadow protected abstract void show();
+	@Shadow public abstract void show(boolean narrateFirstSuggestion);
 	
 	@Inject(method = "refresh", at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/StringReader;canRead()Z"), cancellable = true, remap = false, locals = LocalCapture.CAPTURE_FAILHARD)
 	public void refresh(CallbackInfo ci, String string, StringReader stringReader) {
@@ -54,7 +54,7 @@ public abstract class MixinCommandSuggestor {
 				this.pendingSuggestions = commandDispatcher.getCompletionSuggestions(this.parse, cursor);
 				this.pendingSuggestions.thenRun(() -> {
 					if (this.pendingSuggestions.isDone()) {
-						this.show();
+						this.show(false);
 					}
 				});
 			}

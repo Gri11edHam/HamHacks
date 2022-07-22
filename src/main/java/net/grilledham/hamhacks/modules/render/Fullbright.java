@@ -26,7 +26,6 @@ public class Fullbright extends Module {
 		super.addSettings();
 		brightness = new IntSetting(Text.translatable("setting.fullbright.brightness"), 500, 0, 1000);
 		smoothTransition = new BoolSetting(Text.translatable("setting.fullbright.smoothtransition"), true);
-		smoothTransition.setToolTip(Text.translatable("setting.fullbright.smoothtransition.tooltip"));
 		addSetting(brightness);
 		addSetting(smoothTransition);
 	}

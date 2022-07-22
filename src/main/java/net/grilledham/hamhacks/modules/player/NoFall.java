@@ -26,7 +26,6 @@ public class NoFall extends Module {
 	@Override
 	public void addSettings() {
 		mode = new SelectionSetting(Text.translatable("setting.nofall.mode"), Text.translatable("setting.nofall.mode.packet"), Text.translatable("setting.nofall.mode.packet"), Text.translatable("setting.nofall.mode.momentum"));
-		mode.setToolTip(Text.translatable("setting.nofall.mode.tooltip"));
 		addSetting(mode);
 	}
 	

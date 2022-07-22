@@ -34,15 +34,10 @@ public class Speed extends Module {
 	public void addSettings() {
 		speed = new FloatSetting(Text.translatable("setting.speed.speed"), 2.5f, 0f, 10f);
 		autoJump = new BoolSetting(Text.translatable("setting.speed.autojump"), false);
-		autoJump.setToolTip(Text.translatable("setting.speed.autojump.tooltip"));
 		inAirMult = new FloatSetting(Text.translatable("setting.speed.inairmultiplier"), 1.7f, 0.25f, 4);
-		inAirMult.setToolTip(Text.translatable("setting.speed.inairmultiplier.tooltip"));
 		onIceMult = new FloatSetting(Text.translatable("setting.speed.onicemultiplier"), 2, 0.25f, 4);
-		onIceMult.setToolTip(Text.translatable("setting.speed.onicemultiplier.tooltip"));
 		inTunnelMult = new FloatSetting(Text.translatable("setting.speed.intunnelmultiplier"), 1.7f, 0.25f, 4);
-		inTunnelMult.setToolTip(Text.translatable("setting.speed.intunnelmultiplier.tooltip"));
 		inWaterMult = new FloatSetting(Text.translatable("setting.speed.inwatermultiplier"), 0.6f, 0.25f, 4);
-		inWaterMult.setToolTip(Text.translatable("setting.speed.inwatermultiplier.tooltip"));
 		disableWithElytra = new BoolSetting(Text.translatable("setting.speed.disablewithelytra"), true);
 		addSetting(speed);
 		addSetting(autoJump);

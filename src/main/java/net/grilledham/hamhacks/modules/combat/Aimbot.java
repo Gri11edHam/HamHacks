@@ -45,9 +45,7 @@ public class Aimbot extends Module {
 	@Override
 	public void addSettings() {
 		speed = new FloatSetting(Text.translatable("setting.aimbot.speed"), 10.0f, 0.1f, 100f);
-		speed.setToolTip(Text.translatable("setting.aimbot.speed.tooltip"));
 		fov = new FloatSetting(Text.translatable("setting.aimbot.fov"), 90.0f, 0.1f, 360f);
-		fov.setToolTip(Text.translatable("setting.aimbot.fov.tooltip"));
 		targetEntities = new BoolSetting(Text.translatable("setting.aimbot.targetentities"), true) {
 			@Override
 			protected void valueChanged() {
@@ -57,7 +55,6 @@ public class Aimbot extends Module {
 			}
 		};
 		keepAiming = new BoolSetting(Text.translatable("setting.aimbot.keepaiming"), false);
-		keepAiming.setToolTip(Text.translatable("setting.aimbot.keepaiming.tooltip"));
 		targetPlayers = new BoolSetting(Text.translatable("setting.aimbot.targetplayers"), true);
 		targetPassive = new BoolSetting(Text.translatable("setting.aimbot.targetpassive"), false);
 		targetHostile = new BoolSetting(Text.translatable("setting.aimbot.targethostile"), false);

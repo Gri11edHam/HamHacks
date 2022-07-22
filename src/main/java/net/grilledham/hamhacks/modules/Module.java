@@ -1,7 +1,8 @@
 package net.grilledham.hamhacks.modules;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.EventManager;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.util.setting.Setting;
 import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
@@ -53,17 +54,20 @@ public class Module {
 		this.category = category;
 		this.key = new KeySetting(Text.translatable("setting.generic.keybind"), key);
 		
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if(key.wasPressed()) {
-				toggle();
-			}
-		});
+		EventManager.register(this);
 		addSettings();
 		addSetting(this.showModule);
 		addSetting(this.key);
 		addSetting(this.enabled);
 		addSetting(this.forceDisabled);
 		hideSetting(this.forceDisabled);
+	}
+	
+	@EventListener
+	public void onTick(EventTick e) {
+		if(key.getKeybind().wasPressed()) {
+			toggle();
+		}
 	}
 	
 	protected void addSetting(Setting<?> s) {
