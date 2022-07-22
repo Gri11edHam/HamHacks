@@ -71,7 +71,7 @@ public class Updater {
 			try {
 				File modFile = new File(HamHacksClient.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
 				if(Util.getOperatingSystem() != Util.OperatingSystem.WINDOWS) {
-					// For unix systems (mac and linux)
+					// For mac and linux
 					HamHacksClient.LOGGER.info("Deleting old mod file via File.deleteOnExit()");
 					modFile.deleteOnExit(); // haven't tested but it should work
 				} else {

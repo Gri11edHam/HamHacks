@@ -131,44 +131,58 @@ public class Version {
 		return betaVersion;
 	}
 	
+	private int compareMajor(Version otherVersion) {
+		return Integer.compare(getMajor(), otherVersion.getMajor());
+	}
+	
+	private int compareMinor(Version otherVersion) {
+		return Integer.compare(getMinor(), otherVersion.getMinor());
+	}
+	
+	private int comparePatch(Version otherVersion) {
+		return Integer.compare(getPatch(), otherVersion.getPatch());
+	}
+	
+	private int compareType(Version otherVersion) {
+		if(getType() == VersionType.BETA && otherVersion.getType() == VersionType.BETA) {
+			return Integer.compare(getBetaVersion(), otherVersion.getBetaVersion());
+		} else {
+			return Integer.compare(otherVersion.getType().getValue(), getType().getValue());
+		}
+	}
+	
+	public int compare(String otherVersion) {
+		return compare(new Version(otherVersion));
+	}
+	
+	public int compare(Version otherVersion) {
+		if(compareMajor(otherVersion) != 0) {
+			return compareMajor(otherVersion);
+		}
+		if(compareMinor(otherVersion) != 0) {
+			return compareMinor(otherVersion);
+		}
+		if(comparePatch(otherVersion) != 0) {
+			return comparePatch(otherVersion);
+		}
+		return compareType(otherVersion);
+	}
+	
 	public boolean isNewerThan(String otherVersion) {
 		return isNewerThan(new Version(otherVersion));
 	}
 	
 	public boolean isNewerThan(Version otherVersion) {
-		if(getMajor() > otherVersion.getMajor()) {
-			return true;
-		} else if(getMinor() > otherVersion.getMinor()) {
-			return true;
-		} else if(getPatch() > otherVersion.getPatch()) {
-			return true;
-		} else if(getType().getValue() < otherVersion.getType().getValue()) {
-			return true;
-		} else if(getType() == VersionType.BETA && otherVersion.getType() == VersionType.BETA) {
-			return getBetaVersion() > otherVersion.getBetaVersion();
-		} else {
-			return false;
-		}
+		return compare(otherVersion) == 1;
 	}
+	
 	
 	public boolean isOlderThan(String otherVersion) {
 		return isOlderThan(new Version(otherVersion));
 	}
 	
 	public boolean isOlderThan(Version otherVersion) {
-		if(getMajor() < otherVersion.getMajor()) {
-			return true;
-		} else if(getMinor() < otherVersion.getMinor()) {
-			return true;
-		} else if(getPatch() < otherVersion.getMinor()) {
-			return true;
-		} else if(getType().getValue() > otherVersion.getType().getValue()) {
-			return true;
-		} else if(getType() == VersionType.BETA && otherVersion.getType() == VersionType.BETA) {
-			return getBetaVersion() < otherVersion.getBetaVersion();
-		} else {
-			return false;
-		}
+		return compare(otherVersion) == -1;
 	}
 	
 	public boolean isSameVersion(String otherVersion) {
@@ -176,7 +190,7 @@ public class Version {
 	}
 	
 	public boolean isSameVersion(Version otherVersion) {
-		return getMajor() == otherVersion.getMajor() && getMinor() == otherVersion.getMinor() && getPatch() == otherVersion.getPatch() && getType().getValue() == otherVersion.getType().getValue() && (getType() != VersionType.BETA || otherVersion.getType() != VersionType.BETA || getBetaVersion() == otherVersion.getBetaVersion());
+		return compare(otherVersion) == 0;
 	}
 	
 	private int getVersionNumber(String version, int index) {
