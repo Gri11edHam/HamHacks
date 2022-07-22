@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 @Environment(EnvType.CLIENT)
 public class HamHacksClient implements ClientModInitializer {
 	
-	public static final String MOD_ID = "hamhacks";
-	public static final Version VERSION = new Version("1.6-beta.0");
+	public static final String MOD_ID = "$MOD_ID";
+	public static final Version VERSION = new Version("$VERSION");
 	
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final int CONFIG_VERSION = 1;
@@ -34,6 +34,7 @@ public class HamHacksClient implements ClientModInitializer {
 	
 	@Override
 	public void onInitializeClient() {
+	
 	}
 	
 	public static void init() {
