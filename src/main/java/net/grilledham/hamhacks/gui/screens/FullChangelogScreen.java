@@ -15,7 +15,7 @@ public class FullChangelogScreen extends Screen {
 	private ButtonPart backButton;
 	
 	protected FullChangelogScreen(Screen last) {
-		super(Text.translatable("menu.hamhacks.fullchangelog"));
+		super(Text.translatable("hamhacks.menu.fullchangelog"));
 		this.last = last;
 	}
 	

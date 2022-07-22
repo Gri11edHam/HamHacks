@@ -34,16 +34,16 @@ public class KillAura extends Module {
 	private LivingEntity target;
 	
 	public KillAura() {
-		super(Text.translatable("module.hamhacks.killaura"), Text.translatable("module.hamhacks.killaura.tooltip"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
+		super(Text.translatable("hamhacks.module.killAura"), Text.translatable("hamhacks.module.killAura.tooltip"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		range = new FloatSetting(Text.translatable("setting.killaura.range"), 3f, 1f, 8f);
-		targetPlayers = new BoolSetting(Text.translatable("setting.killaura.targetplayers"), true);
-		targetPassive = new BoolSetting(Text.translatable("setting.killaura.targetpassive"), false);
-		targetHostile = new BoolSetting(Text.translatable("setting.killaura.targethostile"), false);
+		range = new FloatSetting(Text.translatable("hamhacks.module.killAura.range"), 3f, 1f, 8f);
+		targetPlayers = new BoolSetting(Text.translatable("hamhacks.module.killAura.targetPlayers"), true);
+		targetPassive = new BoolSetting(Text.translatable("hamhacks.module.killAura.targetPassive"), false);
+		targetHostile = new BoolSetting(Text.translatable("hamhacks.module.killAura.targetHostile"), false);
 		addSetting(range);
 		addSetting(targetPlayers);
 		addSetting(targetPassive);

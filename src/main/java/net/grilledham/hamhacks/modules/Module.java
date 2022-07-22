@@ -20,7 +20,7 @@ public class Module {
 	protected Text name;
 	
 	protected Text toolTip;
-	protected BoolSetting enabled = new BoolSetting(Text.translatable("setting.generic.enabled"), false) {
+	protected BoolSetting enabled = new BoolSetting(Text.translatable("hamhacks.module.generic.enabled"), false) {
 		@Override
 		protected void valueChanged() {
 			super.valueChanged();
@@ -33,7 +33,7 @@ public class Module {
 	};
 	protected Category category;
 	protected KeySetting key;
-	protected BoolSetting showModule = new BoolSetting(Text.translatable("setting.generic.showmodule"), true);
+	protected BoolSetting showModule = new BoolSetting(Text.translatable("hamhacks.module.generic.showModule"), true);
 	
 	protected List<Setting<?>> shownSettings = new ArrayList<>();
 	protected List<Setting<?>> settings = new ArrayList<>();
@@ -41,7 +41,7 @@ public class Module {
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
 	
-	protected BoolSetting forceDisabled = new BoolSetting(Text.translatable("setting.generic.internal.forcedisabled"), false);
+	protected BoolSetting forceDisabled = new BoolSetting(Text.translatable("hamhacks.module.generic.internal.forceDisabled"), false);
 	protected boolean wasEnabled;
 	
 	public Module(Text name, Category category, Keybind key) {
@@ -52,7 +52,7 @@ public class Module {
 		this.name = name;
 		this.toolTip = toolTip;
 		this.category = category;
-		this.key = new KeySetting(Text.translatable("setting.generic.keybind"), key);
+		this.key = new KeySetting(Text.translatable("hamhacks.module.generic.keybind"), key);
 		
 		EventManager.register(this);
 		addSettings();
@@ -154,12 +154,12 @@ public class Module {
 	}
 	
 	public enum Category {
-		MOVEMENT(Text.translatable("category.hamhacks.movement")),
-		COMBAT(Text.translatable("category.hamhacks.combat")),
-		RENDER(Text.translatable("category.hamhacks.render")),
-		PLAYER(Text.translatable("category.hamhacks.player")),
-		WORLD(Text.translatable("category.hamhacks.world")),
-		MISC(Text.translatable("category.hamhacks.misc"));
+		MOVEMENT(Text.translatable("hamhacks.category.movement")),
+		COMBAT(Text.translatable("hamhacks.category.combat")),
+		RENDER(Text.translatable("hamhacks.category.render")),
+		PLAYER(Text.translatable("hamhacks.category.player")),
+		WORLD(Text.translatable("hamhacks.category.world")),
+		MISC(Text.translatable("hamhacks.category.misc"));
 		
 		private final Text text;
 		private int x;

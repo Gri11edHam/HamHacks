@@ -18,7 +18,7 @@ public class BindModuleScreen extends Screen {
 	private boolean isFirstClick = true;
 	
 	public BindModuleScreen(Module module) {
-		super(Text.translatable("menu.hamhacks.bindmodule"));
+		super(Text.translatable("hamhacks.menu.bindModule"));
 		this.module = module;
 	}
 	

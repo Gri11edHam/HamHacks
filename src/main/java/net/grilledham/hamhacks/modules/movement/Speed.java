@@ -26,19 +26,19 @@ public class Speed extends Module {
 	private static Speed INSTANCE;
 	
 	public Speed() {
-		super(Text.translatable("module.hamhacks.speed"), Text.translatable("module.hamhacks.speed.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
+		super(Text.translatable("hamhacks.module.speed"), Text.translatable("hamhacks.module.speed.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
 		INSTANCE = this;
 	}
 	
 	@Override
 	public void addSettings() {
-		speed = new FloatSetting(Text.translatable("setting.speed.speed"), 2.5f, 0f, 10f);
-		autoJump = new BoolSetting(Text.translatable("setting.speed.autojump"), false);
-		inAirMult = new FloatSetting(Text.translatable("setting.speed.inairmultiplier"), 1.7f, 0.25f, 4);
-		onIceMult = new FloatSetting(Text.translatable("setting.speed.onicemultiplier"), 2, 0.25f, 4);
-		inTunnelMult = new FloatSetting(Text.translatable("setting.speed.intunnelmultiplier"), 1.7f, 0.25f, 4);
-		inWaterMult = new FloatSetting(Text.translatable("setting.speed.inwatermultiplier"), 0.6f, 0.25f, 4);
-		disableWithElytra = new BoolSetting(Text.translatable("setting.speed.disablewithelytra"), true);
+		speed = new FloatSetting(Text.translatable("hamhacks.module.speed.speed"), 2.5f, 0f, 10f);
+		autoJump = new BoolSetting(Text.translatable("hamhacks.module.speed.autoJump"), false);
+		inAirMult = new FloatSetting(Text.translatable("hamhacks.module.speed.inAirMultiplier"), 1.7f, 0.25f, 4);
+		onIceMult = new FloatSetting(Text.translatable("hamhacks.module.speed.onIceMultiplier"), 2, 0.25f, 4);
+		inTunnelMult = new FloatSetting(Text.translatable("hamhacks.module.speed.inTunnelMultiplier"), 1.7f, 0.25f, 4);
+		inWaterMult = new FloatSetting(Text.translatable("hamhacks.module.speed.inWaterMultiplier"), 0.6f, 0.25f, 4);
+		disableWithElytra = new BoolSetting(Text.translatable("hamhacks.module.speed.disableWithElytra"), true);
 		addSetting(speed);
 		addSetting(autoJump);
 		addSetting(inAirMult);

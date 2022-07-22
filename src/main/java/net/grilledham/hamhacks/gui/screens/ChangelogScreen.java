@@ -14,7 +14,7 @@ public class ChangelogScreen extends Screen {
 	private ButtonPart fullChangelogButton;
 	
 	public ChangelogScreen(Screen last) {
-		super(Text.translatable("menu.hamhacks.changelog"));
+		super(Text.translatable("hamhacks.menu.changelog"));
 		this.last = last;
 	}
 	

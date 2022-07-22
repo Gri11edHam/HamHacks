@@ -17,15 +17,15 @@ public class Fullbright extends Module {
 	private float newBrightness;
 	
 	public Fullbright() {
-		super(Text.translatable("module.hamhacks.fullbright"), Category.RENDER, new Keybind(0));
+		super(Text.translatable("hamhacks.module.fullBright"), Category.RENDER, new Keybind(0));
 		INSTANCE = this;
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		brightness = new IntSetting(Text.translatable("setting.fullbright.brightness"), 500, 0, 1000);
-		smoothTransition = new BoolSetting(Text.translatable("setting.fullbright.smoothtransition"), true);
+		brightness = new IntSetting(Text.translatable("hamhacks.module.fullBright.brightness"), 500, 0, 1000);
+		smoothTransition = new BoolSetting(Text.translatable("hamhacks.module.fullBright.smoothTransition"), true);
 		addSetting(brightness);
 		addSetting(smoothTransition);
 	}

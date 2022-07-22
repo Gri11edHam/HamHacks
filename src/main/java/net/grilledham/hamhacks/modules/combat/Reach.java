@@ -13,14 +13,14 @@ public class Reach extends Module {
 	private static Reach INSTANCE;
 	
 	public Reach() {
-		super(Text.translatable("module.hamhacks.reach"), Text.translatable("module.hamhacks.reach.tooltip"), Category.COMBAT, new Keybind(0));
+		super(Text.translatable("hamhacks.module.reach"), Text.translatable("hamhacks.module.reach.tooltip"), Category.COMBAT, new Keybind(0));
 		INSTANCE = this;
 	}
 	
 	@Override
 	public void addSettings() {
-		entityRange = new FloatSetting(Text.translatable("setting.reach.entityrange"), 3.0f, 0, 8);
-		blockRange = new FloatSetting(Text.translatable("setting.reach.blockrange"), 4.5f, 0, 8);
+		entityRange = new FloatSetting(Text.translatable("hamhacks.module.reach.entityRange"), 3.0f, 0, 8);
+		blockRange = new FloatSetting(Text.translatable("hamhacks.module.reach.blockRange"), 4.5f, 0, 8);
 		addSetting(entityRange);
 		addSetting(blockRange);
 	}

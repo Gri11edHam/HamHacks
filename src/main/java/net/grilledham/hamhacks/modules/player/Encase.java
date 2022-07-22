@@ -15,7 +15,7 @@ import org.lwjgl.glfw.GLFW;
 public class Encase extends Module {
 	
 	public Encase() {
-		super(Text.translatable("module.hamhacks.encase"), Text.translatable("module.hamhacks.encase.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_V));
+		super(Text.translatable("hamhacks.module.encase"), Text.translatable("hamhacks.module.encase.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_V));
 	}
 	
 	@Override

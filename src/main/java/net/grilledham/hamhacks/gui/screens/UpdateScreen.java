@@ -15,7 +15,7 @@ public class UpdateScreen extends Screen {
 	private ButtonPart exitButton;
 	
 	public UpdateScreen(Screen last) {
-		super(Text.translatable("menu.hamhacks.update"));
+		super(Text.translatable("hamhacks.menu.update"));
 		this.last = last;
 	}
 	

@@ -36,7 +36,7 @@ public class HUD extends Module {
 	private static HUD INSTANCE;
 	
 	public HUD() {
-		super(Text.translatable("module.hamhacks.hud"), Text.translatable("module.hamhacks.hud.tooltip"), Category.RENDER, new Keybind(0));
+		super(Text.translatable("hamhacks.module.hud"), Text.translatable("hamhacks.module.hud.tooltip"), Category.RENDER, new Keybind(0));
 		setEnabled(true);
 		INSTANCE = this;
 	}
@@ -48,23 +48,23 @@ public class HUD extends Module {
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		showLogo = new BoolSetting(Text.translatable("setting.hud.showlogo"), true);
-		showFPS = new BoolSetting(Text.translatable("setting.hud.showfps"), true);
-		showPing = new BoolSetting(Text.translatable("setting.hud.showping"), true);
-		showTPS = new BoolSetting(Text.translatable("setting.hud.showtps"), true);
-		showTimeSinceLastTick = new BoolSetting(Text.translatable("setting.hud.showtimesincelasttick"), true);
-		showModules = new BoolSetting(Text.translatable("setting.hud.showmodules"), true);
+		showLogo = new BoolSetting(Text.translatable("hamhacks.module.hud.showLogo"), true);
+		showFPS = new BoolSetting(Text.translatable("hamhacks.module.hud.showFps"), true);
+		showPing = new BoolSetting(Text.translatable("hamhacks.module.hud.showPing"), true);
+		showTPS = new BoolSetting(Text.translatable("hamhacks.module.hud.showTps"), true);
+		showTimeSinceLastTick = new BoolSetting(Text.translatable("hamhacks.module.hud.showTimeSinceLastTick"), true);
+		showModules = new BoolSetting(Text.translatable("hamhacks.module.hud.showModules"), true);
 		
-		heldItemScale = new FloatSetting(Text.translatable("setting.hud.helditemscale"), 1f, 0.1f, 2f);
-		shieldHeightModifier = new FloatSetting(Text.translatable("setting.hud.shieldheight"), 0f, -0.5f, 0.5f);
-		fireHeightModifier = new FloatSetting(Text.translatable("setting.hud.fireheight"), 0f, -0.5f, 0.5f);
-		overlayTransparency = new FloatSetting(Text.translatable("setting.hud.overlaytransparency"), 1f, 0f, 1f);
-		modelBobbingOnly = new BoolSetting(Text.translatable("setting.hud.modelbobbingonly"), false);
-		noHurtCam = new BoolSetting(Text.translatable("setting.hud.nohurtcam"), false);
+		heldItemScale = new FloatSetting(Text.translatable("hamhacks.module.hud.heldItemScale"), 1f, 0.1f, 2f);
+		shieldHeightModifier = new FloatSetting(Text.translatable("hamhacks.module.hud.shieldHeight"), 0f, -0.5f, 0.5f);
+		fireHeightModifier = new FloatSetting(Text.translatable("hamhacks.module.hud.fireHeight"), 0f, -0.5f, 0.5f);
+		overlayTransparency = new FloatSetting(Text.translatable("hamhacks.module.hud.overlayTransparency"), 1f, 0f, 1f);
+		modelBobbingOnly = new BoolSetting(Text.translatable("hamhacks.module.hud.modelBobbingOnly"), false);
+		noHurtCam = new BoolSetting(Text.translatable("hamhacks.module.hud.noHurtCam"), false);
 		
-		accentColor = new ColorSetting(Text.translatable("setting.hud.accentcolor"), 1, 1, 1, 1, true);
-		bgColor = new ColorSetting(Text.translatable("setting.hud.backgroundcolor"), 1, 0, 0, 0.5f, false);
-		textColor = new ColorSetting(Text.translatable("setting.hud.textcolor"), 1, 1, 1, 1, true);
+		accentColor = new ColorSetting(Text.translatable("hamhacks.module.hud.accentColor"), 1, 1, 1, 1, true);
+		bgColor = new ColorSetting(Text.translatable("hamhacks.module.hud.backgroundColor"), 1, 0, 0, 0.5f, false);
+		textColor = new ColorSetting(Text.translatable("hamhacks.module.hud.textColor"), 1, 1, 1, 1, true);
 		
 		addSetting(showLogo);
 		addSetting(showFPS);

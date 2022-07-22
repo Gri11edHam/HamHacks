@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.modules.render;
 
+import net.grilledham.hamhacks.gui.screens.ClickGUIScreen;
 import net.grilledham.hamhacks.gui.screens.ModuleSettingsScreen;
-import net.grilledham.hamhacks.gui.screens.NewClickGUIScreen;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.settings.ColorSetting;
@@ -23,7 +23,7 @@ public class ClickGUI extends Module {
 	private static ClickGUI INSTANCE;
 	
 	public ClickGUI() {
-		super(Text.translatable("module.hamhacks.clickgui"), Text.translatable("module.hamhacks.clickgui.tooltip"), Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
+		super(Text.translatable("hamhacks.module.clickGui"), Text.translatable("hamhacks.module.clickGui.tooltip"), Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
 		INSTANCE = this;
 	}
 	
@@ -35,11 +35,11 @@ public class ClickGUI extends Module {
 	public void addSettings() {
 		super.addSettings();
 		float[] barHSB = Color.RGBtoHSB(0xa4, 0, 0, new float[3]);
-		accentColor = new ColorSetting(Text.translatable("setting.clickgui.accentcolor"), barHSB[0], barHSB[1], barHSB[2], 1, false);
-		bgColor = new ColorSetting(Text.translatable("setting.clickgui.backgroundcolor"), 0, 0, 0, 0.5f, false);
-		bgColorHovered = new ColorSetting(Text.translatable("setting.clickgui.backgroundcolorhovered"), 0, 0, 1, 0.5f, false);
-		textColor = new ColorSetting(Text.translatable("setting.clickgui.textcolor"), 0, 0, 1, 1, false);
-		scale = new IntSetting(Text.translatable("setting.clickgui.scale"), 2, 1, 5);
+		accentColor = new ColorSetting(Text.translatable("hamhacks.module.clickGui.accentColor"), barHSB[0], barHSB[1], barHSB[2], 1, false);
+		bgColor = new ColorSetting(Text.translatable("hamhacks.module.clickGui.backgroundColor"), 0, 0, 0, 0.5f, false);
+		bgColorHovered = new ColorSetting(Text.translatable("hamhacks.module.clickGui.backgroundColorHovered"), 0, 0, 1, 0.5f, false);
+		textColor = new ColorSetting(Text.translatable("hamhacks.module.clickGui.textColor"), 0, 0, 1, 1, false);
+		scale = new IntSetting(Text.translatable("hamhacks.module.clickGui.scale"), 2, 1, 5);
 		addSetting(accentColor);
 		addSetting(bgColor);
 		addSetting(bgColorHovered);
@@ -50,13 +50,13 @@ public class ClickGUI extends Module {
 	@Override
 	public void onEnable() {
 		super.onEnable();
-		if(!(mc.currentScreen instanceof NewClickGUIScreen)) {
-			mc.setScreen(new NewClickGUIScreen(mc.currentScreen));
+		if(!(mc.currentScreen instanceof ClickGUIScreen)) {
+			mc.setScreen(new ClickGUIScreen(mc.currentScreen));
 		}
 		enabled.setValue(false);
 	}
 	
 	public boolean moveInScreen(Screen currentScreen) {
-		return currentScreen instanceof NewClickGUIScreen || currentScreen instanceof ModuleSettingsScreen;
+		return currentScreen instanceof ClickGUIScreen || currentScreen instanceof ModuleSettingsScreen;
 	}
 }

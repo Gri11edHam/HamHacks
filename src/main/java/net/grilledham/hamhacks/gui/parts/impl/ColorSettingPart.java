@@ -33,7 +33,7 @@ public class ColorSettingPart extends SettingPart {
 	public ColorSettingPart(int x, int y, ColorSetting setting) {
 		super(x, y, 16, setting);
 		this.setting = setting;
-		chroma = new BoolSetting(Text.translatable("setting.colorsettingpart.chroma"), setting.useChroma()) {
+		chroma = new BoolSetting(Text.translatable("hamhacks.setting.colorSettingPart.chroma"), setting.useChroma()) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();

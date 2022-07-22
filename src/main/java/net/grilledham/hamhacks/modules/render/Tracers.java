@@ -41,13 +41,13 @@ public class Tracers extends Module {
 	private ColorSetting passiveFar;
 	
 	public Tracers() {
-		super(Text.translatable("module.hamhacks.tracers"), Text.translatable("module.hamhacks.tracers.tooltip"), Category.RENDER, new Keybind(0));
+		super(Text.translatable("hamhacks.module.tracers"), Text.translatable("hamhacks.module.tracers.tooltip"), Category.RENDER, new Keybind(0));
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		tracePlayers = new BoolSetting(Text.translatable("setting.tracers.traceplayers"), true) {
+		tracePlayers = new BoolSetting(Text.translatable("hamhacks.module.tracers.tracePlayers"), true) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -55,9 +55,9 @@ public class Tracers extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		playerClose = new ColorSetting(Text.translatable("setting.tracers.playercolorclose"), 1, 1, 1, 0.5f, false);
-		playerFar = new ColorSetting(Text.translatable("setting.tracers.playercolorfar"), 1 / 3f, 1, 1, 0.5f, false);
-		traceHostile = new BoolSetting(Text.translatable("setting.tracers.tracehostile"), false) {
+		playerClose = new ColorSetting(Text.translatable("hamhacks.module.tracers.playerColorClose"), 1, 1, 1, 0.5f, false);
+		playerFar = new ColorSetting(Text.translatable("hamhacks.module.tracers.playerColorFar"), 1 / 3f, 1, 1, 0.5f, false);
+		traceHostile = new BoolSetting(Text.translatable("hamhacks.module.tracers.traceHostile"), false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -65,9 +65,9 @@ public class Tracers extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		hostileClose = new ColorSetting(Text.translatable("setting.tracers.hostilecolorclose"), 1, 1, 1, 0.5f, false);
-		hostileFar = new ColorSetting(Text.translatable("setting.tracers.hostilecolorfar"), 1 / 3f, 1, 1, 0.5f, false);
-		tracePassive = new BoolSetting(Text.translatable("setting.tracers.tracepassive"), false) {
+		hostileClose = new ColorSetting(Text.translatable("hamhacks.module.tracers.hostileColorClose"), 1, 1, 1, 0.5f, false);
+		hostileFar = new ColorSetting(Text.translatable("hamhacks.module.tracers.hostileColorFar"), 1 / 3f, 1, 1, 0.5f, false);
+		tracePassive = new BoolSetting(Text.translatable("hamhacks.module.tracers.tracePassive"), false) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();
@@ -75,8 +75,8 @@ public class Tracers extends Module {
 				updateScreenIfOpen();
 			}
 		};
-		passiveClose = new ColorSetting(Text.translatable("setting.tracers.passivecolorclose"), 1, 1, 1, 0.5f, false);
-		passiveFar = new ColorSetting(Text.translatable("setting.tracers.passivecolorfar"), 1 / 3f, 1, 1, 0.5f, false);
+		passiveClose = new ColorSetting(Text.translatable("hamhacks.module.tracers.passiveColorClose"), 1, 1, 1, 0.5f, false);
+		passiveFar = new ColorSetting(Text.translatable("hamhacks.module.tracers.passiveColorFar"), 1 / 3f, 1, 1, 0.5f, false);
 		
 		addSetting(tracePlayers);
 		addSetting(playerClose);

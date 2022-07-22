@@ -23,7 +23,7 @@ public class ModuleSettingsScreen extends Screen {
 	private ScrollablePart scrollArea;
 	
 	public ModuleSettingsScreen(Screen last, Module module) {
-		super(Text.translatable("menu.hamhacks.clickgui.module"));
+		super(Text.translatable("hamhacks.menu.clickGui.module"));
 		this.last = last;
 		this.module = module;
 	}

@@ -20,12 +20,12 @@ public class NoFall extends Module {
 	private long lastTime;
 	
 	public NoFall() {
-		super(Text.translatable("module.hamhacks.nofall"), Text.translatable("module.hamhacks.nofall.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
+		super(Text.translatable("hamhacks.module.noFall"), Text.translatable("hamhacks.module.noFall.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
 	}
 	
 	@Override
 	public void addSettings() {
-		mode = new SelectionSetting(Text.translatable("setting.nofall.mode"), Text.translatable("setting.nofall.mode.packet"), Text.translatable("setting.nofall.mode.packet"), Text.translatable("setting.nofall.mode.momentum"));
+		mode = new SelectionSetting(Text.translatable("hamhacks.module.noFall.mode"), Text.translatable("hamhacks.module.noFall.mode.packet"), Text.translatable("hamhacks.module.noFall.mode.packet"), Text.translatable("hamhacks.module.noFall.mode.momentum"));
 		addSetting(mode);
 	}
 	
@@ -33,12 +33,12 @@ public class NoFall extends Module {
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
 			switch(((TranslatableTextContent)mode.getValue().getContent()).getKey()) {
-				case "setting.nofall.mode.packet" -> {
+				case "hamhacks.module.noFall.mode.packet" -> {
 					if(mc.player.fallDistance >= 3) {
 						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
 					}
 				}
-				case "setting.nofall.mode.momentum" -> {
+				case "hamhacks.module.noFall.mode.momentum" -> {
 					if(updates >= 0.5f) {
 						updates = 0;
 					}

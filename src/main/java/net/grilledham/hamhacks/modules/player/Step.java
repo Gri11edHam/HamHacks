@@ -12,13 +12,13 @@ public class Step extends Module {
 	private float originalStepHeight;
 	
 	public Step() {
-		super(Text.translatable("module.hamhacks.step"), Text.translatable("module.hamhacks.step.tooltip"), Category.PLAYER, new Keybind(0));
+		super(Text.translatable("hamhacks.module.step"), Text.translatable("hamhacks.module.step.tooltip"), Category.PLAYER, new Keybind(0));
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		height = new FloatSetting(Text.translatable("setting.step.height"), 1f, 0f, 10f) {
+		height = new FloatSetting(Text.translatable("hamhacks.module.step.height"), 1f, 0f, 10f) {
 			@Override
 			protected void valueChanged() {
 				super.valueChanged();

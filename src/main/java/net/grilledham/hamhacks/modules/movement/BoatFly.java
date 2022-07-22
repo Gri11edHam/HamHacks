@@ -13,7 +13,7 @@ import org.lwjgl.glfw.GLFW;
 public class BoatFly extends Module {
 	
 	public BoatFly() {
-		super(Text.translatable("module.hamhacks.boatfly"), Text.translatable("module.hamhacks.boatfly.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_B));
+		super(Text.translatable("hamhacks.module.boatFly"), Text.translatable("hamhacks.module.boatFly.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_B));
 	}
 	
 	@EventListener

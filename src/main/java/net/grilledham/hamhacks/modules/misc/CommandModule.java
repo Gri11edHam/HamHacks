@@ -11,7 +11,7 @@ public class CommandModule extends Module {
 	private static CommandModule INSTANCE;
 	
 	public CommandModule() {
-		super(Text.translatable("module.hamhacks.command"), Category.MISC, new Keybind(GLFW.GLFW_KEY_PERIOD));
+		super(Text.translatable("hamhacks.module.command"), Category.MISC, new Keybind(GLFW.GLFW_KEY_PERIOD));
 		INSTANCE = this;
 	}
 	

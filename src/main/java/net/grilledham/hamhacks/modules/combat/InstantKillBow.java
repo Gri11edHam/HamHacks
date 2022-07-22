@@ -14,14 +14,14 @@ public class InstantKillBow extends Module {
 	private IntSetting iterations;
 	
 	public InstantKillBow() {
-		super(Text.translatable("module.hamhacks.instantkillbow"), Text.translatable("module.hamhacks.instantkillbow.tooltip"), Category.COMBAT, new Keybind(0));
+		super(Text.translatable("hamhacks.module.instantKillBow"), Text.translatable("hamhacks.module.instantKillBow.tooltip"), Category.COMBAT, new Keybind(0));
 		INSTANCE = this;
 	}
 	
 	@Override
 	public void addSettings() {
 		super.addSettings();
-		iterations = new IntSetting(Text.translatable("setting.instantkillbow.iterations"), 100, 10, 500);
+		iterations = new IntSetting(Text.translatable("hamhacks.module.instantKillBow.iterations"), 100, 10, 500);
 		addSetting(iterations);
 	}
 	
