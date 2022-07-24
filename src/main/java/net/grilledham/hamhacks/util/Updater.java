@@ -3,7 +3,7 @@ package net.grilledham.hamhacks.util;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.fabricmc.loader.api.FabricLoader;
-import net.grilledham.hamhacks.client.HamHacksClient;
+import net.grilledham.hamhacks.HamHacksClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Util;
 

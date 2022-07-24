@@ -16,7 +16,7 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"net.grilledham.hamhacks.client.HamHacksClient"
+			"net.grilledham.hamhacks.HamHacksClient"
 		],
 		"main": [
 			"net.grilledham.hamhacks.HamHacks"

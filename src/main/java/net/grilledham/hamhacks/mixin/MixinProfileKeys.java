@@ -1,6 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.client.HamHacksClient;
+import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.modules.misc.AntiBanModule;
 import net.minecraft.client.util.ProfileKeys;
 import net.minecraft.network.encryption.PlayerPublicKey;

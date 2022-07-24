@@ -1,4 +1,4 @@
-package net.grilledham.hamhacks.client;
+package net.grilledham.hamhacks;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,6 +7,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.grilledham.hamhacks.command.CommandManager;
+import net.grilledham.hamhacks.config.HamHacksConfig;
 import net.grilledham.hamhacks.gui.overlays.IngameGui;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
@@ -29,7 +30,7 @@ public class HamHacksClient implements ClientModInitializer {
 	public static final Version VERSION = new Version("$VERSION");
 	
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	public static final int CONFIG_VERSION = 1;
+	public static final int CONFIG_VERSION = 2;
 	
 	public static final Logger LOGGER = LogUtils.getLogger();
 	

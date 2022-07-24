@@ -1,6 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.client.HamHacksClient;
+import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.mixininterface.IClientPlayerInteractionManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;

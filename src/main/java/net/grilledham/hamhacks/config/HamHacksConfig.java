@@ -1,15 +1,14 @@
-package net.grilledham.hamhacks.client;
+package net.grilledham.hamhacks.config;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
 import net.fabricmc.loader.api.FabricLoader;
+import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.setting.Setting;
-import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
-import net.grilledham.hamhacks.util.setting.settings.IntSetting;
 
 import java.io.*;
 import java.util.ConcurrentModificationException;
@@ -127,20 +126,7 @@ public class HamHacksConfig {
 			HamHacksClient.LOGGER.info("Loading config. Version: " + configVersion);
 		}
 		
-		switch(configVersion) {
-			case 0:
-				for(Module m : ModuleManager.getModules()) {
-					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(m.getName()).getAsJsonObject("settings");
-					for(Setting<?> s : m.getSettings()) {
-						if(s instanceof IntSetting) {
-							settings.addProperty(s.getKey(), settings.get(s.getKey()).getAsJsonObject().get("value").getAsInt());
-						} else if(s instanceof FloatSetting) {
-							settings.addProperty(s.getKey(), settings.get(s.getKey()).getAsJsonObject().get("value").getAsFloat());
-						}
-					}
-				}
-			// Add more switch cases for new config changes
-		}
+		ConfigFixer.fixConfig(obj, configVersion);
 		
 		JsonObject categories = obj.getAsJsonObject("categories");
 		for(Module.Category category : Module.Category.values()) {
