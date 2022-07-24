@@ -22,6 +22,8 @@ public class AntiBanModule extends Module {
 	public void addSettings() {
 		super.addSettings();
 		joinEnforcedServers = new BoolSetting(Text.translatable("hamhacks.module.antiBan.joinEnforcedServers"), true);
+		
+		addSetting(joinEnforcedServers);
 	}
 	
 	public static AntiBanModule getInstance() {
