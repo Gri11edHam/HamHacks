@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.modules;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.event.events.EventKey;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
@@ -63,7 +64,7 @@ public class Keybind {
 	}
 	
 	public void checkKeyState(long handle, int key, int scancode, int action, int modifiers) {
-		if(key == code) {
+		if(key == code && MinecraftClient.getInstance().currentScreen == null) {
 			System.out.println("SC: " + scancode + ", A: " + action + ", M: " + modifiers);
 			if(GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS) {
 				isPressed = false;
