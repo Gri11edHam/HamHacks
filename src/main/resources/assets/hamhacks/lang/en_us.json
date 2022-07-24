@@ -142,6 +142,11 @@
 	"hamhacks.module.fullBright.smoothTransition": "Smooth Transition",
 	"hamhacks.module.fullBright.smoothTransition.tooltip": "Should the transition be smooth when enabling/disabling this module",
 
+	"hamhacks.module.antiBan": "Anti Ban",
+	"hamhacks.module.antiBan.tooltip": "Attempts to prevent you from being\nbanned from multiplayer by Mojang\n\u00a7cWARNING: Does not bypass any form of ban",
+	"hamhacks.module.antiBan.joinEnforcedServers": "Join Enforced Servers",
+	"hamhacks.module.antiBan.joinEnforcedServers.tooltip": "Should you automatically join servers\nthat enforce chat signing\n(Joining servers with enforced chat signing disables the module)",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",
@@ -161,5 +166,8 @@
 	"hamhacks.menu.changelog": "Changelog GUI",
 	"hamhacks.menu.fullChangelog": "Full Changelog GUI",
 	"hamhacks.menu.bindModule": "Bind Module GUI",
-	"hamhacks.menu.update": "Update GUI"
+	"hamhacks.menu.update": "Update GUI",
+	"hamhacks.menu.disconnected.continueAnyways": "Continue Anyways",
+
+	"hamhacks.disconnect.enforcedServer": "The server you are trying to connect to enforces a secure connection.\nYou can connect anyways and risk being reported to Mojang or cancel."
 }

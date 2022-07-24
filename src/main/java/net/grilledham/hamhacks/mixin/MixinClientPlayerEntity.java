@@ -60,9 +60,6 @@ public class MixinClientPlayerEntity {
 	private void cancelSignMessage(MessageMetadata metadata, DecoratedContents content, LastSeenMessageList lastSeenMessages, CallbackInfoReturnable<MessageSignatureData> cir) {
 		if(AntiBanModule.getInstance().isEnabled() && !AntiBanModule.getInstance().hasConnected) {
 			cir.setReturnValue(MessageSignatureData.EMPTY);
-		} else {
-			if(AntiBanModule.getInstance().isEnabled()) {
-			}
 		}
 	}
 	
@@ -70,9 +67,6 @@ public class MixinClientPlayerEntity {
 	private void cancelSignMessage(MessageMetadata signer, ParseResults<CommandSource> parseResults, Text preview, LastSeenMessageList lastSeenMessages, CallbackInfoReturnable<ArgumentSignatureDataMap> cir) {
 		if(AntiBanModule.getInstance().isEnabled() && !AntiBanModule.getInstance().hasConnected) {
 			cir.setReturnValue(ArgumentSignatureDataMap.EMPTY);
-		} else {
-			if(AntiBanModule.getInstance().isEnabled()) {
-			}
 		}
 	}
 }

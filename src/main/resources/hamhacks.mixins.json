@@ -20,6 +20,7 @@
 		"MixinLightmapTextureManager",
 		"MixinMinecraftClient",
 		"MixinMouse",
+		"MixinMultiplayerScreen",
 		"MixinProfileKeys",
 		"MixinTitleScreen"
 	]
