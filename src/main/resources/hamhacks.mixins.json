@@ -8,6 +8,7 @@
 		"MixinClientPlayerEntity",
 		"MixinClientPlayerInteractionManager",
 		"MixinCommandSuggestor",
+		"MixinDisconnectedScreen",
 		"MixinGameRenderer",
 		"MixinHeldItemRenderer",
 		"MixinInGameHud",
@@ -19,6 +20,7 @@
 		"MixinLightmapTextureManager",
 		"MixinMinecraftClient",
 		"MixinMouse",
+		"MixinProfileKeys",
 		"MixinTitleScreen"
 	]
 }

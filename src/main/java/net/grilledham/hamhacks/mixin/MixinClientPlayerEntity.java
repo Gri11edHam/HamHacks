@@ -1,16 +1,21 @@
 package net.grilledham.hamhacks.mixin;
 
+import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.grilledham.hamhacks.command.CommandManager;
 import net.grilledham.hamhacks.event.events.EventMotion;
+import net.grilledham.hamhacks.modules.misc.AntiBanModule;
 import net.grilledham.hamhacks.modules.misc.CommandModule;
 import net.grilledham.hamhacks.util.ChatUtil;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.command.CommandSource;
+import net.minecraft.network.message.*;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerEntity.class)
 public class MixinClientPlayerEntity {
@@ -48,6 +53,26 @@ public class MixinClientPlayerEntity {
 				ChatUtil.error(Text.of(e.getMessage()));
 			}
 			ci.cancel();
+		}
+	}
+	
+	@Inject(method = "signChatMessage", at = @At("HEAD"), cancellable = true)
+	private void cancelSignMessage(MessageMetadata metadata, DecoratedContents content, LastSeenMessageList lastSeenMessages, CallbackInfoReturnable<MessageSignatureData> cir) {
+		if(AntiBanModule.getInstance().isEnabled() && !AntiBanModule.getInstance().hasConnected) {
+			cir.setReturnValue(MessageSignatureData.EMPTY);
+		} else {
+			if(AntiBanModule.getInstance().isEnabled()) {
+			}
+		}
+	}
+	
+	@Inject(method = "signArguments", at = @At("HEAD"), cancellable = true)
+	private void cancelSignMessage(MessageMetadata signer, ParseResults<CommandSource> parseResults, Text preview, LastSeenMessageList lastSeenMessages, CallbackInfoReturnable<ArgumentSignatureDataMap> cir) {
+		if(AntiBanModule.getInstance().isEnabled() && !AntiBanModule.getInstance().hasConnected) {
+			cir.setReturnValue(ArgumentSignatureDataMap.EMPTY);
+		} else {
+			if(AntiBanModule.getInstance().isEnabled()) {
+			}
 		}
 	}
 }
