@@ -4,6 +4,7 @@ import net.grilledham.hamhacks.client.HamHacksClient;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.mixininterface.IClientPlayerInteractionManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.MouseUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
@@ -40,6 +41,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	public void tickEvent(CallbackInfo ci) {
 		new EventTick().call();
 		MouseUtil.checkForMouseMove();
+		ModuleManager.updateKeybinds();
 	}
 	
 	@Inject(method = "stop", at = @At("HEAD"))

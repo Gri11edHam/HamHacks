@@ -24,4 +24,8 @@ public class ModuleManager {
 	public static Module getModule(String name) {
 		return modules.stream().filter(module -> module.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 	}
+	
+	public static void updateKeybinds() {
+		modules.forEach(Module::checkKeybind);
+	}
 }

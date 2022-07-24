@@ -1,8 +1,6 @@
 package net.grilledham.hamhacks.modules;
 
-import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.EventManager;
-import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.util.setting.Setting;
 import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
@@ -54,7 +52,6 @@ public class Module {
 		this.category = category;
 		this.key = new KeySetting(Text.translatable("hamhacks.module.generic.keybind"), key);
 		
-		EventManager.register(this);
 		addSettings();
 		addSetting(this.showModule);
 		addSetting(this.key);
@@ -63,9 +60,9 @@ public class Module {
 		hideSetting(this.forceDisabled);
 	}
 	
-	@EventListener
-	public void onTick(EventTick e) {
-		if(key.getKeybind().wasPressed()) {
+	public void checkKeybind() {
+		while(key.getKeybind().wasPressed()) {
+			System.out.println("toggling " + getName());
 			toggle();
 		}
 	}

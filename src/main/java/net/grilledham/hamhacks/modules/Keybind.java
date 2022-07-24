@@ -2,8 +2,7 @@ package net.grilledham.hamhacks.modules;
 
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.EventManager;
-import net.grilledham.hamhacks.event.events.EventTick;
-import net.minecraft.client.MinecraftClient;
+import net.grilledham.hamhacks.event.events.EventKey;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
@@ -18,7 +17,7 @@ public class Keybind {
 	private final int defaultCode;
 	
 	private boolean isPressed = false;
-	private boolean wasPressed = false;
+	private int wasPressed = 0;
 	
 	public Keybind(int defaultCode) {
 		this.code = defaultCode;
@@ -27,10 +26,8 @@ public class Keybind {
 	}
 	
 	@EventListener
-	public void onTick(EventTick e) {
-		if(MinecraftClient.getInstance().currentScreen == null) {
-			checkKeyState();
-		}
+	public void keyPressed(EventKey e) {
+		checkKeyState(e.handle, e.key, e.scancode, e.action, e.modifiers);
 	}
 	
 	/**
@@ -65,26 +62,25 @@ public class Keybind {
 		}
 	}
 	
-	public void checkKeyState() {
-		boolean pressed;
-		long handle = MinecraftClient.getInstance().getWindow().getHandle();
-		if(GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS) {
-			pressed = false;
-		} else {
-			if(code < 0) {
-				pressed = GLFW.glfwGetMouseButton(handle, code + MOUSE_SHIFT) == GLFW.GLFW_PRESS;
-			} else if(code != 0) {
-				pressed = GLFW.glfwGetKey(handle, code) == GLFW.GLFW_PRESS;
+	public void checkKeyState(long handle, int key, int scancode, int action, int modifiers) {
+		if(key == code) {
+			System.out.println("SC: " + scancode + ", A: " + action + ", M: " + modifiers);
+			if(GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS) {
+				isPressed = false;
 			} else {
-				pressed = false;
+				if(code < 0) {
+					isPressed = GLFW.glfwGetMouseButton(handle, code + MOUSE_SHIFT) == GLFW.GLFW_PRESS;
+				} else if(code != 0) {
+					isPressed = action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT;
+				} else {
+					isPressed = false;
+				}
+			}
+			if(isPressed) {
+				wasPressed++;
+				System.out.println(wasPressed);
 			}
 		}
-		if(isPressed && pressed) {
-			wasPressed = false;
-		} else {
-			wasPressed = pressed;
-		}
-		isPressed = pressed;
 	}
 	
 	/**
@@ -92,8 +88,11 @@ public class Keybind {
 	 * @return <code>true</code> or <code>false</code> depending on the key state
 	 */
 	public boolean wasPressed() {
-		boolean toReturn = wasPressed;
-		wasPressed = false;
+		boolean toReturn = wasPressed > 0;
+		if(wasPressed > 0) {
+			System.out.println("wasPressed--");
+			wasPressed--;
+		}
 		return toReturn;
 	}
 	
