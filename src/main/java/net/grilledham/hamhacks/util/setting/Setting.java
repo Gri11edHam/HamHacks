@@ -11,7 +11,7 @@ public abstract class Setting<T> {
 	
 	protected final Text name;
 	
-	protected Text toolTip = null;
+	protected Text toolTip;
 	
 	protected JsonObject value;
 	
@@ -58,7 +58,7 @@ public abstract class Setting<T> {
 	}
 	
 	public boolean hasToolTip() {
-		return getToolTip().equals(getKey() + ".tooltip");
+		return !getToolTip().equals(getKey() + ".tooltip");
 	}
 	
 	public String getName() {
