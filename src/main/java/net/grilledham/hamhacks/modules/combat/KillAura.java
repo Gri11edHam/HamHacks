@@ -34,7 +34,7 @@ public class KillAura extends Module {
 	private LivingEntity target;
 	
 	public KillAura() {
-		super(Text.translatable("hamhacks.module.killAura"), Text.translatable("hamhacks.module.killAura.tooltip"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
+		super(Text.translatable("hamhacks.module.killAura"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
 	}
 	
 	@Override

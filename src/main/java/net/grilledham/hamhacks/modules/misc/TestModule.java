@@ -17,7 +17,7 @@ public class TestModule extends Module {
 	private StringSetting testString;
 	
 	public TestModule() {
-		super(Text.translatable("module.hamhacks.test"), Text.translatable("module.hamhacks.test.tooltip"), Category.MISC, new Keybind(0));
+		super(Text.translatable("module.hamhacks.test"), Category.MISC, new Keybind(0));
 	}
 	
 	@Override

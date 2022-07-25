@@ -26,7 +26,7 @@ public class Speed extends Module {
 	private static Speed INSTANCE;
 	
 	public Speed() {
-		super(Text.translatable("hamhacks.module.speed"), Text.translatable("hamhacks.module.speed.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
+		super(Text.translatable("hamhacks.module.speed"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
 		INSTANCE = this;
 	}
 	

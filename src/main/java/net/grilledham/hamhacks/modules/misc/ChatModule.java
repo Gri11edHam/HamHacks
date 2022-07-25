@@ -32,7 +32,7 @@ public class ChatModule extends Module {
 	private static ChatModule INSTANCE;
 	
 	public ChatModule() {
-		super(Text.translatable("hamhacks.module.chat"), Text.translatable("hamhacks.module.chat.tooltip"), Category.MISC, new Keybind(0));
+		super(Text.translatable("hamhacks.module.chat"), Category.MISC, new Keybind(0));
 		INSTANCE = this;
 	}
 	

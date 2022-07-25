@@ -14,7 +14,7 @@ public class AntiBanModule extends Module {
 	public boolean hasConnected = false;
 	
 	public AntiBanModule() {
-		super(Text.translatable("hamhacks.module.antiBan"), Text.translatable("hamhacks.module.antiBan.tooltip"), Category.MISC, new Keybind(0));
+		super(Text.translatable("hamhacks.module.antiBan"), Category.MISC, new Keybind(0));
 		INSTANCE = this;
 	}
 	

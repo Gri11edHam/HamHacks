@@ -10,7 +10,7 @@ import org.lwjgl.glfw.GLFW;
 public class Sprint extends Module {
 	
 	public Sprint() {
-		super(Text.translatable("hamhacks.module.sprint"), Text.translatable("hamhacks.module.sprint.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_G));
+		super(Text.translatable("hamhacks.module.sprint"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_G));
 	}
 	
 	@EventListener

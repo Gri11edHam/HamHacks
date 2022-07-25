@@ -13,7 +13,7 @@ public class NameHiderModule extends Module {
 	private static NameHiderModule INSTANCE;
 	
 	public NameHiderModule() {
-		super(Text.translatable("hamhacks.module.nameHider"), Text.translatable("hamhacks.module.nameHider.tooltip"), Category.MISC, new Keybind(0));
+		super(Text.translatable("hamhacks.module.nameHider"), Category.MISC, new Keybind(0));
 		INSTANCE = this;
 	}
 	

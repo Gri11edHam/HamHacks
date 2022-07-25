@@ -13,7 +13,7 @@ public class Reach extends Module {
 	private static Reach INSTANCE;
 	
 	public Reach() {
-		super(Text.translatable("hamhacks.module.reach"), Text.translatable("hamhacks.module.reach.tooltip"), Category.COMBAT, new Keybind(0));
+		super(Text.translatable("hamhacks.module.reach"), Category.COMBAT, new Keybind(0));
 		INSTANCE = this;
 	}
 	

@@ -36,7 +36,7 @@ public class HUD extends Module {
 	private static HUD INSTANCE;
 	
 	public HUD() {
-		super(Text.translatable("hamhacks.module.hud"), Text.translatable("hamhacks.module.hud.tooltip"), Category.RENDER, new Keybind(0));
+		super(Text.translatable("hamhacks.module.hud"), Category.RENDER, new Keybind(0));
 		setEnabled(true);
 		INSTANCE = this;
 	}

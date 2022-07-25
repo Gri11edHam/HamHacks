@@ -43,12 +43,8 @@ public class Module {
 	protected boolean wasEnabled;
 	
 	public Module(Text name, Category category, Keybind key) {
-		this(name, null, category, key);
-	}
-	
-	public Module(Text name, Text toolTip, Category category, Keybind key) {
 		this.name = name;
-		this.toolTip = toolTip;
+		this.toolTip = Text.translatable(getConfigName() + ".tooltip");
 		this.category = category;
 		this.key = new KeySetting(Text.translatable("hamhacks.module.generic.keybind"), key);
 		
@@ -123,7 +119,7 @@ public class Module {
 	}
 	
 	public boolean hasToolTip() {
-		return this.toolTip != null;
+		return !getToolTip().equals(getConfigName() + ".tooltip");
 	}
 	
 	public boolean isEnabled() {

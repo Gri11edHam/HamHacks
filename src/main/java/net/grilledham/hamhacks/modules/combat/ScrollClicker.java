@@ -11,7 +11,7 @@ import org.lwjgl.glfw.GLFW;
 public class ScrollClicker extends Module {
 	
 	public ScrollClicker() {
-		super(Text.translatable("hamhacks.module.scrollClick"), Text.translatable("hamhacks.module.scrollClick.tooltip"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_L));
+		super(Text.translatable("hamhacks.module.scrollClick"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_L));
 	}
 	
 	@EventListener

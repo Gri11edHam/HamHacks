@@ -39,7 +39,7 @@ public class Aimbot extends Module {
 	private HitResult blockToAim = null;
 	
 	public Aimbot() {
-		super(Text.translatable("hamhacks.module.aimbot"), Text.translatable("hamhacks.module.aimbot.tooltip"), Category.COMBAT, new Keybind(0));
+		super(Text.translatable("hamhacks.module.aimbot"), Category.COMBAT, new Keybind(0));
 	}
 	
 	@Override

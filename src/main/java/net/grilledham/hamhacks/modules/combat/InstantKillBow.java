@@ -14,7 +14,7 @@ public class InstantKillBow extends Module {
 	private IntSetting iterations;
 	
 	public InstantKillBow() {
-		super(Text.translatable("hamhacks.module.instantKillBow"), Text.translatable("hamhacks.module.instantKillBow.tooltip"), Category.COMBAT, new Keybind(0));
+		super(Text.translatable("hamhacks.module.instantKillBow"), Category.COMBAT, new Keybind(0));
 		INSTANCE = this;
 	}
 	

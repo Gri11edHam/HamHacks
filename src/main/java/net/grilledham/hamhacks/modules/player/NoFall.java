@@ -20,7 +20,7 @@ public class NoFall extends Module {
 	private long lastTime;
 	
 	public NoFall() {
-		super(Text.translatable("hamhacks.module.noFall"), Text.translatable("hamhacks.module.noFall.tooltip"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
+		super(Text.translatable("hamhacks.module.noFall"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
 	}
 	
 	@Override

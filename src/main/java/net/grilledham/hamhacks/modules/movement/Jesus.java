@@ -11,7 +11,7 @@ import org.lwjgl.glfw.GLFW;
 public class Jesus extends Module {
 	
 	public Jesus() {
-		super(Text.translatable("hamhacks.module.jesus"), Text.translatable("hamhacks.module.jesus.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_J));
+		super(Text.translatable("hamhacks.module.jesus"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_J));
 	}
 	
 	@EventListener

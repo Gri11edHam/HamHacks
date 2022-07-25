@@ -32,7 +32,7 @@ public class Fly extends Module {
 	private long lastTime;
 	
 	public Fly() {
-		super(Text.translatable("hamhacks.module.fly"), Text.translatable("hamhacks.module.fly.tooltip"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_F));
+		super(Text.translatable("hamhacks.module.fly"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_F));
 	}
 	
 	@Override
