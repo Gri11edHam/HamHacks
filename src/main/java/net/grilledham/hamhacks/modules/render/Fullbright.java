@@ -17,7 +17,7 @@ public class Fullbright extends Module {
 	private float newBrightness;
 	
 	public Fullbright() {
-		super(Text.translatable("hamhacks.module.fullBright"), Category.RENDER, new Keybind(0));
+		super(Text.translatable("hamhacks.module.fullBright"), Text.translatable("hamhacks.module.fullBright.tooltip"), Category.RENDER, new Keybind(0));
 		INSTANCE = this;
 	}
 	
