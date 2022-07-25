@@ -3,6 +3,8 @@ package net.grilledham.hamhacks.mixin;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.grilledham.hamhacks.command.CommandManager;
+import net.grilledham.hamhacks.event.EventManager;
+import net.grilledham.hamhacks.event.events.EventChat;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.misc.AntiBanModule;
 import net.grilledham.hamhacks.modules.misc.CommandModule;
@@ -40,6 +42,12 @@ public class MixinClientPlayerEntity {
 	
 	@Inject(method = "sendChatMessage(Ljava/lang/String;Lnet/minecraft/text/Text;)V", at = @At("HEAD"), cancellable = true)
 	public void sendMessage(String message, Text preview, CallbackInfo ci) {
+		EventChat.EventChatSent event = new EventChat.EventChatSent(message, preview);
+		EventManager.call(event);
+		if(event.canceled) {
+			ci.cancel();
+			return;
+		}
 		String prefix = CommandModule.getInstance().getKey().getName();
 		boolean previewIsCommand = preview != null && preview.getString().startsWith(prefix);
 		if(message.startsWith(prefix) || previewIsCommand) {
