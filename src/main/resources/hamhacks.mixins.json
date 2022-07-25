@@ -4,6 +4,7 @@
 	"package": "net.grilledham.hamhacks.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
+		"MixinChatHud",
 		"MixinClientConnection",
 		"MixinClientPlayerEntity",
 		"MixinClientPlayerInteractionManager",
@@ -22,6 +23,7 @@
 		"MixinMouse",
 		"MixinMultiplayerScreen",
 		"MixinProfileKeys",
+		"MixinTextVisitFactory",
 		"MixinTitleScreen"
 	]
 }

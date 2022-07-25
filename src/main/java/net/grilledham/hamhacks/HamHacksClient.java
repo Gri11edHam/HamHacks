@@ -13,7 +13,9 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.*;
 import net.grilledham.hamhacks.modules.misc.AntiBanModule;
+import net.grilledham.hamhacks.modules.misc.ChatModule;
 import net.grilledham.hamhacks.modules.misc.CommandModule;
+import net.grilledham.hamhacks.modules.misc.NameHiderModule;
 import net.grilledham.hamhacks.modules.movement.*;
 import net.grilledham.hamhacks.modules.player.*;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
@@ -80,6 +82,8 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new InstantKillBow());
 		ModuleManager.register(new Fullbright());
 		ModuleManager.register(new AntiBanModule());
+		ModuleManager.register(new ChatModule());
+		ModuleManager.register(new NameHiderModule());
 		
 //		ModuleManager.register(new TestModule()); // For testing
 	}
