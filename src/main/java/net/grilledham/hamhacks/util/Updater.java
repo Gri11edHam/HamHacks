@@ -18,6 +18,7 @@ public class Updater {
 	private Updater(){}
 	
 	private static Version latestVersion;
+	private static String changelog = "";
 	private static String downloadURL;
 	
 	private static boolean hasUpdated = false;
@@ -31,6 +32,7 @@ public class Updater {
 			isr.close();
 			is.close();
 			latestVersion = new Version(obj.get("tag_name").getAsString().replace("v", ""));
+			changelog = obj.get("body").getAsString();
 			downloadURL = obj.get("assets").getAsJsonArray().get(0).getAsJsonObject().get("browser_download_url").getAsString();
 			if(Updater.newVersionAvailable()) {
 				HamHacksClient.LOGGER.info("New version available! (" + Updater.getLatest().getVersion(0, true) + ")");
@@ -54,6 +56,10 @@ public class Updater {
 			latestVersion = new Version("0");
 		}
 		return latestVersion;
+	}
+	
+	public static String getChangelog() {
+		return changelog;
 	}
 	
 	public static void update() {
