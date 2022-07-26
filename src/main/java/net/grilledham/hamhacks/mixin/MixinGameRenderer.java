@@ -35,14 +35,14 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void modelBobbingOnly(GameRenderer instance, MatrixStack matrices, float tickDelta) {
-		if(!HUD.getInstance().modelBobbingOnly.getValue() && HUD.getInstance().isEnabled()) {
+		if(!HUD.getInstance().modelBobbingOnly.getValue() || !HUD.getInstance().isEnabled()) {
 			bobView(matrices, tickDelta);
 		}
 	}
 	
 	@Inject(method = "bobViewWhenHurt", at = @At("HEAD"), cancellable = true)
 	public void noHurtCam(MatrixStack matrices, float f, CallbackInfo ci) {
-		if(!(!HUD.getInstance().noHurtCam.getValue() && HUD.getInstance().isEnabled())) {
+		if(HUD.getInstance().noHurtCam.getValue() && HUD.getInstance().isEnabled()) {
 			ci.cancel();
 		}
 	}
