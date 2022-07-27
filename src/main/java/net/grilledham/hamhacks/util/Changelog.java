@@ -3,6 +3,17 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.6:
+				- Added auto-updater
+				- Removed dependency on fabric-api
+				- Updated to 1.19.1
+				- Added modules:
+					: Anti Ban
+					: Chat
+					: Name Hider
+				- Changed translation keys
+				- Bug fixes
+			
 			Update 1.5.3:
 				- Added module:
 					: Fullbright
