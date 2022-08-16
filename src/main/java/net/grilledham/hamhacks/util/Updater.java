@@ -40,7 +40,7 @@ public class Updater {
 				HamHacksClient.LOGGER.info("Up to date! (" + latestVersion.getVersion(0, true) + ")");
 			}
 		} catch(IOException e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		}
 	}
 	
@@ -100,22 +100,17 @@ public class Updater {
 								"EXIT\n";
 						try {
 							FileHelper.writeFile(deleterProgram, deleter);
-						} catch(IOException e) {
-							throw new RuntimeException(e);
-						}
-						
-						try {
 							Runtime.getRuntime().exec("cmd /c start deleter.bat", null, deleter.getParentFile());
 						} catch(IOException e) {
-							throw new RuntimeException(e);
+							e.printStackTrace();
 						}
 					}));
 				}
 			} catch(URISyntaxException e) {
-				throw new RuntimeException(e);
+				e.printStackTrace();
 			}
 		} catch(IOException e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		}
 	}
 }
