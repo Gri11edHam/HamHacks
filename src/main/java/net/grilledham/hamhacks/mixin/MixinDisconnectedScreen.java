@@ -32,7 +32,8 @@ public abstract class MixinDisconnectedScreen extends Screen {
 	@ModifyVariable(method = "<init>", at = @At("LOAD"), index = 3, argsOnly = true)
 	private Text modifyReason(Text reason) {
 		if(reason.getContent() instanceof TranslatableTextContent) {
-			if(AntiBanModule.getInstance().isEnabled() && (((TranslatableTextContent)reason.getContent())).getKey().equals("multiplayer.disconnect.invalid_public_key_signature")) {
+			String key = (((TranslatableTextContent)reason.getContent())).getKey();
+			if(AntiBanModule.getInstance().isEnabled() && (key.equals("multiplayer.disconnect.missing_public_key") || key.equals("multiplayer.disconnect.invalid_public_key") || key.equals("multiplayer.disconnect.invalid_public_key_signature"))) {
 				enforceSecureChat = true;
 			}
 		}
