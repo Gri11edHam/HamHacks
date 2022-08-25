@@ -121,13 +121,10 @@ public class Tracers extends Module {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-		applyRegionalRenderOffset(matrixStack);
+//		reverseBob(matrixStack, partialTicks);
+		applyCameraOffset(matrixStack);
 		
-		BlockPos camPos = getCameraBlockPos();
-		int regionX = (camPos.getX() >> 9) * 512;
-		int regionZ = (camPos.getZ() >> 9) * 512;
-		
-		renderTracers(matrixStack, partialTicks, regionX, regionZ);
+		renderTracers(matrixStack, partialTicks);
 		
 		matrixStack.pop();
 		
@@ -136,6 +133,17 @@ public class Tracers extends Module {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+	}
+	
+	private void reverseBob(MatrixStack matrices, float tickDelta) {
+		if(mc.getCameraEntity() instanceof PlayerEntity playerEntity) {
+			float f = playerEntity.horizontalSpeed - playerEntity.prevHorizontalSpeed;
+			float g = -(playerEntity.horizontalSpeed + f * tickDelta);
+			float h = MathHelper.lerp(tickDelta, playerEntity.prevStrideDistance, playerEntity.strideDistance);
+			matrices.translate(-(MathHelper.sin(g * 3.1415927F) * h * 0.5F), Math.abs(MathHelper.cos(g * 3.1415927F) * h), 0.0);
+			matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(-(MathHelper.sin(g * 3.1415927F) * h * 3.0F)));
+			matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-(Math.abs(MathHelper.cos(g * 3.1415927F - 0.2F) * h) * 5.0F)));
+		}
 	}
 	
 	@EventListener
@@ -167,7 +175,7 @@ public class Tracers extends Module {
 		entities.addAll(stream.toList());
 	}
 	
-	private void renderTracers(MatrixStack matrixStack, double partialTicks, int regionX, int regionZ) {
+	private void renderTracers(MatrixStack matrixStack, double partialTicks) {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
@@ -176,11 +184,11 @@ public class Tracers extends Module {
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 		
-		Vec3d start = getClientLookVec().add(getCameraPos()).subtract(regionX, 0, regionZ);
+		Vec3d start = getClientLookVec().add(getCameraPos());
 		
 		for(LivingEntity e : entities) {
 			Vec3d interpolationOffset = new Vec3d(e.getX(), e.getY(), e.getZ()).subtract(e.prevX, e.prevY, e.prevZ).multiply(1 - partialTicks);
-			Vec3d end = e.getBoundingBox().getCenter().subtract(interpolationOffset).subtract(regionX, 0, regionZ).add(getClientLookVec().multiply(mc.player.distanceTo(e) / 4f));
+			Vec3d end = e.getBoundingBox().getCenter().subtract(interpolationOffset);
 			
 			float f = mc.player.distanceTo(e) / 20F;
 			int cClose;
@@ -211,18 +219,9 @@ public class Tracers extends Module {
 		BufferRenderer.drawWithShader(bufferBuilder.end());
 	}
 	
-	private void applyRegionalRenderOffset(MatrixStack matrixStack) {
-		Camera camera = mc.getBlockEntityRenderDispatcher().camera;
-		matrixStack.multiply(new Quaternion(new Vec3f(1, 0, 0), MathHelper.wrapDegrees(camera.getPitch()), true));
-		matrixStack.multiply(new Quaternion(new Vec3f(0, 1, 0), MathHelper.wrapDegrees(camera.getYaw() + 180), true));
-		
+	private void applyCameraOffset(MatrixStack matrixStack) {
 		Vec3d camPos = getCameraPos();
-		BlockPos blockPos = getCameraBlockPos();
-		
-		int regionX = (blockPos.getX() >> 9) * 512;
-		int regionZ = (blockPos.getZ() >> 9) * 512;
-		
-		matrixStack.translate(regionX - camPos.x, -camPos.y, regionZ - camPos.z);
+		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 	}
 	
 	private Vec3d getClientLookVec() {

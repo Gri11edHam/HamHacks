@@ -65,7 +65,6 @@ public class Keybind {
 	
 	public void checkKeyState(long handle, int key, int scancode, int action, int modifiers) {
 		if(key == code && MinecraftClient.getInstance().currentScreen == null) {
-			System.out.println("SC: " + scancode + ", A: " + action + ", M: " + modifiers);
 			if(GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS) {
 				isPressed = false;
 			} else {
@@ -79,7 +78,6 @@ public class Keybind {
 			}
 			if(isPressed) {
 				wasPressed++;
-				System.out.println(wasPressed);
 			}
 		}
 	}

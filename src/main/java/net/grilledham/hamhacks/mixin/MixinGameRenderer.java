@@ -1,10 +1,13 @@
 package net.grilledham.hamhacks.mixin;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.events.EventRender2D;
 import net.grilledham.hamhacks.event.events.EventRender3D;
+import net.grilledham.hamhacks.mixininterface.IGameRenderer;
 import net.grilledham.hamhacks.modules.combat.Reach;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.resource.ResourceManager;
@@ -18,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
-public abstract class MixinGameRenderer implements SynchronousResourceReloader, AutoCloseable {
+public abstract class MixinGameRenderer implements SynchronousResourceReloader, AutoCloseable, IGameRenderer {
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "net.minecraft.client.gui.hud.InGameHud.render(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void render2DEvent(InGameHud instance, MatrixStack matrices, float tickDelta) {
@@ -27,10 +30,12 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		event.call();
 	}
 	
-	@Inject(method = "renderWorld", at = @At("HEAD"))
+	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=hand"))
 	public void render3DEvent(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo ci) {
 		EventRender3D event = new EventRender3D(tickDelta, matrices);
 		event.call();
+		
+		RenderSystem.applyModelViewMatrix();
 	}
 	
 	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
@@ -70,6 +75,13 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		}
 		return !Reach.getInstance().isEnabled() && bl;
 	}
+	
+	@Override
+	public double getFOV(Camera camera, float tickDelta, boolean changingFov) {
+		return getFov(camera, tickDelta, changingFov);
+	}
+	
+	@Shadow protected abstract double getFov(Camera camera, float tickDelta, boolean changingFov);
 	
 	@Shadow
 	public abstract void close();
