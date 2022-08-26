@@ -121,7 +121,7 @@ public class Tracers extends Module {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-//		reverseBob(matrixStack, partialTicks);
+		matrixStack.loadIdentity();
 		applyCameraOffset(matrixStack);
 		
 		renderTracers(matrixStack, partialTicks);
@@ -133,17 +133,6 @@ public class Tracers extends Module {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-	}
-	
-	private void reverseBob(MatrixStack matrices, float tickDelta) {
-		if(mc.getCameraEntity() instanceof PlayerEntity playerEntity) {
-			float f = playerEntity.horizontalSpeed - playerEntity.prevHorizontalSpeed;
-			float g = -(playerEntity.horizontalSpeed + f * tickDelta);
-			float h = MathHelper.lerp(tickDelta, playerEntity.prevStrideDistance, playerEntity.strideDistance);
-			matrices.translate(-(MathHelper.sin(g * 3.1415927F) * h * 0.5F), Math.abs(MathHelper.cos(g * 3.1415927F) * h), 0.0);
-			matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(-(MathHelper.sin(g * 3.1415927F) * h * 3.0F)));
-			matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-(Math.abs(MathHelper.cos(g * 3.1415927F - 0.2F) * h) * 5.0F)));
-		}
 	}
 	
 	@EventListener
@@ -221,6 +210,7 @@ public class Tracers extends Module {
 	
 	private void applyCameraOffset(MatrixStack matrixStack) {
 		Vec3d camPos = getCameraPos();
+		matrixStack.multiply(new Quaternion(mc.getBlockEntityRenderDispatcher().camera.getPitch(), (mc.getBlockEntityRenderDispatcher().camera.getYaw()) % 360 + 180, 0, true));
 		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 	}
 	
@@ -238,10 +228,6 @@ public class Tracers extends Module {
 	
 	private Vec3d getCameraPos() {
 		return mc.getBlockEntityRenderDispatcher().camera.getPos();
-	}
-	
-	private BlockPos getCameraBlockPos() {
-		return mc.getBlockEntityRenderDispatcher().camera.getBlockPos();
 	}
 	
 	private int mix(int c1, int c2, float f) {
