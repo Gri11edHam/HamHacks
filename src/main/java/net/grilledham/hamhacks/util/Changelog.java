@@ -3,6 +3,13 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.6.1:
+				- Added module:
+					: Timer
+				- Fixed Tracers module
+				- Improved Sprint module
+				- Bug fixes
+			
 			Update 1.6:
 				- Added auto-updater
 				- Removed dependency on fabric-api
