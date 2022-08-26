@@ -58,7 +58,6 @@ public class Module {
 	
 	public void checkKeybind() {
 		while(key.getKeybind().wasPressed()) {
-			System.out.println("toggling " + getName());
 			toggle();
 		}
 	}

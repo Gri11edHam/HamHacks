@@ -89,7 +89,6 @@ public class Keybind {
 	public boolean wasPressed() {
 		boolean toReturn = wasPressed > 0;
 		if(wasPressed > 0) {
-			System.out.println("wasPressed--");
 			wasPressed--;
 		}
 		return toReturn;
