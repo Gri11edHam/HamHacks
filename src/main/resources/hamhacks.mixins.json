@@ -23,6 +23,7 @@
 		"MixinMouse",
 		"MixinMultiplayerScreen",
 		"MixinProfileKeys",
+		"MixinRenderTickCounter",
 		"MixinTextVisitFactory",
 		"MixinTitleScreen"
 	]

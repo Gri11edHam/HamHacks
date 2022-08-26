@@ -4,13 +4,16 @@ import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.mixininterface.IClientPlayerInteractionManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
+import net.grilledham.hamhacks.mixininterface.IRenderTickCounter;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.MouseUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.WindowEventHandler;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,6 +26,10 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	@Shadow
 	public ClientPlayerInteractionManager interactionManager;
 	
+	@Shadow
+	@Final
+	private RenderTickCounter renderTickCounter;
+	
 	public MixinMinecraftClient(String string) {
 		super(string);
 	}
@@ -30,6 +37,11 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	@Override
 	public IClientPlayerInteractionManager getInteractionManager() {
 		return (IClientPlayerInteractionManager)interactionManager;
+	}
+	
+	@Override
+	public IRenderTickCounter getRenderTickCounter() {
+		return (IRenderTickCounter)renderTickCounter;
 	}
 	
 	@Inject(method = "<init>", at = @At("TAIL"))

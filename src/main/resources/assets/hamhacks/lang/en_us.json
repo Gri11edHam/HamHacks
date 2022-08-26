@@ -165,6 +165,11 @@
 	"hamhacks.module.nameHider.fakeName": "Fake Name",
 	"hamhacks.module.nameHider.fakeName.tooltip": "Your new name",
 
+	"hamhacks.module.timer": "Timer",
+	"hamhacks.module.timer.tooltip": "Allows you to change the tick rate of your client",
+	"hamhacks.module.timer.speed": "Speed",
+	"hamhacks.module.timer.speed.tooltip": "The speed of your client in ticks",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",
