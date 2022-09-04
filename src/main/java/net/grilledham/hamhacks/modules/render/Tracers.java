@@ -9,7 +9,6 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.ColorSetting;
-import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
@@ -31,15 +30,6 @@ import java.util.stream.Stream;
 public class Tracers extends Module {
 	
 	private final ArrayList<LivingEntity> entities = new ArrayList<>();
-	
-	@NumberSetting(
-			name = "hamhacks.module.tracers.lineWidth",
-			defaultValue = 1,
-			min = 0.1f,
-			max = 10,
-			step = 1
-	)
-	public float lineWidth = 1;
 	
 	@BoolSetting(name = "hamhacks.module.tracers.tracePlayers", defaultValue = true)
 	public boolean tracePlayers = true;
@@ -128,12 +118,11 @@ public class Tracers extends Module {
 	private void renderTracers(MatrixStack matrixStack, double partialTicks) {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
-		RenderSystem.lineWidth(lineWidth);
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
+		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
 		
 		Vec3d start = getClientLookVec().add(getCameraPos());
 		
