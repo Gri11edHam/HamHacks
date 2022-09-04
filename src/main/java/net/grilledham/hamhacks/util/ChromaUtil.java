@@ -1,7 +1,5 @@
 package net.grilledham.hamhacks.util;
 
-import java.awt.*;
-
 public class ChromaUtil {
 	
 	private static float hue;
@@ -12,6 +10,6 @@ public class ChromaUtil {
 		hue += (System.currentTimeMillis() - lastTime) / 10000f;
 		hue %= 1;
 		lastTime = System.currentTimeMillis();
-		return Color.HSBtoRGB(hue, 1, 1);
+		return Color.toRGB(hue, 1, 1, 1);
 	}
 }

@@ -24,7 +24,9 @@ public class ButtonPart extends GuiPart {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float partialTicks) {
+	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -47,7 +49,9 @@ public class ButtonPart extends GuiPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int button) {
+	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				onClick.run();
@@ -56,6 +60,6 @@ public class ButtonPart extends GuiPart {
 			}
 			return true;
 		}
-		return super.release(mx, my, button);
+		return super.release(mx, my, scrollX, scrollY, button);
 	}
 }

@@ -2,15 +2,13 @@ package net.grilledham.hamhacks.modules;
 
 import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
-import net.grilledham.hamhacks.util.setting.Setting;
-import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
-import net.grilledham.hamhacks.util.setting.settings.KeySetting;
+import net.grilledham.hamhacks.util.setting.BoolSetting;
+import net.grilledham.hamhacks.util.setting.KeySetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Module {
@@ -18,87 +16,60 @@ public class Module {
 	protected Text name;
 	
 	protected Text toolTip;
-	protected BoolSetting enabled = new BoolSetting(Text.translatable("hamhacks.module.generic.enabled"), false) {
-		@Override
-		protected void valueChanged() {
-			super.valueChanged();
-			if(getValue()) {
-				onEnable();
-			} else {
-				onDisable();
-			}
-		}
-	};
-	protected Category category;
-	protected KeySetting key;
-	protected BoolSetting showModule = new BoolSetting(Text.translatable("hamhacks.module.generic.showModule"), true);
 	
-	protected List<Setting<?>> shownSettings = new ArrayList<>();
-	protected List<Setting<?>> settings = new ArrayList<>();
+	protected Category category;
+	
+	@BoolSetting(name = "hamhacks.module.generic.showModule", defaultValue = true)
+	public boolean showModule = true;
+	
+	@KeySetting(name = "hamhacks.module.generic.keybind")
+	public Keybind key;
+	
+	@BoolSetting(name = "hamhacks.module.generic.enabled")
+	public boolean enabled = false;
 	
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
 	
-	protected BoolSetting forceDisabled = new BoolSetting(Text.translatable("hamhacks.module.generic.internal.forceDisabled"), false);
+	@BoolSetting(name = "hamhacks.module.generic.internal.forceDisabled", neverShow = true)
+	public boolean forceDisabled = false;
 	protected boolean wasEnabled;
+	protected boolean lastEnabled;
 	
 	public Module(Text name, Category category, Keybind key) {
 		this.name = name;
 		this.toolTip = Text.translatable(getConfigName() + ".tooltip");
 		this.category = category;
-		this.key = new KeySetting(Text.translatable("hamhacks.module.generic.keybind"), key);
-		
-		addSettings();
-		addSetting(this.showModule);
-		addSetting(this.key);
-		addSetting(this.enabled);
-		addSetting(this.forceDisabled);
-		hideSetting(this.forceDisabled);
+		this.key = key;
 	}
 	
 	public void checkKeybind() {
-		while(key.getKeybind().wasPressed()) {
+		while(key.wasPressed()) {
 			toggle();
 		}
 	}
 	
-	protected void addSetting(Setting<?> s) {
-		settings.add(s);
-		shownSettings.add(s);
-	}
-	
-	protected void showSetting(Setting<?> s, int index) {
-		shownSettings.add(index, s);
-	}
-	
-	protected void hideSetting(Setting<?> s) {
-		shownSettings.remove(s);
-	}
-	
 	public void toggle() {
-		if(!this.forceDisabled.getValue()) {
-			enabled.setValue(!enabled.getValue());
+		if(!this.forceDisabled) {
+			enabled = !enabled;
 		}
 	}
 	
 	public void setEnabled(boolean enabled) {
-		if(!this.forceDisabled.getValue()) {
-			this.enabled.setValue(enabled);
+		if(!this.forceDisabled) {
+			this.enabled = enabled;
 		}
 	}
 	
 	public void forceDisable() {
 		wasEnabled = isEnabled();
 		setEnabled(false);
-		forceDisabled.setValue(true);
+		forceDisabled = true;
 	}
 	
 	public void reEnable() {
-		forceDisabled.setValue(false);
+		forceDisabled = false;
 		setEnabled(wasEnabled);
-	}
-	
-	public void addSettings() {
 	}
 	
 	public void onEnable() {
@@ -122,27 +93,30 @@ public class Module {
 	}
 	
 	public boolean isEnabled() {
-		return this.enabled.getValue();
+		return this.enabled;
 	}
 	
 	public boolean shouldShowModule() {
-		return showModule.getValue();
-	}
-	
-	public List<Setting<?>> getShownSettings() {
-		return shownSettings;
-	}
-	
-	public List<Setting<?>> getSettings() {
-		return settings;
+		return showModule;
 	}
 	
 	public Keybind getKey() {
-		return key.getKeybind();
+		return key;
 	}
 	
 	public String getConfigName() {
 		return ((TranslatableTextContent)name.getContent()).getKey();
+	}
+	
+	public void updateEnabled() {
+		if(lastEnabled != enabled) {
+			if(enabled){
+				onEnable();
+			} else{
+				onDisable();
+			}
+		}
+		lastEnabled = enabled;
 	}
 	
 	public enum Category {

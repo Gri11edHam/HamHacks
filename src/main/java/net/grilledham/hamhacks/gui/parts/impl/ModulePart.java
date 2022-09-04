@@ -28,7 +28,9 @@ public class ModulePart extends GuiPart {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float partialTicks) {
+	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -71,17 +73,19 @@ public class ModulePart extends GuiPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, float partialTicks) {
-		super.renderTop(stack, mx, my, partialTicks);
+	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 		if(module.hasToolTip()) {
 			if(tooltipAnimation >= 1 && !hasClicked) {
-				RenderUtil.drawToolTip(stack, module.getName(), module.getToolTip(), mx, my);
+				RenderUtil.drawToolTip(stack, module.getName(), module.getToolTip(), mx + scrollX, my + scrollY);
 			}
 		}
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int button) {
+	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			hasClicked = true;
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
@@ -91,6 +95,6 @@ public class ModulePart extends GuiPart {
 			}
 			return true;
 		}
-		return super.release(mx, my, button);
+		return super.release(mx, my, scrollX, scrollY, button);
 	}
 }

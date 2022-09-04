@@ -43,7 +43,7 @@ public class MixinChatHud extends DrawableHelper {
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V", ordinal = 0))
 	public void modifyBGColor(MatrixStack matrixStack, int x1, int y1, int x2, int y2, int color) {
-		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().highlightUsername.getValue()) {
+		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().highlightUsername) {
 			ChatHudLine.Visible line = visibleMessages.get(lineIndex);
 			if(ChatModule.getInstance().shouldColorLine(line)) {
 				int newRGB = ChatModule.getInstance().highlightUsernameColor.getRGB() - 0xff000000;
@@ -58,7 +58,7 @@ public class MixinChatHud extends DrawableHelper {
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V", ordinal = 1))
 	public void removeIndicator(MatrixStack matrixStack, int x1, int y1, int x2, int y2, int c) {
-		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().hideSigningStatus.getValue()) {
+		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().hideSigningStatus) {
 			return;
 		}
 		fill(matrixStack, x1, y1, x2, y2, c);
@@ -66,7 +66,7 @@ public class MixinChatHud extends DrawableHelper {
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/MessageIndicator;icon()Lnet/minecraft/client/gui/hud/MessageIndicator$Icon;"))
 	public MessageIndicator.Icon removeIcon(MessageIndicator instance) {
-		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().hideUnsignedIndicator.getValue()) {
+		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().hideUnsignedIndicator) {
 			return null;
 		}
 		return instance.icon();

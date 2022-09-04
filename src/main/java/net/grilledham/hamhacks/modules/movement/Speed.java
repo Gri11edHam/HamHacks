@@ -4,8 +4,8 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
-import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
+import net.grilledham.hamhacks.util.setting.BoolSetting;
+import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.block.Material;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.text.Text;
@@ -15,13 +15,51 @@ import org.lwjgl.glfw.GLFW;
 
 public class Speed extends Module {
 	
-	private FloatSetting speed;
-	private BoolSetting autoJump;
-	private FloatSetting inAirMult;
-	private FloatSetting onIceMult;
-	private FloatSetting inWaterMult;
-	private FloatSetting inTunnelMult;
-	private BoolSetting disableWithElytra;
+	@NumberSetting(
+			name = "hamhacks.module.speed.speed",
+			defaultValue = 2.5f,
+			min = 0,
+			max = 10
+	)
+	public float speed = 2.5f;
+	
+	@BoolSetting(name = "hamhacks.module.speed.autoJump")
+	public boolean autoJump = false;
+	
+	@NumberSetting(
+			name = "hamhacks.module.speed.inAirMultiplier",
+			defaultValue = 1.7f,
+			min = 0.25f,
+			max = 4
+	)
+	public float inAirMult = 1.7f;
+	
+	@NumberSetting(
+			name = "hamhacks.module.speed.onIceMultiplier",
+			defaultValue = 2,
+			min = 0.25f,
+			max = 4
+	)
+	public float onIceMult = 2;
+	
+	@NumberSetting(
+			name = "hamhacks.module.speed.inTunnelMultiplier",
+			defaultValue = 1.7f,
+			min = 0.25f,
+			max = 4
+	)
+	public float inTunnelMult = 1.7f;
+	
+	@NumberSetting(
+			name = "hamhacks.module.speed.inWaterMultiplier",
+			defaultValue = 0.6f,
+			min = 0.25f,
+			max = 4
+	)
+	public float inWaterMult = 0.6f;
+	
+	@BoolSetting(name = "hamhacks.module.speed.disableWithElytra", defaultValue = true)
+	public boolean disableWithElytra = true;
 	
 	private static Speed INSTANCE;
 	
@@ -30,28 +68,10 @@ public class Speed extends Module {
 		INSTANCE = this;
 	}
 	
-	@Override
-	public void addSettings() {
-		speed = new FloatSetting(Text.translatable("hamhacks.module.speed.speed"), 2.5f, 0f, 10f);
-		autoJump = new BoolSetting(Text.translatable("hamhacks.module.speed.autoJump"), false);
-		inAirMult = new FloatSetting(Text.translatable("hamhacks.module.speed.inAirMultiplier"), 1.7f, 0.25f, 4);
-		onIceMult = new FloatSetting(Text.translatable("hamhacks.module.speed.onIceMultiplier"), 2, 0.25f, 4);
-		inTunnelMult = new FloatSetting(Text.translatable("hamhacks.module.speed.inTunnelMultiplier"), 1.7f, 0.25f, 4);
-		inWaterMult = new FloatSetting(Text.translatable("hamhacks.module.speed.inWaterMultiplier"), 0.6f, 0.25f, 4);
-		disableWithElytra = new BoolSetting(Text.translatable("hamhacks.module.speed.disableWithElytra"), true);
-		addSetting(speed);
-		addSetting(autoJump);
-		addSetting(inAirMult);
-		addSetting(onIceMult);
-		addSetting(inTunnelMult);
-		addSetting(inWaterMult);
-		addSetting(disableWithElytra);
-	}
-	
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
-			if(mc.player.getPose() == EntityPose.FALL_FLYING && disableWithElytra.getValue()) {
+			if(mc.player.getPose() == EntityPose.FALL_FLYING && disableWithElytra) {
 				return;
 			}
 			float distanceForward = 0;
@@ -76,30 +96,30 @@ public class Speed extends Module {
 			float dz = (float) (distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90)));
 			dx += (float) (distanceStrafe * Math.cos(Math.toRadians(mc.player.getYaw())));
 			dz += (float) (distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
-			dx *= speed.getValue() / 10f;
-			dz *= speed.getValue() / 10f;
+			dx *= speed / 10f;
+			dz *= speed / 10f;
 			if(checkBlockBelow(Material.AIR)) {
-				dx *= inAirMult.getValue();
-				dz *= inAirMult.getValue();
+				dx *= inAirMult;
+				dz *= inAirMult;
 			}
 			if(checkBlockBelow(Material.ICE) || checkBlockBelow(Material.DENSE_ICE)) {
-				dx *= onIceMult.getValue();
-				dz *= onIceMult.getValue();
+				dx *= onIceMult;
+				dz *= onIceMult;
 			}
 			if(!(checkBlockAbove(Material.AIR) || checkBlockAbove(Material.WATER) || checkBlockAbove(Material.BUBBLE_COLUMN))) {
-				dx *= inTunnelMult.getValue();
-				dz *= inTunnelMult.getValue();
+				dx *= inTunnelMult;
+				dz *= inTunnelMult;
 			}
 			if(mc.player.isTouchingWater()) {
-				dx *= inWaterMult.getValue();
-				dz *= inWaterMult.getValue();
+				dx *= inWaterMult;
+				dz *= inWaterMult;
 			}
 			if(mc.player.isSneaking()) {
 				dx /= 1.5;
 				dz /= 1.5;
 			}
 			mc.player.setVelocity(new Vec3d(dx, mc.player.getVelocity().y, dz));
-			if(autoJump.getValue()) {
+			if(autoJump) {
 				if(mc.player.isOnGround() && (dx != 0 && dz != 0)) {
 					mc.player.jump();
 				}

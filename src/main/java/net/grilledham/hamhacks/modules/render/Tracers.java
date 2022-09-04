@@ -6,8 +6,9 @@ import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
-import net.grilledham.hamhacks.util.setting.settings.ColorSetting;
+import net.grilledham.hamhacks.util.Color;
+import net.grilledham.hamhacks.util.setting.BoolSetting;
+import net.grilledham.hamhacks.util.setting.ColorSetting;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
@@ -30,85 +31,35 @@ public class Tracers extends Module {
 	
 	private final ArrayList<LivingEntity> entities = new ArrayList<>();
 	
-	private BoolSetting tracePlayers;
-	private ColorSetting playerClose;
-	private ColorSetting playerFar;
-	private BoolSetting traceHostile;
-	private ColorSetting hostileClose;
-	private ColorSetting hostileFar;
-	private BoolSetting tracePassive;
-	private ColorSetting passiveClose;
-	private ColorSetting passiveFar;
+	@BoolSetting(name = "hamhacks.module.tracers.tracePlayers", defaultValue = true)
+	public boolean tracePlayers = true;
+	
+	@ColorSetting(name = "hamhacks.module.tracers.playerColorClose", dependsOn = "tracePlayers")
+	public Color playerClose = new Color(0xFFFF0000);
+	
+	@ColorSetting(name = "hamhacks.module.tracers.playerColorFar", dependsOn = "tracePlayers")
+	public Color playerFar = new Color(0xFF00FF00);
+	
+	@BoolSetting(name = "hamhacks.module.tracers.traceHostile")
+	public boolean traceHostile = false;
+	
+	@ColorSetting(name = "hamhacks.module.tracers.hostileColorClose", dependsOn = "traceHostile")
+	public Color hostileClose = new Color(0xFFFF0000);
+	
+	@ColorSetting(name = "hamhacks.module.tracers.hostileColorFar", dependsOn = "traceHostile")
+	public Color hostileFar = new Color(0xFF00FF00);
+	
+	@BoolSetting(name = "hamhacks.module.tracers.tracePassive")
+	public boolean tracePassive = false;
+	
+	@ColorSetting(name = "hamhacks.module.tracers.passiveColorClose", dependsOn = "tracePassive")
+	public Color passiveClose = new Color(0xFFFF0000);
+	
+	@ColorSetting(name = "hamhacks.module.tracers.passiveColorFar", dependsOn = "tracePassive")
+	public Color passiveFar = new Color(0xFF00FF00);
 	
 	public Tracers() {
 		super(Text.translatable("hamhacks.module.tracers"), Category.RENDER, new Keybind(0));
-	}
-	
-	@Override
-	public void addSettings() {
-		super.addSettings();
-		tracePlayers = new BoolSetting(Text.translatable("hamhacks.module.tracers.tracePlayers"), true) {
-			@Override
-			protected void valueChanged() {
-				super.valueChanged();
-				updateSettings();
-				updateScreenIfOpen();
-			}
-		};
-		playerClose = new ColorSetting(Text.translatable("hamhacks.module.tracers.playerColorClose"), 1, 1, 1, 0.5f, false);
-		playerFar = new ColorSetting(Text.translatable("hamhacks.module.tracers.playerColorFar"), 1 / 3f, 1, 1, 0.5f, false);
-		traceHostile = new BoolSetting(Text.translatable("hamhacks.module.tracers.traceHostile"), false) {
-			@Override
-			protected void valueChanged() {
-				super.valueChanged();
-				updateSettings();
-				updateScreenIfOpen();
-			}
-		};
-		hostileClose = new ColorSetting(Text.translatable("hamhacks.module.tracers.hostileColorClose"), 1, 1, 1, 0.5f, false);
-		hostileFar = new ColorSetting(Text.translatable("hamhacks.module.tracers.hostileColorFar"), 1 / 3f, 1, 1, 0.5f, false);
-		tracePassive = new BoolSetting(Text.translatable("hamhacks.module.tracers.tracePassive"), false) {
-			@Override
-			protected void valueChanged() {
-				super.valueChanged();
-				updateSettings();
-				updateScreenIfOpen();
-			}
-		};
-		passiveClose = new ColorSetting(Text.translatable("hamhacks.module.tracers.passiveColorClose"), 1, 1, 1, 0.5f, false);
-		passiveFar = new ColorSetting(Text.translatable("hamhacks.module.tracers.passiveColorFar"), 1 / 3f, 1, 1, 0.5f, false);
-		
-		addSetting(tracePlayers);
-		addSetting(playerClose);
-		addSetting(playerFar);
-		addSetting(traceHostile);
-		addSetting(hostileClose);
-		addSetting(hostileFar);
-		addSetting(tracePassive);
-		addSetting(passiveClose);
-		addSetting(passiveFar);
-		updateSettings();
-	}
-	
-	private void updateSettings() {
-		hideSetting(playerClose);
-		hideSetting(playerFar);
-		hideSetting(hostileClose);
-		hideSetting(hostileFar);
-		hideSetting(passiveClose);
-		hideSetting(passiveFar);
-		if(tracePlayers.getValue()) {
-			showSetting(playerFar, shownSettings.indexOf(tracePlayers) + 1);
-			showSetting(playerClose, shownSettings.indexOf(tracePlayers) + 1);
-		}
-		if(traceHostile.getValue()) {
-			showSetting(hostileFar, shownSettings.indexOf(traceHostile) + 1);
-			showSetting(hostileClose, shownSettings.indexOf(traceHostile) + 1);
-		}
-		if(tracePassive.getValue()) {
-			showSetting(passiveFar, shownSettings.indexOf(tracePassive) + 1);
-			showSetting(passiveClose, shownSettings.indexOf(tracePassive) + 1);
-		}
 	}
 	
 	@EventListener
@@ -159,7 +110,7 @@ public class Tracers extends Module {
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
 				.filter(entity -> entity != player)
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-				.filter(entity -> (entity instanceof PlayerEntity && tracePlayers.getValue()) || (entity instanceof HostileEntity && traceHostile.getValue()) || (entity instanceof PassiveEntity && tracePassive.getValue()));
+				.filter(entity -> (entity instanceof PlayerEntity && tracePlayers) || (entity instanceof HostileEntity && traceHostile) || (entity instanceof PassiveEntity && tracePassive));
 		
 		entities.addAll(stream.toList());
 	}

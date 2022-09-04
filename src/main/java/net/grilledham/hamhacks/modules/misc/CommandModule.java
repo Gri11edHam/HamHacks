@@ -23,6 +23,6 @@ public class CommandModule extends Module {
 	public void onEnable() {
 		super.onEnable();
 		toggle();
-		mc.setScreen(new ChatScreen(key.getKeybind().getName()));
+		mc.setScreen(new ChatScreen(key.getName()));
 	}
 }

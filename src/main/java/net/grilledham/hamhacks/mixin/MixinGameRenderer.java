@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.events.EventRender2D;
 import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.mixininterface.IGameRenderer;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.Reach;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -25,6 +26,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "net.minecraft.client.gui.hud.InGameHud.render(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void render2DEvent(InGameHud instance, MatrixStack matrices, float tickDelta) {
+		ModuleManager.updateEnabled();
 		instance.render(matrices, tickDelta);
 		EventRender2D event = new EventRender2D(matrices, tickDelta);
 		event.call();
@@ -40,14 +42,14 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void modelBobbingOnly(GameRenderer instance, MatrixStack matrices, float tickDelta) {
-		if(!HUD.getInstance().modelBobbingOnly.getValue() || !HUD.getInstance().isEnabled()) {
+		if(!HUD.getInstance().modelBobbingOnly || !HUD.getInstance().isEnabled()) {
 			bobView(matrices, tickDelta);
 		}
 	}
 	
 	@Inject(method = "bobViewWhenHurt", at = @At("HEAD"), cancellable = true)
 	public void noHurtCam(MatrixStack matrices, float f, CallbackInfo ci) {
-		if(HUD.getInstance().noHurtCam.getValue() && HUD.getInstance().isEnabled()) {
+		if(HUD.getInstance().noHurtCam && HUD.getInstance().isEnabled()) {
 			ci.cancel();
 		}
 	}
@@ -57,7 +59,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		if(Reach.getInstance() == null) {
 			return d;
 		}
-		return Reach.getInstance().isEnabled() ? Reach.getInstance().blockRange.getValue() : d;
+		return Reach.getInstance().isEnabled() ? Reach.getInstance().blockRange : d;
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 8)
@@ -65,7 +67,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		if(Reach.getInstance() == null) {
 			return e;
 		}
-		return Reach.getInstance().isEnabled() ? Reach.getInstance().entityRange.getValue() * Reach.getInstance().entityRange.getValue() : e;
+		return Reach.getInstance().isEnabled() ? Reach.getInstance().entityRange * Reach.getInstance().entityRange : e;
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 6)

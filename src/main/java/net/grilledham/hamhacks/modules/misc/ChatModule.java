@@ -4,8 +4,9 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventChat;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
-import net.grilledham.hamhacks.util.setting.settings.ColorSetting;
+import net.grilledham.hamhacks.util.Color;
+import net.grilledham.hamhacks.util.setting.BoolSetting;
+import net.grilledham.hamhacks.util.setting.ColorSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -21,11 +22,23 @@ import java.util.List;
 
 public class ChatModule extends Module {
 	
-	public BoolSetting pingOnMention;
-	public BoolSetting highlightUsername;
-	public ColorSetting highlightUsernameColor;
-	public BoolSetting hideUnsignedIndicator;
-	public BoolSetting hideSigningStatus;
+	@BoolSetting(name = "hamhacks.module.chat.pingOnMention")
+	public boolean pingOnMention = false;
+	
+	@BoolSetting(name = "hamhacks.module.chat.highlightUsername")
+	public boolean highlightUsername = false;
+	
+	@ColorSetting(
+			name = "hamhacks.module.chat.highlightUsernameColor",
+			dependsOn = "highlightUsername"
+	)
+	public Color highlightUsernameColor = Color.getYellow();
+	
+	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedIndicator")
+	public boolean hideUnsignedIndicator = false;
+	
+	@BoolSetting(name = "hamhacks.module.chat.hideSigningStatus")
+	public boolean hideSigningStatus = false;
 	
 	private final List<String> sentMessages = new ArrayList<>();
 	
@@ -46,41 +59,13 @@ public class ChatModule extends Module {
 			sb.append((char)codePoint);
 			return true;
 		});
-		String username = (NameHiderModule.getInstance().isEnabled() ? NameHiderModule.getInstance().fakeName.getValue() : MinecraftClient.getInstance().getSession().getUsername());
+		String username = (NameHiderModule.getInstance().isEnabled() ? NameHiderModule.getInstance().fakeName : MinecraftClient.getInstance().getSession().getUsername());
 		return sb.toString().contains(username) && !sentMessages.contains(sb.toString());
-	}
-	
-	@Override
-	public void addSettings() {
-		super.addSettings();
-		pingOnMention = new BoolSetting(Text.translatable("hamhacks.module.chat.pingOnMention"), false);
-		highlightUsername = new BoolSetting(Text.translatable("hamhacks.module.chat.highlightUsername"), false) {
-			@Override
-			protected void valueChanged() {
-				super.valueChanged();
-				if(highlightUsername.getValue()) {
-					showSetting(highlightUsernameColor, settings.indexOf(highlightUsername) + 1);
-				} else {
-					hideSetting(highlightUsernameColor);
-				}
-				updateScreenIfOpen();
-			}
-		};
-		highlightUsernameColor = new ColorSetting(Text.translatable("hamhacks.module.chat.highlightUsernameColor"), 1, 1, 0.8f, 1.0f, false);
-		hideUnsignedIndicator = new BoolSetting(Text.translatable("hamhacks.module.chat.hideUnsignedIndicator"), false);
-		hideSigningStatus = new BoolSetting(Text.translatable("hamhacks.module.chat.hideSigningStatus"), false);
-		
-		addSetting(pingOnMention);
-		addSetting(highlightUsername);
-		addSetting(highlightUsernameColor);
-		hideSetting(highlightUsernameColor);
-		addSetting(hideUnsignedIndicator);
-		addSetting(hideSigningStatus);
 	}
 	
 	@EventListener
 	public void sendChat(EventChat.EventChatSent e) {
-		String username = (NameHiderModule.getInstance().isEnabled() ? NameHiderModule.getInstance().fakeName.getValue() : MinecraftClient.getInstance().getSession().getUsername());
+		String username = (NameHiderModule.getInstance().isEnabled() ? NameHiderModule.getInstance().fakeName : MinecraftClient.getInstance().getSession().getUsername());
 		sentMessages.add(e.preview == null ? "<" + username + "> " + e.message : e.preview.getString());
 	}
 	

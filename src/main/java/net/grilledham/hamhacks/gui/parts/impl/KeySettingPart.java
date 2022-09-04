@@ -1,27 +1,29 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
+import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.grilledham.hamhacks.util.setting.settings.KeySetting;
+import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
+
+import java.lang.reflect.Field;
 
 public class KeySettingPart extends SettingPart {
 	
 	private float hoverAnimation;
 	
-	private final KeySetting setting;
-	
 	private boolean listening = false;
 	
-	public KeySettingPart(int x, int y, KeySetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName() + "    [________________]") + 4, setting);
-		this.setting = setting;
+	public KeySettingPart(int x, int y, Field setting, Object obj) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting) + "    [________________]") + 4, setting, obj);
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float partialTicks) {
+	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -30,9 +32,13 @@ public class KeySettingPart extends SettingPart {
 		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation);
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
-		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
-		String text = "[" + (listening ? "Listening..." : setting.getKeybind().getName()) + "]";
-		mc.textRenderer.drawWithShadow(stack, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		try {
+			String text = "[" + (listening ? "Listening..." : ((Keybind)setting.get(obj)).getName()) + "]";
+			mc.textRenderer.drawWithShadow(stack, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -46,7 +52,9 @@ public class KeySettingPart extends SettingPart {
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int button) {
+	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			
@@ -55,34 +63,44 @@ public class KeySettingPart extends SettingPart {
 			}
 			return true;
 		}
-		return super.click(mx, my, button);
+		return super.click(mx, my, scrollX, scrollY, button);
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int button) {
-		super.release(mx, my, button);
-		if(listening) {
-			setting.getKeybind().setKey(button, true);
-			listening = false;
-			return true;
-		} else if(mx >= x && mx < x + width && my >= y && my < y + height) {
-			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-				listening = true;
-			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-				setting.reset();
+	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
+		super.release(mx, my, scrollX, scrollY, button);
+		try {
+			if(listening) {
+				((Keybind)setting.get(obj)).setKey(button, true);
+				listening = false;
+				return true;
+			} else if(mx >= x && mx < x + width && my >= y && my < y + height) {
+				if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+					listening = true;
+				} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+					SettingHelper.reset(setting, obj);
+				}
+				return true;
 			}
-			return true;
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
 		}
-		return super.release(mx, my, button);
+		return super.release(mx, my, scrollX, scrollY, button);
 	}
 	
 	@Override
 	public boolean type(int code, int scanCode, int modifiers) {
 		if(listening) {
-			if(code == GLFW.GLFW_KEY_ESCAPE) {
-				setting.getKeybind().setKey(0);
-			} else {
-				setting.getKeybind().setKey(code, false);
+			try {
+				if(code == GLFW.GLFW_KEY_ESCAPE) {
+					((Keybind)setting.get(obj)).setKey(0);
+				} else {
+					((Keybind)setting.get(obj)).setKey(code, false);
+				}
+			} catch(IllegalAccessException e) {
+				e.printStackTrace();
 			}
 			listening = false;
 			return true;
