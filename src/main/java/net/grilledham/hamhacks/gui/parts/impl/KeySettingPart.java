@@ -17,7 +17,7 @@ public class KeySettingPart extends SettingPart {
 	private boolean listening = false;
 	
 	public KeySettingPart(int x, int y, Field setting, Object obj) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting) + "    [________________]") + 4, setting, obj);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString() + " [________________]") + 4, setting, obj);
 	}
 	
 	@Override

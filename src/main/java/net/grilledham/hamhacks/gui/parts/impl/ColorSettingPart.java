@@ -20,7 +20,7 @@ public class ColorSettingPart extends SettingPart {
 	@BoolSetting(name = "hamhacks.setting.colorSettingPart.chroma", neverShow = true)
 	public boolean chroma;
 	
-	@StringSetting(name = "", neverShow = true)
+	@StringSetting(name = "", placeholder = "ffffffff", neverShow = true)
 	public String hexVal;
 	
 	private final BoolSettingPart chromaPart;
@@ -44,13 +44,18 @@ public class ColorSettingPart extends SettingPart {
 			}
 			hexVal = hex.toString();
 			Field hexValField = getClass().getField("hexVal");
+			Field finalSetting = setting;
+			final Object finalObj = obj;
 			hexValPart = new StringSettingPart(x, y, hexValField, this) {
 				@Override
 				public boolean type(int code, int scanCode, int modifiers) {
 					if(code == GLFW.GLFW_KEY_ENTER) {
 						try {
-							((Color)setting.get(obj)).set(HexFormat.fromHexDigits(hexVal));
-							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
+							if(hexVal.length() > 8) {
+								hexVal = hexVal.substring(hexVal.length() - 8);
+							}
+							((Color)finalSetting.get(finalObj)).set(HexFormat.fromHexDigits(hexVal));
+							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)finalSetting.get(finalObj)).getRGB()));
 							while(hex.length() < 8) {
 								hex.insert(0, "0");
 							}

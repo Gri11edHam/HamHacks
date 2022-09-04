@@ -32,7 +32,7 @@ public class StringSettingPart extends SettingPart {
 	public String internalSetting;
 	
 	public StringSettingPart(int x, int y, Field setting, Object obj) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting)) + 106, setting, obj);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 106, setting, obj);
 		cursorPos = getValue().length();
 		stringScroll = cursorPos;
 	}
@@ -84,7 +84,12 @@ public class StringSettingPart extends SettingPart {
 		RenderUtil.adjustScissor(x + width - 102, y, 100, height, ClickGUI.getInstance().scale);
 		RenderUtil.applyScissor();
 		
-		mc.textRenderer.drawWithShadow(stack, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ClickGUI.getInstance().textColor.getRGB());
+		if(getValue() == null || getValue().equals("")) {
+			String value = setting.getAnnotation(StringSetting.class).placeholder();
+			mc.textRenderer.drawWithShadow(stack, value, x + width - mc.textRenderer.getWidth(value) - 2, y + 4, RenderUtil.mix(ClickGUI.getInstance().bgColor.getRGB(), ClickGUI.getInstance().textColor.getRGB(), 0.75f));
+		} else {
+			mc.textRenderer.drawWithShadow(stack, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ClickGUI.getInstance().textColor.getRGB());
+		}
 		
 		RenderUtil.preRender();
 		

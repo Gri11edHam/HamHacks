@@ -26,14 +26,15 @@ public class SelectionSettingPart extends SettingPart {
 	private int maxWidth;
 	
 	public SelectionSettingPart(int x, int y, Field setting, Object obj) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting)), setting, obj);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()), setting, obj);
 		maxWidth = 0;
 		GuiPart part;
 		try {
-			for(String s : ((SelectableList)setting.get(obj)).getPossibilities()) {
-				parts.add(part = new ButtonPart(Text.translatable(s).getString(), 0, 0, mc.textRenderer.getWidth(s) + 4, 16, () -> {
+			for(String string : ((SelectableList)setting.get(obj)).getPossibilities()) {
+				String s = Text.translatable(string).getString();
+				parts.add(part = new ButtonPart(s, 0, 0, mc.textRenderer.getWidth(s) + 4, 16, () -> {
 					try {
-						((SelectableList)setting.get(obj)).set(s);
+						((SelectableList)setting.get(obj)).set(string);
 					} catch(IllegalAccessException e) {
 						e.printStackTrace();
 					}

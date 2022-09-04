@@ -127,6 +127,14 @@ public class ScrollablePart extends GuiPart {
 	}
 	
 	@Override
+	public void resize(int maxW, int maxH) {
+		super.resize(maxW, maxH);
+		for(GuiPart part : subParts) {
+			part.resize(maxW, part.getHeight());
+		}
+	}
+	
+	@Override
 	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {

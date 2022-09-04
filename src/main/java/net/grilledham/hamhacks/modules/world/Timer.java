@@ -13,7 +13,9 @@ public class Timer extends Module {
 			name = "hamhacks.module.timer.speed",
 			defaultValue = 20,
 			min = 1,
-			max = 100
+			max = 100,
+			step = 0.5f,
+			forceStep = false
 	)
 	public float speed = 20;
 	

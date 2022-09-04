@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.grilledham.hamhacks.util.setting.StringSetting;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
@@ -23,37 +24,22 @@ public class NumberSettingPart extends SettingPart {
 	public String strVal;
 	
 	public NumberSettingPart(int x, int y, Field setting, Object obj) {
-		super(x, y, 16, setting, obj);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 314, setting, obj);
 		try {
-			float roundedSetting = setting.getFloat(obj);
-			NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
-			if(numSetting.forceStep() && numSetting.step() != -1) {
-				float closest = numSetting.min();
-				for(float f = numSetting.min(); f < numSetting.max(); f += numSetting.step()) {
-					float newDist = Math.abs(f - roundedSetting);
-					float oldDist = Math.abs(closest - roundedSetting);
-					if(newDist <= oldDist) {
-						closest = f;
-					} else {
-						break;
-					}
-				}
-				roundedSetting = closest;
-			}
-			strVal = String.format("%f", roundedSetting);
+			updateValue();
 			Field strValField = getClass().getField("strVal");
 			final Field finalSetting = setting;
+			final Object finalObj = obj;
 			editor = new StringSettingPart(x + width - 207, y, strValField, this) {
+				
 				@Override
-				public boolean type(int code, int scanCode, int modifiers) {
-					if(code == GLFW.GLFW_KEY_ENTER) {
-						try {
-							finalSetting.setFloat(obj, Float.parseFloat(strVal));
-						} catch(Exception e) {
-							e.printStackTrace();
+				public void updateValue(String value) {
+					super.updateValue(value);
+					try {
+						if(!strVal.equals("")) {
+							finalSetting.setFloat(finalObj, Float.parseFloat(strVal));
 						}
-					}
-					return super.type(code, scanCode, modifiers);
+					} catch(Exception ignored) {}
 				}
 				
 				@Override
@@ -99,24 +85,24 @@ public class NumberSettingPart extends SettingPart {
 		if(dragging) {
 			float newPercentage = (mx - (x + width - 204)) / (float)200;
 			float newVal = (newPercentage * (setting.getAnnotation(NumberSetting.class).max() - setting.getAnnotation(NumberSetting.class).min())) + setting.getAnnotation(NumberSetting.class).min();
+			NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
+			newVal = Math.min(Math.max(newVal, numSetting.min()), numSetting.max());
+			if(numSetting.step() != -1) {
+				float closest = numSetting.min();
+				for(float f = numSetting.min(); f < numSetting.max(); f += numSetting.step()) {
+					float newDist = Math.abs(f - newVal);
+					float oldDist = Math.abs(closest - newVal);
+					if(newDist <= oldDist) {
+						closest = f;
+					} else {
+						break;
+					}
+				}
+				newVal = closest;
+			}
 			try {
 				setting.setFloat(obj, newVal);
-				float roundedSetting = setting.getFloat(obj);
-				NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
-				if(numSetting.forceStep()) {
-					float closest = numSetting.min();
-					for(float f = numSetting.min(); f < numSetting.max(); f += numSetting.step()) {
-						float newDist = Math.abs(f - roundedSetting);
-						float oldDist = Math.abs(closest - roundedSetting);
-						if(newDist <= oldDist) {
-							closest = f;
-						} else {
-							break;
-						}
-					}
-					roundedSetting = closest;
-				}
-				strVal = String.format("%f", roundedSetting);
+				updateValue();
 			} catch(IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -164,7 +150,9 @@ public class NumberSettingPart extends SettingPart {
 		}
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-				dragging = true;
+				if(mx >= x + width - 204 && mx < x + width - 4) {
+					dragging = true;
+				}
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 			
 			}
@@ -178,8 +166,9 @@ public class NumberSettingPart extends SettingPart {
 		int x = this.x + scrollX;
 		int y = this.y + scrollY;
 		super.release(mx, my, scrollX, scrollY, button);
-		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT && dragging) {
 			dragging = false;
+			return true;
 		}
 		if(editor.release(mx, my, scrollX, scrollY, button)) {
 			return true;
@@ -190,22 +179,7 @@ public class NumberSettingPart extends SettingPart {
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 				try {
 					SettingHelper.reset(setting, obj);
-					float roundedSetting = setting.getFloat(obj);
-					NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
-					if(numSetting.forceStep()) {
-						float closest = numSetting.min();
-						for(float f = numSetting.min(); f < numSetting.max(); f += numSetting.step()) {
-							float newDist = Math.abs(f - roundedSetting);
-							float oldDist = Math.abs(closest - roundedSetting);
-							if(newDist <= oldDist) {
-								closest = f;
-							} else {
-								break;
-							}
-						}
-						roundedSetting = closest;
-					}
-					strVal = String.format("%f", roundedSetting);
+					updateValue();
 				} catch(IllegalAccessException e) {
 					e.printStackTrace();
 				}
@@ -213,6 +187,31 @@ public class NumberSettingPart extends SettingPart {
 			return true;
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
+	}
+	
+	private void updateValue() throws IllegalAccessException {
+		float roundedSetting = setting.getFloat(obj);
+		NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
+		roundedSetting = Math.min(Math.max(roundedSetting, numSetting.min()), numSetting.max());
+		if(numSetting.forceStep() && numSetting.step() != -1) {
+			float closest = numSetting.min();
+			for(float f = numSetting.min(); f < numSetting.max(); f += numSetting.step()) {
+				float newDist = Math.abs(f - roundedSetting);
+				float oldDist = Math.abs(closest - roundedSetting);
+				if(newDist <= oldDist) {
+					closest = f;
+				} else {
+					break;
+				}
+			}
+			roundedSetting = closest;
+		}
+		setting.setFloat(obj, roundedSetting);
+		if(numSetting.forceStep() && numSetting.step() == 1) {
+			strVal = (int)roundedSetting + "";
+		} else {
+			strVal = roundedSetting + "";
+		}
 	}
 	
 	@Override

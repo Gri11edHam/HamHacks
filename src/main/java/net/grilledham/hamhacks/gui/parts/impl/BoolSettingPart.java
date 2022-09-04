@@ -17,7 +17,7 @@ public class BoolSettingPart extends SettingPart {
 	protected boolean drawBackground = true;
 	
 	public BoolSettingPart(int x, int y, Field setting, Object obj) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting)) + 22, setting, obj);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 22, setting, obj);
 	}
 	
 	@Override

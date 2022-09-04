@@ -33,5 +33,5 @@ public @interface StringSetting {
 	/**
 	 * What should be displayed if no text is entered
 	 */
-	String placeholder() default "Click here to enter text";
+	String placeholder() default "Click to enter text";
 }

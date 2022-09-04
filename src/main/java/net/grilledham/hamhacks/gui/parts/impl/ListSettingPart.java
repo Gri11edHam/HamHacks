@@ -29,7 +29,7 @@ public class ListSettingPart extends SettingPart {
 	float maxWidth = 0;
 	
 	public ListSettingPart(int x, int y, Field setting, Object obj) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting)) + 18, setting, obj);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 18, setting, obj);
 		updateList();
 	}
 	
@@ -43,15 +43,16 @@ public class ListSettingPart extends SettingPart {
 				int finalI = i;
 				StringSettingPart strSetPart;
 				Field finalSetting = setting;
+				final Object finalObj = obj;
 				stringParts.add(strSetPart = new StringSettingPart(x, y, s) {
 					@Override
 					public void updateValue(String value) {
+						super.updateValue(value);
 						try {
-							((StringList)finalSetting.get(obj)).getList().set(finalI, value);
+							((StringList)finalSetting.get(finalObj)).getList().set(finalI, value);
 						} catch(IllegalAccessException e) {
 							e.printStackTrace();
 						}
-						super.updateValue(value);
 					}
 				});
 				strSetPart.drawBackground = false;
