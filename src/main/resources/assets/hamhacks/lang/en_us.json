@@ -30,9 +30,9 @@
 	"hamhacks.module.noFall": "No Fall",
 	"hamhacks.module.noFall.tooltip": "Disables fall damage",
 	"hamhacks.module.noFall.mode": "Mode",
-	"hamhacks.module.noFall.mode.tooltip": "Packet: Sends a packet to the server saying that you're on the ground\nMomentum: Sends the server a fake position to confuse it into thinking you're going up",
+	"hamhacks.module.noFall.mode.tooltip": "Packet: Sends a packet to the server saying that you're on the ground\nFly Spoof: Sends a packet saying you are flying\n\u00a7cWARNING: Fly Spoof can be inconsistent",
 	"hamhacks.module.noFall.mode.packet": "Packet",
-	"hamhacks.module.noFall.mode.momentum": "Momentum",
+	"hamhacks.module.noFall.mode.flySpoof": "Fly Spoof",
 
 	"hamhacks.module.aimbot": "Aimbot",
 	"hamhacks.module.aimbot.tooltip": "Aims for you",
