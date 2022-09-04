@@ -220,40 +220,50 @@ public class SettingHelper {
 	
 	public static void parseBoolSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
 		String name = f.getAnnotation(BoolSetting.class).name();
-		f.setBoolean(o, saveData.get(name).getAsBoolean());
+		if(saveData.has(name)) {
+			f.setBoolean(o, saveData.get(name).getAsBoolean());
+		}
 	}
 	
 	public static void parseColorSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
 		String name = f.getAnnotation(ColorSetting.class).name();
-		JsonObject cObj = saveData.get(name).getAsJsonObject();
-		float hue = cObj.get("hue").getAsFloat();
-		float saturation = cObj.get("saturation").getAsFloat();
-		float brightness = cObj.get("brightness").getAsFloat();
-		float alpha = cObj.get("alpha").getAsFloat();
-		boolean chroma = cObj.get("chroma").getAsBoolean();
-		Color c = (Color)f.get(o);
-		c.set(hue, saturation, brightness, alpha);
-		c.setChroma(chroma);
+		if(saveData.has(name)) {
+			JsonObject cObj = saveData.get(name).getAsJsonObject();
+			float hue = cObj.get("hue").getAsFloat();
+			float saturation = cObj.get("saturation").getAsFloat();
+			float brightness = cObj.get("brightness").getAsFloat();
+			float alpha = cObj.get("alpha").getAsFloat();
+			boolean chroma = cObj.get("chroma").getAsBoolean();
+			Color c = (Color)f.get(o);
+			c.set(hue, saturation, brightness, alpha);
+			c.setChroma(chroma);
+		}
 	}
 	
 	public static void parseNumberSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
 		String name = f.getAnnotation(NumberSetting.class).name();
-		f.setFloat(o, saveData.get(name).getAsFloat());
+		if(saveData.has(name)) {
+			f.setFloat(o, saveData.get(name).getAsFloat());
+		}
 	}
 	
 	public static void parseKeySaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
 		String name = f.getAnnotation(KeySetting.class).name();
-		((Keybind)f.get(o)).setKey(saveData.get(name).getAsInt());
+		if(saveData.has(name)) {
+			((Keybind)f.get(o)).setKey(saveData.get(name).getAsInt());
+		}
 	}
 	
 	public static void parseListSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
 		String name = f.getAnnotation(ListSetting.class).name();
-		JsonArray arr = saveData.getAsJsonArray(name);
-		StringList list = ((StringList)f.get(o));
-		list.clear();
-		for(JsonElement el : arr) {
-			String s = el.getAsString();
-			list.add(s);
+		if(saveData.has(name)) {
+			JsonArray arr = saveData.getAsJsonArray(name);
+			StringList list = ((StringList)f.get(o));
+			list.clear();
+			for(JsonElement el : arr) {
+				String s = el.getAsString();
+				list.add(s);
+			}
 		}
 	}
 	
