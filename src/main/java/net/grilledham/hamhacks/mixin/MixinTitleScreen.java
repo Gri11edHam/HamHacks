@@ -34,29 +34,29 @@ public class MixinTitleScreen extends Screen {
 	
 	@Inject(method = "render", at = @At("TAIL"))
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		changelogButton.draw(matrices, mouseX, mouseY, delta);
+		changelogButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
 		if(Updater.newVersionAvailable()) {
 			updateButton.setText("Update (" + Updater.getLatest().getVersion(0, true) + ")");
-			updateButton.draw(matrices, mouseX, mouseY, delta);
+			updateButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
 		}
 	}
 	
 	@Inject(method = "mouseClicked", at = @At("TAIL"), cancellable = true)
 	public void clicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-		if(changelogButton.click(mouseX, mouseY, button)) {
+		if(changelogButton.click(mouseX, mouseY, 0, 0, button)) {
 			cir.setReturnValue(true);
 		}
-		if(Updater.newVersionAvailable() && updateButton.click(mouseX, mouseY, button)) {
+		if(Updater.newVersionAvailable() && updateButton.click(mouseX, mouseY, 0, 0, button)) {
 			cir.setReturnValue(true);
 		}
 	}
 	
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		if(changelogButton.release(mouseX, mouseY, button)) {
+		if(changelogButton.release(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
-		if(Updater.newVersionAvailable() && updateButton.release(mouseX, mouseY, button)) {
+		if(Updater.newVersionAvailable() && updateButton.release(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
 		return super.mouseReleased(mouseX, mouseY, button);

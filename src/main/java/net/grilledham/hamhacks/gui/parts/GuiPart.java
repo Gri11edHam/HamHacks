@@ -12,6 +12,8 @@ public abstract class GuiPart {
 	protected int width;
 	protected int height;
 	
+	protected final int preferredWidth;
+	
 	protected int lastX;
 	protected int lastY;
 	
@@ -20,6 +22,7 @@ public abstract class GuiPart {
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.preferredWidth = width;
 	}
 	
 	public void moveTo(int x, int y) {
@@ -37,32 +40,32 @@ public abstract class GuiPart {
 		height = maxH;
 	}
 	
-	public void draw(MatrixStack stack, int mx, int my, float partialTicks) {
-		render(stack, mx, my, partialTicks);
+	public void draw(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		render(stack, mx, my, scrollX, scrollY, partialTicks);
 		lastX = x;
 		lastY = y;
 	}
 	
-	public void drawTop(MatrixStack stack, int mx, int my, float partialTicks) {
-		renderTop(stack, mx, my, partialTicks);
+	public void drawTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 		lastX = x;
 		lastY = y;
 	}
 	
-	protected abstract void render(MatrixStack stack, int mx, int my, float partialTicks);
+	protected abstract void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks);
 	
-	protected void renderTop(MatrixStack stack, int mx, int my, float partialTicks) {
+	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
 	}
 	
-	public boolean click(double mx, double my, int button) {
+	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
 		return false;
 	}
 	
-	public boolean release(double mx, double my, int button) {
+	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
 		return false;
 	}
 	
-	public boolean drag(double mx, double my, int button, double dx, double dy) {
+	public boolean drag(double mx, double my, int scrollX, int scrollY, int button, double dx, double dy) {
 		return false;
 	}
 	
@@ -74,7 +77,7 @@ public abstract class GuiPart {
 		return false;
 	}
 	
-	public boolean scroll(double mx, double my, double delta) {
+	public boolean scroll(double mx, double my, int scrollX, int scrollY, double delta) {
 		return false;
 	}
 	
@@ -92,5 +95,9 @@ public abstract class GuiPart {
 	
 	public int getHeight() {
 		return height;
+	}
+	
+	public int getPreferredWidth() {
+		return preferredWidth;
 	}
 }

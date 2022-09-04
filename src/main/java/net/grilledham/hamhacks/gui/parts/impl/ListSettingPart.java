@@ -2,15 +2,15 @@ package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.grilledham.hamhacks.util.setting.settings.ListSetting;
-import net.grilledham.hamhacks.util.setting.settings.StringSetting;
+import net.grilledham.hamhacks.util.StringList;
+import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 import org.lwjgl.glfw.GLFW;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +19,6 @@ public class ListSettingPart extends SettingPart {
 	private float hoverAnimation;
 	private float selectionAnimation;
 	
-	private final ListSetting setting;
-	
-	private final List<StringSetting> strings = new ArrayList<>();
 	private final List<StringSettingPart> stringParts = new ArrayList<>();
 	private final List<ButtonPart> removeButtons = new ArrayList<>();
 	
@@ -31,41 +28,61 @@ public class ListSettingPart extends SettingPart {
 	
 	float maxWidth = 0;
 	
-	public ListSettingPart(int x, int y, ListSetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 18, setting);
-		this.setting = setting;
+	public ListSettingPart(int x, int y, Field setting, Object obj) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 18, setting, obj);
 		updateList();
 	}
 	
 	private void updateList() {
-		strings.clear();
 		stringParts.clear();
 		removeButtons.clear();
 		maxWidth = 106 + 16;
 		int i = 0;
-		for(String s : setting.getValue()) {
-			int finalI = i;
-			StringSetting strSet;
-			strings.add(strSet = new StringSetting(Text.translatable("setting.listsettingpart.internal.stringsetting"), s));
-			StringSettingPart strSetPart;
-			stringParts.add(strSetPart = new StringSettingPart(x, y, strSet));
-			strSetPart.drawBackground = false;
-			ButtonPart bPart;
-			removeButtons.add(bPart = new ButtonPart("-", x, y, 16, height, () -> {
-				setting.remove(strings.get(finalI).getValue());
+		try {
+			for(String s : ((StringList)setting.get(obj)).getList()) {
+				int finalI = i;
+				StringSettingPart strSetPart;
+				Field finalSetting = setting;
+				final Object finalObj = obj;
+				stringParts.add(strSetPart = new StringSettingPart(x, y, s) {
+					@Override
+					public void updateValue(String value) {
+						super.updateValue(value);
+						try {
+							((StringList)finalSetting.get(finalObj)).getList().set(finalI, value);
+						} catch(IllegalAccessException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				strSetPart.drawBackground = false;
+				ButtonPart bPart;
+				removeButtons.add(bPart = new ButtonPart("-", x, y, 16, height, () -> {
+					try {
+						((StringList)setting.get(obj)).remove(finalI);
+					} catch(IllegalAccessException e) {
+						e.printStackTrace();
+					}
+					updateList();
+				}));
+				i++;
+				maxWidth = Math.max(maxWidth, strSetPart.getWidth() + bPart.getWidth());
+			}
+			for(i = 0; i < stringParts.size(); i++) {
+				stringParts.get(i).moveTo((int)(x + width - maxWidth - 2), y + height * (i + 1));
+				removeButtons.get(i).moveTo((int)(x + width - maxWidth + stringParts.get(i).getWidth()), y + height * (i + 1));
+			}
+			addButton = new ButtonPart("+", (int)(x + width - maxWidth), y + height * (i + 1), (int)maxWidth, height, () -> {
+				try {
+					((StringList)setting.get(obj)).getList().add("");
+				} catch(IllegalAccessException e) {
+					e.printStackTrace();
+				}
 				updateList();
-			}));
-			i++;
-			maxWidth = Math.max(maxWidth, strSetPart.getWidth() + bPart.getWidth());
+			});
+		} catch(IllegalAccessException e) {
+			throw new RuntimeException(e);
 		}
-		for(i = 0; i < stringParts.size(); i++) {
-			stringParts.get(i).moveTo((int)(x + width - maxWidth - 2), y + height * (i + 1));
-			removeButtons.get(i).moveTo((int)(x + width - maxWidth + stringParts.get(i).getWidth()), y + height * (i + 1));
-		}
-		addButton = new ButtonPart("+", (int)(x + width - maxWidth), y + height * (i + 1), (int)maxWidth, height, () -> {
-			setting.add("");
-			updateList();
-		});
 	}
 	
 	@Override
@@ -87,7 +104,9 @@ public class ListSettingPart extends SettingPart {
 	}
 	
 	@Override
-	protected void render(MatrixStack stack, int mx, int my, float partialTicks) {
+	protected void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -101,7 +120,7 @@ public class ListSettingPart extends SettingPart {
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - height, y, height, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
 		float dropDownX = x + width - height / 2f - mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterX = dropDownX + mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterY = y + 4 + mc.textRenderer.fontHeight / 2f;
@@ -129,87 +148,94 @@ public class ListSettingPart extends SettingPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, float partialTicks) {
+	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
-		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * selectionAnimation, ClickGUI.getInstance().scale.getValue());
+		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * selectionAnimation, ClickGUI.getInstance().scale);
 		RenderUtil.applyScissor();
 		
 		RenderUtil.drawRect(stack, x + width - maxWidth, y + height, maxWidth, height * (stringParts.size() + 1), 0xff202020);
 		
-		addButton.draw(stack, mx, my, partialTicks);
+		addButton.draw(stack, mx, my, scrollX, scrollY, partialTicks);
 		
 		for(int i = 0; i < removeButtons.size(); i++) {
-			removeButtons.get(i).draw(stack, mx, my, partialTicks);
+			removeButtons.get(i).draw(stack, mx, my, scrollX, scrollY, partialTicks);
 		}
 		
 		for(int i = 0; i < removeButtons.size(); i++) {
 			if(((stringParts.size() + 1)) * selectionAnimation > i) {
-				stringParts.get(i).draw(stack, mx, my, partialTicks);
+				stringParts.get(i).draw(stack, mx, my, scrollX, scrollY, partialTicks);
 			}
 		}
 		
 		RenderUtil.postRender();
 		RenderUtil.popScissor();
 		stack.pop();
-		super.renderTop(stack, mx, my, partialTicks);
+		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int button) {
+	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		if(selected) {
 			for(int i = 0; i < stringParts.size(); i++) {
-				if(stringParts.get(i).click(mx, my, button)) {
+				if(stringParts.get(i).click(mx, my, scrollX, scrollY, button)) {
 					return true;
 				}
-				if(removeButtons.get(i).click(mx, my, button)) {
+				if(removeButtons.get(i).click(mx, my, scrollX, scrollY, button)) {
 					return true;
 				}
 			}
-			if(addButton.click(mx, my, button)) {
+			if(addButton.click(mx, my, scrollX, scrollY, button)) {
 				return true;
 			}
 		}
 		if(mx >= x + width - height && mx < x + width && my >= y && my < y + height) {
 			return true;
 		}
-		return super.click(mx, my, button);
+		return super.click(mx, my, scrollX, scrollY, button);
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int button) {
-		super.release(mx, my, button);
-		for(int i = 0; i < strings.size(); i++) {
-			setting.set(i, strings.get(i).getValue());
-		}
-		if(selected) {
-			if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && (mx >= x + width - height && mx < x + width && my >= y && my < y + height)) {
-				setting.reset();
-				updateList();
-				return true;
-			}
-			for(int i = 0; i < stringParts.size(); i++) {
-				if(stringParts.get(i).release(mx, my, button)) {
+	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
+		super.release(mx, my, scrollX, scrollY, button);
+		try {
+			if(selected) {
+				if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && (mx >= x + width - height && mx < x + width && my >= y && my < y + height)) {
+					SettingHelper.reset(setting, obj);
+					updateList();
 					return true;
 				}
-				if(removeButtons.get(i).release(mx, my, button)) {
+				for(int i = 0; i < stringParts.size(); i++) {
+					if(stringParts.get(i).release(mx, my, scrollX, scrollY, button)) {
+						return true;
+					}
+					if(removeButtons.get(i).release(mx, my, scrollX, scrollY, button)) {
+						return true;
+					}
+				}
+				if(addButton.release(mx, my, scrollX, scrollY, button)) {
 					return true;
 				}
-			}
-			if(addButton.release(mx, my, button)) {
+				selected = false;
+			} else if(mx >= x + width - height && mx < x + width && my >= y && my < y + height) {
+				if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+					selected = true;
+				} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+					SettingHelper.reset(setting, obj);
+					updateList();
+				}
 				return true;
 			}
-			selected = false;
-		} else if(mx >= x + width - height && mx < x + width && my >= y && my < y + height) {
-			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-				selected = true;
-			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-				setting.reset();
-				updateList();
-			}
-			return true;
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
 		}
-		return super.release(mx, my, button);
+		return super.release(mx, my, scrollX, scrollY, button);
 	}
 	
 	@Override
@@ -227,9 +253,6 @@ public class ListSettingPart extends SettingPart {
 				return true;
 			}
 			selected = false;
-		}
-		for(int i = 0; i < strings.size(); i++) {
-			setting.set(i, strings.get(i).getValue());
 		}
 		return super.type(code, scanCode, modifiers);
 	}

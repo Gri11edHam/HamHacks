@@ -77,13 +77,13 @@ public class NewVersionScreen extends Screen {
 		
 		super.render(matrices, mouseX, mouseY, delta);
 		
-		updateButton.draw(matrices, mouseX, mouseY, delta);
-		cancelButton.draw(matrices, mouseX, mouseY, delta);
+		updateButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
+		cancelButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
 	}
 	
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if(updateButton.click(mouseX, mouseY, button) || cancelButton.click(mouseX, mouseY, button)) {
+		if(updateButton.click(mouseX, mouseY, 0, 0, button) || cancelButton.click(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
@@ -91,7 +91,7 @@ public class NewVersionScreen extends Screen {
 	
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		if(updateButton.release(mouseX, mouseY, button) || cancelButton.release(mouseX, mouseY, button)) {
+		if(updateButton.release(mouseX, mouseY, 0, 0, button) || cancelButton.release(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
 		return super.mouseReleased(mouseX, mouseY, button);

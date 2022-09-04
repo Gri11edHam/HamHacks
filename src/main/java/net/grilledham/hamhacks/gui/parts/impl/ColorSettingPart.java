@@ -1,14 +1,15 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
-import net.grilledham.hamhacks.util.setting.settings.ColorSetting;
-import net.grilledham.hamhacks.util.setting.settings.StringSetting;
+import net.grilledham.hamhacks.util.setting.BoolSetting;
+import net.grilledham.hamhacks.util.setting.SettingHelper;
+import net.grilledham.hamhacks.util.setting.StringSetting;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
+import java.lang.reflect.Field;
 import java.util.HexFormat;
 
 public class ColorSettingPart extends SettingPart {
@@ -16,10 +17,11 @@ public class ColorSettingPart extends SettingPart {
 	private float hoverAnimation;
 	private float selectionAnimation;
 	
-	private final ColorSetting setting;
+	@BoolSetting(name = "hamhacks.setting.colorSettingPart.chroma", neverShow = true)
+	public boolean chroma;
 	
-	private final BoolSetting chroma;
-	private final StringSetting hexVal;
+	@StringSetting(name = "", placeholder = "ffffffff", neverShow = true)
+	public String hexVal;
 	
 	private final BoolSettingPart chromaPart;
 	private final StringSettingPart hexValPart;
@@ -30,79 +32,89 @@ public class ColorSettingPart extends SettingPart {
 	private double dragStartX = -1;
 	private double dragStartY = -1;
 	
-	public ColorSettingPart(int x, int y, ColorSetting setting) {
-		super(x, y, 16, setting);
-		this.setting = setting;
-		chroma = new BoolSetting(Text.translatable("hamhacks.setting.colorSettingPart.chroma"), setting.useChroma()) {
-			@Override
-			protected void valueChanged() {
-				super.valueChanged();
-				setting.setChroma(getValue());
+	public ColorSettingPart(int x, int y, Field setting, Object obj) {
+		super(x, y, 16, setting, obj);
+		try {
+			chroma = ((Color)setting.get(obj)).getChroma();
+			chromaPart = new BoolSettingPart(x, y, getClass().getField("chroma"), this);
+			chromaPart.drawBackground = false;
+			StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
+			while(hex.length() < 8) {
+				hex.insert(0, "0");
 			}
-		};
-		chromaPart = new BoolSettingPart(x, y, chroma);
-		chromaPart.drawBackground = false;
-		StringBuilder hex = new StringBuilder(Integer.toHexString(setting.getRGB()));
-		while(hex.length() < 8) {
-			hex.insert(0, "0");
-		}
-		hexVal = new StringSetting(Text.translatable(""), hex.toString());
-		hexValPart = new StringSettingPart(x, y, hexVal) {
-			@Override
-			public boolean type(int code, int scanCode, int modifiers) {
-				if(code == GLFW.GLFW_KEY_ENTER) {
-					try {
-						setting.setRGB(HexFormat.fromHexDigits(hexVal.getValue()));
-						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.getRGB()));
-						while(hex.length() < 8) {
-							hex.insert(0, "0");
+			hexVal = hex.toString();
+			Field hexValField = getClass().getField("hexVal");
+			Field finalSetting = setting;
+			final Object finalObj = obj;
+			hexValPart = new StringSettingPart(x, y, hexValField, this) {
+				@Override
+				public boolean type(int code, int scanCode, int modifiers) {
+					if(code == GLFW.GLFW_KEY_ENTER) {
+						try {
+							if(hexVal.length() > 8) {
+								hexVal = hexVal.substring(hexVal.length() - 8);
+							}
+							((Color)finalSetting.get(finalObj)).set(HexFormat.fromHexDigits(hexVal));
+							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)finalSetting.get(finalObj)).getRGB()));
+							while(hex.length() < 8) {
+								hex.insert(0, "0");
+							}
+							hexVal = hex.toString();
+							type(GLFW.GLFW_KEY_END, GLFW.glfwGetKeyScancode(GLFW.GLFW_KEY_END), 0);
+						} catch(Exception e) {
+							e.printStackTrace();
 						}
-						hexVal.setValue(hex.toString());
-						type(GLFW.GLFW_KEY_END, GLFW.glfwGetKeyScancode(GLFW.GLFW_KEY_END), 0);
-					} catch(Exception e) {
-						e.printStackTrace();
 					}
+					return super.type(code, scanCode, modifiers);
 				}
-				return super.type(code, scanCode, modifiers);
-			}
-			
-			@Override
-			public boolean typeChar(char c, int modifiers) {
-				return switch(c) {
-					case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' -> super.typeChar(c, modifiers);
-					default -> false;
-				};
-			}
-		};
-		hexValPart.drawBackground = false;
-		resize(mc.textRenderer.getWidth(setting.getName()) + 10 + 16, 16);
+				
+				@Override
+				public boolean typeChar(char c, int modifiers) {
+					return switch(c) {
+						case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' -> super.typeChar(c, modifiers);
+						default -> false;
+					};
+				}
+			};
+			hexValPart.drawBackground = false;
+		} catch(NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+		resize(mc.textRenderer.getWidth(SettingHelper.getName(setting)) + 10 + 16, 16);
 	}
 	
 	@Override
-	protected void render(MatrixStack stack, int mx, int my, float partialTicks) {
-		stack.push();
-		RenderUtil.preRender();
-		
-		int bgC = ClickGUI.getInstance().bgColor.getRGB();
-		RenderUtil.drawRect(stack, x, y, width, height, bgC);
-		
-		int outlineC = 0xffcccccc;
-		RenderUtil.drawHRect(stack, x + width - 20, y + 2, 18, 12, outlineC);
-		
-		boolean hovered = mx >= x + width - 18 && mx < x + width - 2 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((setting.getRGB() & 0xff000000) + 0xffffff, setting.getRGB(), hoverAnimation / 4);
-		RenderUtil.drawRect(stack, x + width - 18, y + 4, 14, 8, boxC);
-		
-		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
-		
-		RenderUtil.postRender();
-		stack.pop();
-		
-		if(hovered) {
-			hoverAnimation += partialTicks / 5;
-		} else {
-			hoverAnimation -= partialTicks / 5;
+	protected void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
+		try {
+			stack.push();
+			RenderUtil.preRender();
+			
+			int bgC = ClickGUI.getInstance().bgColor.getRGB();
+			RenderUtil.drawRect(stack, x, y, width, height, bgC);
+			
+			int outlineC = 0xffcccccc;
+			RenderUtil.drawHRect(stack, x + width - 20, y + 2, 18, 12, outlineC);
+			
+			boolean hovered = mx >= x + width - 18 && mx < x + width - 2 && my >= y + 4 && my < y + 12;
+			int boxC = RenderUtil.mix((((Color)setting.get(obj)).getRGB() & 0xff000000) + 0xffffff, ((Color)setting.get(obj)).getRGB(), hoverAnimation / 4);
+			RenderUtil.drawRect(stack, x + width - 18, y + 4, 14, 8, boxC);
+			
+			mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+			
+			RenderUtil.postRender();
+			stack.pop();
+			
+			if(hovered) {
+				hoverAnimation += partialTicks / 5;
+			} else {
+				hoverAnimation -= partialTicks / 5;
+			}
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
 		}
+		
 		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
 		if(selected) {
 			selectionAnimation += partialTicks / 5;
@@ -113,87 +125,93 @@ public class ColorSettingPart extends SettingPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, float partialTicks) {
-		stack.push();
-		float w = 220;
-		float h = 122;
-		float x = this.x + width - w;
-		float y = this.y + height;
-		
-		RenderUtil.pushScissor(x - 1 + ((w + 2) * (1 - selectionAnimation)), y - 1, (w + 2) * selectionAnimation, (h + 2) * selectionAnimation, ClickGUI.getInstance().scale.getValue());
-		RenderUtil.applyScissor();
-		RenderUtil.preRender();
-		
-		RenderUtil.drawRect(stack, x, y, w, h, 0xff202020);
-		RenderUtil.drawHRect(stack, x - 1, y - 1, w + 2, h + 2, 0xffa0a0a0);
-		
-		RenderUtil.drawHRect(stack, x + 1, y + 1, 103, 103, 0xffa0a0a0);
-		RenderUtil.drawSBGradient(stack, x + 2, y + 2, 101, 101, setting.getHue());
-		
-		RenderUtil.drawHRect(stack, x + 105, y + 1, 22, 103, 0xffa0a0a0);
-		RenderUtil.drawHueGradient(stack, x + 106, y + 2, 20, 101);
-		
-		RenderUtil.drawHRect(stack, x + 129, y + 1, 22, 103, 0xffa0a0a0);
-		RenderUtil.drawAlphaGradient(stack, x + 130, y + 2, 20, 101);
-		
-		RenderUtil.drawHRect(stack, x + 1 + (100 * setting.getSaturation()), y + 1 + (100 * (1 - setting.getBrightness())), 3, 3, 0xffa0a0a0);
-		RenderUtil.drawHRect(stack, x + 105, y + 1 + (100 * (setting.getHue())), 22, 3, 0xffa0a0a0);
-		RenderUtil.drawHRect(stack, x + 129, y + 1 + (100 * (1 - setting.getAlpha())), 22, 3, 0xffa0a0a0);
-		
-		chromaPart.draw(stack, mx, my, partialTicks);
-		if(selectionAnimation > 0.8f) {
-			hexValPart.draw(stack, mx, my, partialTicks);
-		}
-		
-		RenderUtil.popScissor();
-		RenderUtil.postRender();
-		stack.pop();
-		
-		if(selected) {
-			if(dragging) {
-				if(dragStartY >= y + 2 && dragStartY <= y + 102) {
-					// SB
-					if(dragStartX >= x + 2 && dragStartX <= x + 103) {
-						float newS = (mx - (x + 1)) / 100f;
-						float newB = 1 - ((my - (y + 1)) / 100f);
-						newS = Math.min(Math.max(newS, 0), 1);
-						newB = Math.min(Math.max(newB, 0), 1);
-						setting.setSaturation(newS);
-						setting.setBrightness(newB);
-						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.getRGB()));
-						while(hex.length() < 8) {
-							hex.insert(0, "0");
+	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
+		try {
+			stack.push();
+			float w = 220;
+			float h = 122;
+			float newX = x + width - w;
+			float newY = y + height;
+			
+			RenderUtil.pushScissor(newX - 1 + ((w + 2) * (1 - selectionAnimation)), newY - 1, (w + 2) * selectionAnimation, (h + 2) * selectionAnimation, ClickGUI.getInstance().scale);
+			RenderUtil.applyScissor();
+			RenderUtil.preRender();
+			
+			RenderUtil.drawRect(stack, newX, newY, w, h, 0xff202020);
+			RenderUtil.drawHRect(stack, newX - 1, newY - 1, w + 2, h + 2, 0xffa0a0a0);
+			
+			RenderUtil.drawHRect(stack, newX + 1, newY + 1, 103, 103, 0xffa0a0a0);
+			RenderUtil.drawSBGradient(stack, newX + 2, newY + 2, 101, 101, ((Color)setting.get(obj)).getHue());
+			
+			RenderUtil.drawHRect(stack, newX + 105, newY + 1, 22, 103, 0xffa0a0a0);
+			RenderUtil.drawHueGradient(stack, newX + 106, newY + 2, 20, 101);
+			
+			RenderUtil.drawHRect(stack, newX + 129, newY + 1, 22, 103, 0xffa0a0a0);
+			RenderUtil.drawAlphaGradient(stack, newX + 130, newY + 2, 20, 101);
+			
+			RenderUtil.drawHRect(stack, newX + 1 + (100 * ((Color)setting.get(obj)).getSaturation()), newY + 1 + (100 * (1 - ((Color)setting.get(obj)).getBrightness())), 3, 3, 0xffa0a0a0);
+			RenderUtil.drawHRect(stack, newX + 105, newY + 1 + (100 * (((Color)setting.get(obj)).getHue())), 22, 3, 0xffa0a0a0);
+			RenderUtil.drawHRect(stack, newX + 129, newY + 1 + (100 * (1 - ((Color)setting.get(obj)).getAlpha())), 22, 3, 0xffa0a0a0);
+			
+			chromaPart.draw(stack, mx, my, scrollX, scrollY, partialTicks);
+			if(selectionAnimation > 0.8f) {
+				hexValPart.draw(stack, mx, my, scrollX, scrollY, partialTicks);
+			}
+			
+			RenderUtil.popScissor();
+			RenderUtil.postRender();
+			stack.pop();
+			
+			if(selected) {
+				if(dragging) {
+					if(dragStartY >= newY + 2 && dragStartY <= newY + 102) {
+						// SB
+						if(dragStartX >= newX + 2 && dragStartX <= newX + 103) {
+							float newS = (mx - (newX + 1)) / 100f;
+							float newB = 1 - ((my - (newY + 1)) / 100f);
+							newS = Math.min(Math.max(newS, 0), 1);
+							newB = Math.min(Math.max(newB, 0), 1);
+							((Color)setting.get(obj)).setSaturation(newS);
+							((Color)setting.get(obj)).setBrightness(newB);
+							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
+							while(hex.length() < 8) {
+								hex.insert(0, "0");
+							}
+							hexVal = hex.toString();
 						}
-						hexVal.setValue(hex.toString());
-					}
-					
-					// Hue
-					if(dragStartX >= x + 106 && dragStartX <= x + 126) {
-						float newH = (my - (y + 1)) / 100f;
-						newH = Math.min(Math.max(newH, 0), 1);
-						setting.setHue(newH);
-						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.getRGB()));
-						while(hex.length() < 8) {
-							hex.insert(0, "0");
+						
+						// Hue
+						if(dragStartX >= newX + 106 && dragStartX <= newX + 126) {
+							float newH = (my - (newY + 1)) / 100f;
+							newH = Math.min(Math.max(newH, 0), 1);
+							((Color)setting.get(obj)).setHue(newH);
+							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
+							while(hex.length() < 8) {
+								hex.insert(0, "0");
+							}
+							hexVal = hex.toString();
 						}
-						hexVal.setValue(hex.toString());
-					}
-					
-					// Alpha
-					if(dragStartX >= x + 130 && dragStartX <= x + 150) {
-						float newA = 1 - ((my - (y + 1)) / 100f);
-						newA = Math.min(Math.max(newA, 0), 1);
-						setting.setAlpha(newA);
-						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.getRGB()));
-						while(hex.length() < 8) {
-							hex.insert(0, "0");
+						
+						// Alpha
+						if(dragStartX >= newX + 130 && dragStartX <= newX + 150) {
+							float newA = 1 - ((my - (newY + 1)) / 100f);
+							newA = Math.min(Math.max(newA, 0), 1);
+							((Color)setting.get(obj)).setAlpha(newA);
+							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
+							while(hex.length() < 8) {
+								hex.insert(0, "0");
+							}
+							hexVal = hex.toString();
 						}
-						hexVal.setValue(hex.toString());
 					}
 				}
 			}
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
 		}
-		super.renderTop(stack, mx, my, partialTicks);
+		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override
@@ -218,67 +236,79 @@ public class ColorSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int button) {
+	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
 		dragging = true;
 		dragStartX = mx;
 		dragStartY = my;
-		if(chromaPart.click(mx, my, button)) {
+		if(chromaPart.click(mx, my, scrollX, scrollY, button)) {
+			try {
+				((Color)setting.get(obj)).setChroma(chroma);
+			} catch(IllegalAccessException e) {
+				e.printStackTrace();
+			}
 			return true;
 		}
-		if(hexValPart.click(mx, my, button)) {
+		if(hexValPart.click(mx, my, scrollX, scrollY, button)) {
 			return true;
 		}
 		if(selected) {
 			return true;
 		}
-		return super.click(mx, my, button);
+		return super.click(mx, my, scrollX, scrollY, button);
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int button) {
-		super.release(mx, my, button);
+	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
+		super.release(mx, my, scrollX, scrollY, button);
 		boolean wasDragging = dragging;
 		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			dragging = false;
 		}
 		if(selected) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && (mx >= x + width - 18 && mx < x + width - 4 && my >= y + 4 && my < y + 12)) {
-				setting.reset();
-				chroma.setValue(setting.useChroma());
-				StringBuilder hex = new StringBuilder(Integer.toHexString(setting.getRGB()));
-				while(hex.length() < 8) {
-					hex.insert(0, "0");
+				try {
+					SettingHelper.reset(setting, obj);
+					chroma = ((Color)setting.get(obj)).getChroma();
+					chroma = ((Color)setting.get(obj)).getChroma();
+					StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
+					while(hex.length() < 8) {
+						hex.insert(0, "0");
+					}
+					hexVal = hex.toString();
+				} catch(IllegalAccessException e) {
+					throw new RuntimeException(e);
 				}
-				hexVal.setValue(hex.toString());
 				return true;
 			}
 			float w = 220;
 			float h = 122;
-			float x = this.x + width - w;
-			float y = this.y + height;
+			float newX = x + width - w;
+			float newY = y + height;
 			if(wasDragging) {
-				if(dragStartY >= y + 2 && dragStartY <= y + 102) {
+				if(dragStartY >= newY + 2 && dragStartY <= newY + 102) {
 					// SB
-					if(dragStartX >= x + 2 && dragStartX <= x + 103) {
+					if(dragStartX >= newX + 2 && dragStartX <= newX + 103) {
 						return true;
 					}
 					// Hue
-					if(dragStartX >= x + 106 && dragStartX <= x + 126) {
+					if(dragStartX >= newX + 106 && dragStartX <= newX + 126) {
 						return true;
 					}
 					// Alpha
-					if(dragStartX >= x + 130 && dragStartX <= x + 150) {
+					if(dragStartX >= newX + 130 && dragStartX <= newX + 150) {
 						return true;
 					}
 				}
 			}
-			if(chromaPart.release(mx, my, button)) {
+			if(chromaPart.release(mx, my, scrollX, scrollY, button)) {
 				return true;
 			}
-			if(hexValPart.release(mx, my, button)) {
+			if(hexValPart.release(mx, my, scrollX, scrollY, button)) {
 				return true;
 			}
-			if(mx >= x && mx < x + w && my >= y && my < y + h) {
+			if(mx >= newX && mx < newX + w && my >= newY && my < newY + h) {
 				return true;
 			}
 			selected = false;
@@ -287,17 +317,21 @@ public class ColorSettingPart extends SettingPart {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				selected = true;
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-				setting.reset();
-				chroma.setValue(setting.useChroma());
-				StringBuilder hex = new StringBuilder(Integer.toHexString(setting.getRGB()));
-				while(hex.length() < 8) {
-					hex.insert(0, "0");
+				try {
+					SettingHelper.reset(setting, obj);
+					chroma = ((Color)setting.get(obj)).getChroma();
+					StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
+					while(hex.length() < 8) {
+						hex.insert(0, "0");
+					}
+					hexVal = hex.toString();
+				} catch(IllegalAccessException e) {
+					e.printStackTrace();
 				}
-				hexVal.setValue(hex.toString());
 			}
 			return true;
 		}
-		return super.release(mx, my, button);
+		return super.release(mx, my, scrollX, scrollY, button);
 	}
 	
 	@Override

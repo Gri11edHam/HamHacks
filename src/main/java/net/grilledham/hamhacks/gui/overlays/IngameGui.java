@@ -30,27 +30,27 @@ public class IngameGui {
 		if(!HUD.getInstance().isEnabled()) {
 			return;
 		}
-		Float[] barC = HUD.getInstance().accentColor.getValue();
-		Float[] bgC = HUD.getInstance().bgColor.getValue();
-		Float[] textC = HUD.getInstance().textColor.getValue();
+		float[] barC = HUD.getInstance().accentColor.getHSB();
+		float[] bgC = HUD.getInstance().bgColor.getHSB();
+		float[] textC = HUD.getInstance().textColor.getHSB();
 		
 		int i = 0;
 		int yAdd = 0;
-		if(HUD.getInstance().showLogo.getValue()) {
+		if(HUD.getInstance().showLogo) {
 			float finalBarHue;
-			if(HUD.getInstance().accentColor.useChroma()) {
+			if(HUD.getInstance().accentColor.getChroma()) {
 				finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 			} else {
 				finalBarHue = barC[0];
 			}
 			float finalBGHue;
-			if(HUD.getInstance().bgColor.useChroma()) {
+			if(HUD.getInstance().bgColor.getChroma()) {
 				finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 			} else {
 				finalBGHue = bgC[0];
 			}
 			float finalTextHue;
-			if(HUD.getInstance().textColor.useChroma()) {
+			if(HUD.getInstance().textColor.getChroma()) {
 				finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 			} else {
 				finalTextHue = textC[0];
@@ -72,13 +72,13 @@ public class IngameGui {
 			yAdd += (fontRenderer.fontHeight * 2) + 4;
 			i++;
 		}
-		if(HUD.getInstance().showFPS.getValue()) {
+		if(HUD.getInstance().showFPS) {
 			String fps = MinecraftClient.getInstance().fpsDebugString;
 			fps = fps.split(" ")[0] + " " + fps.split(" ")[1];
 			yAdd += drawLeftAligned(matrices, tickDelta, fontRenderer, fps, i, yAdd);
 			i++;
 		}
-		if(HUD.getInstance().showPing.getValue()) {
+		if(HUD.getInstance().showPing) {
 			String ping = "0 ms";
 			if(MinecraftClient.getInstance().player != null) {
 				PlayerListEntry playerListEntry = MinecraftClient.getInstance().player.networkHandler.getPlayerListEntry(MinecraftClient.getInstance().player.getUuid());
@@ -95,12 +95,12 @@ public class IngameGui {
 			yAdd += drawLeftAligned(matrices, tickDelta, fontRenderer, ping, i, yAdd);
 			i++;
 		}
-		if(HUD.getInstance().showTPS.getValue()) {
+		if(HUD.getInstance().showTPS) {
 			String tps = String.format("%.2f tps", ConnectionUtil.getTPS());
 			yAdd += drawLeftAligned(matrices, tickDelta, fontRenderer, tps, i, yAdd);
 			i++;
 		}
-		if(HUD.getInstance().showTimeSinceLastTick.getValue()) {
+		if(HUD.getInstance().showTimeSinceLastTick) {
 			float timeSinceLastTick = ConnectionUtil.getTimeSinceLastTick() / 1000f;
 			if(timeSinceLastTick >= 2) {
 				String timeSinceLastTickString = String.format("Seconds Since Last Tick: %.2f", timeSinceLastTick);
@@ -108,7 +108,7 @@ public class IngameGui {
 				i++;
 			}
 		}
-		if(HUD.getInstance().showModules.getValue()) {
+		if(HUD.getInstance().showModules) {
 			yAdd = 0;
 			for(Module m : ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getName()), MinecraftClient.getInstance().textRenderer.getWidth(a.getName()))).collect(Collectors.toList())) {
 				if(m.isEnabled() && m.shouldShowModule()) {
@@ -120,23 +120,23 @@ public class IngameGui {
 	}
 	
 	private int drawLeftAligned(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer, String text, int i, int yAdd) {
-		Float[] barC = HUD.getInstance().accentColor.getValue();
-		Float[] bgC = HUD.getInstance().bgColor.getValue();
-		Float[] textC = HUD.getInstance().textColor.getValue();
+		float[] barC = HUD.getInstance().accentColor.getHSB();
+		float[] bgC = HUD.getInstance().bgColor.getHSB();
+		float[] textC = HUD.getInstance().textColor.getHSB();
 		float finalBarHue;
-		if(HUD.getInstance().accentColor.useChroma()) {
+		if(HUD.getInstance().accentColor.getChroma()) {
 			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBarHue = barC[0];
 		}
 		float finalBGHue;
-		if(HUD.getInstance().bgColor.useChroma()) {
+		if(HUD.getInstance().bgColor.getChroma()) {
 			finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBGHue = bgC[0];
 		}
 		float finalTextHue;
-		if(HUD.getInstance().textColor.useChroma()) {
+		if(HUD.getInstance().textColor.getChroma()) {
 			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalTextHue = textC[0];
@@ -153,23 +153,23 @@ public class IngameGui {
 	}
 	
 	private int drawRightAligned(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer, String text, int i, int yAdd) {
-		Float[] barC = HUD.getInstance().accentColor.getValue();
-		Float[] bgC = HUD.getInstance().bgColor.getValue();
-		Float[] textC = HUD.getInstance().textColor.getValue();
+		float[] barC = HUD.getInstance().accentColor.getHSB();
+		float[] bgC = HUD.getInstance().bgColor.getHSB();
+		float[] textC = HUD.getInstance().textColor.getHSB();
 		float finalBarHue;
-		if(HUD.getInstance().accentColor.useChroma()) {
+		if(HUD.getInstance().accentColor.getChroma()) {
 			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBarHue = barC[0];
 		}
 		float finalBGHue;
-		if(HUD.getInstance().bgColor.useChroma()) {
+		if(HUD.getInstance().bgColor.getChroma()) {
 			finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBGHue = bgC[0];
 		}
 		float finalTextHue;
-		if(HUD.getInstance().textColor.useChroma()) {
+		if(HUD.getInstance().textColor.getChroma()) {
 			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalTextHue = textC[0];

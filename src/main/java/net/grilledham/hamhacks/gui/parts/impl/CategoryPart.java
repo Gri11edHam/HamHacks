@@ -32,15 +32,18 @@ public class CategoryPart extends GuiPart {
 			scrollArea.addPart(new ModulePart(parent, x, y + height + (16 * i), width, 16, m));
 			i++;
 		}
+		scrollArea.moveTo(x, y + height);
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float partialTicks) {
+	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		stack.push();
 		
 		float scissorHeight = height + scrollArea.getHeight() * (1 - openCloseAnimation);
 		
-		RenderUtil.pushScissor(x, y, width, scissorHeight, ClickGUI.getInstance().scale.getValue());
+		RenderUtil.pushScissor(x, y, width, scissorHeight, ClickGUI.getInstance().scale);
 		RenderUtil.applyScissor();
 		RenderUtil.preRender();
 		
@@ -55,7 +58,7 @@ public class CategoryPart extends GuiPart {
 		
 		mc.textRenderer.drawWithShadow(stack, category.getText(), x + 3, y + 5, ClickGUI.getInstance().textColor.getRGB());
 		
-		scrollArea.draw(stack, mx, my, partialTicks);
+		scrollArea.draw(stack, mx, my, scrollX, scrollY, partialTicks);
 		
 		RenderUtil.popScissor();
 		RenderUtil.postRender();
@@ -86,12 +89,14 @@ public class CategoryPart extends GuiPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, float partialTicks) {
-		scrollArea.drawTop(stack, mx, my, partialTicks);
+	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+		scrollArea.drawTop(stack, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int button) {
+	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				dragging = true;
@@ -103,15 +108,17 @@ public class CategoryPart extends GuiPart {
 			return true;
 		}
 		if(openCloseAnimation <= 0.5f) {
-			if(scrollArea.click(mx, my, button)) {
+			if(scrollArea.click(mx, my, scrollX, scrollY, button)) {
 				return true;
 			}
 		}
-		return super.click(mx, my, button);
+		return super.click(mx, my, scrollX, scrollY, button);
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int button) {
+	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		boolean wasDragging = dragging;
 		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			dragging = false;
@@ -126,16 +133,18 @@ public class CategoryPart extends GuiPart {
 		}
 		if(!wasDragging) {
 			if(openCloseAnimation <= 0.5f) {
-				if(scrollArea.release(mx, my, button)) {
+				if(scrollArea.release(mx, my, scrollX, scrollY, button)) {
 					return true;
 				}
 			}
 		}
-		return super.release(mx, my, button);
+		return super.release(mx, my, scrollX, scrollY, button);
 	}
 	
 	@Override
-	public boolean drag(double mx, double my, int button, double dx, double dy) {
+	public boolean drag(double mx, double my, int scrollX, int scrollY, int button, double dx, double dy) {
+		int x = this.x + scrollX;
+		int y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			
@@ -145,18 +154,18 @@ public class CategoryPart extends GuiPart {
 			return true;
 		}
 		if(openCloseAnimation <= 0.5f) {
-			if(scrollArea.drag(mx, my, button, dx, dy)) {
+			if(scrollArea.drag(mx, my, scrollX, scrollY, button, dx, dy)) {
 				return true;
 			}
 		}
-		return super.drag(mx, my, button, dx, dy);
+		return super.drag(mx, my, scrollX, scrollY, button, dx, dy);
 	}
 	
 	@Override
-	public boolean scroll(double mx, double my, double delta) {
-		if(scrollArea.scroll(mx, my, delta)) {
+	public boolean scroll(double mx, double my, int scrollX, int scrollY, double delta) {
+		if(scrollArea.scroll(mx, my, scrollX, scrollY, delta)) {
 			return true;
 		}
-		return super.scroll(mx, my, delta);
+		return super.scroll(mx, my, scrollX, scrollY, delta);
 	}
 }

@@ -7,7 +7,6 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -156,22 +155,22 @@ public class RenderUtil {
 		BufferBuilder buf = Tessellator.getInstance().getBuffer();
 		Matrix4f mat = stack.peek().getPositionMatrix();
 		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		int tr = Color.HSBtoRGB(hue, 1, 1);
+		int tr = Color.toRGB(hue, 1, 1, 1);
 		float atr = (float)(tr >> 24 & 255) / 255.0F;
 		float rtr = (float)(tr >> 16 & 255) / 255.0F;
 		float gtr = (float)(tr >> 8 & 255) / 255.0F;
 		float btr = (float)(tr & 255) / 255.0F;
-		int br = Color.HSBtoRGB(hue, 1, 0);
+		int br = Color.toRGB(hue, 1, 0, 1);
 		float abr = (float)(br >> 24 & 255) / 255.0F;
 		float rbr = (float)(br >> 16 & 255) / 255.0F;
 		float gbr = (float)(br >> 8 & 255) / 255.0F;
 		float bbr = (float)(br & 255) / 255.0F;
-		int tl = Color.HSBtoRGB(hue, 0, 1);
+		int tl = Color.toRGB(hue, 0, 1, 1);
 		float atl = (float)(tl >> 24 & 255) / 255.0F;
 		float rtl = (float)(tl >> 16 & 255) / 255.0F;
 		float gtl = (float)(tl >> 8 & 255) / 255.0F;
 		float btl = (float)(tl & 255) / 255.0F;
-		int bl = Color.HSBtoRGB(hue, 0, 0);
+		int bl = Color.toRGB(hue, 0, 0, 1);
 		float abl = (float)(bl >> 24 & 255) / 255.0F;
 		float rbl = (float)(bl >> 16 & 255) / 255.0F;
 		float gbl = (float)(bl >> 8 & 255) / 255.0F;
@@ -187,18 +186,18 @@ public class RenderUtil {
 		BufferBuilder buf = Tessellator.getInstance().getBuffer();
 		Matrix4f mat = stack.peek().getPositionMatrix();
 		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		int startC = Color.HSBtoRGB(0, 1, 1);
+		int startC = Color.toRGB(0, 1, 1, 1);
 		float endY = y + (height / 6f);
 		int endC;
 		for(int i = 0; i < 6; i++) {
 			switch(i) {
-				case 0 -> endC = Color.HSBtoRGB(1 / 6f, 1, 1);
-				case 1 -> endC = Color.HSBtoRGB(2 / 6f, 1, 1);
-				case 2 -> endC = Color.HSBtoRGB(3 / 6f, 1, 1);
-				case 3 -> endC = Color.HSBtoRGB(4 / 6f, 1, 1);
-				case 4 -> endC = Color.HSBtoRGB(5 / 6f, 1, 1);
-				case 5 -> endC = Color.HSBtoRGB(6 / 6f, 1, 1);
-				default -> endC = Color.HSBtoRGB(1, 1, 1);
+				case 0 -> endC = Color.toRGB(1 / 6f, 1, 1, 1);
+				case 1 -> endC = Color.toRGB(2 / 6f, 1, 1, 1);
+				case 2 -> endC = Color.toRGB(3 / 6f, 1, 1, 1);
+				case 3 -> endC = Color.toRGB(4 / 6f, 1, 1, 1);
+				case 4 -> endC = Color.toRGB(5 / 6f, 1, 1, 1);
+				case 5 -> endC = Color.toRGB(6 / 6f, 1, 1, 1);
+				default -> endC = Color.toRGB(1, 1, 1, 1);
 			}
 			float sa = (float)(startC >> 24 & 255) / 255.0F;
 			float sr = (float)(startC >> 16 & 255) / 255.0F;
@@ -271,7 +270,7 @@ public class RenderUtil {
 			x -= w - (shift ? 4 : 8);
 		}
 		
-		pushScissor(x, y, w, h, (float)ClickGUI.getInstance().scale.getValue());
+		pushScissor(x, y, w, h, ClickGUI.getInstance().scale);
 		applyScissor();
 		
 		preRender();

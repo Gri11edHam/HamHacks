@@ -76,7 +76,6 @@ public class Trap extends Module {
 			}
 			mc.player.getInventory().selectedSlot = oldSlot;
 		}
-		enabled.setValue(false);
-		onDisable();
+		setEnabled(false);
 	}
 }

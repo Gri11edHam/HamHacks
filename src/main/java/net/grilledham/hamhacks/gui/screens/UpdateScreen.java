@@ -37,13 +37,13 @@ public class UpdateScreen extends Screen {
 		String s2 = "(The mod won't be fully updated until you restart your game)";
 		client.textRenderer.drawWithShadow(matrices, s2, width / 2f - client.textRenderer.getWidth(s2) / 2f, height / 2f - 20 - client.textRenderer.fontHeight / 2f, -1);
 		
-		continueButton.draw(matrices, mouseX, mouseY, delta);
-		exitButton.draw(matrices, mouseX, mouseY, delta);
+		continueButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
+		exitButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
 	}
 	
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if(continueButton.click(mouseX, mouseY, button) || exitButton.click(mouseX, mouseY, button)) {
+		if(continueButton.click(mouseX, mouseY, 0, 0, button) || exitButton.click(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
@@ -51,7 +51,7 @@ public class UpdateScreen extends Screen {
 	
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		if(continueButton.release(mouseX, mouseY, button) || exitButton.release(mouseX, mouseY, button)) {
+		if(continueButton.release(mouseX, mouseY, 0, 0, button) || exitButton.release(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
 		return super.mouseReleased(mouseX, mouseY, button);

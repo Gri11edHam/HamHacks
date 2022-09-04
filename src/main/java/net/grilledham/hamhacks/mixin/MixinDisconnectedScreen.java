@@ -39,7 +39,7 @@ public abstract class MixinDisconnectedScreen extends Screen {
 		}
 		if(enforceSecureChat) {
 			AntiBanModule.getInstance().hasConnected = true;
-			if(AntiBanModule.getInstance().joinEnforcedServers.getValue()) {
+			if(AntiBanModule.getInstance().joinEnforcedServers) {
 				((IMultiplayerScreen)parent).reconnect();
 			}
 			return Text.translatable("hamhacks.disconnect.enforcedServer");

@@ -2,69 +2,56 @@ package net.grilledham.hamhacks.modules.misc;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.setting.settings.*;
+import net.grilledham.hamhacks.util.Color;
+import net.grilledham.hamhacks.util.SelectableList;
+import net.grilledham.hamhacks.util.StringList;
+import net.grilledham.hamhacks.util.setting.*;
 import net.minecraft.text.Text;
 
 public class TestModule extends Module {
 	
-	private BoolSetting testBool;
-	private ColorSetting testColor;
-	private FloatSetting testFloat;
-	private IntSetting testInt;
-	private KeySetting testKey;
-	private ListSetting testList;
-	private SelectionSetting testSelector;
-	private StringSetting testString;
+	@BoolSetting(name = "setting.test.testbool")
+	public boolean testBool = false;
+	
+	@ColorSetting(name = "setting.test.testcolor", dependsOn = "testBool")
+	public Color testColor = Color.getWhite();
+	
+	@NumberSetting(
+			name = "setting.test.testfloat",
+			defaultValue = 0.5f,
+			min = 0,
+			max = 1,
+			dependsOn = "testBool"
+	)
+	public float testFloat = 0.5f;
+	
+	@NumberSetting(
+			name = "setting.test.testint",
+			defaultValue = 100,
+			min = 0,
+			max = 200,
+			step = 1,
+			dependsOn = "testBool"
+	)
+	public float testInt = 100;
+	
+	@KeySetting(name = "setting.test.testkey", dependsOn = "testBool")
+	public Keybind testKey = new Keybind(0);
+	
+	@ListSetting(name = "setting.test.testlist", dependsOn = "testBool")
+	public StringList testList = new StringList("Test1", "Test2");
+	
+	@SelectionSetting(name = "setting.test.testselector", dependsOn = "testBool")
+	public SelectableList testSelector = new SelectableList("setting.test.testselector.test1", "setting.test.testselector.test1", "setting.test.testselector.test2", "setting.test.testselector.test3");
+	
+	@StringSetting(
+			name = "setting.test.teststring",
+			defaultValue = "Test",
+			dependsOn = "testBool"
+	)
+	public String testString = "Test";
 	
 	public TestModule() {
 		super(Text.translatable("module.hamhacks.test"), Category.MISC, new Keybind(0));
-	}
-	
-	@Override
-	public void addSettings() {
-		super.addSettings();
-		testBool = new BoolSetting(Text.translatable("setting.test.testbool"), false) {
-			@Override
-			protected void valueChanged() {
-				super.valueChanged();
-				updateSettings();
-				updateScreenIfOpen();
-			}
-		};
-		testColor = new ColorSetting(Text.translatable("setting.test.testcolor"), 1, 1, 1, 1, false);
-		testFloat = new FloatSetting(Text.translatable("setting.test.testfloat"), 0.5f, 0f, 1f);
-		testInt = new IntSetting(Text.translatable("setting.test.testint"), 100, 0, 200);
-		testKey = new KeySetting(Text.translatable("setting.test.testkey"), new Keybind(0));
-		testList = new ListSetting(Text.translatable("setting.test.testlist"), "Test1", "Test2");
-		testSelector = new SelectionSetting(Text.translatable("setting.test.testselector"), Text.translatable("setting.test.testselector.test1"), Text.translatable("setting.test.testselector.test1"), Text.translatable("setting.test.testselector.test2"), Text.translatable("setting.test.testselector.test3"));
-		testString = new StringSetting(Text.translatable("setting.test.teststring"), "Test");
-		addSetting(testBool);
-		addSetting(testColor);
-		addSetting(testFloat);
-		addSetting(testInt);
-		addSetting(testKey);
-		addSetting(testList);
-		addSetting(testSelector);
-		addSetting(testString);
-		updateSettings();
-	}
-	
-	private void updateSettings() {
-		hideSetting(testColor);
-		hideSetting(testFloat);
-		hideSetting(testInt);
-		hideSetting(testKey);
-		hideSetting(testList);
-		hideSetting(testSelector);
-		hideSetting(testString);
-		if(testBool.getValue()) {
-			showSetting(testString, shownSettings.indexOf(testBool) + 1);
-			showSetting(testSelector, shownSettings.indexOf(testBool) + 1);
-			showSetting(testList, shownSettings.indexOf(testBool) + 1);
-			showSetting(testKey, shownSettings.indexOf(testBool) + 1);
-			showSetting(testInt, shownSettings.indexOf(testBool) + 1);
-			showSetting(testFloat, shownSettings.indexOf(testBool) + 1);
-			showSetting(testColor, shownSettings.indexOf(testBool) + 1);
-		}
 	}
 }

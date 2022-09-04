@@ -26,28 +26,28 @@ public class ClickGUIScreen extends Screen {
 	
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		mouseX = (int)((mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue());
-		mouseY = (int)((mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue());
+		mouseX = (int)((mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
+		mouseY = (int)((mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
 		matrices.push();
-		float scaleFactor = (float)(ClickGUI.getInstance().scale.getValue() / client.getWindow().getScaleFactor());
+		float scaleFactor = (float)(ClickGUI.getInstance().scale / client.getWindow().getScaleFactor());
 		matrices.scale(scaleFactor, scaleFactor, scaleFactor);
 		
 		super.render(matrices, mouseX, mouseY, delta);
 		for(CategoryPart category : categories) {
-			category.draw(matrices, mouseX, mouseY, delta);
+			category.draw(matrices, mouseX, mouseY, 0, 0, delta);
 		}
 		for(CategoryPart category : categories) {
-			category.drawTop(matrices, mouseX, mouseY, delta);
+			category.drawTop(matrices, mouseX, mouseY, 0, 0, delta);
 		}
 		matrices.pop();
 	}
 	
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
-		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
+		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
+		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
 		for(CategoryPart category : categories) {
-			if(category.click(mouseX, mouseY, button)) {
+			if(category.click(mouseX, mouseY, 0, 0, button)) {
 				return true;
 			}
 		}
@@ -56,10 +56,10 @@ public class ClickGUIScreen extends Screen {
 	
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
-		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
+		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
+		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
 		for(CategoryPart category : categories) {
-			if(category.release(mouseX, mouseY, button)) {
+			if(category.release(mouseX, mouseY, 0, 0, button)) {
 				return true;
 			}
 		}
@@ -68,10 +68,10 @@ public class ClickGUIScreen extends Screen {
 	
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
-		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale.getValue();
+		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
+		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
 		for(CategoryPart category : categories) {
-			if(category.drag(mouseX, mouseY, button, deltaX, deltaY)) {
+			if(category.drag(mouseX, mouseY, 0, 0, button, deltaX, deltaY)) {
 				return true;
 			}
 		}

@@ -6,8 +6,8 @@ import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.RotationHack;
-import net.grilledham.hamhacks.util.setting.settings.BoolSetting;
-import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
+import net.grilledham.hamhacks.util.setting.BoolSetting;
+import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -26,28 +26,30 @@ import java.util.stream.Stream;
 
 public class KillAura extends Module {
 	
-	private FloatSetting range;
-	private BoolSetting targetPlayers;
-	private BoolSetting targetPassive;
-	private BoolSetting targetHostile;
+	@NumberSetting(
+			name = "hamhacks.module.killAura.range",
+			defaultValue = 3,
+			min = 1,
+			max = 8
+	)
+	public float range = 3;
+	
+	@BoolSetting(
+			name = "hamhacks.module.killAura.targetPlayers",
+			defaultValue = true
+	)
+	public boolean targetPlayers = true;
+	
+	@BoolSetting(name = "hamhacks.module.killAura.targetPassive")
+	public boolean targetPassive = false;
+	
+	@BoolSetting(name = "hamhacks.module.killAura.targetHostile")
+	public boolean targetHostile = false;
 	
 	private LivingEntity target;
 	
 	public KillAura() {
 		super(Text.translatable("hamhacks.module.killAura"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
-	}
-	
-	@Override
-	public void addSettings() {
-		super.addSettings();
-		range = new FloatSetting(Text.translatable("hamhacks.module.killAura.range"), 3f, 1f, 8f);
-		targetPlayers = new BoolSetting(Text.translatable("hamhacks.module.killAura.targetPlayers"), true);
-		targetPassive = new BoolSetting(Text.translatable("hamhacks.module.killAura.targetPassive"), false);
-		targetHostile = new BoolSetting(Text.translatable("hamhacks.module.killAura.targetHostile"), false);
-		addSetting(range);
-		addSetting(targetPlayers);
-		addSetting(targetPassive);
-		addSetting(targetHostile);
 	}
 	
 	@EventListener
@@ -71,7 +73,7 @@ public class KillAura extends Module {
 					.filter(entity -> !entity.isRemoved() && entity.isAlive())
 					.filter(entity -> entity != mc.player)
 					.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-					.filter(entity -> (entity instanceof PlayerEntity && targetPlayers.getValue()) || (entity instanceof HostileEntity && targetHostile.getValue()) || (entity instanceof PassiveEntity && targetPassive.getValue()));
+					.filter(entity -> (entity instanceof PlayerEntity && targetPlayers) || (entity instanceof HostileEntity && targetHostile) || (entity instanceof PassiveEntity && targetPassive));
 			
 			List<LivingEntity> entities = stream.toList();
 			if(!entities.isEmpty()) {
@@ -81,7 +83,7 @@ public class KillAura extends Module {
 						closest = entity;
 					}
 				}
-				if(mc.player.distanceTo(closest) <= range.getValue()) {
+				if(mc.player.distanceTo(closest) <= range) {
 					target = closest;
 				} else {
 					target = null;

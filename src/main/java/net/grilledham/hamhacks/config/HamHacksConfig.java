@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.config;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.Expose;
@@ -8,10 +7,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.util.setting.Setting;
+import net.grilledham.hamhacks.util.setting.SettingHelper;
 
 import java.io.*;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collector;
@@ -77,7 +75,8 @@ public class HamHacksConfig {
 			for(Module m : ModuleManager.getModules()) {
 				JsonObject mod = new JsonObject();
 				JsonObject modSettings = new JsonObject();
-				addSettings(modSettings, m.getSettings());
+				SettingHelper.addSaveData(m, modSettings);
+//				addSettings(modSettings, m.getSettings());
 				mod.add("settings", modSettings);
 				modules.add(m.getConfigName(), mod);
 			}
@@ -89,28 +88,28 @@ public class HamHacksConfig {
 		}
 	}
 	
-	private static void addSettings(JsonObject obj, List<Setting<?>> settings) {
-		for(Setting<?> s : settings) {
-			if(s != null) {
-				addSetting(obj, s);
-			}
-		}
-	}
+//	private static void addSettings(JsonObject obj, List<Setting<?>> settings) {
+//		for(Setting<?> s : settings) {
+//			if(s != null) {
+//				addSetting(obj, s);
+//			}
+//		}
+//	}
 	
-	private static void addSettings(JsonArray obj, List<Setting<?>> settings) {
-		for(Setting<?> s : settings) {
-			if(s != null) {
-				JsonObject setting = new JsonObject();
-				setting.addProperty("name", s.getName());
-				addSetting(setting, s);
-				obj.add(setting);
-			}
-		}
-	}
+//	private static void addSettings(JsonArray obj, List<Setting<?>> settings) {
+//		for(Setting<?> s : settings) {
+//			if(s != null) {
+//				JsonObject setting = new JsonObject();
+//				setting.addProperty("name", s.getName());
+//				addSetting(setting, s);
+//				obj.add(setting);
+//			}
+//		}
+//	}
 	
-	private static void addSetting(JsonObject obj, Setting<?> s) {
-		obj.add(s.getKey(), s.getAsJsonObject().get(s.getKey()));
-	}
+//	private static void addSetting(JsonObject obj, Setting<?> s) {
+//		obj.add(s.getKey(), s.getAsJsonObject().get(s.getKey()));
+//	}
 	
 	private static void parseSettings(JsonObject obj) {
 		int configVersion = obj.has("config_version") ? obj.get("config_version").getAsInt() : -1;
@@ -142,36 +141,37 @@ public class HamHacksConfig {
 					continue;
 				}
 				JsonObject modSettings = mod.getAsJsonObject("settings");
-				parseSettings(modSettings, m.getSettings());
+				SettingHelper.parseSaveData(m, modSettings);
+//				parseSettings(modSettings, m.getSettings());
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	private static void parseSettings(JsonObject obj, List<Setting<?>> settings) {
-		try {
-			for(Setting<?> s : settings) {
-				try {
-					parseSetting(obj, s);
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-			}
-		} catch(ConcurrentModificationException e) {
-			parseSettings(obj, settings);
-		}
-	}
+//	private static void parseSettings(JsonObject obj, List<Setting<?>> settings) {
+//		try {
+//			for(Setting<?> s : settings) {
+//				try {
+//					parseSetting(obj, s);
+//				} catch(Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		} catch(ConcurrentModificationException e) {
+//			parseSettings(obj, settings);
+//		}
+//	}
 	
-	private static void parseSetting(JsonObject obj, Setting<?> s) {
-		if(obj.has(s.getKey())) {
-			try {
-				s.set(obj.get(s.getKey()));
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+//	private static void parseSetting(JsonObject obj, Setting<?> s) {
+//		if(obj.has(s.getKey())) {
+//			try {
+//				s.set(obj.get(s.getKey()));
+//			} catch(Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 	
 	public static void writeToFile(File file, JsonObject object) {
 		if (file == null || (file.exists() && file.isDirectory()))

@@ -4,10 +4,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.util.setting.Setting;
-import net.grilledham.hamhacks.util.setting.settings.FloatSetting;
-import net.grilledham.hamhacks.util.setting.settings.IntSetting;
+import net.grilledham.hamhacks.util.setting.NumberSetting;
+import net.grilledham.hamhacks.util.setting.SettingHelper;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -190,12 +190,9 @@ public class ConfigFixer {
 			case 0:
 				for(Module m : ModuleManager.getModules()) {
 					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(m.getName()).getAsJsonObject("settings");
-					for(Setting<?> s : m.getSettings()) {
-						if(s instanceof IntSetting) {
-							settings.addProperty(s.getKey(), settings.get(s.getKey()).getAsJsonObject().get("value").getAsInt());
-						} else if(s instanceof FloatSetting) {
-							settings.addProperty(s.getKey(), settings.get(s.getKey()).getAsJsonObject().get("value").getAsFloat());
-						}
+					for(Field f : SettingHelper.getNumberSettings(m)) {
+						String name = f.getAnnotation(NumberSetting.class).name();
+						settings.addProperty(name, settings.get(name).getAsJsonObject().get("value").getAsFloat());
 					}
 				}
 			case 1:

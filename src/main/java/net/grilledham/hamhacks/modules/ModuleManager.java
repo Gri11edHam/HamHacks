@@ -28,4 +28,8 @@ public class ModuleManager {
 	public static void updateKeybinds() {
 		modules.forEach(Module::checkKeybind);
 	}
+	
+	public static void updateEnabled() {
+		modules.forEach(Module::updateEnabled);
+	}
 }

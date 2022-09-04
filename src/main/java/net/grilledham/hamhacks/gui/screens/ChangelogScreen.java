@@ -40,18 +40,18 @@ public class ChangelogScreen extends Screen {
 			client.textRenderer.drawWithShadow(matrices, s.replace("\t", "    "), width / 2f - clw / 2f, 12 + i * 12, 0xffffffff);
 			i++;
 		}
-		backButton.draw(matrices, mouseX, mouseY, delta);
-		fullChangelogButton.draw(matrices, mouseX, mouseY, delta);
+		backButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
+		fullChangelogButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
 		
 		matrices.pop();
 	}
 	
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if(backButton.click(mouseX, mouseY, button)) {
+		if(backButton.click(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
-		if(fullChangelogButton.click(mouseX, mouseY, button)) {
+		if(fullChangelogButton.click(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
@@ -59,10 +59,10 @@ public class ChangelogScreen extends Screen {
 	
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		if(backButton.release(mouseX, mouseY, button)) {
+		if(backButton.release(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
-		if(fullChangelogButton.release(mouseX, mouseY, button)) {
+		if(fullChangelogButton.release(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
 		return super.mouseReleased(mouseX, mouseY, button);
