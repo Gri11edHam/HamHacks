@@ -119,6 +119,7 @@
 
 	"hamhacks.module.tracers": "Tracers",
 	"hamhacks.module.tracers.tooltip": "Traces a line from your crosshair\nto entities in the world",
+	"hamhacks.module.tracers.lineWidth": "Line Width",
 	"hamhacks.module.tracers.tracePlayers": "Trace Players",
 	"hamhacks.module.tracers.playerColorClose": "Player Color (Close)",
 	"hamhacks.module.tracers.playerColorFar": "Player Color (Far)",
