@@ -7,12 +7,14 @@ import net.grilledham.hamhacks.mixininterface.IGameRenderer;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.Reach;
 import net.grilledham.hamhacks.modules.render.HUD;
+import net.grilledham.hamhacks.modules.render.Zoom;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SynchronousResourceReloader;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(GameRenderer.class)
 public abstract class MixinGameRenderer implements SynchronousResourceReloader, AutoCloseable, IGameRenderer {
@@ -76,6 +79,24 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 			return bl;
 		}
 		return !Reach.getInstance().isEnabled() && bl;
+	}
+	
+	@Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
+	public void modifyFov(Camera camera, float tickDelta, boolean changingFov, CallbackInfoReturnable<Double> cir) {
+		if(changingFov || !Zoom.getInstance().renderHand) {
+			double d = cir.getReturnValueD();
+			cir.setReturnValue(Zoom.getInstance().modifyFov(d));
+		}
+	}
+	
+	@Redirect(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F"))
+	public float mitigateBob(float delta, float start, float end) {
+		if(Zoom.getInstance().isEnabled()) {
+			double divisor = Math.sqrt(Zoom.getInstance().getZoomAmount());
+			start = (float)(start / divisor);
+			end = (float)(end / divisor);
+		}
+		return MathHelper.lerp(delta, start, end);
 	}
 	
 	@Override
