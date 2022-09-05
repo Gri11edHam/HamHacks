@@ -2,7 +2,6 @@ package net.grilledham.hamhacks.util;
 
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.EventManager;
-import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -26,29 +25,28 @@ public class RotationHack {
 		EventManager.register(hack);
 	}
 	
-	@EventListener
-	public void motionEvent(EventMotion e) {
-		if(e.type == EventMotion.Type.PRE) {
-			if(!useFake) {
-				return;
-			}
-			
-			ClientPlayerEntity player = mc.player;
-			realYaw = player.getYaw();
-			realPitch = player.getPitch();
-			player.setYaw(serverYaw);
-			player.setPitch(serverPitch);
-		} else if(e.type == EventMotion.Type.POST) {
-			if(!useFake) {
-				return;
-			}
-			
-			ClientPlayerEntity player = mc.player;
-			player.setYaw(realYaw);
-			player.setPitch(realPitch);
-			if(useFakeTicks <= 0) {
-				useFake = false;
-			}
+	public static void preSend() {
+		if(!useFake) {
+			return;
+		}
+		
+		ClientPlayerEntity player = mc.player;
+		realYaw = player.getYaw();
+		realPitch = player.getPitch();
+		player.setYaw(serverYaw);
+		player.setYaw(serverPitch);
+	}
+	
+	public static void postSend() {
+		if(!useFake) {
+			return;
+		}
+		
+		ClientPlayerEntity player = mc.player;
+		player.setYaw(realYaw);
+		player.setPitch(realPitch);
+		if(useFakeTicks <= 0) {
+			useFake = false;
 		}
 	}
 	
@@ -57,7 +55,7 @@ public class RotationHack {
 		useFakeTicks--;
 	}
 	
-	public static void faceVectorPacket(Vec3d vec, int ticks) {
+	public static void faceVectorPacket(Vec3d vec) {
 		Vec3d eyesPos = mc.player.getEyePos();
 		
 		double diffX = vec.x - eyesPos.x;
@@ -70,7 +68,7 @@ public class RotationHack {
 		float pitch = (float)-Math.toDegrees(Math.atan2(diffY, diffXZ));
 		
 		useFake = true;
-		useFakeTicks = ticks;
+		useFakeTicks = 10;
 		serverYaw = yaw;
 		serverPitch = pitch;
 	}

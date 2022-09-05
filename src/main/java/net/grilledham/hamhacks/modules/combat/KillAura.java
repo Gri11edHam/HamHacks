@@ -91,15 +91,15 @@ public class KillAura extends Module {
 			} else {
 				target = null;
 			}
-			if(target != null) {
-				RotationHack.faceVectorPacket(target.getEyePos(), (int)mc.player.getAttackCooldownProgressPerTick());
-			}
+		}
+		if(target != null) {
+			RotationHack.faceVectorPacket(target.getEyePos());
 		}
 	}
 	
 	@EventListener
 	public void onMove(EventMotion e) {
-		if(((EventMotion)e).type == EventMotion.Type.POST) {
+		if(e.type == EventMotion.Type.POST) {
 			if(target == null) {
 				return;
 			}

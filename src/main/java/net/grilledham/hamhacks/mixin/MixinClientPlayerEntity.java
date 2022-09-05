@@ -11,6 +11,7 @@ import net.grilledham.hamhacks.mixininterface.IClientEntityPlayer;
 import net.grilledham.hamhacks.modules.misc.AntiBanModule;
 import net.grilledham.hamhacks.modules.misc.CommandModule;
 import net.grilledham.hamhacks.util.ChatUtil;
+import net.grilledham.hamhacks.util.RotationHack;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -89,6 +90,26 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 		if(AntiBanModule.getInstance().isEnabled() && !AntiBanModule.getInstance().hasConnected) {
 			cir.setReturnValue(ArgumentSignatureDataMap.EMPTY);
 		}
+	}
+	
+	@Inject(method = "sendMovementPackets", at = @At("HEAD"))
+	private void preSendMovePackets(CallbackInfo ci) {
+		RotationHack.preSend();
+	}
+	
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 0))
+	private void preSendMovePacketsVehicle(CallbackInfo ci) {
+		RotationHack.preSend();
+	}
+	
+	@Inject(method = "sendMovementPackets", at = @At("TAIL"))
+	private void postSendMovePackets(CallbackInfo ci) {
+		RotationHack.postSend();
+	}
+	
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 1, shift = At.Shift.AFTER))
+	private void postSendMovePacketsVehicle(CallbackInfo ci) {
+		RotationHack.postSend();
 	}
 	
 	@Override
