@@ -512,6 +512,7 @@ public class SettingHelper {
 	}
 	
 	private static boolean shouldShow(Object o, String[] dependsOn) {
+		boolean shouldShow = true;
 		for(String s : dependsOn) {
 			String condition = s.replaceAll("!", "");
 			String[] args = condition.split("->");
@@ -528,11 +529,15 @@ public class SettingHelper {
 				throw new RuntimeException(e);
 			}
 			if(s.startsWith("!")) {
-				return !dependencyMet;
+				if(dependencyMet) {
+					shouldShow = false;
+				}
 			} else {
-				return dependencyMet;
+				if(!dependencyMet) {
+					shouldShow = false;
+				}
 			}
 		}
-		return true;
+		return shouldShow;
 	}
 }
