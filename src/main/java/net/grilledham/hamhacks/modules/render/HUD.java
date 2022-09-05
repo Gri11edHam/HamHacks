@@ -84,6 +84,7 @@ public class HUD extends Module {
 	public HUD() {
 		super(Text.translatable("hamhacks.module.hud"), Category.RENDER, new Keybind(0));
 		setEnabled(true);
+		showModule = false;
 		INSTANCE = this;
 	}
 	

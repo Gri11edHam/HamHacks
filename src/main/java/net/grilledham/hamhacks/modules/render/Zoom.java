@@ -97,6 +97,7 @@ public class Zoom extends Module {
 	
 	public Zoom() {
 		super(Text.translatable("hamhacks.module.zoom"), Category.RENDER, new Keybind(0));
+		setEnabled(true);
 		INSTANCE = this;
 	}
 	
