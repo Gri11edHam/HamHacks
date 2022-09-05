@@ -219,7 +219,7 @@
 	"hamhacks.menu.fullChangelog": "Full Changelog GUI",
 	"hamhacks.menu.bindModule": "Bind Module GUI",
 	"hamhacks.menu.update": "Update GUI",
-	"hamhacks.menu.disconnected.continueAnyways": "Continue Anyways",
-
-	"hamhacks.disconnect.enforcedServer": "The server you are trying to connect to enforces a secure connection.\nYou can connect anyways and risk being reported to Mojang or cancel."
+	"hamhacks.menu.securedServerWarning": "Secured Server",
+	"hamhacks.menu.securedServerWarning.message": "The server you are trying to connect to enforces a secure connection.\nYou can connect anyways and risk being reported to Mojang or cancel.",
+	"hamhacks.menu.securedServerWarning.checkMessage": "Don't show again"
 }

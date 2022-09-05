@@ -2,20 +2,20 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.mixininterface.IMultiplayerScreen;
 import net.grilledham.hamhacks.modules.misc.AntiBanModule;
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.screen.WarningScreen;
+import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(DisconnectedScreen.class)
 public abstract class MixinDisconnectedScreen extends Screen {
@@ -41,24 +41,23 @@ public abstract class MixinDisconnectedScreen extends Screen {
 			AntiBanModule.getInstance().hasConnected = true;
 			if(AntiBanModule.getInstance().joinEnforcedServers) {
 				((IMultiplayerScreen)parent).reconnect();
+			} else {
+				client.setScreen(new WarningScreen(Text.translatable("hamhacks.menu.securedServerWarning"), Text.translatable("hamhacks.menu.securedServerWarning"), Text.translatable("hamhacks.menu.securedServerWarning")) {
+					@Override
+					protected void initButtons(int yOffset) {
+						this.addDrawableChild(new ButtonWidget(this.width / 2 - 155, 100 + yOffset, 150, 20, ScreenTexts.CANCEL, (button) -> {
+							this.client.setScreen(new MultiplayerScreen(new TitleScreen()));
+						}));
+						this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 100 + yOffset, 150, 20, ScreenTexts.PROCEED, (button) -> {
+							if(checkbox != null && checkbox.isChecked()) {
+								AntiBanModule.getInstance().joinEnforcedServers = true;
+							}
+							((IMultiplayerScreen)parent).reconnect();
+						}));
+					}
+				});
 			}
-			return Text.translatable("hamhacks.disconnect.enforcedServer");
 		}
 		return reason;
-	}
-	
-	@ModifyArg(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/DisconnectedScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;"))
-	public Element moveBackButton(Element element) {
-		if(enforceSecureChat) {
-			((ButtonWidget)element).y += 22;
-		}
-		return element;
-	}
-	
-	@Inject(method = "init", at = @At("TAIL"))
-	public void addContinueButton(CallbackInfo ci) {
-		if(enforceSecureChat) {
-			addDrawableChild(new ButtonWidget(this.width / 2 - 100, Math.min(this.height / 2 + this.reasonHeight / 2 + 9, this.height - 30), 200, 20, Text.translatable("hamhacks.menu.disconnected.continueAnyways"), (button) -> ((IMultiplayerScreen)parent).reconnect()));
-		}
 	}
 }

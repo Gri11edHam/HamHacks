@@ -16,6 +16,7 @@ public class AntiBanModule extends Module {
 	
 	public AntiBanModule() {
 		super(Text.translatable("hamhacks.module.antiBan"), Category.MISC, new Keybind(0));
+		setEnabled(true);
 		INSTANCE = this;
 	}
 	
