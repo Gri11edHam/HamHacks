@@ -20,7 +20,7 @@ import net.minecraft.util.math.random.RandomSplitter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatModule extends Module {
+public class Chat extends Module {
 	
 	@BoolSetting(name = "hamhacks.module.chat.pingOnMention")
 	public boolean pingOnMention = false;
@@ -42,14 +42,14 @@ public class ChatModule extends Module {
 	
 	private final List<String> sentMessages = new ArrayList<>();
 	
-	private static ChatModule INSTANCE;
+	private static Chat INSTANCE;
 	
-	public ChatModule() {
+	public Chat() {
 		super(Text.translatable("hamhacks.module.chat"), Category.MISC, new Keybind(0));
 		INSTANCE = this;
 	}
 	
-	public static ChatModule getInstance() {
+	public static Chat getInstance() {
 		return INSTANCE;
 	}
 	
@@ -59,13 +59,13 @@ public class ChatModule extends Module {
 			sb.append((char)codePoint);
 			return true;
 		});
-		String username = (NameHiderModule.getInstance().isEnabled() ? NameHiderModule.getInstance().fakeName : MinecraftClient.getInstance().getSession().getUsername());
+		String username = (NameHider.getInstance().isEnabled() ? NameHider.getInstance().fakeName : MinecraftClient.getInstance().getSession().getUsername());
 		return sb.toString().contains(username) && !sentMessages.contains(sb.toString());
 	}
 	
 	@EventListener
 	public void sendChat(EventChat.EventChatSent e) {
-		String username = (NameHiderModule.getInstance().isEnabled() ? NameHiderModule.getInstance().fakeName : MinecraftClient.getInstance().getSession().getUsername());
+		String username = (NameHider.getInstance().isEnabled() ? NameHider.getInstance().fakeName : MinecraftClient.getInstance().getSession().getUsername());
 		sentMessages.add(e.preview == null ? "<" + username + "> " + e.message : e.preview.getString());
 	}
 	

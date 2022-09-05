@@ -6,16 +6,16 @@ import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
-public class CommandModule extends Module {
+public class Commands extends Module {
 	
-	private static CommandModule INSTANCE;
+	private static Commands INSTANCE;
 	
-	public CommandModule() {
+	public Commands() {
 		super(Text.translatable("hamhacks.module.command"), Category.MISC, new Keybind(GLFW.GLFW_KEY_PERIOD));
 		INSTANCE = this;
 	}
 	
-	public static CommandModule getInstance() {
+	public static Commands getInstance() {
 		return INSTANCE;
 	}
 	

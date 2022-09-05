@@ -6,7 +6,7 @@ import net.grilledham.hamhacks.util.setting.StringSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
-public class NameHiderModule extends Module {
+public class NameHider extends Module {
 	
 	@StringSetting(
 			name = "hamhacks.module.nameHider.fakeName",
@@ -15,14 +15,14 @@ public class NameHiderModule extends Module {
 	)
 	public String fakeName = "GrilledHam";
 	
-	private static NameHiderModule INSTANCE;
+	private static NameHider INSTANCE;
 	
-	public NameHiderModule() {
+	public NameHider() {
 		super(Text.translatable("hamhacks.module.nameHider"), Category.MISC, new Keybind(0));
 		INSTANCE = this;
 	}
 	
-	public static NameHiderModule getInstance() {
+	public static NameHider getInstance() {
 		return INSTANCE;
 	}
 	

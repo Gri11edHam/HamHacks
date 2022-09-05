@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.mixininterface.IMultiplayerScreen;
-import net.grilledham.hamhacks.modules.misc.AntiBanModule;
+import net.grilledham.hamhacks.modules.misc.AntiBan;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
@@ -26,8 +26,8 @@ public abstract class MixinMultiplayerScreen extends Screen implements IMultipla
 	
 	@Inject(method = {"connect()V", "directConnect"}, at = @At("HEAD"))
 	public void connect(CallbackInfo ci) {
-		if(AntiBanModule.getInstance().hasConnected) {
-			AntiBanModule.getInstance().hasConnected = false;
+		if(AntiBan.getInstance().hasConnected) {
+			AntiBan.getInstance().hasConnected = false;
 		}
 	}
 	

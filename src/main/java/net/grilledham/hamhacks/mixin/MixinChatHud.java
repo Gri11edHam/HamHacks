@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.event.events.EventChat;
-import net.grilledham.hamhacks.modules.misc.ChatModule;
+import net.grilledham.hamhacks.modules.misc.Chat;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
@@ -44,12 +44,12 @@ public class MixinChatHud extends DrawableHelper {
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V", ordinal = 0))
 	public void modifyBGColor(MatrixStack matrixStack, int x1, int y1, int x2, int y2, int color) {
-		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().highlightUsername) {
+		if(Chat.getInstance().isEnabled() && Chat.getInstance().highlightUsername) {
 			ChatHudLine.Visible line = visibleMessages.get(lineIndex);
-			if(ChatModule.getInstance().shouldColorLine(line)) {
-				int newRGB = ChatModule.getInstance().highlightUsernameColor.getRGB() - 0xff000000;
+			if(Chat.getInstance().shouldColorLine(line)) {
+				int newRGB = Chat.getInstance().highlightUsernameColor.getRGB() - 0xff000000;
 				int newAlpha = color >> 24;
-				newAlpha = (int)((float)newAlpha * ChatModule.getInstance().highlightUsernameColor.getAlpha());
+				newAlpha = (int)((float)newAlpha * Chat.getInstance().highlightUsernameColor.getAlpha());
 				newAlpha = newAlpha << 24;
 				color = newAlpha + newRGB;
 			}
@@ -59,7 +59,7 @@ public class MixinChatHud extends DrawableHelper {
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V", ordinal = 1))
 	public void removeIndicator(MatrixStack matrixStack, int x1, int y1, int x2, int y2, int c) {
-		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().hideSigningStatus) {
+		if(Chat.getInstance().isEnabled() && Chat.getInstance().hideSigningStatus) {
 			return;
 		}
 		fill(matrixStack, x1, y1, x2, y2, c);
@@ -67,7 +67,7 @@ public class MixinChatHud extends DrawableHelper {
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/MessageIndicator;icon()Lnet/minecraft/client/gui/hud/MessageIndicator$Icon;"))
 	public MessageIndicator.Icon removeIcon(MessageIndicator instance) {
-		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().hideUnsignedIndicator) {
+		if(Chat.getInstance().isEnabled() && Chat.getInstance().hideUnsignedIndicator) {
 			return null;
 		}
 		return instance.icon();
@@ -75,7 +75,7 @@ public class MixinChatHud extends DrawableHelper {
 	
 	@Inject(method = "getIndicatorAt", at = @At("HEAD"), cancellable = true)
 	public void removeIconTooltip(double mouseX, double mouseY, CallbackInfoReturnable<MessageIndicator> cir) {
-		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().hideUnsignedIndicator) {
+		if(Chat.getInstance().isEnabled() && Chat.getInstance().hideUnsignedIndicator) {
 			cir.setReturnValue(null);
 		}
 	}

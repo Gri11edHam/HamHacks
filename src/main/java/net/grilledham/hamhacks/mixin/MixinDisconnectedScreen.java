@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.mixininterface.IMultiplayerScreen;
-import net.grilledham.hamhacks.modules.misc.AntiBanModule;
+import net.grilledham.hamhacks.modules.misc.AntiBan;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -33,13 +33,13 @@ public abstract class MixinDisconnectedScreen extends Screen {
 	private Text modifyReason(Text reason) {
 		if(reason.getContent() instanceof TranslatableTextContent) {
 			String key = (((TranslatableTextContent)reason.getContent())).getKey();
-			if(AntiBanModule.getInstance().isEnabled() && (key.equals("multiplayer.disconnect.missing_public_key") || key.equals("multiplayer.disconnect.invalid_public_key") || key.equals("multiplayer.disconnect.invalid_public_key_signature"))) {
+			if(AntiBan.getInstance().isEnabled() && (key.equals("multiplayer.disconnect.missing_public_key") || key.equals("multiplayer.disconnect.invalid_public_key") || key.equals("multiplayer.disconnect.invalid_public_key_signature"))) {
 				enforceSecureChat = true;
 			}
 		}
 		if(enforceSecureChat) {
-			AntiBanModule.getInstance().hasConnected = true;
-			if(AntiBanModule.getInstance().joinEnforcedServers) {
+			AntiBan.getInstance().hasConnected = true;
+			if(AntiBan.getInstance().joinEnforcedServers) {
 				((IMultiplayerScreen)parent).reconnect();
 			} else {
 				client.setScreen(new WarningScreen(Text.translatable("hamhacks.menu.securedServerWarning"), Text.translatable("hamhacks.menu.securedServerWarning"), Text.translatable("hamhacks.menu.securedServerWarning")) {
@@ -50,7 +50,7 @@ public abstract class MixinDisconnectedScreen extends Screen {
 						}));
 						this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 100 + yOffset, 150, 20, ScreenTexts.PROCEED, (button) -> {
 							if(checkbox != null && checkbox.isChecked()) {
-								AntiBanModule.getInstance().joinEnforcedServers = true;
+								AntiBan.getInstance().joinEnforcedServers = true;
 							}
 							((IMultiplayerScreen)parent).reconnect();
 						}));

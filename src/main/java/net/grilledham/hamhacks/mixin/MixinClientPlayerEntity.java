@@ -8,8 +8,8 @@ import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.event.events.EventChat;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.mixininterface.IClientEntityPlayer;
-import net.grilledham.hamhacks.modules.misc.AntiBanModule;
-import net.grilledham.hamhacks.modules.misc.CommandModule;
+import net.grilledham.hamhacks.modules.misc.AntiBan;
+import net.grilledham.hamhacks.modules.misc.Commands;
 import net.grilledham.hamhacks.util.ChatUtil;
 import net.grilledham.hamhacks.util.RotationHack;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -62,7 +62,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 			ci.cancel();
 			return;
 		}
-		String prefix = CommandModule.getInstance().getKey().getName();
+		String prefix = Commands.getInstance().getKey().getName();
 		boolean previewIsCommand = preview != null && preview.getString().startsWith(prefix);
 		if(message.startsWith(prefix) || previewIsCommand) {
 			try {
@@ -80,14 +80,14 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 	
 	@Inject(method = "signChatMessage", at = @At("HEAD"), cancellable = true)
 	private void cancelSignMessage(MessageMetadata metadata, DecoratedContents content, LastSeenMessageList lastSeenMessages, CallbackInfoReturnable<MessageSignatureData> cir) {
-		if(AntiBanModule.getInstance().isEnabled() && !AntiBanModule.getInstance().hasConnected) {
+		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
 			cir.setReturnValue(MessageSignatureData.EMPTY);
 		}
 	}
 	
 	@Inject(method = "signArguments", at = @At("HEAD"), cancellable = true)
 	private void cancelSignMessage(MessageMetadata signer, ParseResults<CommandSource> parseResults, Text preview, LastSeenMessageList lastSeenMessages, CallbackInfoReturnable<ArgumentSignatureDataMap> cir) {
-		if(AntiBanModule.getInstance().isEnabled() && !AntiBanModule.getInstance().hasConnected) {
+		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
 			cir.setReturnValue(ArgumentSignatureDataMap.EMPTY);
 		}
 	}
