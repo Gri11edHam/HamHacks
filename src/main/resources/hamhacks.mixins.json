@@ -24,6 +24,7 @@
 		"MixinMultiplayerScreen",
 		"MixinProfileKeys",
 		"MixinRenderTickCounter",
+		"MixinTelemetrySender",
 		"MixinTextVisitFactory",
 		"MixinTitleScreen"
 	]

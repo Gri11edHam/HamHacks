@@ -199,6 +199,9 @@
 	"hamhacks.module.zoom.renderHand": "Render Hand",
 	"hamhacks.module.zoom.renderHand.tooltip": "If enabled, your hand will always be rendered",
 
+	"hamhacks.module.noTelemetry": "No Telemetry",
+	"hamhacks.module.noTelemetry.tooltip": "Disables the telemetry that was added by Micro$oft",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",
