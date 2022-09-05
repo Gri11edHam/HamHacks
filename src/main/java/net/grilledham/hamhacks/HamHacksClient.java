@@ -18,10 +18,7 @@ import net.grilledham.hamhacks.modules.misc.CommandModule;
 import net.grilledham.hamhacks.modules.misc.NameHiderModule;
 import net.grilledham.hamhacks.modules.movement.*;
 import net.grilledham.hamhacks.modules.player.*;
-import net.grilledham.hamhacks.modules.render.ClickGUI;
-import net.grilledham.hamhacks.modules.render.Fullbright;
-import net.grilledham.hamhacks.modules.render.HUD;
-import net.grilledham.hamhacks.modules.render.Tracers;
+import net.grilledham.hamhacks.modules.render.*;
 import net.grilledham.hamhacks.modules.world.Timer;
 import net.grilledham.hamhacks.util.*;
 import org.slf4j.Logger;
@@ -86,6 +83,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new ChatModule());
 		ModuleManager.register(new NameHiderModule());
 		ModuleManager.register(new Timer());
+		ModuleManager.register(new Zoom());
 		
 //		ModuleManager.register(new TestModule()); // For testing
 	}
