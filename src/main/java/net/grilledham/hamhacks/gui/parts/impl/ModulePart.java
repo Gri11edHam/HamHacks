@@ -77,7 +77,7 @@ public class ModulePart extends GuiPart {
 		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 		if(module.hasToolTip()) {
 			if(tooltipAnimation >= 1 && !hasClicked) {
-				RenderUtil.drawToolTip(stack, module.getName(), module.getToolTip(), mx + scrollX, my + scrollY);
+				RenderUtil.drawToolTip(stack, module.getName(), module.getToolTip(), mx, my);
 			}
 		}
 	}
