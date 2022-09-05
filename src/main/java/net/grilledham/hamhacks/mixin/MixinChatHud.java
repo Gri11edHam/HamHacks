@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -70,5 +71,12 @@ public class MixinChatHud extends DrawableHelper {
 			return null;
 		}
 		return instance.icon();
+	}
+	
+	@Inject(method = "getIndicatorAt", at = @At("HEAD"), cancellable = true)
+	public void removeIconTooltip(double mouseX, double mouseY, CallbackInfoReturnable<MessageIndicator> cir) {
+		if(ChatModule.getInstance().isEnabled() && ChatModule.getInstance().hideUnsignedIndicator) {
+			cir.setReturnValue(null);
+		}
 	}
 }
