@@ -36,7 +36,23 @@ public class ColorSettingPart extends SettingPart {
 		super(x, y, 16, setting, obj);
 		try {
 			chroma = ((Color)setting.get(obj)).getChroma();
-			chromaPart = new BoolSettingPart(x, y, getClass().getField("chroma"), this);
+			Field chromaField = getClass().getField("chroma");
+			final Object finalObj = obj;
+			Field finalSetting = setting;
+			chromaPart = new BoolSettingPart(x, y, chromaField, this) {
+				@Override
+				public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+					if(super.release(mx, my, scrollX, scrollY, button)) {
+						try {
+							((Color)finalSetting.get(finalObj)).setChroma(chroma);
+						} catch(IllegalAccessException e) {
+							e.printStackTrace();
+						}
+						return true;
+					}
+					return false;
+				}
+			};
 			chromaPart.drawBackground = false;
 			StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
 			while(hex.length() < 8) {
@@ -44,8 +60,6 @@ public class ColorSettingPart extends SettingPart {
 			}
 			hexVal = hex.toString();
 			Field hexValField = getClass().getField("hexVal");
-			Field finalSetting = setting;
-			final Object finalObj = obj;
 			hexValPart = new StringSettingPart(x, y, hexValField, this) {
 				@Override
 				public boolean type(int code, int scanCode, int modifiers) {
@@ -241,11 +255,6 @@ public class ColorSettingPart extends SettingPart {
 		dragStartX = mx;
 		dragStartY = my;
 		if(chromaPart.click(mx, my, scrollX, scrollY, button)) {
-			try {
-				((Color)setting.get(obj)).setChroma(chroma);
-			} catch(IllegalAccessException e) {
-				e.printStackTrace();
-			}
 			return true;
 		}
 		if(hexValPart.click(mx, my, scrollX, scrollY, button)) {

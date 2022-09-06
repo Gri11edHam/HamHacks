@@ -100,7 +100,7 @@ public class Color {
 	}
 	
 	public float[] getHSB() {
-		return new float[] {hue, saturation, brightness, alpha};
+		return new float[] {getHue(), saturation, brightness, alpha};
 	}
 	
 	public float getTrueHue() {
