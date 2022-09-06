@@ -19,8 +19,8 @@ public class CategoryPart extends GuiPart {
 	private final ScrollablePart scrollArea;
 	
 	private boolean dragging = false;
-	private int lastMouseX = 0;
-	private int lastMouseY = 0;
+	private double lastMouseX = 0;
+	private double lastMouseY = 0;
 	
 	public CategoryPart(Screen parent, Module.Category category) {
 		super(category.getX(), category.getY(), category.getWidth(), category.getHeight());
@@ -36,9 +36,9 @@ public class CategoryPart extends GuiPart {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		
 		float scissorHeight = height + scrollArea.getHeight() * (1 - openCloseAnimation);
@@ -66,8 +66,8 @@ public class CategoryPart extends GuiPart {
 		stack.pop();
 		
 		if(dragging) {
-			moveBy(mx - lastMouseX, my - lastMouseY);
-			scrollArea.moveBy(mx - lastMouseX, my - lastMouseY);
+			moveBy((float)(mx - lastMouseX), (float)(my - lastMouseY));
+			scrollArea.moveBy((float)(mx - lastMouseX), (float)(my - lastMouseY));
 			category.setPos(x, y);
 			lastMouseX = mx;
 			lastMouseY = my;
@@ -89,19 +89,19 @@ public class CategoryPart extends GuiPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+	protected void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		scrollArea.drawTop(stack, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				dragging = true;
-				lastMouseX = (int)mx;
-				lastMouseY = (int)my;
+				lastMouseX = mx;
+				lastMouseY = my;
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 			
 			}
@@ -116,9 +116,9 @@ public class CategoryPart extends GuiPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		boolean wasDragging = dragging;
 		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			dragging = false;
@@ -142,9 +142,9 @@ public class CategoryPart extends GuiPart {
 	}
 	
 	@Override
-	public boolean drag(double mx, double my, int scrollX, int scrollY, int button, double dx, double dy) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean drag(double mx, double my, float scrollX, float scrollY, int button, double dx, double dy) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			
@@ -162,7 +162,7 @@ public class CategoryPart extends GuiPart {
 	}
 	
 	@Override
-	public boolean scroll(double mx, double my, int scrollX, int scrollY, double delta) {
+	public boolean scroll(double mx, double my, float scrollX, float scrollY, double delta) {
 		if(scrollArea.scroll(mx, my, scrollX, scrollY, delta)) {
 			return true;
 		}

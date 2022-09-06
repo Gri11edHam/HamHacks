@@ -33,12 +33,12 @@ public class ModuleSettingsScreen extends Screen {
 		super.init();
 		width = (int)((width * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
 		height = (int)((height * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
-		int maxWidth = 0;
+		float maxWidth = 0;
 		topPart = new GuiPart(0, 0, client.textRenderer.getWidth(module.getName()) + 2, 16) {
 			@Override
-			public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-				int x = this.x + scrollX;
-				int y = this.y + scrollY;
+			public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+				float x = this.x + scrollX;
+				float y = this.y + scrollY;
 				stack.push();
 				RenderUtil.preRender();
 				
@@ -72,9 +72,9 @@ public class ModuleSettingsScreen extends Screen {
 			} else {
 				settingParts.add(part = new GuiPart(0, 0, 0, 16) {
 					@Override
-					public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-						int x = this.x + scrollX;
-						int y = this.y + scrollY;
+					public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+						float x = this.x + scrollX;
+						float y = this.y + scrollY;
 						stack.push();
 						RenderUtil.preRender();
 						
@@ -113,7 +113,7 @@ public class ModuleSettingsScreen extends Screen {
 	
 	public void updatePartVisibility() {
 		int totalHeight = 0;
-		int maxWidth = topPart.getPreferredWidth();
+		float maxWidth = topPart.getPreferredWidth();
 		for(GuiPart part : scrollArea.getParts()) {
 			if(part instanceof SettingPart) {
 				boolean shouldShow = SettingHelper.shouldShow(((SettingPart)part).getSetting(), ((SettingPart)part).getObject());

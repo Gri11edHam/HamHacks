@@ -7,17 +7,17 @@ public abstract class GuiPart {
 	
 	protected final MinecraftClient mc = MinecraftClient.getInstance();
 	
-	protected int x;
-	protected int y;
-	protected int width;
-	protected int height;
+	protected float x;
+	protected float y;
+	protected float width;
+	protected float height;
 	
-	protected final int preferredWidth;
+	protected final float preferredWidth;
 	
-	protected int lastX;
-	protected int lastY;
+	protected float lastX;
+	protected float lastY;
 	
-	public GuiPart(int x, int y, int width, int height) {
+	public GuiPart(float x, float y, float width, float height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -25,47 +25,47 @@ public abstract class GuiPart {
 		this.preferredWidth = width;
 	}
 	
-	public void moveTo(int x, int y) {
+	public void moveTo(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
 	
-	public void moveBy(int x, int y) {
+	public void moveBy(float x, float y) {
 		this.x += x;
 		this.y += y;
 	}
 	
-	public void resize(int maxW, int maxH) {
+	public void resize(float maxW, float maxH) {
 		width = maxW;
 		height = maxH;
 	}
 	
-	public void draw(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+	public void draw(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		render(stack, mx, my, scrollX, scrollY, partialTicks);
 		lastX = x;
 		lastY = y;
 	}
 	
-	public void drawTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+	public void drawTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 		lastX = x;
 		lastY = y;
 	}
 	
-	protected abstract void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks);
+	protected abstract void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks);
 	
-	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+	protected void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 	}
 	
-	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
+	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
 		return false;
 	}
 	
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
 		return false;
 	}
 	
-	public boolean drag(double mx, double my, int scrollX, int scrollY, int button, double dx, double dy) {
+	public boolean drag(double mx, double my, float scrollX, float scrollY, int button, double dx, double dy) {
 		return false;
 	}
 	
@@ -77,27 +77,27 @@ public abstract class GuiPart {
 		return false;
 	}
 	
-	public boolean scroll(double mx, double my, int scrollX, int scrollY, double delta) {
+	public boolean scroll(double mx, double my, float scrollX, float scrollY, double delta) {
 		return false;
 	}
 	
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 	
-	public int getY() {
+	public float getY() {
 		return y;
 	}
 	
-	public int getWidth() {
+	public float getWidth() {
 		return width;
 	}
 	
-	public int getHeight() {
+	public float getHeight() {
 		return height;
 	}
 	
-	public int getPreferredWidth() {
+	public float getPreferredWidth() {
 		return preferredWidth;
 	}
 }

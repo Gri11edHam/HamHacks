@@ -16,14 +16,14 @@ public class BoolSettingPart extends SettingPart {
 	
 	protected boolean drawBackground = true;
 	
-	public BoolSettingPart(int x, int y, Field setting, Object obj) {
+	public BoolSettingPart(float x, float y, Field setting, Object obj) {
 		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 22, setting, obj);
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -64,10 +64,10 @@ public class BoolSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
 		super.release(mx, my, scrollX, scrollY, button);
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(mx >= x + width - 12 && mx < x + width - 4 && my >= y + 4 && my < y + 12) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				try {

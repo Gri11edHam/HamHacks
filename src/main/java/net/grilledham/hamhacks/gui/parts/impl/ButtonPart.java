@@ -13,7 +13,7 @@ public class ButtonPart extends GuiPart {
 	private String text;
 	private final Runnable onClick;
 	
-	public ButtonPart(String text, int x, int y, int width, int height, Runnable onClick) {
+	public ButtonPart(String text, float x, float y, float width, float height, Runnable onClick) {
 		super(x, y, width, height);
 		this.text = text;
 		this.onClick = onClick;
@@ -24,9 +24,9 @@ public class ButtonPart extends GuiPart {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -49,9 +49,9 @@ public class ButtonPart extends GuiPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				onClick.run();

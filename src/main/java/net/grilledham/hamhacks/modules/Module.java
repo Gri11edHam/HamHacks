@@ -132,10 +132,10 @@ public class Module {
 		MISC(Text.translatable("hamhacks.category.misc"));
 		
 		private final Text text;
-		private int x;
-		private int y;
-		private int width;
-		private int height;
+		private float x;
+		private float y;
+		private float width;
+		private float height;
 		
 		private boolean expanded = false;
 		
@@ -190,12 +190,12 @@ public class Module {
 			return text.getString();
 		}
 		
-		public void setPos(int x, int y) {
+		public void setPos(float x, float y) {
 			this.x = x;
 			this.y = y;
 		}
 		
-		public void setDimensions(int width, int height) {
+		public void setDimensions(float width, float height) {
 			this.width = width;
 			this.height = height;
 		}
@@ -208,19 +208,19 @@ public class Module {
 			return expanded;
 		}
 		
-		public int getX() {
+		public float getX() {
 			return x;
 		}
 		
-		public int getY() {
+		public float getY() {
 			return y;
 		}
 		
-		public int getWidth() {
+		public float getWidth() {
 			return width;
 		}
 		
-		public int getHeight() {
+		public float getHeight() {
 			return height;
 		}
 		

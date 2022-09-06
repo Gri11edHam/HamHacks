@@ -130,7 +130,7 @@ public class HamHacksConfig {
 		JsonObject categories = obj.getAsJsonObject("categories");
 		for(Module.Category category : Module.Category.values()) {
 			JsonObject cObj = categories.getAsJsonObject(category.name().toLowerCase(Locale.ROOT));
-			category.setPos(cObj.get("x").getAsInt(), cObj.get("y").getAsInt());
+			category.setPos(cObj.get("x").getAsFloat(), cObj.get("y").getAsFloat());
 			category.expand(cObj.get("expanded").getAsBoolean());
 		}
 		JsonObject modules = obj.getAsJsonObject("modules");

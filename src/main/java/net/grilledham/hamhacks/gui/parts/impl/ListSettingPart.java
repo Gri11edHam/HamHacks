@@ -28,7 +28,7 @@ public class ListSettingPart extends SettingPart {
 	
 	float maxWidth = 0;
 	
-	public ListSettingPart(int x, int y, Field setting, Object obj) {
+	public ListSettingPart(float x, float y, Field setting, Object obj) {
 		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 18, setting, obj);
 		updateList();
 	}
@@ -69,10 +69,10 @@ public class ListSettingPart extends SettingPart {
 				maxWidth = Math.max(maxWidth, strSetPart.getWidth() + bPart.getWidth());
 			}
 			for(i = 0; i < stringParts.size(); i++) {
-				stringParts.get(i).moveTo((int)(x + width - maxWidth - 2), y + height * (i + 1));
-				removeButtons.get(i).moveTo((int)(x + width - maxWidth + stringParts.get(i).getWidth()), y + height * (i + 1));
+				stringParts.get(i).moveTo(x + width - maxWidth - 2, y + height * (i + 1));
+				removeButtons.get(i).moveTo(x + width - maxWidth + stringParts.get(i).getWidth(), y + height * (i + 1));
 			}
-			addButton = new ButtonPart("+", (int)(x + width - maxWidth), y + height * (i + 1), (int)maxWidth, height, () -> {
+			addButton = new ButtonPart("+", x + width - maxWidth, y + height * (i + 1), maxWidth, height, () -> {
 				try {
 					((StringList)setting.get(obj)).getList().add("");
 				} catch(IllegalAccessException e) {
@@ -86,27 +86,27 @@ public class ListSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public void resize(int maxW, int maxH) {
+	public void resize(float maxW, float maxH) {
 		super.resize(maxW, maxH);
 		updateList();
 	}
 	
 	@Override
-	public void moveTo(int x, int y) {
+	public void moveTo(float x, float y) {
 		super.moveTo(x, y);
 		updateList();
 	}
 	
 	@Override
-	public void moveBy(int x, int y) {
+	public void moveBy(float x, float y) {
 		super.moveBy(x, y);
 		updateList();
 	}
 	
 	@Override
-	protected void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	protected void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -148,9 +148,9 @@ public class ListSettingPart extends SettingPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	protected void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * selectionAnimation, ClickGUI.getInstance().scale);
@@ -177,9 +177,9 @@ public class ListSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(selected) {
 			for(int i = 0; i < stringParts.size(); i++) {
 				if(stringParts.get(i).click(mx, my, scrollX, scrollY, button)) {
@@ -200,9 +200,9 @@ public class ListSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		super.release(mx, my, scrollX, scrollY, button);
 		try {
 			if(selected) {

@@ -15,17 +15,17 @@ public class ScrollablePart extends GuiPart {
 	
 	private float scroll = 0;
 	
-	private int maxHeight;
+	private float maxHeight;
 	
 	private final List<GuiPart> subParts = new ArrayList<>();
 	private final HashMap<GuiPart, Boolean> isPartEnabled = new HashMap<>();
 	
-	public ScrollablePart(int x, int y, int width, int maxHeight) {
+	public ScrollablePart(float x, float y, float width, float maxHeight) {
 		super(x, y, width, 0);
 		this.maxHeight = maxHeight;
 	}
 	
-	public void setMaxHeight(int maxHeight) {
+	public void setMaxHeight(float maxHeight) {
 		this.maxHeight = maxHeight;
 	}
 	
@@ -57,9 +57,9 @@ public class ScrollablePart extends GuiPart {
 	}
 	
 	@Override
-	protected void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	protected void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		
 		RenderUtil.adjustScissor(x, y, width, height, ClickGUI.getInstance().scale);
@@ -68,7 +68,7 @@ public class ScrollablePart extends GuiPart {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				part.draw(stack, mx, my, scrollX, (int)(scrollY - scroll + trueHeight), partialTicks);
+				part.draw(stack, mx, my, scrollX, scrollY - scroll + trueHeight, partialTicks);
 				trueHeight += part.getHeight();
 			}
 		}
@@ -77,7 +77,7 @@ public class ScrollablePart extends GuiPart {
 		
 		stack.pop();
 		
-		height = (int)Math.min(trueHeight, maxHeight);
+		height = Math.min(trueHeight, maxHeight);
 		
 		if(nextScroll > trueHeight - height) {
 			nextScroll = trueHeight - height;
@@ -89,9 +89,9 @@ public class ScrollablePart extends GuiPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	protected void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		
 		RenderUtil.pushScissor(x, y, width, height, ClickGUI.getInstance().scale);
@@ -100,7 +100,7 @@ public class ScrollablePart extends GuiPart {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				part.drawTop(stack, mx, my, scrollX, (int)(scrollY - scroll + trueHeight), partialTicks);
+				part.drawTop(stack, mx, my, scrollX, scrollY - scroll + trueHeight, partialTicks);
 				trueHeight += part.getHeight();
 			}
 		}
@@ -111,7 +111,7 @@ public class ScrollablePart extends GuiPart {
 	}
 	
 	@Override
-	public void moveBy(int x, int y) {
+	public void moveBy(float x, float y) {
 		super.moveBy(x, y);
 		for(GuiPart part : subParts) {
 			part.moveBy(x, y);
@@ -119,7 +119,7 @@ public class ScrollablePart extends GuiPart {
 	}
 	
 	@Override
-	public void moveTo(int x, int y) {
+	public void moveTo(float x, float y) {
 		super.moveTo(x, y);
 		for(GuiPart part : subParts) {
 			part.moveTo(x, y);
@@ -127,7 +127,7 @@ public class ScrollablePart extends GuiPart {
 	}
 	
 	@Override
-	public void resize(int maxW, int maxH) {
+	public void resize(float maxW, float maxH) {
 		super.resize(maxW, maxH);
 		for(GuiPart part : subParts) {
 			part.resize(maxW, part.getHeight());
@@ -135,45 +135,45 @@ public class ScrollablePart extends GuiPart {
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
+	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				if(part.click(mx, my, scrollX, (int)(scrollY - scroll + trueHeight), button)) {
+				if(part.click(mx, my, scrollX, scrollY - scroll + trueHeight, button)) {
 					return true;
 				}
 				trueHeight += part.getHeight();
 			}
 		}
-		return super.click(mx, my, scrollX, (int)(scrollY - scroll), button);
+		return super.click(mx, my, scrollX, scrollY - scroll, button);
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				if(part.release(mx, my, scrollX, (int)(scrollY - scroll + trueHeight), button)) {
+				if(part.release(mx, my, scrollX, scrollY - scroll + trueHeight, button)) {
 					return true;
 				}
 				trueHeight += part.getHeight();
 			}
 		}
-		return super.release(mx, my, scrollX, (int)(scrollY - scroll), button);
+		return super.release(mx, my, scrollX, scrollY - scroll, button);
 	}
 	
 	@Override
-	public boolean drag(double mx, double my, int scrollX, int scrollY, int button, double dx, double dy) {
+	public boolean drag(double mx, double my, float scrollX, float scrollY, int button, double dx, double dy) {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				if(part.drag(mx, my, scrollX, (int)(scrollY - scroll + trueHeight), button, dx, dy)) {
+				if(part.drag(mx, my, scrollX, scrollY - scroll + trueHeight, button, dx, dy)) {
 					return true;
 				}
 				trueHeight += part.getHeight();
 			}
 		}
-		return super.drag(mx, my, scrollX, (int)(scrollY - scroll), button, dx, dy);
+		return super.drag(mx, my, scrollX, scrollY - scroll, button, dx, dy);
 	}
 	
 	@Override
@@ -201,14 +201,14 @@ public class ScrollablePart extends GuiPart {
 	}
 	
 	@Override
-	public boolean scroll(double mx, double my, int scrollX, int scrollY, double delta) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean scroll(double mx, double my, float scrollX, float scrollY, double delta) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			float trueHeight = 0;
 			for(GuiPart part : subParts) {
 				if(isPartEnabled.get(part)) {
-					if(part.scroll(mx, my, scrollX, (int)(scrollY - scroll + trueHeight), delta)) {
+					if(part.scroll(mx, my, scrollX, scrollY - scroll + trueHeight, delta)) {
 						return true;
 					}
 					trueHeight += part.getHeight();

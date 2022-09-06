@@ -16,7 +16,7 @@ public abstract class SettingPart extends GuiPart {
 	protected final Field setting;
 	protected final Object obj;
 	
-	public SettingPart(int x, int y, int width, Field setting, Object obj) {
+	public SettingPart(float x, float y, float width, Field setting, Object obj) {
 		super(x, y, width, 16);
 		this.setting = setting;
 		this.obj = obj;
@@ -31,9 +31,9 @@ public abstract class SettingPart extends GuiPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	protected void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
 		
@@ -57,9 +57,9 @@ public abstract class SettingPart extends GuiPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			hasClicked = true;
 		}

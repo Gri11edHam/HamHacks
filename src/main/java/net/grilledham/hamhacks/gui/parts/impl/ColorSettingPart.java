@@ -32,7 +32,7 @@ public class ColorSettingPart extends SettingPart {
 	private double dragStartX = -1;
 	private double dragStartY = -1;
 	
-	public ColorSettingPart(int x, int y, Field setting, Object obj) {
+	public ColorSettingPart(float x, float y, Field setting, Object obj) {
 		super(x, y, 16, setting, obj);
 		try {
 			chroma = ((Color)setting.get(obj)).getChroma();
@@ -41,7 +41,7 @@ public class ColorSettingPart extends SettingPart {
 			Field finalSetting = setting;
 			chromaPart = new BoolSettingPart(x, y, chromaField, this) {
 				@Override
-				public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
+				public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
 					if(super.release(mx, my, scrollX, scrollY, button)) {
 						try {
 							((Color)finalSetting.get(finalObj)).setChroma(chroma);
@@ -98,9 +98,9 @@ public class ColorSettingPart extends SettingPart {
 	}
 	
 	@Override
-	protected void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	protected void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		try {
 			stack.push();
 			RenderUtil.preRender();
@@ -139,9 +139,9 @@ public class ColorSettingPart extends SettingPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	protected void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		try {
 			stack.push();
 			float w = 220;
@@ -229,28 +229,28 @@ public class ColorSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public void moveTo(int x, int y) {
+	public void moveTo(float x, float y) {
 		super.moveTo(x, y);
 		chromaPart.moveTo(x + width - 220 , y + height + 122 - chromaPart.getHeight() - 1);
 		hexValPart.moveTo(x + width - hexValPart.getWidth() - 1, y + height + 122 - hexValPart.getHeight() - 1);
 	}
 	
 	@Override
-	public void moveBy(int x, int y) {
+	public void moveBy(float x, float y) {
 		super.moveBy(x, y);
 		chromaPart.moveBy(x, y);
 		hexValPart.moveBy(x, y);
 	}
 	
 	@Override
-	public void resize(int maxW, int maxH) {
+	public void resize(float maxW, float maxH) {
 		super.resize(maxW, maxH);
 		chromaPart.moveTo(x + width - 220 , y + height + 122 - chromaPart.getHeight() - 1);
 		hexValPart.moveTo(x + width - hexValPart.getWidth() - 1, y + height + 122 - hexValPart.getHeight() - 1);
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
+	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
 		dragging = true;
 		dragStartX = mx;
 		dragStartY = my;
@@ -267,9 +267,9 @@ public class ColorSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		super.release(mx, my, scrollX, scrollY, button);
 		boolean wasDragging = dragging;
 		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {

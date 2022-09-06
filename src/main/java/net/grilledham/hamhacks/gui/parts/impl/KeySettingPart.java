@@ -16,14 +16,14 @@ public class KeySettingPart extends SettingPart {
 	
 	private boolean listening = false;
 	
-	public KeySettingPart(int x, int y, Field setting, Object obj) {
+	public KeySettingPart(float x, float y, Field setting, Object obj) {
 		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString() + " [________________]") + 4, setting, obj);
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -52,9 +52,9 @@ public class KeySettingPart extends SettingPart {
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			
@@ -67,9 +67,9 @@ public class KeySettingPart extends SettingPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		super.release(mx, my, scrollX, scrollY, button);
 		try {
 			if(listening) {

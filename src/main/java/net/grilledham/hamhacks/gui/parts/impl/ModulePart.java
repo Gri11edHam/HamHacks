@@ -21,16 +21,16 @@ public class ModulePart extends GuiPart {
 	private final Module module;
 	private final Screen parent;
 	
-	public ModulePart(Screen parent, int x, int y, int width, int height, Module module) {
+	public ModulePart(Screen parent, float x, float y, float width, float height, Module module) {
 		super(x, y, width, height);
 		this.module = module;
 		this.parent = parent;
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -73,7 +73,7 @@ public class ModulePart extends GuiPart {
 	}
 	
 	@Override
-	protected void renderTop(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
+	protected void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 		if(module.hasToolTip()) {
 			if(tooltipAnimation >= 1 && !hasClicked) {
@@ -83,9 +83,9 @@ public class ModulePart extends GuiPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			hasClicked = true;
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {

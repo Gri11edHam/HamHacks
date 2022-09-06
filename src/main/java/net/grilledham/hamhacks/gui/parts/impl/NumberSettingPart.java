@@ -23,7 +23,7 @@ public class NumberSettingPart extends SettingPart {
 	@StringSetting(name = "")
 	public String strVal;
 	
-	public NumberSettingPart(int x, int y, Field setting, Object obj) {
+	public NumberSettingPart(float x, float y, Field setting, Object obj) {
 		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 314, setting, obj);
 		try {
 			updateValue();
@@ -58,9 +58,9 @@ public class NumberSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, int scrollX, int scrollY, float partialTicks) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		
@@ -124,27 +124,27 @@ public class NumberSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public void moveTo(int x, int y) {
+	public void moveTo(float x, float y) {
 		super.moveTo(x, y);
 		editor.moveTo(x + width - 207 - editor.getWidth(), y);
 	}
 	
 	@Override
-	public void moveBy(int x, int y) {
+	public void moveBy(float x, float y) {
 		super.moveBy(x, y);
 		editor.moveBy(x, y);
 	}
 	
 	@Override
-	public void resize(int maxW, int maxH) {
+	public void resize(float maxW, float maxH) {
 		super.resize(maxW, maxH);
 		editor.moveTo(x + width - 207 - editor.getWidth(), y);
 	}
 	
 	@Override
-	public boolean click(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		if(editor.click(mx, my, scrollX, scrollY, button)) {
 			return true;
 		}
@@ -162,9 +162,9 @@ public class NumberSettingPart extends SettingPart {
 	}
 	
 	@Override
-	public boolean release(double mx, double my, int scrollX, int scrollY, int button) {
-		int x = this.x + scrollX;
-		int y = this.y + scrollY;
+	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		super.release(mx, my, scrollX, scrollY, button);
 		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT && dragging) {
 			dragging = false;
