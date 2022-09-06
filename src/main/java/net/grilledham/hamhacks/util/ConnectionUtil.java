@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.util;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.event.events.EventPacket;
+import net.grilledham.hamhacks.mixininterface.IIntegratedServer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
@@ -49,6 +50,9 @@ public class ConnectionUtil {
 	}
 	
 	public static long getTimeSinceLastTick() {
+		if(MinecraftClient.getInstance().isPaused() && MinecraftClient.getInstance().isInSingleplayer() && !((IIntegratedServer)MinecraftClient.getInstance().getServer()).isOpenToLAN()) {
+			return 0;
+		}
 		long now = System.currentTimeMillis();
 		if(now - joinedGameAt < 2000) {
 			return 0;
@@ -62,6 +66,10 @@ public class ConnectionUtil {
 		}
 		if(System.currentTimeMillis() - joinedGameAt < 2000) {
 			return 20;
+		}
+		
+		if(MinecraftClient.getInstance().isPaused() && MinecraftClient.getInstance().isInSingleplayer() && !((IIntegratedServer)MinecraftClient.getInstance().getServer()).isOpenToLAN()) {
+			return tickRate;
 		}
 		
 		float elapsedTime = (System.currentTimeMillis() - lastPacketReceivedAt) / 1000f;
