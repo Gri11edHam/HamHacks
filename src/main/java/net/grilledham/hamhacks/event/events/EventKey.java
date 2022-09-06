@@ -1,8 +1,8 @@
 package net.grilledham.hamhacks.event.events;
 
-import net.grilledham.hamhacks.event.Event;
+import net.grilledham.hamhacks.event.EventCancelable;
 
-public class EventKey extends Event {
+public class EventKey extends EventCancelable {
 	
 	public final long handle;
 	public final int key;

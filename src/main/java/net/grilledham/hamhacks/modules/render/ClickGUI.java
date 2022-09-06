@@ -51,6 +51,6 @@ public class ClickGUI extends Module {
 	}
 	
 	public boolean moveInScreen(Screen currentScreen) {
-		return currentScreen instanceof ClickGUIScreen || currentScreen instanceof ModuleSettingsScreen;
+		return currentScreen instanceof ClickGUIScreen || currentScreen instanceof ModuleSettingsScreen || currentScreen == null;
 	}
 }

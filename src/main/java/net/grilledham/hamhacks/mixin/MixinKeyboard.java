@@ -10,8 +10,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Keyboard.class)
 public class MixinKeyboard {
 	
-	@Inject(method = "onKey", at = @At("HEAD"))
+	@Inject(method = "onKey", at = @At("HEAD"), cancellable = true)
 	private void keyPressed(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
-		new EventKey(window, key, scancode, action, modifiers).call();
+		EventKey event = new EventKey(window, key, scancode, action, modifiers);
+		event.call();
+		if(event.canceled) {
+			ci.cancel();
+		}
 	}
 }

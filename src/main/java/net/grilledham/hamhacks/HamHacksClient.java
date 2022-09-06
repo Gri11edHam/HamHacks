@@ -82,6 +82,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new Timer());
 		ModuleManager.register(new Zoom());
 		ModuleManager.register(new NoTelemetry());
+		ModuleManager.register(new Freecam());
 		
 //		ModuleManager.register(new TestModule()); // For testing
 	}
