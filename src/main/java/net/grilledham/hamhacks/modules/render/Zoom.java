@@ -101,6 +101,11 @@ public class Zoom extends Module {
 		INSTANCE = this;
 	}
 	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + String.format("%.2f", smoothZoom ? zoomAmount : zoom);
+	}
+	
 	public static Zoom getInstance() {
 		return INSTANCE;
 	}

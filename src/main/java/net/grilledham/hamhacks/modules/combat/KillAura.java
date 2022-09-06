@@ -52,6 +52,11 @@ public class KillAura extends Module {
 		super(Text.translatable("hamhacks.module.killAura"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
 	}
 	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + String.format("%.2f", range);
+	}
+	
 	@EventListener
 	public void onTick(EventTick e) {
 		if(mc.world == null) {

@@ -24,6 +24,11 @@ public class Step extends Module {
 	}
 	
 	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + String.format("%.2f", height);
+	}
+	
+	@Override
 	public void onEnable() {
 		super.onEnable();
 		originalStepHeight = mc.player.stepHeight;

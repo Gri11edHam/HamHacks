@@ -57,6 +57,11 @@ public class Fly extends Module {
 	}
 	
 	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + Text.translatable(mode.get()).getString();
+	}
+	
+	@Override
 	public void onEnable() {
 		super.onEnable();
 		Speed.getInstance().forceDisable();

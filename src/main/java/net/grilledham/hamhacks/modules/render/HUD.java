@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.modules.render;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.ColorSetting;
@@ -90,6 +91,11 @@ public class HUD extends Module {
 	
 	public static HUD getInstance() {
 		return INSTANCE;
+	}
+	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + ModuleManager.getModules().stream().filter(Module::isEnabled).toList().size() + "|" + ModuleManager.getModules().size();
 	}
 	
 	public void applyHandTransform(LivingEntity entity, ItemStack stack, ModelTransformation.Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {

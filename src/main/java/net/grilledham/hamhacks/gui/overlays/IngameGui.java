@@ -110,9 +110,9 @@ public class IngameGui {
 		}
 		if(HUD.getInstance().showModules) {
 			yAdd = 0;
-			for(Module m : ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getName()), MinecraftClient.getInstance().textRenderer.getWidth(a.getName()))).collect(Collectors.toList())) {
+			for(Module m : ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getHUDText()), MinecraftClient.getInstance().textRenderer.getWidth(a.getHUDText()))).collect(Collectors.toList())) {
 				if(m.isEnabled() && m.shouldShowModule()) {
-					yAdd += drawRightAligned(matrices, tickDelta, fontRenderer, m.getName(), i, yAdd);
+					yAdd += drawRightAligned(matrices, tickDelta, fontRenderer, m.getHUDText(), i, yAdd);
 					i++;
 				}
 			}

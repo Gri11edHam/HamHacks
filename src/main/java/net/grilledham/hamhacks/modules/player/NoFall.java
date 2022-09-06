@@ -20,6 +20,11 @@ public class NoFall extends Module {
 		super(Text.translatable("hamhacks.module.noFall"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
 	}
 	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + Text.translatable(mode.get()).getString();
+	}
+	
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {

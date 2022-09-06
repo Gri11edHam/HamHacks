@@ -119,6 +119,10 @@ public class Module {
 		lastEnabled = enabled;
 	}
 	
+	public String getHUDText() {
+		return getName();
+	}
+	
 	public enum Category {
 		MOVEMENT(Text.translatable("hamhacks.category.movement")),
 		COMBAT(Text.translatable("hamhacks.category.combat")),

@@ -23,6 +23,11 @@ public class Timer extends Module {
 		super(Text.translatable("hamhacks.module.timer"), Category.WORLD, new Keybind(0));
 	}
 	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + String.format("%.2f", speed);
+	}
+	
 	@EventListener
 	public void onTick(EventTick e) {
 		if(imc.getRenderTickCounter().getTPS() != speed) {

@@ -38,4 +38,9 @@ public class InstantKillBow extends Module {
 			}
 		}
 	}
+	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + (int)iterations;
+	}
 }

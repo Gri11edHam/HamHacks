@@ -31,6 +31,11 @@ public class Fullbright extends Module {
 		INSTANCE = this;
 	}
 	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + (int)brightness;
+	}
+	
 	public static Fullbright getInstance() {
 		return INSTANCE;
 	}

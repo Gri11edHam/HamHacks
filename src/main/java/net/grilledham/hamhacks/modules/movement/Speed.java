@@ -68,6 +68,11 @@ public class Speed extends Module {
 		INSTANCE = this;
 	}
 	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + String.format("%.2f", speed);
+	}
+	
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {

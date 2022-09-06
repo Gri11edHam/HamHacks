@@ -33,4 +33,9 @@ public class Reach extends Module {
 	public static Reach getInstance() {
 		return INSTANCE;
 	}
+	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + String.format("%.2f|%.2f", entityRange, blockRange);
+	}
 }
