@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.modules;
 
 import com.google.common.collect.Lists;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,5 +32,9 @@ public class ModuleManager {
 	
 	public static void updateEnabled() {
 		modules.forEach(Module::updateEnabled);
+	}
+	
+	public static void sortModules(Comparator<Module> comparator) {
+		modules.sort(comparator);
 	}
 }

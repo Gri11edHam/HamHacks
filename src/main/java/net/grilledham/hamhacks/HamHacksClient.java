@@ -20,6 +20,8 @@ import net.grilledham.hamhacks.modules.world.Timer;
 import net.grilledham.hamhacks.util.*;
 import org.slf4j.Logger;
 
+import java.util.Comparator;
+
 @Environment(EnvType.CLIENT)
 public class HamHacksClient implements ClientModInitializer {
 	
@@ -83,6 +85,8 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new Zoom());
 		ModuleManager.register(new NoTelemetry());
 		ModuleManager.register(new Freecam());
+		
+		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 		
 //		ModuleManager.register(new TestModule()); // For testing
 	}
