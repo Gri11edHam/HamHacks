@@ -10,8 +10,8 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
+import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerSpawnS2CPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -83,10 +83,8 @@ public class Freecam extends Module {
 	
 	@EventListener
 	public void onJoin(EventPacket.EventPacketReceived e) {
-		if(e.packet instanceof PlayerSpawnS2CPacket) {
-			if(((PlayerSpawnS2CPacket)e.packet).getPlayerUuid() == mc.cameraEntity.getUuid()) {
-				toggle();
-			}
+		if(e.packet instanceof GameJoinS2CPacket) {
+			toggle();
 		} else if(e.packet instanceof PlayerRespawnS2CPacket) {
 			toggle();
 		}
