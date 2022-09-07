@@ -76,7 +76,6 @@ public class HamHacksConfig {
 				JsonObject mod = new JsonObject();
 				JsonObject modSettings = new JsonObject();
 				SettingHelper.addSaveData(m, modSettings);
-//				addSettings(modSettings, m.getSettings());
 				mod.add("settings", modSettings);
 				modules.add(m.getConfigName(), mod);
 			}
@@ -87,29 +86,6 @@ public class HamHacksConfig {
 			ex.printStackTrace();
 		}
 	}
-	
-//	private static void addSettings(JsonObject obj, List<Setting<?>> settings) {
-//		for(Setting<?> s : settings) {
-//			if(s != null) {
-//				addSetting(obj, s);
-//			}
-//		}
-//	}
-	
-//	private static void addSettings(JsonArray obj, List<Setting<?>> settings) {
-//		for(Setting<?> s : settings) {
-//			if(s != null) {
-//				JsonObject setting = new JsonObject();
-//				setting.addProperty("name", s.getName());
-//				addSetting(setting, s);
-//				obj.add(setting);
-//			}
-//		}
-//	}
-	
-//	private static void addSetting(JsonObject obj, Setting<?> s) {
-//		obj.add(s.getKey(), s.getAsJsonObject().get(s.getKey()));
-//	}
 	
 	private static void parseSettings(JsonObject obj) {
 		int configVersion = obj.has("config_version") ? obj.get("config_version").getAsInt() : -1;
@@ -142,36 +118,11 @@ public class HamHacksConfig {
 				}
 				JsonObject modSettings = mod.getAsJsonObject("settings");
 				SettingHelper.parseSaveData(m, modSettings);
-//				parseSettings(modSettings, m.getSettings());
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
-//	private static void parseSettings(JsonObject obj, List<Setting<?>> settings) {
-//		try {
-//			for(Setting<?> s : settings) {
-//				try {
-//					parseSetting(obj, s);
-//				} catch(Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		} catch(ConcurrentModificationException e) {
-//			parseSettings(obj, settings);
-//		}
-//	}
-	
-//	private static void parseSetting(JsonObject obj, Setting<?> s) {
-//		if(obj.has(s.getKey())) {
-//			try {
-//				s.set(obj.get(s.getKey()));
-//			} catch(Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
 	
 	public static void writeToFile(File file, JsonObject object) {
 		if (file == null || (file.exists() && file.isDirectory()))
@@ -190,29 +141,6 @@ public class HamHacksConfig {
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-	
-	public static <T> T readFromJson(File file, Class<T> c) {
-		try {
-			FileInputStream fileInputStream = new FileInputStream(file);
-			InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-			
-			StringBuilder builder = new StringBuilder();
-			
-			String line;
-			while((line = bufferedReader.readLine()) != null) {
-				builder.append(line);
-			}
-			bufferedReader.close();
-			inputStreamReader.close();
-			fileInputStream.close();
-			
-			return HamHacksClient.GSON.fromJson(builder.toString(), c);
-		} catch(IOException e) {
-			e.printStackTrace();
-			return null;
 		}
 	}
 }
