@@ -82,7 +82,6 @@ public class BoolSettingPart extends SettingPart {
 					e.printStackTrace();
 				}
 			}
-			return true;
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
 	}

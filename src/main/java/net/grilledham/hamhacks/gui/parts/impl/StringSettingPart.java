@@ -62,7 +62,7 @@ public class StringSettingPart extends SettingPart {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		selectionStart = Math.min(Math.max(selectionStart, -1), getValue().length());
-		selectionEnd = Math.min(Math.max(selectionEnd, selectionStart), getValue().length());
+		selectionEnd = Math.min(Math.max(selectionEnd, -1), getValue().length());
 		cursorPos = Math.min(Math.max(cursorPos, 0), getValue().length());
 		if(!selected) {
 			stringScroll = getValue().length();
@@ -95,7 +95,7 @@ public class StringSettingPart extends SettingPart {
 		
 		if(selectionStart > -1) {
 			int selectionColor = 0x804040c0;
-			RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(selectionStart)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, mc.textRenderer.getWidth(getValue().substring(selectionStart, selectionEnd)), mc.textRenderer.fontHeight + 1, selectionColor);
+			RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(getSelectionStart())) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, mc.textRenderer.getWidth(getValue().substring(getSelectionStart(), getSelectionEnd())), mc.textRenderer.fontHeight + 1, selectionColor);
 		}
 		
 		RenderUtil.popScissor();
@@ -117,9 +117,15 @@ public class StringSettingPart extends SettingPart {
 					stringScroll += partialTicks;
 				}
 				stringScroll = Math.min(Math.max(stringScroll, 0), currentInput.length());
-				selectionEnd = cursorPos;
 				
-				selectionStart = Math.min(Math.max(Math.round((dragStartX - stringX) / (MinecraftClient.getInstance().textRenderer.getWidth(currentInput) / (float)currentInput.length())), 0), currentInput.length());
+				int start = Math.min(Math.max(Math.round((dragStartX - stringX) / (MinecraftClient.getInstance().textRenderer.getWidth(currentInput) / (float)currentInput.length())), 0), currentInput.length());
+				if(cursorPos < start) {
+					selectionEnd = start;
+					selectionStart = cursorPos;
+				} else {
+					selectionEnd = cursorPos;
+					selectionStart = start;
+				}
 			}
 		}
 		
@@ -176,10 +182,12 @@ public class StringSettingPart extends SettingPart {
 			}
 			stringScroll = Math.min(Math.max(stringScroll, 0), currentInput.length());
 			selected = true;
+			ClickGUI.getInstance().typing = true;
 			return true;
 		} else if(selected && selectionStart <= -1) {
 			selected = false;
-			return true;
+			ClickGUI.getInstance().typing = false;
+			return false;
 		} else if(selected) {
 			return true;
 		}
@@ -190,13 +198,16 @@ public class StringSettingPart extends SettingPart {
 	public boolean type(int code, int scanCode, int modifiers) {
 		if(selected) {
 			switch(code) {
-				case GLFW.GLFW_KEY_ESCAPE -> selected = false;
+				case GLFW.GLFW_KEY_ESCAPE, GLFW.GLFW_KEY_ENTER -> {
+					selected = false;
+					ClickGUI.getInstance().typing = false;
+				}
 				case GLFW.GLFW_KEY_BACKSPACE -> {
 					if(selectionStart > -1) {
-						String first = getValue().substring(0, selectionStart);
-						String last = getValue().substring(selectionEnd);
+						String first = getValue().substring(0, getSelectionStart());
+						String last = getValue().substring(getSelectionEnd());
+						cursorPos = getSelectionStart();
 						selectionStart = -1;
-						cursorPos = selectionEnd;
 						updateValue(first + last);
 						break;
 					}
@@ -219,10 +230,10 @@ public class StringSettingPart extends SettingPart {
 				}
 				case GLFW.GLFW_KEY_DELETE -> {
 					if(selectionStart > -1) {
-						String first = getValue().substring(0, selectionStart);
-						String last = getValue().substring(selectionEnd);
+						String first = getValue().substring(0, getSelectionStart());
+						String last = getValue().substring(getSelectionEnd());
+						cursorPos = getSelectionStart();
 						selectionStart = -1;
-						cursorPos = selectionEnd;
 						updateValue(first + last);
 						break;
 					}
@@ -241,19 +252,27 @@ public class StringSettingPart extends SettingPart {
 					updateValue(first + last.toString().trim());
 				}
 				case GLFW.GLFW_KEY_LEFT -> {
-					if(modifiers == 1) {
+					if((modifiers & 1) == 1) {
 						if(selectionStart <= -1) {
 							selectionEnd = cursorPos;
-						}
-						cursorPos--;
-						if(cursorPos > -1) {
 							selectionStart = cursorPos;
 						}
+						if((modifiers & 2) == 2) {
+							String first = getValue().substring(0, cursorPos).trim();
+							cursorPos = first.lastIndexOf(" ");
+						} else {
+							cursorPos--;
+						}
+						if(cursorPos <= -1) {
+							cursorPos = 0;
+						}
+						selectionEnd = cursorPos;
 						break;
 					}
 					if(selectionStart > -1) {
-						cursorPos = selectionStart;
+						cursorPos = getSelectionStart();
 						selectionStart = -1;
+						break;
 					}
 					if(modifiers == 2) {
 						String first = getValue().substring(0, cursorPos).trim();
@@ -263,17 +282,25 @@ public class StringSettingPart extends SettingPart {
 					cursorPos--;
 				}
 				case GLFW.GLFW_KEY_RIGHT -> {
-					if(modifiers == 1) {
+					if((modifiers & 1) == 1) {
 						if(selectionStart <= -1) {
 							selectionStart = cursorPos;
+							selectionEnd = cursorPos;
 						}
-						cursorPos++;
+						if((modifiers & 2) == 2) {
+							String first = getValue().substring(0, cursorPos);
+							String last = getValue().substring(cursorPos).trim() + " ";
+							cursorPos = first.length() + last.indexOf(" ") + 1;
+						} else {
+							cursorPos++;
+						}
 						selectionEnd = cursorPos;
 						break;
 					}
 					if(selectionStart > -1) {
-						cursorPos = selectionEnd;
+						cursorPos = getSelectionEnd();
 						selectionStart = -1;
+						break;
 					}
 					if(modifiers == 2) {
 						String first = getValue().substring(0, cursorPos);
@@ -289,24 +316,24 @@ public class StringSettingPart extends SettingPart {
 					if(modifiers == 2) {
 						selectionStart = 0;
 						selectionEnd = getValue().length();
-						cursorPos = selectionEnd;
+						cursorPos = getSelectionEnd();
 					}
 				}
 				case GLFW.GLFW_KEY_C -> {
 					if(modifiers == 2) {
 						if(selectionStart > -1) {
-							mc.keyboard.setClipboard(getValue().substring(selectionStart, selectionEnd));
+							mc.keyboard.setClipboard(getValue().substring(getSelectionStart(), getSelectionEnd()));
 						}
 					}
 				}
 				case GLFW.GLFW_KEY_X -> {
 					if(modifiers == 2) {
 						if(selectionStart > -1) {
-							mc.keyboard.setClipboard(getValue().substring(selectionStart, selectionEnd));
+							mc.keyboard.setClipboard(getValue().substring(getSelectionStart(), getSelectionEnd()));
 							
-							cursorPos = selectionStart;
-							String first = getValue().substring(0, selectionStart);
-							String last = getValue().substring(selectionEnd);
+							cursorPos = getSelectionStart();
+							String first = getValue().substring(0, getSelectionStart());
+							String last = getValue().substring(getSelectionEnd());
 							selectionStart = -1;
 							updateValue(first + last);
 						}
@@ -315,9 +342,9 @@ public class StringSettingPart extends SettingPart {
 				case GLFW.GLFW_KEY_V -> {
 					if(modifiers == 2) {
 						if(selectionStart > -1) {
-							cursorPos = selectionStart;
-							String first = getValue().substring(0, selectionStart);
-							String last = getValue().substring(selectionEnd);
+							cursorPos = getSelectionStart();
+							String first = getValue().substring(0, getSelectionStart());
+							String last = getValue().substring(getSelectionEnd());
 							selectionStart = -1;
 							updateValue(first + last);
 						}
@@ -329,9 +356,12 @@ public class StringSettingPart extends SettingPart {
 					}
 				}
 			}
+			if(selectionStart == selectionEnd) {
+				selectionStart = -1;
+			}
 			cursorPos = Math.min(Math.max(cursorPos, 0), getValue().length());
 			selectionStart = Math.min(Math.max(selectionStart, -1), getValue().length());
-			selectionEnd = Math.min(Math.max(selectionEnd, selectionStart), getValue().length());
+			selectionEnd = Math.min(Math.max(selectionEnd, -1), getValue().length());
 			stringScroll = Math.min(Math.max(stringScroll, 0), getValue().length());
 			float cursorX = x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll));
 			while(cursorX < x + width - 102) {
@@ -347,7 +377,7 @@ public class StringSettingPart extends SettingPart {
 			stringScroll = Math.min(Math.max(stringScroll, 0), getValue().length());
 			cursorShown = true;
 			cursorAnimation = 1;
-			return true;
+			return selected;
 		}
 		return super.type(code, scanCode, modifiers);
 	}
@@ -356,9 +386,9 @@ public class StringSettingPart extends SettingPart {
 	public boolean typeChar(char c, int modifiers) {
 		if(selected) {
 			if(selectionStart > -1) {
-				String first = getValue().substring(0, selectionStart);
-				String last = getValue().substring(selectionEnd);
-				cursorPos = selectionStart;
+				String first = getValue().substring(0, getSelectionStart());
+				String last = getValue().substring(getSelectionEnd());
+				cursorPos = getSelectionStart();
 				selectionStart = -1;
 				updateValue(first + last);
 			}
@@ -370,9 +400,17 @@ public class StringSettingPart extends SettingPart {
 			stringScroll++;
 			cursorShown = true;
 			cursorAnimation = 1;
-			return true;
+			return selected;
 		}
 		return super.typeChar(c, modifiers);
+	}
+	
+	private int getSelectionStart() {
+		return Math.min(selectionStart, selectionEnd);
+	}
+	
+	private int getSelectionEnd() {
+		return Math.max(selectionStart, selectionEnd);
 	}
 	
 	public void updateValue(String value) {

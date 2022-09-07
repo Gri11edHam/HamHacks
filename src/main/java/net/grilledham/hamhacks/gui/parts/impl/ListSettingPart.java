@@ -189,11 +189,7 @@ public class ListSettingPart extends SettingPart {
 					return true;
 				}
 			}
-			if(addButton.click(mx, my, scrollX, scrollY, button)) {
-				return true;
-			}
-		}
-		if(mx >= x + width - height && mx < x + width && my >= y && my < y + height) {
+			addButton.click(mx, my, scrollX, scrollY, button);
 			return true;
 		}
 		return super.click(mx, my, scrollX, scrollY, button);
@@ -223,14 +219,16 @@ public class ListSettingPart extends SettingPart {
 					return true;
 				}
 				selected = false;
+				return false;
 			} else if(mx >= x + width - height && mx < x + width && my >= y && my < y + height) {
 				if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 					selected = true;
+					return true;
 				} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 					SettingHelper.reset(setting, obj);
 					updateList();
+					return false;
 				}
-				return true;
 			}
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
@@ -253,6 +251,7 @@ public class ListSettingPart extends SettingPart {
 				return true;
 			}
 			selected = false;
+			return false;
 		}
 		return super.type(code, scanCode, modifiers);
 	}

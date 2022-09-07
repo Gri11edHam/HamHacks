@@ -254,12 +254,8 @@ public class ColorSettingPart extends SettingPart {
 		dragging = true;
 		dragStartX = mx;
 		dragStartY = my;
-		if(chromaPart.click(mx, my, scrollX, scrollY, button)) {
-			return true;
-		}
-		if(hexValPart.click(mx, my, scrollX, scrollY, button)) {
-			return true;
-		}
+		chromaPart.click(mx, my, scrollX, scrollY, button);
+		hexValPart.click(mx, my, scrollX, scrollY, button);
 		if(selected) {
 			return true;
 		}
@@ -311,20 +307,17 @@ public class ColorSettingPart extends SettingPart {
 					}
 				}
 			}
-			if(chromaPart.release(mx, my, scrollX, scrollY, button)) {
-				return true;
-			}
-			if(hexValPart.release(mx, my, scrollX, scrollY, button)) {
-				return true;
-			}
+			chromaPart.release(mx, my, scrollX, scrollY, button);
+			hexValPart.release(mx, my, scrollX, scrollY, button);
 			if(mx >= newX && mx < newX + w && my >= newY && my < newY + h) {
 				return true;
 			}
 			selected = false;
-			return true;
+			return false;
 		} if(mx >= x + width - 18 && mx < x + width - 4 && my >= y + 4 && my < y + 12) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				selected = true;
+				return true;
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 				try {
 					SettingHelper.reset(setting, obj);
@@ -337,8 +330,8 @@ public class ColorSettingPart extends SettingPart {
 				} catch(IllegalAccessException e) {
 					e.printStackTrace();
 				}
+				return true;
 			}
-			return true;
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
 	}

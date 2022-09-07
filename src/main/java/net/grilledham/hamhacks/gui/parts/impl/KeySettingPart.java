@@ -75,14 +75,14 @@ public class KeySettingPart extends SettingPart {
 			if(listening) {
 				((Keybind)setting.get(obj)).setKey(button, true);
 				listening = false;
-				return true;
+				return false;
 			} else if(mx >= x && mx < x + width && my >= y && my < y + height) {
 				if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 					listening = true;
+					return true;
 				} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 					SettingHelper.reset(setting, obj);
 				}
-				return true;
 			}
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
@@ -103,7 +103,7 @@ public class KeySettingPart extends SettingPart {
 				e.printStackTrace();
 			}
 			listening = false;
-			return true;
+			return false;
 		}
 		return super.type(code, scanCode, modifiers);
 	}

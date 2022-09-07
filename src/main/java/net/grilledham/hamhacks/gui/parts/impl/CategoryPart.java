@@ -105,12 +105,9 @@ public class CategoryPart extends GuiPart {
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 			
 			}
-			return true;
 		}
 		if(openCloseAnimation <= 0.5f) {
-			if(scrollArea.click(mx, my, scrollX, scrollY, button)) {
-				return true;
-			}
+			scrollArea.click(mx, my, scrollX, scrollY, button);
 		}
 		return super.click(mx, my, scrollX, scrollY, button);
 	}
@@ -129,13 +126,10 @@ public class CategoryPart extends GuiPart {
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 				category.expand(!category.isExpanded());
 			}
-			return true;
 		}
 		if(!wasDragging) {
 			if(openCloseAnimation <= 0.5f) {
-				if(scrollArea.release(mx, my, scrollX, scrollY, button)) {
-					return true;
-				}
+				scrollArea.release(mx, my, scrollX, scrollY, button);
 			}
 		}
 		return super.release(mx, my, scrollX, scrollY, button);

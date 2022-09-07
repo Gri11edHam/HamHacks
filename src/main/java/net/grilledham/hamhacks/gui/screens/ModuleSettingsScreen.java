@@ -33,6 +33,7 @@ public class ModuleSettingsScreen extends Screen {
 		super.init();
 		width = (int)((width * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
 		height = (int)((height * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
+		client.keyboard.setRepeatEvents(true);
 		float maxWidth = 0;
 		topPart = new GuiPart(0, 0, client.textRenderer.getWidth(module.getName()) + 2, 16) {
 			@Override

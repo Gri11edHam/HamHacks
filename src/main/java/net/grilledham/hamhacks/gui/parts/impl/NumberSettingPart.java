@@ -85,21 +85,6 @@ public class NumberSettingPart extends SettingPart {
 		if(dragging) {
 			float newPercentage = (mx - (x + width - 204)) / (float)200;
 			float newVal = (newPercentage * (setting.getAnnotation(NumberSetting.class).max() - setting.getAnnotation(NumberSetting.class).min())) + setting.getAnnotation(NumberSetting.class).min();
-			NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
-			newVal = Math.min(Math.max(newVal, numSetting.min()), numSetting.max());
-			if(numSetting.step() != -1) {
-				float closest = numSetting.min();
-				for(float f = numSetting.min(); f < numSetting.max(); f += numSetting.step()) {
-					float newDist = Math.abs(f - newVal);
-					float oldDist = Math.abs(closest - newVal);
-					if(newDist <= oldDist) {
-						closest = f;
-					} else {
-						break;
-					}
-				}
-				newVal = closest;
-			}
 			try {
 				setting.setFloat(obj, newVal);
 				updateValue();
@@ -152,11 +137,12 @@ public class NumberSettingPart extends SettingPart {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				if(mx >= x + width - 204 && mx < x + width - 4) {
 					dragging = true;
+					return true;
 				}
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 			
 			}
-			return true;
+			return false;
 		}
 		return super.click(mx, my, scrollX, scrollY, button);
 	}
@@ -168,7 +154,7 @@ public class NumberSettingPart extends SettingPart {
 		super.release(mx, my, scrollX, scrollY, button);
 		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT && dragging) {
 			dragging = false;
-			return true;
+			return false;
 		}
 		if(editor.release(mx, my, scrollX, scrollY, button)) {
 			return true;
@@ -195,7 +181,7 @@ public class NumberSettingPart extends SettingPart {
 		roundedSetting = Math.min(Math.max(roundedSetting, numSetting.min()), numSetting.max());
 		if(numSetting.forceStep() && numSetting.step() != -1) {
 			float closest = numSetting.min();
-			for(float f = numSetting.min(); f < numSetting.max(); f += numSetting.step()) {
+			for(float f = numSetting.min(); f <= numSetting.max(); f += numSetting.step()) {
 				float newDist = Math.abs(f - roundedSetting);
 				float oldDist = Math.abs(closest - roundedSetting);
 				if(newDist <= oldDist) {

@@ -32,6 +32,8 @@ public class ClickGUI extends Module {
 	
 	private static ClickGUI INSTANCE;
 	
+	public boolean typing = false;
+	
 	public ClickGUI() {
 		super(Text.translatable("hamhacks.module.clickGui"), Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
 		INSTANCE = this;
@@ -51,6 +53,6 @@ public class ClickGUI extends Module {
 	}
 	
 	public boolean moveInScreen(Screen currentScreen) {
-		return currentScreen instanceof ClickGUIScreen || currentScreen instanceof ModuleSettingsScreen || currentScreen == null;
+		return !typing && (currentScreen instanceof ClickGUIScreen || currentScreen instanceof ModuleSettingsScreen || currentScreen == null);
 	}
 }

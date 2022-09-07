@@ -58,7 +58,6 @@ public class ButtonPart extends GuiPart {
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 			
 			}
-			return true;
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
 	}

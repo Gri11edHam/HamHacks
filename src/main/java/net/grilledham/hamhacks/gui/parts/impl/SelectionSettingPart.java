@@ -158,7 +158,6 @@ public class SelectionSettingPart extends SettingPart {
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 			
 			}
-			return true;
 		}
 		return super.click(mx, my, scrollX, scrollY, button);
 	}
@@ -173,18 +172,19 @@ public class SelectionSettingPart extends SettingPart {
 			for(GuiPart part : parts) {
 				part.release(mx, my, scrollX, scrollY, button);
 			}
-			return true;
+			return false;
 		} else if(mx >= x + width - maxWidth && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 				selected = true;
+				return true;
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 				try {
 					SettingHelper.reset(setting, obj);
 				} catch(IllegalAccessException e) {
 					e.printStackTrace();
 				}
+				return false;
 			}
-			return true;
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
 	}

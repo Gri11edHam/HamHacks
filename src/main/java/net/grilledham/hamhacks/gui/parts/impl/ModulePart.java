@@ -93,7 +93,6 @@ public class ModulePart extends GuiPart {
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 				mc.setScreen(new ModuleSettingsScreen(parent, module));
 			}
-			return true;
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
 	}
