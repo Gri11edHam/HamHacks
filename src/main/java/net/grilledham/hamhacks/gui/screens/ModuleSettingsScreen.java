@@ -140,6 +140,8 @@ public class ModuleSettingsScreen extends Screen {
 		float scaleFactor = (float)(ClickGUI.getInstance().scale / client.getWindow().getScaleFactor());
 		matrices.scale(scaleFactor, scaleFactor, scaleFactor);
 		
+		updatePartVisibility();
+		
 		super.render(matrices, mouseX, mouseY, delta);
 		
 		topPart.draw(matrices, mouseX, mouseY, 0, 0, delta);
@@ -165,9 +167,6 @@ public class ModuleSettingsScreen extends Screen {
 		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
 		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
 		if(scrollArea.release(mouseX, mouseY, 0, 0, button)) {
-			// for some reason it flickers below 180 fps when you call updatePartVisibility() every tick. I guess this works for now ¯\_(ツ)_/¯
-			// TODO: fix flickering
-			updatePartVisibility();
 			return true;
 		}
 		return super.mouseReleased(mouseX, mouseY, button);
