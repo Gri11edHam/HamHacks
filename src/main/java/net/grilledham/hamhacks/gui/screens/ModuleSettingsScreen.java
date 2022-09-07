@@ -99,14 +99,14 @@ public class ModuleSettingsScreen extends Screen {
 		scrollArea = new ScrollablePart(0, 0, 0, (int)(Math.min(height * (2 / 3f), totalHeight)));
 		scrollArea.clearParts();
 		for(GuiPart guiPart : settingParts) {
-			guiPart.moveTo(width / 2 - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f)) + yAdd));
+			guiPart.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f)) + yAdd));
 			guiPart.resize(maxWidth, guiPart.getHeight());
 			yAdd += guiPart.getHeight();
 			scrollArea.addPart(guiPart);
 		}
-		scrollArea.moveTo(width / 2 - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))));
+		scrollArea.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))));
 		scrollArea.resize(maxWidth, 0);
-		topPart.moveTo(width / 2 - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topPart.getHeight());
+		topPart.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topPart.getHeight());
 		topPart.resize(maxWidth, topPart.getHeight());
 		updatePartVisibility();
 	}
@@ -126,9 +126,9 @@ public class ModuleSettingsScreen extends Screen {
 				}
 			}
 		}
-		scrollArea.moveTo(width / 2 - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))));
+		scrollArea.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))));
 		scrollArea.resize(maxWidth, 0);
-		topPart.moveTo(width / 2 - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topPart.getHeight());
+		topPart.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topPart.getHeight());
 		topPart.resize(maxWidth, topPart.getHeight());
 	}
 	

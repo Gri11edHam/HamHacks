@@ -27,11 +27,11 @@ public class NewVersionScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		updateButton = new ButtonPart("Update", width / 2 + 1, height - 30, 100, 20, () -> {
+		updateButton = new ButtonPart("Update", width / 2f + 1, height - 30, 100, 20, () -> {
 			Updater.update();
 			MinecraftClient.getInstance().setScreen(new UpdateScreen(last));
 		});
-		cancelButton = new ButtonPart("Cancel", width / 2 - 101, height - 30, 100, 20, this::close);
+		cancelButton = new ButtonPart("Cancel", width / 2f - 101, height - 30, 100, 20, this::close);
 		int changelogHeight = (textRenderer.fontHeight + 2) * Updater.getChangelog().split("\n").length;
 		float clw = 0;
 		for(String s : Updater.getChangelog().split("\n")) {

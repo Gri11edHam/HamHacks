@@ -22,8 +22,8 @@ public class UpdateScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		continueButton = new ButtonPart("Continue", width / 2 - 101, height / 2 - 10, 100, 20, this::close);
-		exitButton = new ButtonPart("Exit", width / 2 + 1, height / 2 - 10, 100, 20, () -> MinecraftClient.getInstance().scheduleStop());
+		continueButton = new ButtonPart("Continue", width / 2f - 101, height / 2f - 10, 100, 20, this::close);
+		exitButton = new ButtonPart("Exit", width / 2f + 1, height / 2f - 10, 100, 20, () -> MinecraftClient.getInstance().scheduleStop());
 	}
 	
 	@Override

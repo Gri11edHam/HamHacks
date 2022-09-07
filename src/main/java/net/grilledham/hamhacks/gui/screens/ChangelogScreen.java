@@ -21,8 +21,8 @@ public class ChangelogScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		backButton = new ButtonPart("Back", width / 2 - 100, height - 32, 200, 20, this::close);
-		fullChangelogButton = new ButtonPart("Full Changelog", width / 2 - 100, height - 54, 200, 20, () -> client.setScreen(new FullChangelogScreen(this)));
+		backButton = new ButtonPart("Back", width / 2f - 100, height - 32, 200, 20, this::close);
+		fullChangelogButton = new ButtonPart("Full Changelog", width / 2f - 100, height - 54, 200, 20, () -> client.setScreen(new FullChangelogScreen(this)));
 	}
 	
 	@Override
