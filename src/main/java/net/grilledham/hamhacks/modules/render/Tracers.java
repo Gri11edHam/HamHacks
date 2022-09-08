@@ -7,14 +7,17 @@ import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.Color;
+import net.grilledham.hamhacks.util.SelectableList;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.ColorSetting;
+import net.grilledham.hamhacks.util.setting.SelectionSetting;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.WaterCreatureEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -30,6 +33,12 @@ import java.util.stream.Stream;
 public class Tracers extends Module {
 	
 	private final ArrayList<LivingEntity> entities = new ArrayList<>();
+	
+	@BoolSetting(name = "hamhacks.module.tracers.drawStem", defaultValue = true)
+	public boolean drawStem = true;
+	
+	@SelectionSetting(name = "hamhacks.module.tracers.endPosition")
+	public SelectableList endPos = new SelectableList("hamhacks.module.tracers.endPosition.center", "hamhacks.module.tracers.endPosition.eyes", "hamhacks.module.tracers.endPosition.center", "hamhacks.module.tracers.endPosition.feet");
 	
 	@BoolSetting(name = "hamhacks.module.tracers.tracePlayers", defaultValue = true)
 	public boolean tracePlayers = true;
@@ -108,9 +117,9 @@ public class Tracers extends Module {
 					}
 				}, new Box(mc.player.getBlockPos().add(-256, -256, -256), mc.player.getBlockPos().add(256, 256, 256)), Objects::nonNull).stream()
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
-				.filter(entity -> entity != player)
+				.filter(entity -> entity != player || Freecam.getInstance().isEnabled())
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-				.filter(entity -> (entity instanceof PlayerEntity && tracePlayers) || (entity instanceof HostileEntity && traceHostile) || (entity instanceof PassiveEntity && tracePassive));
+				.filter(entity -> (entity instanceof PlayerEntity && tracePlayers) || (entity instanceof HostileEntity && traceHostile) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && tracePassive));
 		
 		entities.addAll(stream.toList());
 	}
@@ -122,15 +131,23 @@ public class Tracers extends Module {
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
+		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 		
 		Vec3d start = getClientLookVec().add(getCameraPos());
 		
 		for(LivingEntity e : entities) {
 			Vec3d interpolationOffset = new Vec3d(e.getX(), e.getY(), e.getZ()).subtract(e.prevX, e.prevY, e.prevZ).multiply(1 - partialTicks);
-			Vec3d end = e.getBoundingBox().getCenter().subtract(interpolationOffset);
+			Vec3d endTop = e.getBoundingBox().getCenter().add(0, e.getEyeHeight(e.getPose()) / 2, 0).subtract(interpolationOffset);
+			Vec3d endCenter = e.getBoundingBox().getCenter().subtract(interpolationOffset);
+			Vec3d endBottom = e.getBoundingBox().getCenter().subtract(0, e.getEyeHeight(e.getPose()) / 2, 0).subtract(interpolationOffset);
 			
-			float f = mc.player.distanceTo(e) / 20F;
+			Vec3d end = switch(endPos.get()) {
+				case "hamhacks.module.tracers.endPosition.eyes" -> endTop;
+				case "hamhacks.module.tracers.endPosition.feet" -> endBottom;
+				default -> endCenter;
+			};
+			
+			float f = (float)(getCameraPos().distanceTo(e.getPos()) / 20F);
 			int cClose;
 			int cFar;
 			if(e instanceof PlayerEntity) {
@@ -139,7 +156,7 @@ public class Tracers extends Module {
 			} else if(e instanceof HostileEntity) {
 				cClose = hostileClose.getRGB();
 				cFar = hostileFar.getRGB();
-			} else if(e instanceof PassiveEntity) {
+			} else if(e instanceof PassiveEntity || e instanceof WaterCreatureEntity) {
 				cClose = passiveClose.getRGB();
 				cFar = passiveFar.getRGB();
 			} else {
@@ -154,6 +171,11 @@ public class Tracers extends Module {
 			
 			bufferBuilder.vertex(matrix, (float)start.x, (float)start.y, (float)start.z).color(r, g, b, a).next();
 			bufferBuilder.vertex(matrix, (float)end.x, (float)end.y, (float)end.z).color(r, g, b, a).next();
+			
+			if(drawStem) {
+				bufferBuilder.vertex(matrix, (float)endTop.x, (float)endTop.y, (float)endTop.z).color(r, g, b, a).next();
+				bufferBuilder.vertex(matrix, (float)endBottom.x, (float)endBottom.y, (float)endBottom.z).color(r, g, b, a).next();
+			}
 		}
 		
 		BufferRenderer.drawWithShader(bufferBuilder.end());
