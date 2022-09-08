@@ -208,6 +208,14 @@
 	"hamhacks.module.freecam.speed": "Speed",
 	"hamhacks.module.freecam.speed.tooltip": "How fast you move",
 
+	"hamhacks.module.notifications": "Notifications",
+	"hamhacks.module.notifications.backgroundColor": "Background Color",
+	"hamhacks.module.notifications.accentColor": "Accent Color",
+	"hamhacks.module.notifications.progressColorBackground": "Background Progress Color",
+	"hamhacks.module.notifications.progressColor": "Progress Color",
+	"hamhacks.module.notifications.lifeSpan": "Life Span",
+	"hamhacks.module.notifications.lifeSpan.tooltip": "How long a notification is displayed in seconds",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",

@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.grilledham.hamhacks.event.events.EventRender;
 import net.grilledham.hamhacks.event.events.EventRender2D;
 import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.mixininterface.ICamera;
@@ -43,9 +44,15 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	private boolean calledFromFreecam = false;
 	
+	@Inject(method = "render", at = @At("TAIL"))
+	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
+		ModuleManager.updateEnabled();
+		EventRender event = new EventRender(new MatrixStack(), tickDelta);
+		event.call();
+	}
+	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "net.minecraft.client.gui.hud.InGameHud.render(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void render2DEvent(InGameHud instance, MatrixStack matrices, float tickDelta) {
-		ModuleManager.updateEnabled();
 		instance.render(matrices, tickDelta);
 		EventRender2D event = new EventRender2D(matrices, tickDelta);
 		event.call();

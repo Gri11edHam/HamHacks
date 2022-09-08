@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.render.Notifications;
 import net.grilledham.hamhacks.util.SelectableList;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
@@ -64,6 +65,9 @@ public class Fly extends Module {
 	@Override
 	public void onEnable() {
 		super.onEnable();
+		if(Speed.getInstance().isEnabled()) {
+			Notifications.notify(getName(), "Disabled " + Speed.getInstance().getName());
+		}
 		Speed.getInstance().forceDisable();
 		if(mc.player == null) {
 			return;
@@ -240,6 +244,9 @@ public class Fly extends Module {
 	public void onDisable() {
 		super.onDisable();
 		Speed.getInstance().reEnable();
+		if(Speed.getInstance().isEnabled()) {
+			Notifications.notify(getName(), "Re-Enabled " + Speed.getInstance().getName());
+		}
 		lastDx = 0;
 		lastDy = 0;
 		lastDz = 0;

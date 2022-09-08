@@ -6,19 +6,30 @@ import net.grilledham.hamhacks.mixininterface.IClientPlayerInteractionManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.mixininterface.IRenderTickCounter;
 import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.render.Notifications;
 import net.grilledham.hamhacks.util.MouseUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.WindowEventHandler;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.util.Session;
+import net.minecraft.resource.ReloadableResourceManagerImpl;
+import net.minecraft.resource.ResourcePack;
+import net.minecraft.resource.ResourceReload;
+import net.minecraft.util.Unit;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Mixin(MinecraftClient.class)
 public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runnable> implements WindowEventHandler, IMinecraftClient {
@@ -29,6 +40,8 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	@Shadow
 	@Final
 	private RenderTickCounter renderTickCounter;
+	
+	@Shadow public abstract Session getSession();
 	
 	public MixinMinecraftClient(String string) {
 		super(string);
@@ -42,6 +55,19 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	@Override
 	public IRenderTickCounter getRenderTickCounter() {
 		return (IRenderTickCounter)renderTickCounter;
+	}
+	
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/ReloadableResourceManagerImpl;reload(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Ljava/util/List;)Lnet/minecraft/resource/ResourceReload;"))
+	public ResourceReload loadResources(ReloadableResourceManagerImpl instance, Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, List<ResourcePack> packs) {
+		ResourceReload toReturn = instance.reload(prepareExecutor, applyExecutor, initialStage, packs);
+		toReturn.whenComplete().thenRun(() -> {
+			if(HamHacksClient.firstTime) {
+				Notifications.notify("HamHacks", "Welcome to HamHacks, " + getSession().getUsername());
+			} else {
+				Notifications.notify("HamHacks", "Welcome back, " + getSession().getUsername());
+			}
+		});
+		return toReturn;
 	}
 	
 	@Inject(method = "<init>", at = @At("TAIL"))

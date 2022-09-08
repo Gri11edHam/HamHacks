@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.mixininterface.IMultiplayerScreen;
 import net.grilledham.hamhacks.modules.misc.AntiBan;
+import net.grilledham.hamhacks.modules.render.Notifications;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -41,6 +42,7 @@ public abstract class MixinDisconnectedScreen extends Screen {
 			AntiBan.getInstance().hasConnected = true;
 			if(AntiBan.getInstance().joinEnforcedServers) {
 				((IMultiplayerScreen)parent).reconnect();
+				Notifications.notify(AntiBan.getInstance().getName(), "Connecting to unsafe server. To stop automatic connection to unsafe servers, disable Join Enforced Servers.");
 			} else {
 				client.setScreen(new WarningScreen(Text.translatable("hamhacks.menu.securedServerWarning"), Text.translatable("hamhacks.menu.securedServerWarning"), Text.translatable("hamhacks.menu.securedServerWarning")) {
 					@Override

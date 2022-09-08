@@ -33,6 +33,8 @@ public class HamHacksClient implements ClientModInitializer {
 	
 	public static final Logger LOGGER = LogUtils.getLogger();
 	
+	public static boolean firstTime = false;
+	
 	@Override
 	public void onInitializeClient() {
 	
@@ -85,6 +87,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new Zoom());
 		ModuleManager.register(new NoTelemetry());
 		ModuleManager.register(new Freecam());
+		ModuleManager.register(new Notifications());
 		
 		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 		

@@ -35,6 +35,7 @@ public class HamHacksConfig {
 		prepareConfigFile();
 		try {
 			if (!file.getParentFile().exists() || !file.exists()) {
+				HamHacksClient.firstTime = true;
 				save();
 				load();
 				return;

@@ -84,9 +84,11 @@ public class Freecam extends Module {
 	@EventListener
 	public void onJoin(EventPacket.EventPacketReceived e) {
 		if(e.packet instanceof GameJoinS2CPacket) {
-			toggle();
+			setEnabled(false);
+			Notifications.notify(getName(), "Disabled due to join");
 		} else if(e.packet instanceof PlayerRespawnS2CPacket) {
-			toggle();
+			setEnabled(false);
+			Notifications.notify(getName(), "Disabled due to death");
 		}
 	}
 	
