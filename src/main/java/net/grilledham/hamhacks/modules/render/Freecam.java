@@ -39,7 +39,7 @@ public class Freecam extends Module {
 	private float lastDy;
 	private float lastDz;
 	
-	private Perspective perspective;
+	private Perspective perspective = Perspective.FIRST_PERSON;
 	
 	@NumberSetting(
 			name = "hamhacks.module.freecam.speed",
@@ -64,6 +64,10 @@ public class Freecam extends Module {
 	public void onEnable() {
 		super.onEnable();
 		
+		if(mc.world == null || mc.options.getPerspective() == null) {
+			return;
+		}
+		
 		setUp();
 		
 		forward = false;
@@ -77,6 +81,11 @@ public class Freecam extends Module {
 	@Override
 	public void onDisable() {
 		super.onDisable();
+		
+		if(mc.world == null || mc.options.getPerspective() == null) {
+			return;
+		}
+		
 		mc.options.sneakKey.setPressed(false);
 		mc.options.setPerspective(perspective);
 	}
@@ -94,6 +103,10 @@ public class Freecam extends Module {
 	
 	@EventListener
 	public void onTick(EventTick e) {
+		if(mc.world == null || mc.options.getPerspective() == null) {
+			return;
+		}
+		
 		if(!ClickGUI.getInstance().moveInScreen(mc.currentScreen)) {
 			forward = false;
 			back = false;
