@@ -43,15 +43,13 @@ public class ColorSettingPart extends SettingPart {
 			chromaPart = new BoolSettingPart(x, y, chromaField, this) {
 				@Override
 				public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
-					if(super.release(mx, my, scrollX, scrollY, button)) {
-						try {
-							((Color)finalSetting.get(finalObj)).setChroma(chroma);
-						} catch(IllegalAccessException e) {
-							e.printStackTrace();
-						}
-						return true;
+					boolean superReturn = super.release(mx, my, scrollX, scrollY, button);
+					try {
+						((Color)finalSetting.get(finalObj)).setChroma(chroma);
+					} catch(IllegalAccessException e) {
+						e.printStackTrace();
 					}
-					return false;
+					return superReturn;
 				}
 			};
 			chromaPart.drawBackground = false;
@@ -339,7 +337,7 @@ public class ColorSettingPart extends SettingPart {
 				} catch(IllegalAccessException e) {
 					e.printStackTrace();
 				}
-				return true;
+				return false;
 			}
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
