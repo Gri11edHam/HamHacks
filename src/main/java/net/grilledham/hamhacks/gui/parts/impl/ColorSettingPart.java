@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
@@ -14,8 +15,8 @@ import java.util.HexFormat;
 
 public class ColorSettingPart extends SettingPart {
 	
-	private float hoverAnimation;
-	private float selectionAnimation;
+	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	private final Animation selectionAnimation = Animation.getInOutQuad(0.25, true);
 	
 	@BoolSetting(name = "hamhacks.setting.colorSettingPart.chroma", neverShow = true)
 	public boolean chroma;
@@ -112,7 +113,7 @@ public class ColorSettingPart extends SettingPart {
 			RenderUtil.drawHRect(stack, x + width - 20, y + 2, 18, 12, outlineC);
 			
 			boolean hovered = mx >= x + width - 18 && mx < x + width - 2 && my >= y + 4 && my < y + 12;
-			int boxC = RenderUtil.mix((((Color)setting.get(obj)).getRGB() & 0xff000000) + 0xffffff, ((Color)setting.get(obj)).getRGB(), hoverAnimation / 4);
+			int boxC = RenderUtil.mix((((Color)setting.get(obj)).getRGB() & 0xff000000) + 0xffffff, ((Color)setting.get(obj)).getRGB(), hoverAnimation.get() / 4);
 			RenderUtil.drawRect(stack, x + width - 18, y + 4, 14, 8, boxC);
 			
 			mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
@@ -120,22 +121,14 @@ public class ColorSettingPart extends SettingPart {
 			RenderUtil.postRender();
 			stack.pop();
 			
-			if(hovered) {
-				hoverAnimation += partialTicks / 5;
-			} else {
-				hoverAnimation -= partialTicks / 5;
-			}
+			hoverAnimation.set(hovered);
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		
-		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
-		if(selected) {
-			selectionAnimation += partialTicks / 5;
-		} else {
-			selectionAnimation -= partialTicks / 5;
-		}
-		selectionAnimation = Math.min(1, Math.max(0, selectionAnimation));
+		hoverAnimation.update();
+		selectionAnimation.set(selected);
+		selectionAnimation.update();
 	}
 	
 	@Override
@@ -148,8 +141,13 @@ public class ColorSettingPart extends SettingPart {
 			float h = 122;
 			float newX = x + width - w;
 			float newY = y + height;
+			float subPartScroll = 0;
+			if(newY + h > mc.currentScreen.height) {
+				newY = y - h;
+				subPartScroll = -height - h;
+			}
 			
-			RenderUtil.pushScissor(newX - 1 + ((w + 2) * (1 - selectionAnimation)), newY - 1, (w + 2) * selectionAnimation, (h + 2) * selectionAnimation, ClickGUI.getInstance().scale);
+			RenderUtil.pushScissor(newX - 1 + ((w + 2) * (float)(1 - selectionAnimation.get())), newY - 1, (w + 2) * (float)selectionAnimation.get(), (h + 2) * (float)selectionAnimation.get(), ClickGUI.getInstance().scale);
 			RenderUtil.applyScissor();
 			RenderUtil.preRender();
 			
@@ -169,9 +167,9 @@ public class ColorSettingPart extends SettingPart {
 			RenderUtil.drawHRect(stack, newX + 105, newY + 1 + (100 * (((Color)setting.get(obj)).getHue())), 22, 3, 0xffa0a0a0);
 			RenderUtil.drawHRect(stack, newX + 129, newY + 1 + (100 * (1 - ((Color)setting.get(obj)).getAlpha())), 22, 3, 0xffa0a0a0);
 			
-			chromaPart.draw(stack, mx, my, scrollX, scrollY, partialTicks);
-			if(selectionAnimation > 0.8f) {
-				hexValPart.draw(stack, mx, my, scrollX, scrollY, partialTicks);
+			chromaPart.draw(stack, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
+			if(selectionAnimation.get() > 0.8) {
+				hexValPart.draw(stack, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
 			}
 			
 			RenderUtil.popScissor();
@@ -254,8 +252,14 @@ public class ColorSettingPart extends SettingPart {
 		dragging = true;
 		dragStartX = mx;
 		dragStartY = my;
-		chromaPart.click(mx, my, scrollX, scrollY, button);
-		hexValPart.click(mx, my, scrollX, scrollY, button);
+		float h = 122;
+		float newY = y + height;
+		float subPartScroll = 0;
+		if(newY + h > mc.currentScreen.height) {
+			subPartScroll = -height - h;
+		}
+		chromaPart.click(mx, my, scrollX, scrollY + subPartScroll, button);
+		hexValPart.click(mx, my, scrollX, scrollY + subPartScroll, button);
 		if(selected) {
 			return true;
 		}
@@ -291,6 +295,11 @@ public class ColorSettingPart extends SettingPart {
 			float h = 122;
 			float newX = x + width - w;
 			float newY = y + height;
+			float subPartScroll = 0;
+			if(newY + h > mc.currentScreen.height) {
+				newY = y - h;
+				subPartScroll = -height - h;
+			}
 			if(wasDragging) {
 				if(dragStartY >= newY + 2 && dragStartY <= newY + 102) {
 					// SB
@@ -307,8 +316,8 @@ public class ColorSettingPart extends SettingPart {
 					}
 				}
 			}
-			chromaPart.release(mx, my, scrollX, scrollY, button);
-			hexValPart.release(mx, my, scrollX, scrollY, button);
+			chromaPart.release(mx, my, scrollX, scrollY + subPartScroll, button);
+			hexValPart.release(mx, my, scrollX, scrollY + subPartScroll, button);
 			if(mx >= newX && mx < newX + w && my >= newY && my < newY + h) {
 				return true;
 			}
@@ -341,6 +350,10 @@ public class ColorSettingPart extends SettingPart {
 		if(selected) {
 			if(hexValPart.type(code, scanCode, modifiers)) {
 				return true;
+			}
+			if(code == GLFW.GLFW_KEY_ESCAPE) {
+				selected = false;
+				return false;
 			}
 		}
 		return super.type(code, scanCode, modifiers);

@@ -4,6 +4,7 @@ import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.gui.screens.ModuleSettingsScreen;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -11,10 +12,10 @@ import org.lwjgl.glfw.GLFW;
 
 public class ModulePart extends GuiPart {
 	
-	private float hoverAnimation;
-	private float enableAnimation;
+	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	private final Animation enableAnimation = Animation.getInOutQuad(0.25);
 	
-	private float tooltipAnimation;
+	private final Animation tooltipAnimation = Animation.getAnimation(t -> t, 1, false);
 	
 	private boolean hasClicked = false;
 	
@@ -25,6 +26,7 @@ public class ModulePart extends GuiPart {
 		super(x, y, width, height);
 		this.module = module;
 		this.parent = parent;
+		enableAnimation.setAbsolute(module.isEnabled());
 	}
 	
 	@Override
@@ -36,10 +38,10 @@ public class ModulePart extends GuiPart {
 		
 		int bgC = ClickGUI.getInstance().bgColor.getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation);
+		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x + 1, y, width - 1, height, bgC);
 		
-		int barC = (ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation);
+		int barC = (ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation.get());
 		RenderUtil.drawRect(stack, x, y, 1, height, barC);
 		
 		mc.textRenderer.drawWithShadow(stack, module.getName(), x + 3, y + 4, ClickGUI.getInstance().textColor.getRGB());
@@ -47,27 +49,15 @@ public class ModulePart extends GuiPart {
 		RenderUtil.postRender();
 		stack.pop();
 		
-		if(hovered) {
-			hoverAnimation += partialTicks / 5;
-		} else {
-			hoverAnimation -= partialTicks / 5;
-		}
-		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
+		hoverAnimation.set(hovered);
+		hoverAnimation.update();
 		
-		if(module.isEnabled()) {
-			enableAnimation += partialTicks / 5;
-		} else {
-			enableAnimation -= partialTicks / 5;
-		}
-		enableAnimation = Math.min(1, Math.max(0, enableAnimation));
+		enableAnimation.set(module.isEnabled());
+		enableAnimation.update();
 		
-		if(hovered) {
-			tooltipAnimation += partialTicks / 20;
-		} else {
-			tooltipAnimation -= partialTicks / 20;
-		}
-		tooltipAnimation = Math.min(1, Math.max(0, tooltipAnimation));
-		if(tooltipAnimation < 1) {
+		tooltipAnimation.set(hovered);
+		tooltipAnimation.update();
+		if(tooltipAnimation.get() < 1) {
 			hasClicked = false;
 		}
 	}
@@ -76,7 +66,7 @@ public class ModulePart extends GuiPart {
 	protected void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 		if(module.hasToolTip()) {
-			if(tooltipAnimation >= 1 && !hasClicked) {
+			if(tooltipAnimation.get() >= 1 && !hasClicked) {
 				RenderUtil.drawToolTip(stack, module.getName(), module.getToolTip(), mx, my);
 			}
 		}

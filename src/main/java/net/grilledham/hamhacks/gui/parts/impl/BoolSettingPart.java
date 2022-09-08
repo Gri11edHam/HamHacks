@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.minecraft.client.MinecraftClient;
@@ -11,13 +12,18 @@ import java.lang.reflect.Field;
 
 public class BoolSettingPart extends SettingPart {
 	
-	private float hoverAnimation;
-	private float enableAnimation;
+	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	private final Animation enableAnimation = Animation.getInOutQuad(0.25);
 	
 	protected boolean drawBackground = true;
 	
 	public BoolSettingPart(float x, float y, Field setting, Object obj) {
 		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 22, setting, obj);
+		try {
+			enableAnimation.setAbsolute(setting.getBoolean(obj));
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -36,7 +42,7 @@ public class BoolSettingPart extends SettingPart {
 		RenderUtil.drawHRect(stack, x + width - 14, y + 2, 12, 12, outlineC);
 		
 		boolean hovered = mx >= x + width - 12 && mx < x + width - 4 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + 0xffffff, (ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation), hoverAnimation / 4);
+		int boxC = RenderUtil.mix((ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + 0xffffff, (ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation.get()), hoverAnimation.get() / 4);
 		RenderUtil.drawRect(stack, x + width - 12, y + 4, 8, 8, boxC);
 		
 		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
@@ -44,23 +50,15 @@ public class BoolSettingPart extends SettingPart {
 		RenderUtil.postRender();
 		stack.pop();
 		
-		if(hovered) {
-			hoverAnimation += partialTicks / 5;
-		} else {
-			hoverAnimation -= partialTicks / 5;
-		}
-		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
+		hoverAnimation.set(hovered);
+		hoverAnimation.update();
 		
 		try {
-			if(setting.getBoolean(obj)) {
-				enableAnimation += partialTicks / 5;
-			} else {
-				enableAnimation -= partialTicks / 5;
-			}
+			enableAnimation.set(setting.getBoolean(obj));
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		enableAnimation = Math.min(1, Math.max(0, enableAnimation));
+		enableAnimation.update();
 	}
 	
 	@Override

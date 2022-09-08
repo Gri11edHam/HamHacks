@@ -4,6 +4,7 @@ import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -13,8 +14,8 @@ public class CategoryPart extends GuiPart {
 	
 	private final Module.Category category;
 	
-	private float openCloseAnimation;
-	private float hoverAnimation;
+	private final Animation openCloseAnimation = Animation.getInOutQuad(0.25);
+	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
 	
 	private final ScrollablePart scrollArea;
 	
@@ -25,7 +26,7 @@ public class CategoryPart extends GuiPart {
 	public CategoryPart(Screen parent, Module.Category category) {
 		super(category.getX(), category.getY(), category.getWidth(), category.getHeight());
 		this.category = category;
-		openCloseAnimation = category.isExpanded() ? 1 : 0;
+		openCloseAnimation.setAbsolute(1);
 		int i = 0;
 		scrollArea = new ScrollablePart(x, y + height, width, 16 * 8);
 		for(Module m : ModuleManager.getModules(category)) {
@@ -41,7 +42,7 @@ public class CategoryPart extends GuiPart {
 		float y = this.y + scrollY;
 		stack.push();
 		
-		float scissorHeight = height + scrollArea.getHeight() * (1 - openCloseAnimation);
+		float scissorHeight = height + scrollArea.getHeight() * (float)(1 - openCloseAnimation.get());
 		
 		RenderUtil.pushScissor(x, y, width, scissorHeight, ClickGUI.getInstance().scale);
 		RenderUtil.applyScissor();
@@ -49,7 +50,7 @@ public class CategoryPart extends GuiPart {
 		
 		int bgC = ClickGUI.getInstance().bgColor.getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation);
+		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x + 1, y + 1, width - 1, height - 1, bgC);
 		
 		RenderUtil.drawRect(stack, x + 1, y, width - 1, 1, ClickGUI.getInstance().accentColor.getRGB());
@@ -73,19 +74,11 @@ public class CategoryPart extends GuiPart {
 			lastMouseY = my;
 		}
 		
-		if(category.isExpanded()) {
-			openCloseAnimation += partialTicks / 5;
-		} else {
-			openCloseAnimation -= partialTicks / 5;
-		}
-		openCloseAnimation = Math.min(1, Math.max(0, openCloseAnimation));
+		openCloseAnimation.set(category.isExpanded());
+		openCloseAnimation.update();
 		
-		if(hovered) {
-			hoverAnimation += partialTicks / 5;
-		} else {
-			hoverAnimation -= partialTicks / 5;
-		}
-		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
+		hoverAnimation.set(hovered);
+		hoverAnimation.update();
 	}
 	
 	@Override
@@ -106,7 +99,7 @@ public class CategoryPart extends GuiPart {
 			
 			}
 		}
-		if(openCloseAnimation <= 0.5f) {
+		if(openCloseAnimation.get() <= 0.5) {
 			scrollArea.click(mx, my, scrollX, scrollY, button);
 		}
 		return super.click(mx, my, scrollX, scrollY, button);
@@ -128,7 +121,7 @@ public class CategoryPart extends GuiPart {
 			}
 		}
 		if(!wasDragging) {
-			if(openCloseAnimation <= 0.5f) {
+			if(openCloseAnimation.get() <= 0.5) {
 				scrollArea.release(mx, my, scrollX, scrollY, button);
 			}
 		}
@@ -147,7 +140,7 @@ public class CategoryPart extends GuiPart {
 			}
 			return true;
 		}
-		if(openCloseAnimation <= 0.5f) {
+		if(openCloseAnimation.get() <= 0.5) {
 			if(scrollArea.drag(mx, my, scrollX, scrollY, button, dx, dy)) {
 				return true;
 			}

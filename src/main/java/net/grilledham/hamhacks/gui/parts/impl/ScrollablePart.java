@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -13,14 +14,14 @@ public class ScrollablePart extends GuiPart {
 	
 	private float nextScroll;
 	
-	private float scroll = 0;
+	private final Animation scroll = Animation.getAnimation(t -> t, 0.05, false);
 	
 	private float maxHeight;
 	
 	private final List<GuiPart> subParts = new ArrayList<>();
 	private final HashMap<GuiPart, Boolean> isPartEnabled = new HashMap<>();
 	
-	private GuiPart seleced = null;
+	private GuiPart selected = null;
 	
 	public ScrollablePart(float x, float y, float width, float maxHeight) {
 		super(x, y, width, 0);
@@ -70,7 +71,7 @@ public class ScrollablePart extends GuiPart {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				part.draw(stack, mx, my, scrollX, scrollY - scroll + trueHeight, partialTicks);
+				part.draw(stack, mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
 				trueHeight += part.getHeight();
 			}
 		}
@@ -87,7 +88,8 @@ public class ScrollablePart extends GuiPart {
 			nextScroll = 0;
 		}
 		
-		scroll = scroll + (nextScroll - scroll) * partialTicks;
+		scroll.set(nextScroll);
+		scroll.update();
 	}
 	
 	@Override
@@ -102,7 +104,7 @@ public class ScrollablePart extends GuiPart {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				part.drawTop(stack, mx, my, scrollX, scrollY - scroll + trueHeight, partialTicks);
+				part.drawTop(stack, mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
 				trueHeight += part.getHeight();
 			}
 		}
@@ -141,21 +143,21 @@ public class ScrollablePart extends GuiPart {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				if(seleced != null) {
-					if(part == seleced) {
-						seleced.click(mx, my, scrollX, scrollY - scroll + trueHeight, button);
+				if(selected != null) {
+					if(part == selected) {
+						selected.click(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button);
 						return true;
 					}
 				} else {
-					if(part.click(mx, my, scrollX, scrollY - scroll + trueHeight, button)) {
-						seleced = part;
+					if(part.click(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button)) {
+						selected = part;
 						return true;
 					}
 				}
 				trueHeight += part.getHeight();
 			}
 		}
-		return super.click(mx, my, scrollX, scrollY - scroll, button);
+		return super.click(mx, my, scrollX, scrollY - (float)scroll.get(), button);
 	}
 	
 	@Override
@@ -163,23 +165,23 @@ public class ScrollablePart extends GuiPart {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				if(seleced != null) {
-					if(part == seleced) {
-						if(!seleced.release(mx, my, scrollX, scrollY - scroll + trueHeight, button)) {
-							seleced = null;
+				if(selected != null) {
+					if(part == selected) {
+						if(!selected.release(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button)) {
+							selected = null;
 						}
 						return true;
 					}
 				} else {
-					if(part.release(mx, my, scrollX, scrollY - scroll + trueHeight, button)) {
-						seleced = part;
+					if(part.release(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button)) {
+						selected = part;
 						return true;
 					}
 				}
 				trueHeight += part.getHeight();
 			}
 		}
-		return super.release(mx, my, scrollX, scrollY - scroll, button);
+		return super.release(mx, my, scrollX, scrollY - (float)scroll.get(), button);
 	}
 	
 	@Override
@@ -187,27 +189,27 @@ public class ScrollablePart extends GuiPart {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				if(seleced != null) {
-					if(part == seleced) {
-						seleced.drag(mx, my, scrollX, scrollY - scroll + trueHeight, button, dx, dy);
+				if(selected != null) {
+					if(part == selected) {
+						selected.drag(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button, dx, dy);
 						return true;
 					}
 				} else {
-					if(part.drag(mx, my, scrollX, scrollY - scroll + trueHeight, button, dx, dy)) {
+					if(part.drag(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button, dx, dy)) {
 						return true;
 					}
 				}
 				trueHeight += part.getHeight();
 			}
 		}
-		return super.drag(mx, my, scrollX, scrollY - scroll, button, dx, dy);
+		return super.drag(mx, my, scrollX, scrollY - (float)scroll.get(), button, dx, dy);
 	}
 	
 	@Override
 	public boolean type(int code, int scanCode, int modifiers) {
-		if(seleced != null) {
-			if(!seleced.type(code, scanCode, modifiers)) {
-				seleced = null;
+		if(selected != null) {
+			if(!selected.type(code, scanCode, modifiers)) {
+				selected = null;
 			}
 			return true;
 		}
@@ -223,8 +225,8 @@ public class ScrollablePart extends GuiPart {
 	
 	@Override
 	public boolean typeChar(char c, int modifiers) {
-		if(seleced != null) {
-			seleced.typeChar(c, modifiers);
+		if(selected != null) {
+			selected.typeChar(c, modifiers);
 			return true;
 		}
 		for(GuiPart part : subParts) {
@@ -245,7 +247,7 @@ public class ScrollablePart extends GuiPart {
 			float trueHeight = 0;
 			for(GuiPart part : subParts) {
 				if(isPartEnabled.get(part)) {
-					if(part.scroll(mx, my, scrollX, scrollY - scroll + trueHeight, delta)) {
+					if(part.scroll(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, delta)) {
 						return true;
 					}
 					trueHeight += part.getHeight();

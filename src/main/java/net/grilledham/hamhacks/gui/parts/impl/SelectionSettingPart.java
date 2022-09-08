@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.SelectableList;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
@@ -16,8 +17,8 @@ import java.util.List;
 
 public class SelectionSettingPart extends SettingPart {
 	
-	private float hoverAnimation;
-	private float selectionAnimation;
+	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	private final Animation selectionAnimation = Animation.getInOutQuad(0.25);
 	
 	private boolean selected = false;
 	
@@ -94,7 +95,7 @@ public class SelectionSettingPart extends SettingPart {
 		RenderUtil.drawRect(stack, x, y, width - maxWidth, height, bgC);
 		
 		boolean hovered = mx >= x + width - maxWidth && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation);
+		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x + width - maxWidth, y, maxWidth, height, bgC);
 		
 		int outlineC = 0xffcccccc;
@@ -111,19 +112,11 @@ public class SelectionSettingPart extends SettingPart {
 		RenderUtil.postRender();
 		stack.pop();
 		
-		if(hovered) {
-			hoverAnimation += partialTicks / 5;
-		} else {
-			hoverAnimation -= partialTicks / 5;
-		}
-		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
+		hoverAnimation.set(hovered);
+		hoverAnimation.update();
 		
-		if(selected) {
-			selectionAnimation += partialTicks / 5;
-		} else {
-			selectionAnimation -= partialTicks / 5;
-		}
-		selectionAnimation = Math.min(1, Math.max(0, selectionAnimation));
+		selectionAnimation.set(selected);
+		selectionAnimation.update();
 	}
 	
 	@Override
@@ -132,7 +125,7 @@ public class SelectionSettingPart extends SettingPart {
 		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
-		RenderUtil.pushScissor(x, y, width, (height * parts.size()) * selectionAnimation, ClickGUI.getInstance().scale);
+		RenderUtil.pushScissor(x, y, width, (height * parts.size()) * (float)selectionAnimation.get(), ClickGUI.getInstance().scale);
 		RenderUtil.applyScissor();
 		
 		for(GuiPart part : parts) {

@@ -2,13 +2,14 @@ package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
 public class ButtonPart extends GuiPart {
 	
-	private float hoverAnimation;
+	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
 	
 	private String text;
 	private final Runnable onClick;
@@ -32,7 +33,7 @@ public class ButtonPart extends GuiPart {
 		
 		int bgC = 0xff202020;
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(0xffa0a0a0, bgC, hoverAnimation);
+		bgC = RenderUtil.mix(0xffa0a0a0, bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
 		mc.textRenderer.drawWithShadow(stack, text, x + width / 2f - mc.textRenderer.getWidth(text) / 2f, y + height / 2f - mc.textRenderer.fontHeight / 2f, ClickGUI.getInstance().textColor.getRGB());
@@ -40,12 +41,8 @@ public class ButtonPart extends GuiPart {
 		RenderUtil.postRender();
 		stack.pop();
 		
-		if(hovered) {
-			hoverAnimation += partialTicks / 5;
-		} else {
-			hoverAnimation -= partialTicks / 5;
-		}
-		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
+		hoverAnimation.set(hovered);
+		hoverAnimation.update();
 	}
 	
 	@Override

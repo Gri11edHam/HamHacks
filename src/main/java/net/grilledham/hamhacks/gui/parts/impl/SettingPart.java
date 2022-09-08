@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.gui.parts.GuiPart;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.minecraft.client.util.math.MatrixStack;
@@ -9,7 +10,7 @@ import java.lang.reflect.Field;
 
 public abstract class SettingPart extends GuiPart {
 	
-	private float tooltipAnimation;
+	private final Animation tooltipAnimation = Animation.getAnimation(t -> t, 1, false);
 	
 	private boolean hasClicked = false;
 	
@@ -39,19 +40,15 @@ public abstract class SettingPart extends GuiPart {
 		
 		if(setting != null && obj != null) {
 			if(SettingHelper.hasTooltip(setting)) {
-				if(tooltipAnimation >= 1 && !hasClicked) {
+				if(tooltipAnimation.get() >= 1 && !hasClicked) {
 					RenderUtil.drawToolTip(stack, SettingHelper.getName(setting).getString(), SettingHelper.getTooltip(setting).getString(), mx, my);
 				}
 			}
 		}
 		
-		if(hovered) {
-			tooltipAnimation += partialTicks / 20;
-		} else {
-			tooltipAnimation -= partialTicks / 20;
-		}
-		tooltipAnimation = Math.min(1, Math.max(0, tooltipAnimation));
-		if(tooltipAnimation < 1) {
+		tooltipAnimation.set(hovered);
+		tooltipAnimation.update();
+		if(tooltipAnimation.get() < 1) {
 			hasClicked = false;
 		}
 	}

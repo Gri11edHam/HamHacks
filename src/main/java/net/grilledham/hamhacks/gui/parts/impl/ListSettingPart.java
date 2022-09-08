@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.StringList;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
@@ -16,8 +17,8 @@ import java.util.List;
 
 public class ListSettingPart extends SettingPart {
 	
-	private float hoverAnimation;
-	private float selectionAnimation;
+	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	private final Animation selectionAnimation = Animation.getInOutQuad(0.25);
 	
 	private final List<StringSettingPart> stringParts = new ArrayList<>();
 	private final List<ButtonPart> removeButtons = new ArrayList<>();
@@ -114,7 +115,7 @@ public class ListSettingPart extends SettingPart {
 		RenderUtil.drawRect(stack, x, y, width - height, height, bgC);
 		
 		boolean hovered = mx >= x + width - height && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation);
+		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x + width - height, y, height, height, bgC);
 		
 		int outlineC = 0xffcccccc;
@@ -125,26 +126,18 @@ public class ListSettingPart extends SettingPart {
 		float dropDownCenterX = dropDownX + mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterY = y + 4 + mc.textRenderer.fontHeight / 2f;
 		stack.translate(dropDownCenterX, dropDownCenterY, 0);
-		stack.peek().getPositionMatrix().multiply(new Quaternion(new Vec3f(0, 0, 1), selectionAnimation * -90, true));
+		stack.peek().getPositionMatrix().multiply(new Quaternion(new Vec3f(0, 0, 1), (float)selectionAnimation.get() * -90, true));
 		stack.translate(-dropDownCenterX, -dropDownCenterY, 0);
 		mc.textRenderer.drawWithShadow(stack, "<", dropDownX, y + 4, ClickGUI.getInstance().textColor.getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();
 		
-		if(hovered) {
-			hoverAnimation += partialTicks / 5;
-		} else {
-			hoverAnimation -= partialTicks / 5;
-		}
-		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
+		hoverAnimation.set(hovered);
+		hoverAnimation.update();
 		
-		if(selected) {
-			selectionAnimation += partialTicks / 5;
-		} else {
-			selectionAnimation -= partialTicks / 5;
-		}
-		selectionAnimation = Math.min(1, Math.max(0, selectionAnimation));
+		selectionAnimation.set(selected);
+		selectionAnimation.update();
 	}
 	
 	@Override
@@ -153,7 +146,7 @@ public class ListSettingPart extends SettingPart {
 		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
-		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * selectionAnimation, ClickGUI.getInstance().scale);
+		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * (float)selectionAnimation.get(), ClickGUI.getInstance().scale);
 		RenderUtil.applyScissor();
 		
 		RenderUtil.drawRect(stack, x + width - maxWidth, y + height, maxWidth, height * (stringParts.size() + 1), 0xff202020);
@@ -165,7 +158,7 @@ public class ListSettingPart extends SettingPart {
 		}
 		
 		for(int i = 0; i < removeButtons.size(); i++) {
-			if(((stringParts.size() + 1)) * selectionAnimation > i) {
+			if(((stringParts.size() + 1)) * selectionAnimation.get() > i) {
 				stringParts.get(i).draw(stack, mx, my, scrollX, scrollY, partialTicks);
 			}
 		}

@@ -4,6 +4,7 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventScroll;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.KeySetting;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
@@ -68,7 +69,7 @@ public class Zoom extends Module {
 	@NumberSetting(
 			name = "hamhacks.module.zoom.animationSpeed",
 			defaultValue = 0.5f,
-			min = 0.001f,
+			min = 0,
 			max = 1,
 			dependsOn = "smoothZoom"
 	)
@@ -82,16 +83,13 @@ public class Zoom extends Module {
 	
 	private boolean zooming = false;
 	
-	private double prevZoomAmount = 1;
 	private double zoom = 1;
-	private double prevZoom = 1;
-	private double zoomProgress = 0;
 	private double zoomAmount = 1;
 	
 	private double prevSensitivity = 0;
 	private boolean wasSmoothCameraEnabled = false;
 	
-	private long lastTime = System.currentTimeMillis();
+	private final Animation animation = Animation.getInOutQuad(animationSpeed, true);
 	
 	private static Zoom INSTANCE;
 	
@@ -99,6 +97,7 @@ public class Zoom extends Module {
 		super(Text.translatable("hamhacks.module.zoom"), Category.RENDER, new Keybind(0));
 		setEnabled(true);
 		INSTANCE = this;
+		animation.setAbsolute(1);
 	}
 	
 	@Override
@@ -145,25 +144,10 @@ public class Zoom extends Module {
 			}
 			
 			if(smoothZoom) {
-				double progressMultiplier;
-				
-				if(prevZoom != zoom) {
-					prevZoomAmount = zoomAmount;
-					zoomProgress = 0;
-				}
-				if(zoomProgress < 1) {
-					zoomProgress += (System.currentTimeMillis() - lastTime) / (animationSpeed * 1000);
-				} else {
-					zoomProgress = 1;
-				}
-				
-				if(zooming) {
-					progressMultiplier = getProgressMultiplier(zoomProgress);
-				} else {
-					progressMultiplier = 1 - getProgressMultiplier(1 - zoomProgress);
-				}
-				
-				zoomAmount = prevZoomAmount + (zoom - prevZoomAmount) * progressMultiplier;
+				animation.set(zoom);
+				animation.setSpeed(animationSpeed);
+				animation.update();
+				zoomAmount = animation.get();
 				if(zoomAmount != 0) {
 					fov /= zoomAmount;
 				}
@@ -172,9 +156,7 @@ public class Zoom extends Module {
 					fov /= zoom;
 				}
 			}
-			prevZoom = zoom;
 		}
-		lastTime = System.currentTimeMillis();
 		return fov;
 	}
 	
@@ -204,14 +186,6 @@ public class Zoom extends Module {
 				direction = 0.5f;
 			}
 			zoom *= scrollSpeed * direction;
-		}
-	}
-	
-	private double getProgressMultiplier(double t) {
-		if(t < 0.5) {
-			return 2 * Math.pow(t, 2);
-		} else {
-			return 1 - Math.pow(-2 * t + 2, 2) / 2;
 		}
 	}
 }

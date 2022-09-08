@@ -65,7 +65,7 @@ public class RenderUtil {
 		}
 	}
 	
-	public static int mix(int c1, int c2, float by) {
+	public static int mix(int c1, int c2, double by) {
 		by = Math.min(1, Math.max(0, by));
 		int r1 = (c1 >> 16) & 255;
 		int g1 = (c1 >> 8) & 255;

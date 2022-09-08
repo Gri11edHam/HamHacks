@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.grilledham.hamhacks.util.setting.StringSetting;
@@ -12,7 +13,7 @@ import java.lang.reflect.Field;
 
 public class StringSettingPart extends SettingPart {
 	
-	private float cursorAnimation = 0;
+	private final Animation cursorAnimation = Animation.getInOutQuad(true);
 	private boolean cursorShown = false;
 	private int cursorPos;
 	
@@ -100,7 +101,7 @@ public class StringSettingPart extends SettingPart {
 		
 		RenderUtil.popScissor();
 		
-		int cursorColor = RenderUtil.mix(ClickGUI.getInstance().textColor.getRGB(), ClickGUI.getInstance().textColor.getRGB() & 0xffffff, cursorAnimation);
+		int cursorColor = RenderUtil.mix(ClickGUI.getInstance().textColor.getRGB(), ClickGUI.getInstance().textColor.getRGB() & 0xffffff, cursorAnimation.get());
 		RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, 1, mc.textRenderer.fontHeight + 1, cursorColor);
 		
 		RenderUtil.postRender();
@@ -129,15 +130,11 @@ public class StringSettingPart extends SettingPart {
 			}
 		}
 		
-		if(cursorShown) {
-			cursorAnimation += partialTicks / 10;
-		} else {
-			cursorAnimation -= partialTicks / 10;
-		}
-		cursorAnimation = Math.min(1, Math.max(0, cursorAnimation));
-		if(cursorAnimation >= 1) {
+		cursorAnimation.set(cursorShown);
+		cursorAnimation.update();
+		if(cursorAnimation.get() >= 1) {
 			cursorShown = false;
-		} else if(cursorAnimation <= 0) {
+		} else if(cursorAnimation.get() <= 0) {
 			cursorShown = true;
 		}
 		cursorShown = cursorShown && selected;
@@ -376,7 +373,7 @@ public class StringSettingPart extends SettingPart {
 			}
 			stringScroll = Math.min(Math.max(stringScroll, 0), getValue().length());
 			cursorShown = true;
-			cursorAnimation = 1;
+			cursorAnimation.setAbsolute(1);
 			return selected;
 		}
 		return super.type(code, scanCode, modifiers);
@@ -399,7 +396,7 @@ public class StringSettingPart extends SettingPart {
 			cursorPos++;
 			stringScroll++;
 			cursorShown = true;
-			cursorAnimation = 1;
+			cursorAnimation.setAbsolute(1);
 			return selected;
 		}
 		return super.typeChar(c, modifiers);

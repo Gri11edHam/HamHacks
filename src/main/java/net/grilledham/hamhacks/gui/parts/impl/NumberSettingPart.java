@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
@@ -13,8 +14,8 @@ import java.lang.reflect.Field;
 
 public class NumberSettingPart extends SettingPart {
 	
-	private float hoverAnimation;
-	private float sliderAnimation;
+	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	private final Animation sliderAnimation = Animation.getInOutQuad(0.25);
 	
 	private boolean dragging = false;
 	
@@ -25,6 +26,7 @@ public class NumberSettingPart extends SettingPart {
 	
 	public NumberSettingPart(float x, float y, Field setting, Object obj) {
 		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 314, setting, obj);
+		sliderAnimation.setAbsolute(setting.getAnnotation(NumberSetting.class).min());
 		try {
 			updateValue();
 			Field strValField = getClass().getField("strVal");
@@ -71,8 +73,8 @@ public class NumberSettingPart extends SettingPart {
 		RenderUtil.drawHRect(stack, x + width - 206, y + 2, 204, 12, outlineC);
 		
 		boolean hovered = mx >= x + width - 204 && mx < x + width - 4 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + 0xffffff, ClickGUI.getInstance().accentColor.getRGB(), hoverAnimation / 4);
-		float sliderPercentage = (sliderAnimation - setting.getAnnotation(NumberSetting.class).min()) / (setting.getAnnotation(NumberSetting.class).max() - setting.getAnnotation(NumberSetting.class).min());
+		int boxC = RenderUtil.mix((ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + 0xffffff, ClickGUI.getInstance().accentColor.getRGB(), hoverAnimation.get() / 4);
+		float sliderPercentage = ((float)sliderAnimation.get() - setting.getAnnotation(NumberSetting.class).min()) / (setting.getAnnotation(NumberSetting.class).max() - setting.getAnnotation(NumberSetting.class).min());
 		RenderUtil.drawRect(stack, x + width - 204, y + 4, (200 * sliderPercentage), 8, boxC);
 		
 		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
@@ -93,19 +95,15 @@ public class NumberSettingPart extends SettingPart {
 			}
 		}
 		
-		if(hovered) {
-			hoverAnimation += partialTicks / 5;
-		} else {
-			hoverAnimation -= partialTicks / 5;
-		}
-		hoverAnimation = Math.min(1, Math.max(0, hoverAnimation));
+		hoverAnimation.set(hovered);
+		hoverAnimation.update();
 		
 		try {
-			sliderAnimation += (setting.getFloat(obj) - sliderAnimation) * (partialTicks / 5);
+			sliderAnimation.set(setting.getFloat(obj));
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		sliderAnimation = Math.min(setting.getAnnotation(NumberSetting.class).max(), Math.max(setting.getAnnotation(NumberSetting.class).min(), sliderAnimation));
+		sliderAnimation.update();
 	}
 	
 	@Override
@@ -170,7 +168,6 @@ public class NumberSettingPart extends SettingPart {
 					e.printStackTrace();
 				}
 			}
-			return true;
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
 	}

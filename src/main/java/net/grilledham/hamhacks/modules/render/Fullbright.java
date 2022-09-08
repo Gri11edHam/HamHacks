@@ -2,10 +2,10 @@ package net.grilledham.hamhacks.modules.render;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
 
 public class Fullbright extends Module {
 	
@@ -24,7 +24,7 @@ public class Fullbright extends Module {
 	
 	private static Fullbright INSTANCE;
 	
-	private float newBrightness;
+	private final Animation newBrightness = Animation.getInOutQuad(0.25);
 	
 	public Fullbright() {
 		super(Text.translatable("hamhacks.module.fullBright"), Category.RENDER, new Keybind(0));
@@ -48,10 +48,11 @@ public class Fullbright extends Module {
 			nextBrightness = original;
 		}
 		if(smoothTransition) {
-			newBrightness = MathHelper.lerp(delta / 16f, newBrightness, nextBrightness);
+			newBrightness.set(nextBrightness);
+			newBrightness.update();
 		} else {
-			newBrightness = nextBrightness;
+			newBrightness.setAbsolute(nextBrightness);
 		}
-		return newBrightness;
+		return (float)newBrightness.get();
 	}
 }
