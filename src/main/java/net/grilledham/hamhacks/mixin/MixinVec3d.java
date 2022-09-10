@@ -21,6 +21,21 @@ public abstract class MixinVec3d implements Position, IVec3d {
 	@Shadow @Final public double z;
 	
 	@Override
+	public void setX(double x) {
+		this.x = x;
+	}
+	
+	@Override
+	public void setY(double y) {
+		this.y = y;
+	}
+	
+	@Override
+	public void setZ(double z) {
+		this.z = z;
+	}
+	
+	@Override
 	public void set(double x, double y, double z) {
 		this.x = x;
 		this.y = y;

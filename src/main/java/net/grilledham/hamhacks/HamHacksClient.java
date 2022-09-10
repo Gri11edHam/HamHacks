@@ -59,6 +59,8 @@ public class HamHacksClient implements ClientModInitializer {
 	}
 	
 	private static void registerModules() {
+		ModuleManager.register(new Notifications());
+		
 		ModuleManager.register(new Fly());
 		ModuleManager.register(new Trap());
 		ModuleManager.register(new Encase());
@@ -87,7 +89,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new Zoom());
 		ModuleManager.register(new NoTelemetry());
 		ModuleManager.register(new Freecam());
-		ModuleManager.register(new Notifications());
+		ModuleManager.register(new ESP());
 		
 		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 		
