@@ -31,12 +31,23 @@ public class Step extends Module {
 	@Override
 	public void onEnable() {
 		super.onEnable();
+		if(mc.player == null) {
+			originalStepHeight = -1;
+			return;
+		}
 		originalStepHeight = mc.player.stepHeight;
 		mc.player.stepHeight = height;
 	}
 	
 	@EventListener
 	public void onTick(EventTick e) {
+		if(mc.player == null) {
+			originalStepHeight = -1;
+			return;
+		}
+		if(originalStepHeight == -1) {
+			originalStepHeight = mc.player.stepHeight;
+		}
 		mc.player.stepHeight = height;
 	}
 	
@@ -44,6 +55,7 @@ public class Step extends Module {
 	public void onDisable() {
 		super.onDisable();
 		if(mc.player == null) {
+			originalStepHeight = -1;
 			return;
 		}
 		mc.player.stepHeight = originalStepHeight;

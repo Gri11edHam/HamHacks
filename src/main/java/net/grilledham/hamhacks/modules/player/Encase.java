@@ -21,6 +21,10 @@ public class Encase extends Module {
 	@Override
 	public void onEnable() {
 		super.onEnable();
+		if(mc.player == null) {
+			setEnabled(false);
+			return;
+		}
 		int slot = -1;
 		int oldSlot = mc.player.getInventory().selectedSlot;
 		for(int i = 0; i < 9; i++) {
@@ -31,6 +35,7 @@ public class Encase extends Module {
 			}
 		}
 		if(slot < 0) {
+			setEnabled(false);
 			return;
 		}
 		mc.player.getInventory().selectedSlot = slot;

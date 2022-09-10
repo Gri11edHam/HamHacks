@@ -22,6 +22,10 @@ public class Trap extends Module {
 	@Override
 	public void onEnable() {
 		super.onEnable();
+		if(mc.world == null) {
+			setEnabled(false);
+			return;
+		}
 		PlayerEntity p = null;
 		for(PlayerEntity player : mc.world.getPlayers()) {
 			if(player != mc.player) {
@@ -43,6 +47,7 @@ public class Trap extends Module {
 				}
 			}
 			if(slot < 0) {
+				setEnabled(false);
 				return;
 			}
 			mc.player.getInventory().selectedSlot = slot;
