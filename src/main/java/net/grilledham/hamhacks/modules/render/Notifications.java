@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.modules.render;
 
 import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventClick;
 import net.grilledham.hamhacks.event.events.EventRender;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
@@ -19,17 +20,20 @@ public class Notifications extends Module {
 	
 	private static final List<Notification> notifications = new ArrayList<>();
 	
-	@ColorSetting(name = "hamhacks.module.notifications.backgroundColor")
-	public Color bgColor = new Color(0x80000000);
-	
 	@ColorSetting(name = "hamhacks.module.notifications.accentColor")
 	public Color accentColor = new Color(0x80AA0000);
 	
-	@ColorSetting(name = "hamhacks.module.notifications.progressColorBackground")
-	public Color progressColorBG = new Color(0x80000000);
+	@ColorSetting(name = "hamhacks.module.notifications.backgroundColor")
+	public Color bgColor = new Color(0x80000000);
+	
+	@ColorSetting(name = "hamhacks.module.notifications.backgroundColorHovered")
+	public Color bgColorHovered = new Color(0x80ffffff);
 	
 	@ColorSetting(name = "hamhacks.module.notifications.progressColor")
 	public Color progressColor = new Color(0x80AA0000);
+	
+	@ColorSetting(name = "hamhacks.module.notifications.progressColorBackground")
+	public Color progressColorBG = new Color(0x80000000);
 	
 	@NumberSetting(
 			name = "hamhacks.module.notifications.lifeSpan",
@@ -63,8 +67,10 @@ public class Notifications extends Module {
 	public void render(EventRender e) {
 		List<Notification> completed = new ArrayList<>();
 		float yAdd = 0;
+		double mx = mc.mouse.getX() * (double)mc.getWindow().getScaledWidth() / (double)mc.getWindow().getWidth();
+		double my = mc.mouse.getY() * (double)mc.getWindow().getScaledHeight() / (double)mc.getWindow().getHeight();
 		for(Notification n : notifications) {
-			yAdd += n.render(e.matrices, yAdd, e.tickDelta) + 10;
+			yAdd += n.render(e.matrices, mx, my, yAdd, e.tickDelta) + 10;
 			if(n.isComplete()) {
 				completed.add(n);
 			}
@@ -72,12 +78,26 @@ public class Notifications extends Module {
 		notifications.removeAll(completed);
 	}
 	
+	@EventListener
+	public void click(EventClick e) {
+		for(Notification n : notifications) {
+			if(n.click(e.x, e.y, e.button)) {
+				e.canceled = true;
+				break;
+			}
+		}
+	}
+	
 	public static void notify(Notification n) {
 		notifications.add(n);
 	}
 	
+	public static void notify(String title, String info, Runnable clickEvent) {
+		notify(new Notification(title, info, clickEvent));
+	}
+	
 	public static void notify(String title, String info) {
-		notify(new Notification(title, info));
+		notify(title, info, null);
 	}
 	
 	public static void notify(String info) {

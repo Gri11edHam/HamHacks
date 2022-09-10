@@ -4,7 +4,7 @@ import net.grilledham.hamhacks.modules.render.Notifications;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +14,12 @@ public class Notification {
 	private final Animation inOutAnimation = Animation.getInOutQuad(0.25, true);
 	private final Animation dropAnimation = Animation.getInOutQuad(0.25);
 	
+	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	
+	private final Animation progressAnimation = Animation.getAnimation(t -> t, Notifications.getInstance().lifeSpan, false);
+	
 	private final List<String> titleTexts = new ArrayList<>();
 	private final List<String> infoTexts = new ArrayList<>();
-	
-	private final long completionTime;
 	
 	private boolean complete = false;
 	
@@ -27,7 +29,10 @@ public class Notification {
 	private static final float WIDTH = 200;
 	private final float height;
 	
-	public Notification(String title, String info) {
+	private final Runnable clickEvent;
+	
+	public Notification(String title, String info, Runnable clickEvent) {
+		this.clickEvent = clickEvent;
 		int i = 1;
 		float titleH = textRenderer.fontHeight;
 		float infoH = textRenderer.fontHeight;
@@ -63,20 +68,29 @@ public class Notification {
 			infoTexts.add(info);
 		}
 		height = 5 + titleH + 5 + infoH + 5 + 2;
-		completionTime = System.currentTimeMillis() + (long)(Notifications.getInstance().lifeSpan * 1000);
+		progressAnimation.setAbsolute(0);
+		progressAnimation.set(1);
 	}
 	
-	public float render(MatrixStack matrices, float yAdd, float partialTicks) {
+	public Notification(String title, String info) {
+		this(title, info, null);
+	}
+	
+	public float render(MatrixStack matrices, double mx, double my, float yAdd, float partialTicks) {
 		matrices.push();
 		
 		float x = mc.getWindow().getScaledWidth() - WIDTH - 5 + ((WIDTH + 5) * (float)(1 - inOutAnimation.get()));
 		float y = mc.getWindow().getScaledHeight() - height - 5 - (float)dropAnimation.get();
 		
+		boolean hovered = mx >= x && mx <= x + WIDTH && my >= y && my <= y + height;
+		
+		int bgColor = RenderUtil.mix(Notifications.getInstance().bgColorHovered.getRGB(), Notifications.getInstance().bgColor.getRGB(), hoverAnimation.get());
+		
 		RenderUtil.preRender();
-		RenderUtil.drawRect(matrices, x, y, WIDTH, height - 2, Notifications.getInstance().bgColor.getRGB());
+		RenderUtil.drawRect(matrices, x, y, WIDTH, height - 2, bgColor);
 		RenderUtil.drawHRect(matrices, x - 1, y - 1, WIDTH + 2, height + 2, Notifications.getInstance().accentColor.getRGB());
 		
-		float progressBarPercentage = MathHelper.clamp(1 - ((completionTime - System.currentTimeMillis()) /  (Notifications.getInstance().lifeSpan * 1000)), 0, 1);
+		float progressBarPercentage = (float)progressAnimation.get();
 		RenderUtil.drawRect(matrices, x + WIDTH * progressBarPercentage, y + height - 2, WIDTH * (1 - progressBarPercentage), 2, Notifications.getInstance().progressColorBG.getRGB());
 		RenderUtil.drawRect(matrices, x, y + height - 2, WIDTH * progressBarPercentage, 2, Notifications.getInstance().progressColor.getRGB());
 		
@@ -96,14 +110,33 @@ public class Notification {
 		
 		inOutAnimation.set(!complete);
 		dropAnimation.set(yAdd);
+		hoverAnimation.set(hovered);
 		inOutAnimation.update();
 		dropAnimation.update();
+		hoverAnimation.update();
+		progressAnimation.update();
 		
-		if(completionTime <= System.currentTimeMillis()) {
+		if(progressAnimation.get() >= 1) {
 			complete = true;
 		}
 		
 		return height;
+	}
+	
+	public boolean click(double mx, double my, int button) {
+		float x = mc.getWindow().getScaledWidth() - WIDTH - 5 + ((WIDTH + 5) * (float)(1 - inOutAnimation.get()));
+		float y = mc.getWindow().getScaledHeight() - height - 5 - (float)dropAnimation.get();
+		
+		if(mx >= x && mx <= x + WIDTH && my >= y && my <= y + height && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			progressAnimation.setSpeed(0.25);
+			progressAnimation.setAbsolute(progressAnimation.get());
+			progressAnimation.set(1);
+			if(clickEvent != null) {
+				clickEvent.run();
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean isComplete() {

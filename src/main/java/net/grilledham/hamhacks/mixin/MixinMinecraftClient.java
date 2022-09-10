@@ -2,15 +2,18 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.event.events.EventTick;
+import net.grilledham.hamhacks.gui.screens.NewVersionScreen;
 import net.grilledham.hamhacks.mixininterface.IClientPlayerInteractionManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.mixininterface.IRenderTickCounter;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Notifications;
 import net.grilledham.hamhacks.util.MouseUtil;
+import net.grilledham.hamhacks.util.Updater;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.WindowEventHandler;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.Session;
@@ -19,6 +22,7 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceReload;
 import net.minecraft.util.Unit;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -43,6 +47,8 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	
 	@Shadow public abstract Session getSession();
 	
+	@Shadow @Nullable public Screen currentScreen;
+	
 	public MixinMinecraftClient(String string) {
 		super(string);
 	}
@@ -65,6 +71,9 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 				Notifications.notify("HamHacks", "Welcome to HamHacks, " + getSession().getUsername());
 			} else {
 				Notifications.notify("HamHacks", "Welcome back, " + getSession().getUsername());
+			}
+			if(Updater.newVersionAvailable()) {
+				Notifications.notify("HamHacks", "New version available: " + Updater.getLatest().getVersion(0, true) + ". Click to update", () -> MinecraftClient.getInstance().setScreen(new NewVersionScreen(currentScreen)));
 			}
 		});
 		return toReturn;
