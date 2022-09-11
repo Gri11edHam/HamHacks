@@ -11,6 +11,7 @@
 		"MixinClientPlayerInteractionManager",
 		"MixinCommandSuggestor",
 		"MixinDisconnectedScreen",
+		"MixinEntityRenderer",
 		"MixinGameRenderer",
 		"MixinHeldItemRenderer",
 		"MixinInGameHud",

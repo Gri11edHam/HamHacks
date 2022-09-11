@@ -90,6 +90,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new NoTelemetry());
 		ModuleManager.register(new Freecam());
 		ModuleManager.register(new ESP());
+		ModuleManager.register(new Nametags());
 		
 		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 		

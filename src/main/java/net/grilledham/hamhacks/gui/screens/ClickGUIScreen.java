@@ -79,6 +79,18 @@ public class ClickGUIScreen extends Screen {
 	}
 	
 	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
+		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
+		for(CategoryPart category : categories) {
+			if(category.scroll(mouseX, mouseY, 0, 0, amount)) {
+				return true;
+			}
+		}
+		return super.mouseScrolled(mouseX, mouseY, amount);
+	}
+	
+	@Override
 	public void close() {
 		client.setScreen(last);
 	}

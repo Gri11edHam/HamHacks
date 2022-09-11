@@ -26,6 +26,10 @@ public class ModuleManager {
 		return modules.stream().filter(module -> module.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 	}
 	
+	public static <T extends Module> T getModule(Class<T> clazz) {
+		return clazz.cast(modules.stream().filter(module -> module.getClass() == clazz).findFirst().orElse(null));
+	}
+	
 	public static void updateKeybinds() {
 		modules.forEach(Module::checkKeybind);
 	}

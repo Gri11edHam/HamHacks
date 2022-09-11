@@ -4,7 +4,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Matrix4f;
 
 import java.util.ArrayList;
@@ -291,5 +294,44 @@ public class RenderUtil {
 		}
 		
 		popScissor();
+	}
+	
+	public static void drawItem(MatrixStack matrices, ItemStack itemStack, float x, float y, float scale, boolean overlay) {
+		matrices.push();
+		matrices.translate(x + 8, y + 8, zLevel);
+		matrices.scale(16, -16, 16);
+		matrices.scale(scale, scale, 1);
+		
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
+		
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		
+		BakedModel model = mc.getItemRenderer().getModel(itemStack, null, null, 0);
+		if(!model.isSideLit()) {
+			DiffuseLighting.disableGuiDepthLighting();
+		}
+		matrices.peek().getNormalMatrix().set(1, 1, 1);
+		
+		mc.getItemRenderer().renderItem(itemStack, ModelTransformation.Mode.GUI, 0xF000F0,
+				OverlayTexture.DEFAULT_UV, matrices, mc.getBufferBuilders().getEntityVertexConsumers(), 0);
+		
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
+		
+		if(!model.isSideLit()) {
+			DiffuseLighting.enableGuiDepthLighting();
+		}
+		
+		RenderSystem.disableBlend();
+		
+		matrices.pop();
+		
+		if(overlay && itemStack.getCount() > 1) {
+			matrices.push();
+			matrices.translate(x + 8, y + 8, zLevel + 100);
+			matrices.scale(scale, scale, 1);
+			mc.textRenderer.drawWithShadow(matrices, itemStack.getCount() + "", 9 - mc.textRenderer.getWidth(itemStack.getCount() + ""), 1, -1);
+			matrices.pop();
+		}
 	}
 }

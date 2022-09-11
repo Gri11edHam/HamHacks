@@ -9,6 +9,7 @@ import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.ProjectionUtil;
+import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.SelectableList;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
@@ -115,10 +116,7 @@ public class ESP extends Module {
 		MatrixStack matrixStack = e.matrices;
 		float partialTicks = e.tickDelta;
 		
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		RenderUtil.preRender();
 		matrixStack.push();
 		
 		matrixStack.loadIdentity();
@@ -127,11 +125,7 @@ public class ESP extends Module {
 		render2D(matrixStack, partialTicks);
 		
 		matrixStack.pop();
-		
-		RenderSystem.setShaderColor(1, 1, 1, 1);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		RenderUtil.postRender();
 	}
 	
 	@EventListener
@@ -233,7 +227,7 @@ public class ESP extends Module {
 	private boolean checkPos(double x, double y, double z, Vec3 min, Vec3 max) {
 		Vec3 pos = new Vec3(x, y, z);
 		
-		if(!ProjectionUtil.to2D(pos)) return true;
+		if(!ProjectionUtil.to2D(pos, 1)) return true;
 		
 		if (pos.getX() < min.getX()) min.setX(pos.getX());
 		if (pos.getY() < min.getY()) min.setY(pos.getY());

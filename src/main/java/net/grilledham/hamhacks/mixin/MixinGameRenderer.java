@@ -57,9 +57,9 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "net.minecraft.client.gui.hud.InGameHud.render(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void render2DEvent(InGameHud instance, MatrixStack matrices, float tickDelta) {
-		instance.render(matrices, tickDelta);
 		EventRender2D event = new EventRender2D(matrices, tickDelta);
 		event.call();
+		instance.render(matrices, tickDelta);
 	}
 	
 	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=hand"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
