@@ -121,6 +121,10 @@ public class Vec3 {
 		return dist(pos.x, pos.y, pos.z);
 	}
 	
+	public Vec3d get() {
+		return new Vec3d(x, y, z);
+	}
+	
 	public Vec3 copy() {
 		return new Vec3(this);
 	}

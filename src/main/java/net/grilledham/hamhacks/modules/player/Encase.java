@@ -1,10 +1,14 @@
 package net.grilledham.hamhacks.modules.player;
 
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventMotion;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.util.RotationHack;
+import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -14,6 +18,8 @@ import org.lwjgl.glfw.GLFW;
 
 public class Encase extends Module {
 	
+	private Vec3 anchorPos = new Vec3();
+	
 	public Encase() {
 		super(Text.translatable("hamhacks.module.encase"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_LEFT_ALT));
 	}
@@ -21,7 +27,19 @@ public class Encase extends Module {
 	@Override
 	public void onEnable() {
 		super.onEnable();
+		anchorPos = null;
+	}
+	
+	@Override
+	public void onDisable() {
+		super.onDisable();
+		anchorPos = null;
+	}
+	
+	@EventListener
+	public void onTick(EventTick e) {
 		if(mc.player == null) {
+			anchorPos = null;
 			setEnabled(false);
 			return;
 		}
@@ -35,39 +53,51 @@ public class Encase extends Module {
 			}
 		}
 		if(slot < 0) {
+			anchorPos = null;
 			setEnabled(false);
 			return;
 		}
 		mc.player.getInventory().selectedSlot = slot;
-		Vec3d eyesPos = new Vec3d(mc.player.getX(), mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
-		for(int x = 0; x < 1; x++) {
-			BlockPos pos = mc.player.getBlockPos().add(0, x, 0);
-			for(Direction side : Direction.values()) {
-				BlockPos neighbor = pos.offset(side);
-				Direction side2 = side.getOpposite();
-				
-				Vec3d hitVec = Vec3d.ofCenter(neighbor).add(Vec3d.of(side2.getVector()).multiply(0.5));
-				
-				if(eyesPos.squaredDistanceTo(hitVec) > 30.25) {
-					continue;
-				}
-				
-				double diffX = hitVec.x - eyesPos.x;
-				double diffY = hitVec.y - eyesPos.y;
-				double diffZ = hitVec.z - eyesPos.z;
-				
-				double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
-				
-				float yaw = (float)Math.toDegrees(Math.atan2(diffZ, diffX)) - 90F;
-				float pitch = (float)-Math.toDegrees(Math.atan2(diffY, diffXZ));
-				
-				PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, mc.player.isOnGround());
-				mc.player.networkHandler.sendPacket(packet);
-				imc.getInteractionManager().rightClickBlock(neighbor, side2, hitVec);
+		if(anchorPos == null) {
+			anchorPos = new Vec3();
+		}
+		anchorPos.set(Vec3d.ofCenter(mc.player.getBlockPos()));
+		anchorPos.setY((int)anchorPos.getY() - 0.1);
+		Vec3 eyesPos = new Vec3(mc.player.getX(), mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
+		BlockPos pos = mc.player.getBlockPos();
+		for(Direction side : Direction.stream().filter(d -> d != Direction.UP).toList()) {
+			BlockPos neighbor = pos.offset(side);
+			Direction side2 = side.getOpposite();
+			
+			Vec3d hitVec = Vec3d.ofCenter(neighbor).add(Vec3d.of(side2.getVector()).multiply(0.5));
+			
+			if(eyesPos.get().squaredDistanceTo(hitVec) > 30.25) {
+				break;
+			}
+			
+			RotationHack.faceVectorPacket(hitVec);
+			if(imc.getInteractionManager().rightClickBlock(neighbor, side2, hitVec)) {
 				mc.player.swingHand(Hand.MAIN_HAND);
+				break;
 			}
 		}
 		mc.player.getInventory().selectedSlot = oldSlot;
-		setEnabled(false);
+	}
+	
+	@EventListener
+	public void onMove(EventMotion e) {
+		if(e.type == EventMotion.Type.PRE) {
+			if(anchorPos != null) {
+				mc.player.setVelocity(mc.player.getVelocity().x, getVelocityTo(anchorPos, 0.25).y, mc.player.getVelocity().z);
+				if(mc.options.forwardKey.isPressed() || mc.options.backKey.isPressed() || mc.options.leftKey.isPressed() || mc.options.rightKey.isPressed()) {
+					return;
+				}
+				mc.player.setVelocity(getVelocityTo(anchorPos, 0.25));
+			}
+		}
+	}
+	
+	private Vec3d getVelocityTo(Vec3 pos, double speed) {
+		return pos.get().subtract(mc.player.getPos()).multiply(speed);
 	}
 }
