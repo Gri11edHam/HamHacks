@@ -5,12 +5,14 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.player.Encase;
+import net.grilledham.hamhacks.util.RotationHack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -23,16 +25,14 @@ import java.util.List;
 
 public class CrystalAura extends Module {
 	
-	private int updates = 0;
-	
 	public CrystalAura() {
 		super(Text.translatable("hamhacks.module.crystalAura"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_C));
 	}
 	
 	@EventListener
 	public void onTick(EventTick e) {
-		updates = 0;
 		if(mc.world == null) {
+			setEnabled(false);
 			return;
 		}
 		PlayerEntity p = null;
@@ -56,6 +56,7 @@ public class CrystalAura extends Module {
 				}
 			}
 			if(slot < 0) {
+				setEnabled(false);
 				return;
 			}
 			mc.player.getInventory().selectedSlot = slot;
@@ -65,7 +66,13 @@ public class CrystalAura extends Module {
 			for(int x = -2; x < 3; x++) {
 				for(int y = -2; y < 4; y++) {
 					for(int z = -2; z < 3; z++) {
-						possiblePositions.add(new Vec3i(x, y, z));
+						Vec3i position = new Vec3i(x, y, z);
+						if(position.isWithinDistance(mc.player.getPos(), 3) && !ModuleManager.getModule(Encase.class).playerSafe) {
+							continue;
+						}
+						if(position.isWithinDistance(p.getPos(), 5)) {
+							possiblePositions.add(position);
+						}
 					}
 				}
 			}
@@ -113,17 +120,7 @@ public class CrystalAura extends Module {
 				return false;
 			}
 			
-			double diffX = hitVec.x - eyesPos.x;
-			double diffY = hitVec.y - eyesPos.y;
-			double diffZ = hitVec.z - eyesPos.z;
-			
-			double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
-			
-			float yaw = (float)Math.toDegrees(Math.atan2(diffZ, diffX)) - 90F;
-			float pitch = (float)-Math.toDegrees(Math.atan2(diffY, diffXZ));
-			
-			PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, mc.player.isOnGround());
-			mc.player.networkHandler.sendPacket(packet);
+			RotationHack.faceVectorPacket(hitVec);
 			if(imc.getInteractionManager().rightClickBlock(neighbor, side2, hitVec)) {
 				mc.player.swingHand(Hand.MAIN_HAND);
 				return true;

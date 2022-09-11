@@ -18,6 +18,8 @@ import org.lwjgl.glfw.GLFW;
 
 public class Encase extends Module {
 	
+	public boolean playerSafe = false;
+	
 	private Vec3 anchorPos = new Vec3();
 	
 	public Encase() {
@@ -28,12 +30,14 @@ public class Encase extends Module {
 	public void onEnable() {
 		super.onEnable();
 		anchorPos = null;
+		playerSafe = false;
 	}
 	
 	@Override
 	public void onDisable() {
 		super.onDisable();
 		anchorPos = null;
+		playerSafe = false;
 	}
 	
 	@EventListener
@@ -76,8 +80,10 @@ public class Encase extends Module {
 			}
 			
 			RotationHack.faceVectorPacket(hitVec);
+			playerSafe = false;
 			if(imc.getInteractionManager().rightClickBlock(neighbor, side2, hitVec)) {
 				mc.player.swingHand(Hand.MAIN_HAND);
+				playerSafe = true;
 				break;
 			}
 		}
