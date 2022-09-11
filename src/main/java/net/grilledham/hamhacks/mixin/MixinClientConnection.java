@@ -3,9 +3,9 @@ package net.grilledham.hamhacks.mixin;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.grilledham.hamhacks.event.events.EventPacket;
-import net.minecraft.class_7648;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.listener.PacketListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,8 +25,8 @@ public abstract class MixinClientConnection extends SimpleChannelInboundHandler<
 		}
 	}
 	
-	@Inject(method = "send(Lnet/minecraft/network/Packet;Lnet/minecraft/class_7648;)V", at = @At("HEAD"), cancellable = true)
-	public void send(Packet<?> packet, class_7648 callback, CallbackInfo ci) {
+	@Inject(method = "send(Lnet/minecraft/network/Packet;Lnet/minecraft/network/PacketCallbacks;)V", at = @At("HEAD"), cancellable = true)
+	public void send(Packet<?> packet, PacketCallbacks callback, CallbackInfo ci) {
 		EventPacket.EventPacketSent event = new EventPacket.EventPacketSent(packet, callback);
 		event.call();
 		if(event.canceled) {
