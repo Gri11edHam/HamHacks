@@ -7,6 +7,7 @@ import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -150,7 +151,7 @@ public class ESP extends Module {
 					}
 				}, new Box(mc.player.getBlockPos().add(-256, -256, -256), mc.player.getBlockPos().add(256, 256, 256)), Objects::nonNull).stream()
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
-				.filter(entity -> entity != player || Freecam.getInstance().isEnabled() || self)
+				.filter(entity -> entity != player || ModuleManager.getModule(Freecam.class).isEnabled() || self)
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
 				.filter(entity -> (entity instanceof PlayerEntity && players) || (entity instanceof HostileEntity && hostiles) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives));
 		

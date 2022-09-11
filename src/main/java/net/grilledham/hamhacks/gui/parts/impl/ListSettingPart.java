@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -111,24 +112,24 @@ public class ListSettingPart extends SettingPart {
 		stack.push();
 		RenderUtil.preRender();
 		
-		int bgC = ClickGUI.getInstance().bgColor.getRGB();
+		int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
 		RenderUtil.drawRect(stack, x, y, width - height, height, bgC);
 		
 		boolean hovered = mx >= x + width - height && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation.get());
+		bgC = RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).bgColorHovered.getRGB(), bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x + width - height, y, height, height, bgC);
 		
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - height, y, height, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		float dropDownX = x + width - height / 2f - mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterX = dropDownX + mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterY = y + 4 + mc.textRenderer.fontHeight / 2f;
 		stack.translate(dropDownCenterX, dropDownCenterY, 0);
 		stack.peek().getPositionMatrix().multiply(new Quaternion(new Vec3f(0, 0, 1), (float)selectionAnimation.get() * -90, true));
 		stack.translate(-dropDownCenterX, -dropDownCenterY, 0);
-		mc.textRenderer.drawWithShadow(stack, "<", dropDownX, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, "<", dropDownX, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -146,7 +147,7 @@ public class ListSettingPart extends SettingPart {
 		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
-		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * (float)selectionAnimation.get(), ClickGUI.getInstance().scale);
+		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * (float)selectionAnimation.get(), ModuleManager.getModule(ClickGUI.class).scale);
 		RenderUtil.applyScissor();
 		
 		RenderUtil.drawRect(stack, x + width - maxWidth, y + height, maxWidth, height * (stringParts.size() + 1), 0xff202020);

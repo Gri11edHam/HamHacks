@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
@@ -273,7 +274,7 @@ public class RenderUtil {
 			x -= w - (shift ? 4 : 8);
 		}
 		
-		pushScissor(x, y, w, h, ClickGUI.getInstance().scale);
+		pushScissor(x, y, w, h, ModuleManager.getModule(ClickGUI.class).scale);
 		applyScissor();
 		
 		preRender();

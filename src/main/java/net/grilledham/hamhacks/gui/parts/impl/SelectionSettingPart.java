@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.gui.parts.GuiPart;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -91,20 +92,20 @@ public class SelectionSettingPart extends SettingPart {
 		stack.push();
 		RenderUtil.preRender();
 		
-		int bgC = ClickGUI.getInstance().bgColor.getRGB();
+		int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
 		RenderUtil.drawRect(stack, x, y, width - maxWidth, height, bgC);
 		
 		boolean hovered = mx >= x + width - maxWidth && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation.get());
+		bgC = RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).bgColorHovered.getRGB(), bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x + width - maxWidth, y, maxWidth, height, bgC);
 		
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - maxWidth, y, maxWidth, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		try {
 			String text = Text.translatable(((SelectableList)setting.get(obj)).get()).getString();
-			mc.textRenderer.drawWithShadow(stack, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+			mc.textRenderer.drawWithShadow(stack, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -125,7 +126,7 @@ public class SelectionSettingPart extends SettingPart {
 		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
-		RenderUtil.pushScissor(x, y, width, (height * parts.size()) * (float)selectionAnimation.get(), ClickGUI.getInstance().scale);
+		RenderUtil.pushScissor(x, y, width, (height * parts.size()) * (float)selectionAnimation.get(), ModuleManager.getModule(ClickGUI.class).scale);
 		RenderUtil.applyScissor();
 		
 		for(GuiPart part : parts) {

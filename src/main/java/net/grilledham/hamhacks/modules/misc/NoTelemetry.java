@@ -6,15 +6,8 @@ import net.minecraft.text.Text;
 
 public class NoTelemetry extends Module {
 	
-	private static NoTelemetry INSTANCE;
-	
 	public NoTelemetry() {
 		super(Text.translatable("hamhacks.module.noTelemetry"), Category.MISC, new Keybind(0));
 		setEnabled(true);
-		INSTANCE = this;
-	}
-	
-	public static NoTelemetry getInstance() {
-		return INSTANCE;
 	}
 }

@@ -17,8 +17,8 @@ public class ScrollClicker extends Module {
 	@EventListener
 	public void onScroll(EventScroll e) {
 		e.canceled = true;
-		double vertical = ((EventScroll)e).vertical;
-		double horizontal = ((EventScroll)e).horizontal;
+		double vertical = e.vertical;
+		double horizontal = e.horizontal;
 		if(vertical < 0 || horizontal < 0) {
 			KeyBinding.onKeyPressed(mc.options.attackKey.getDefaultKey());
 		}

@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Notifications;
 import net.grilledham.hamhacks.util.SelectableList;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
@@ -65,10 +66,10 @@ public class Fly extends Module {
 	@Override
 	public void onEnable() {
 		super.onEnable();
-		if(Speed.getInstance().isEnabled()) {
-			Notifications.notify(getName(), "Disabled " + Speed.getInstance().getName());
+		if(ModuleManager.getModule(Speed.class).isEnabled()) {
+			Notifications.notify(getName(), "Disabled " + ModuleManager.getModule(Speed.class).getName());
 		}
-		Speed.getInstance().forceDisable();
+		ModuleManager.getModule(Speed.class).forceDisable();
 		if(mc.player == null) {
 			return;
 		}
@@ -243,9 +244,9 @@ public class Fly extends Module {
 	@Override
 	public void onDisable() {
 		super.onDisable();
-		Speed.getInstance().reEnable();
-		if(Speed.getInstance().isEnabled()) {
-			Notifications.notify(getName(), "Re-Enabled " + Speed.getInstance().getName());
+		ModuleManager.getModule(Speed.class).reEnable();
+		if(ModuleManager.getModule(Speed.class).isEnabled()) {
+			Notifications.notify(getName(), "Re-Enabled " + ModuleManager.getModule(Speed.class).getName());
 		}
 		lastDx = 0;
 		lastDy = 0;

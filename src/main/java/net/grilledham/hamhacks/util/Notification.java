@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.util;
 
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Notifications;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -16,7 +17,7 @@ public class Notification {
 	
 	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
 	
-	private final Animation progressAnimation = Animation.getAnimation(t -> t, Notifications.getInstance().lifeSpan, false);
+	private final Animation progressAnimation = Animation.getAnimation(t -> t, ModuleManager.getModule(Notifications.class).lifeSpan, false);
 	
 	private final List<String> titleTexts = new ArrayList<>();
 	private final List<String> infoTexts = new ArrayList<>();
@@ -84,15 +85,15 @@ public class Notification {
 		
 		boolean hovered = mx >= x && mx <= x + WIDTH && my >= y && my <= y + height;
 		
-		int bgColor = RenderUtil.mix(Notifications.getInstance().bgColorHovered.getRGB(), Notifications.getInstance().bgColor.getRGB(), hoverAnimation.get());
+		int bgColor = RenderUtil.mix(ModuleManager.getModule(Notifications.class).bgColorHovered.getRGB(), ModuleManager.getModule(Notifications.class).bgColor.getRGB(), hoverAnimation.get());
 		
 		RenderUtil.preRender();
 		RenderUtil.drawRect(matrices, x, y, WIDTH, height - 2, bgColor);
-		RenderUtil.drawHRect(matrices, x - 1, y - 1, WIDTH + 2, height + 2, Notifications.getInstance().accentColor.getRGB());
+		RenderUtil.drawHRect(matrices, x - 1, y - 1, WIDTH + 2, height + 2, ModuleManager.getModule(Notifications.class).accentColor.getRGB());
 		
 		float progressBarPercentage = (float)progressAnimation.get();
-		RenderUtil.drawRect(matrices, x + WIDTH * progressBarPercentage, y + height - 2, WIDTH * (1 - progressBarPercentage), 2, Notifications.getInstance().progressColorBG.getRGB());
-		RenderUtil.drawRect(matrices, x, y + height - 2, WIDTH * progressBarPercentage, 2, Notifications.getInstance().progressColor.getRGB());
+		RenderUtil.drawRect(matrices, x + WIDTH * progressBarPercentage, y + height - 2, WIDTH * (1 - progressBarPercentage), 2, ModuleManager.getModule(Notifications.class).progressColorBG.getRGB());
+		RenderUtil.drawRect(matrices, x, y + height - 2, WIDTH * progressBarPercentage, 2, ModuleManager.getModule(Notifications.class).progressColor.getRGB());
 		
 		RenderUtil.postRender();
 		

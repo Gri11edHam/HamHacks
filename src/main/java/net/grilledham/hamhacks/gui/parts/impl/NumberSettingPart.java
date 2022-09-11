@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -66,18 +67,18 @@ public class NumberSettingPart extends SettingPart {
 		stack.push();
 		RenderUtil.preRender();
 		
-		int bgC = ClickGUI.getInstance().bgColor.getRGB();
+		int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - 206, y + 2, 204, 12, outlineC);
 		
 		boolean hovered = mx >= x + width - 204 && mx < x + width - 4 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((ClickGUI.getInstance().accentColor.getRGB() & 0xff000000) + 0xffffff, ClickGUI.getInstance().accentColor.getRGB(), hoverAnimation.get() / 4);
+		int boxC = RenderUtil.mix((ModuleManager.getModule(ClickGUI.class).accentColor.getRGB() & 0xff000000) + 0xffffff, ModuleManager.getModule(ClickGUI.class).accentColor.getRGB(), hoverAnimation.get() / 4);
 		float sliderPercentage = ((float)sliderAnimation.get() - setting.getAnnotation(NumberSetting.class).min()) / (setting.getAnnotation(NumberSetting.class).max() - setting.getAnnotation(NumberSetting.class).min());
 		RenderUtil.drawRect(stack, x + width - 204, y + 4, (200 * sliderPercentage), 8, boxC);
 		
-		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();

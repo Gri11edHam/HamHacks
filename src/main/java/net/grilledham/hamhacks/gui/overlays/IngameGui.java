@@ -37,36 +37,38 @@ public class IngameGui {
 			return;
 		}
 		
+		HUD hud = ModuleManager.getModule(HUD.class);
+		
 		matrices.push();
 		
-		float[] barC = HUD.getInstance().accentColor.getHSB();
-		float[] bgC = HUD.getInstance().bgColor.getHSB();
-		float[] textC = HUD.getInstance().textColor.getHSB();
+		float[] barC = hud.accentColor.getHSB();
+		float[] bgC = hud.bgColor.getHSB();
+		float[] textC = hud.textColor.getHSB();
 		
 		int j = 0;
 		int i = 0;
 		float yAdd = 0;
 		Animation animation = getAnimation(j++);
-		if(HUD.getInstance().animate) {
-			animation.set(HUD.getInstance().showLogo && HUD.getInstance().isEnabled());
+		if(hud.animate) {
+			animation.set(hud.showLogo && hud.isEnabled());
 		} else {
-			animation.setAbsolute(HUD.getInstance().showLogo && HUD.getInstance().isEnabled());
+			animation.setAbsolute(hud.showLogo && hud.isEnabled());
 		}
 		if(animation.get() > 0) {
 			float finalBarHue;
-			if(HUD.getInstance().accentColor.getChroma()) {
+			if(hud.accentColor.getChroma()) {
 				finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 			} else {
 				finalBarHue = barC[0];
 			}
 			float finalBGHue;
-			if(HUD.getInstance().bgColor.getChroma()) {
+			if(hud.bgColor.getChroma()) {
 				finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 			} else {
 				finalBGHue = bgC[0];
 			}
 			float finalTextHue;
-			if(HUD.getInstance().textColor.getChroma()) {
+			if(hud.textColor.getChroma()) {
 				finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 			} else {
 				finalTextHue = textC[0];
@@ -77,8 +79,6 @@ public class IngameGui {
 			String text = "§4§o§lHamHacks";
 			float textX = 2;
 			float textY = (fontRenderer.fontHeight + 2) * i + 2;
-//			DrawableHelper.fill(matrices, textX - 2, textY - 2, textX + fontRenderer.getWidth(text) + 2, textY + fontRenderer.fontHeight, bgColor);
-//			DrawableHelper.fill(matrices, textX + fontRenderer.getWidth(text) + 2,  textX + fontRenderer.getWidth(MinecraftClient.getInstance().fpsDebugString) + 5, textX - 2, textY + fontRenderer.fontHeight, barColor);
 			matrices.push();
 			matrices.translate(textX, textY, 0);
 			matrices.scale(2, 2, 1);
@@ -89,10 +89,10 @@ public class IngameGui {
 			i++;
 		}
 		animation = getAnimation(j++);
-		if(HUD.getInstance().animate) {
-			animation.set(HUD.getInstance().showFPS && HUD.getInstance().isEnabled());
+		if(hud.animate) {
+			animation.set(hud.showFPS && hud.isEnabled());
 		} else {
-			animation.setAbsolute(HUD.getInstance().showFPS && HUD.getInstance().isEnabled());
+			animation.setAbsolute(hud.showFPS && hud.isEnabled());
 		}
 		if(animation.get() > 0) {
 			String fps = MinecraftClient.getInstance().fpsDebugString;
@@ -101,10 +101,10 @@ public class IngameGui {
 			i++;
 		}
 		animation = getAnimation(j++);
-		if(HUD.getInstance().animate) {
-			animation.set(HUD.getInstance().showPing && HUD.getInstance().isEnabled());
+		if(hud.animate) {
+			animation.set(hud.showPing && hud.isEnabled());
 		} else {
-			animation.setAbsolute(HUD.getInstance().showPing && HUD.getInstance().isEnabled());
+			animation.setAbsolute(hud.showPing && hud.isEnabled());
 		}
 		if(animation.get() > 0) {
 			String ping = "0 ms";
@@ -124,10 +124,10 @@ public class IngameGui {
 			i++;
 		}
 		animation = getAnimation(j++);
-		if(HUD.getInstance().animate) {
-			animation.set(HUD.getInstance().showTPS && HUD.getInstance().isEnabled());
+		if(hud.animate) {
+			animation.set(hud.showTPS && hud.isEnabled());
 		} else {
-			animation.setAbsolute(HUD.getInstance().showTPS && HUD.getInstance().isEnabled());
+			animation.setAbsolute(hud.showTPS && hud.isEnabled());
 		}
 		if(animation.get() > 0) {
 			String tps = String.format("%.2f tps", ConnectionUtil.getTPS());
@@ -135,10 +135,10 @@ public class IngameGui {
 			i++;
 		}
 		animation = getAnimation(j++);
-		if(HUD.getInstance().animate) {
-			animation.set(HUD.getInstance().showTimeSinceLastTick && HUD.getInstance().isEnabled());
+		if(hud.animate) {
+			animation.set(hud.showTimeSinceLastTick && hud.isEnabled());
 		} else {
-			animation.setAbsolute(HUD.getInstance().showTimeSinceLastTick && HUD.getInstance().isEnabled());
+			animation.setAbsolute(hud.showTimeSinceLastTick && hud.isEnabled());
 		}
 		if(animation.get() > 0) {
 			float timeSinceLastTick = ConnectionUtil.getTimeSinceLastTick() / 1000f;
@@ -153,10 +153,10 @@ public class IngameGui {
 		Map<Module, Animation> moduleAnimations = new HashMap<>();
 		for(Module m : ModuleManager.getModules()) {
 			animation = getAnimation(k++);
-			if(HUD.getInstance().animate) {
-				animation.set(m.isEnabled() && m.shouldShowModule() && HUD.getInstance().showModules && HUD.getInstance().isEnabled());
+			if(hud.animate) {
+				animation.set(m.isEnabled() && m.shouldShowModule() && hud.showModules && hud.isEnabled());
 			} else {
-				animation.setAbsolute(m.isEnabled() && m.shouldShowModule() && HUD.getInstance().showModules && HUD.getInstance().isEnabled());
+				animation.setAbsolute(m.isEnabled() && m.shouldShowModule() && hud.showModules && hud.isEnabled());
 			}
 			moduleAnimations.put(m, animation);
 		}
@@ -175,23 +175,25 @@ public class IngameGui {
 	}
 	
 	private float drawLeftAligned(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
-		float[] barC = HUD.getInstance().accentColor.getHSB();
-		float[] bgC = HUD.getInstance().bgColor.getHSB();
-		float[] textC = HUD.getInstance().textColor.getHSB();
+		HUD hud = ModuleManager.getModule(HUD.class);
+		
+		float[] barC = hud.accentColor.getHSB();
+		float[] bgC = hud.bgColor.getHSB();
+		float[] textC = hud.textColor.getHSB();
 		float finalBarHue;
-		if(HUD.getInstance().accentColor.getChroma()) {
+		if(hud.accentColor.getChroma()) {
 			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBarHue = barC[0];
 		}
 		float finalBGHue;
-		if(HUD.getInstance().bgColor.getChroma()) {
+		if(hud.bgColor.getChroma()) {
 			finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBGHue = bgC[0];
 		}
 		float finalTextHue;
-		if(HUD.getInstance().textColor.getChroma()) {
+		if(hud.textColor.getChroma()) {
 			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalTextHue = textC[0];
@@ -210,23 +212,25 @@ public class IngameGui {
 	}
 	
 	private float drawRightAligned(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
-		float[] barC = HUD.getInstance().accentColor.getHSB();
-		float[] bgC = HUD.getInstance().bgColor.getHSB();
-		float[] textC = HUD.getInstance().textColor.getHSB();
+		HUD hud = ModuleManager.getModule(HUD.class);
+		
+		float[] barC = hud.accentColor.getHSB();
+		float[] bgC = hud.bgColor.getHSB();
+		float[] textC = hud.textColor.getHSB();
 		float finalBarHue;
-		if(HUD.getInstance().accentColor.getChroma()) {
+		if(hud.accentColor.getChroma()) {
 			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBarHue = barC[0];
 		}
 		float finalBGHue;
-		if(HUD.getInstance().bgColor.getChroma()) {
+		if(hud.bgColor.getChroma()) {
 			finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBGHue = bgC[0];
 		}
 		float finalTextHue;
-		if(HUD.getInstance().textColor.getChroma()) {
+		if(hud.textColor.getChroma()) {
 			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalTextHue = textC[0];

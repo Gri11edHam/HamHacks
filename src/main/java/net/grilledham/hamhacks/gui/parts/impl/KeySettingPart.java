@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.Keybind;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -28,15 +29,15 @@ public class KeySettingPart extends SettingPart {
 		stack.push();
 		RenderUtil.preRender();
 		
-		int bgC = ClickGUI.getInstance().bgColor.getRGB();
+		int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation.get());
+		bgC = RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).bgColorHovered.getRGB(), bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
-		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		try {
 			String text = "[" + (listening ? "Listening..." : ((Keybind)setting.get(obj)).getName()) + "]";
-			mc.textRenderer.drawWithShadow(stack, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+			mc.textRenderer.drawWithShadow(stack, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
 		}

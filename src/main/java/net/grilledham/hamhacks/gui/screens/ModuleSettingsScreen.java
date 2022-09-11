@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.gui.screens;
 import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.gui.parts.impl.*;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.setting.*;
@@ -31,8 +32,8 @@ public class ModuleSettingsScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		width = (int)((width * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
-		height = (int)((height * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
+		width = (int)((width * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale);
+		height = (int)((height * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale);
 		client.keyboard.setRepeatEvents(true);
 		float maxWidth = 0;
 		topPart = new GuiPart(0, 0, client.textRenderer.getWidth(module.getName()) + 2, 16) {
@@ -43,10 +44,10 @@ public class ModuleSettingsScreen extends Screen {
 				stack.push();
 				RenderUtil.preRender();
 				
-				int bgC = ClickGUI.getInstance().accentColor.getRGB();
+				int bgC = ModuleManager.getModule(ClickGUI.class).accentColor.getRGB();
 				RenderUtil.drawRect(stack, x, y, width, height, bgC);
 				
-				mc.textRenderer.drawWithShadow(stack, module.getName(), x + width / 2f - mc.textRenderer.getWidth(module.getName()) / 2f, y + 4, ClickGUI.getInstance().textColor.getRGB());
+				mc.textRenderer.drawWithShadow(stack, module.getName(), x + width / 2f - mc.textRenderer.getWidth(module.getName()) / 2f, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 				
 				RenderUtil.postRender();
 				stack.pop();
@@ -79,12 +80,12 @@ public class ModuleSettingsScreen extends Screen {
 						stack.push();
 						RenderUtil.preRender();
 						
-						int bgC = ClickGUI.getInstance().bgColor.getRGB();
+						int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
 						boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-						bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hovered ? 1 : 0);
+						bgC = RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).bgColorHovered.getRGB(), bgC, hovered ? 1 : 0);
 						RenderUtil.drawRect(stack, x, y, width, height, bgC);
 						
-						mc.textRenderer.drawWithShadow(stack, "uhhhh", x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+						mc.textRenderer.drawWithShadow(stack, "uhhhh", x + 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 						
 						RenderUtil.postRender();
 						stack.pop();
@@ -135,10 +136,10 @@ public class ModuleSettingsScreen extends Screen {
 	
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		mouseX = (int)((mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
-		mouseY = (int)((mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale);
+		mouseX = (int)((mouseX * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale);
+		mouseY = (int)((mouseY * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale);
 		matrices.push();
-		float scaleFactor = (float)(ClickGUI.getInstance().scale / client.getWindow().getScaleFactor());
+		float scaleFactor = (float)(ModuleManager.getModule(ClickGUI.class).scale / client.getWindow().getScaleFactor());
 		matrices.scale(scaleFactor, scaleFactor, scaleFactor);
 		
 		updatePartVisibility();
@@ -155,8 +156,8 @@ public class ModuleSettingsScreen extends Screen {
 	
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
-		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
+		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale;
+		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale;
 		if(scrollArea.click(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
@@ -165,8 +166,8 @@ public class ModuleSettingsScreen extends Screen {
 	
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
-		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
+		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale;
+		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale;
 		if(scrollArea.release(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
@@ -175,8 +176,8 @@ public class ModuleSettingsScreen extends Screen {
 	
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
-		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ClickGUI.getInstance().scale;
+		mouseX = (mouseX * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale;
+		mouseY = (mouseY * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale;
 		if(scrollArea.drag(mouseX, mouseY, 0, 0, button, deltaX, deltaY)) {
 			return true;
 		}

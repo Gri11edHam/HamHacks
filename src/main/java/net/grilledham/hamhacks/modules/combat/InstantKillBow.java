@@ -9,8 +9,6 @@ import net.minecraft.text.Text;
 
 public class InstantKillBow extends Module {
 	
-	private static InstantKillBow INSTANCE;
-	
 	@NumberSetting(
 			name = "hamhacks.module.instantKillBow.iterations",
 			defaultValue = 100,
@@ -22,15 +20,10 @@ public class InstantKillBow extends Module {
 	
 	public InstantKillBow() {
 		super(Text.translatable("hamhacks.module.instantKillBow"), Category.COMBAT, new Keybind(0));
-		INSTANCE = this;
-	}
-	
-	public static InstantKillBow getInstance() {
-		return INSTANCE;
 	}
 	
 	public void preBow() {
-		if(InstantKillBow.getInstance().isEnabled()) {
+		if(isEnabled()) {
 			mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_SPRINTING));
 			for (int i = 0; i < iterations; i++) {
 				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.000000001, mc.player.getZ(), true));

@@ -30,17 +30,10 @@ public class ClickGUI extends Module {
 	)
 	public float scale = 2;
 	
-	private static ClickGUI INSTANCE;
-	
 	public boolean typing = false;
 	
 	public ClickGUI() {
 		super(Text.translatable("hamhacks.module.clickGui"), Category.RENDER, new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT));
-		INSTANCE = this;
-	}
-	
-	public static ClickGUI getInstance() {
-		return INSTANCE;
 	}
 	
 	@Override

@@ -61,11 +61,8 @@ public class Speed extends Module {
 	@BoolSetting(name = "hamhacks.module.speed.disableWithElytra", defaultValue = true)
 	public boolean disableWithElytra = true;
 	
-	private static Speed INSTANCE;
-	
 	public Speed() {
 		super(Text.translatable("hamhacks.module.speed"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));
-		INSTANCE = this;
 	}
 	
 	@Override
@@ -152,9 +149,5 @@ public class Speed extends Module {
 			}
 		}
 		return true;
-	}
-	
-	public static Speed getInstance() {
-		return INSTANCE;
 	}
 }

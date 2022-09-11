@@ -23,15 +23,8 @@ public class Reach extends Module {
 	)
 	public float blockRange = 4.5f;
 	
-	private static Reach INSTANCE;
-	
 	public Reach() {
 		super(Text.translatable("hamhacks.module.reach"), Category.COMBAT, new Keybind(0));
-		INSTANCE = this;
-	}
-	
-	public static Reach getInstance() {
-		return INSTANCE;
 	}
 	
 	@Override

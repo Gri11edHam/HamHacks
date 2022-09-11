@@ -91,22 +91,15 @@ public class Zoom extends Module {
 	
 	private final Animation animation = Animation.getInOutQuad(animationSpeed, true);
 	
-	private static Zoom INSTANCE;
-	
 	public Zoom() {
 		super(Text.translatable("hamhacks.module.zoom"), Category.RENDER, new Keybind(0));
 		setEnabled(true);
-		INSTANCE = this;
 		animation.setAbsolute(1);
 	}
 	
 	@Override
 	public String getHUDText() {
 		return super.getHUDText() + " \u00a77" + String.format("%.2f", smoothZoom ? zoomAmount : zoom);
-	}
-	
-	public static Zoom getInstance() {
-		return INSTANCE;
 	}
 	
 	

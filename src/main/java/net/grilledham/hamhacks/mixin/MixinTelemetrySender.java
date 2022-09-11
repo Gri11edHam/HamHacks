@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.NoTelemetry;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.util.telemetry.TelemetrySender;
@@ -12,7 +13,7 @@ public class MixinTelemetrySender {
 	
 	@Redirect(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/SharedConstants;isDevelopment:Z"))
 	private boolean disableTelemetry() {
-		if(NoTelemetry.getInstance().isEnabled()) {
+		if(ModuleManager.getModule(NoTelemetry.class).isEnabled()) {
 			return true;
 		}
 		return SharedConstants.isDevelopment;

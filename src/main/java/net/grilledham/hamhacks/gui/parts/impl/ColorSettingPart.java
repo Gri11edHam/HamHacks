@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.Color;
@@ -104,7 +105,7 @@ public class ColorSettingPart extends SettingPart {
 			stack.push();
 			RenderUtil.preRender();
 			
-			int bgC = ClickGUI.getInstance().bgColor.getRGB();
+			int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
 			RenderUtil.drawRect(stack, x, y, width, height, bgC);
 			
 			int outlineC = 0xffcccccc;
@@ -114,7 +115,7 @@ public class ColorSettingPart extends SettingPart {
 			int boxC = RenderUtil.mix((((Color)setting.get(obj)).getRGB() & 0xff000000) + 0xffffff, ((Color)setting.get(obj)).getRGB(), hoverAnimation.get() / 4);
 			RenderUtil.drawRect(stack, x + width - 18, y + 4, 14, 8, boxC);
 			
-			mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+			mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 			
 			RenderUtil.postRender();
 			stack.pop();
@@ -145,7 +146,7 @@ public class ColorSettingPart extends SettingPart {
 				subPartScroll = -height - h;
 			}
 			
-			RenderUtil.pushScissor(newX - 1 + ((w + 2) * (float)(1 - selectionAnimation.get())), newY - 1, (w + 2) * (float)selectionAnimation.get(), (h + 2) * (float)selectionAnimation.get(), ClickGUI.getInstance().scale);
+			RenderUtil.pushScissor(newX - 1 + ((w + 2) * (float)(1 - selectionAnimation.get())), newY - 1, (w + 2) * (float)selectionAnimation.get(), (h + 2) * (float)selectionAnimation.get(), ModuleManager.getModule(ClickGUI.class).scale);
 			RenderUtil.applyScissor();
 			RenderUtil.preRender();
 			

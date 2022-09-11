@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -73,23 +74,23 @@ public class StringSettingPart extends SettingPart {
 		RenderUtil.preRender();
 		
 		if(drawBackground) {
-			int bgC = ClickGUI.getInstance().bgColor.getRGB();
+			int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
 			RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		}
 		
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - 104, y, 104, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		
-		RenderUtil.adjustScissor(x + width - 102, y, 100, height, ClickGUI.getInstance().scale);
+		RenderUtil.adjustScissor(x + width - 102, y, 100, height, ModuleManager.getModule(ClickGUI.class).scale);
 		RenderUtil.applyScissor();
 		
 		if(getValue() == null || getValue().equals("")) {
 			String value = setting.getAnnotation(StringSetting.class).placeholder();
-			mc.textRenderer.drawWithShadow(stack, value, x + width - mc.textRenderer.getWidth(value) - 2, y + 4, RenderUtil.mix(ClickGUI.getInstance().bgColor.getRGB(), ClickGUI.getInstance().textColor.getRGB(), 0.75f));
+			mc.textRenderer.drawWithShadow(stack, value, x + width - mc.textRenderer.getWidth(value) - 2, y + 4, RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).bgColor.getRGB(), ModuleManager.getModule(ClickGUI.class).textColor.getRGB(), 0.75f));
 		} else {
-			mc.textRenderer.drawWithShadow(stack, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ClickGUI.getInstance().textColor.getRGB());
+			mc.textRenderer.drawWithShadow(stack, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		}
 		
 		RenderUtil.preRender();
@@ -101,7 +102,7 @@ public class StringSettingPart extends SettingPart {
 		
 		RenderUtil.popScissor();
 		
-		int cursorColor = RenderUtil.mix(ClickGUI.getInstance().textColor.getRGB(), ClickGUI.getInstance().textColor.getRGB() & 0xffffff, cursorAnimation.get());
+		int cursorColor = RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).textColor.getRGB(), ModuleManager.getModule(ClickGUI.class).textColor.getRGB() & 0xffffff, cursorAnimation.get());
 		RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, 1, mc.textRenderer.fontHeight + 1, cursorColor);
 		
 		RenderUtil.postRender();
@@ -179,11 +180,11 @@ public class StringSettingPart extends SettingPart {
 			}
 			stringScroll = Math.min(Math.max(stringScroll, 0), currentInput.length());
 			selected = true;
-			ClickGUI.getInstance().typing = true;
+			ModuleManager.getModule(ClickGUI.class).typing = true;
 			return true;
 		} else if(selected && selectionStart <= -1) {
 			selected = false;
-			ClickGUI.getInstance().typing = false;
+			ModuleManager.getModule(ClickGUI.class).typing = false;
 			return false;
 		} else if(selected) {
 			return true;
@@ -197,7 +198,7 @@ public class StringSettingPart extends SettingPart {
 			switch(code) {
 				case GLFW.GLFW_KEY_ESCAPE, GLFW.GLFW_KEY_ENTER -> {
 					selected = false;
-					ClickGUI.getInstance().typing = false;
+					ModuleManager.getModule(ClickGUI.class).typing = false;
 				}
 				case GLFW.GLFW_KEY_BACKSPACE -> {
 					if(selectionStart > -1) {
