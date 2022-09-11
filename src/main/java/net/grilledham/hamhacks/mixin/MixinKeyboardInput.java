@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.mixininterface.IKeyBinding;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.modules.render.Freecam;
 import net.minecraft.client.MinecraftClient;
@@ -29,12 +30,12 @@ public abstract class MixinKeyboardInput extends Input {
 	
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
 	public void tick(boolean slowDown, float f, CallbackInfo ci) {
-		boolean forward = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.forwardKey).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen) && !Freecam.getInstance().isEnabled();
-		boolean back = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.backKey).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen) && !Freecam.getInstance().isEnabled();
-		boolean left = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.leftKey).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen) && !Freecam.getInstance().isEnabled();
-		boolean right = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.rightKey).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen) && !Freecam.getInstance().isEnabled();
-		boolean jump = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.jumpKey).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen) && !Freecam.getInstance().isEnabled();
-		boolean sneak = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.sneakKey).getBound().getCode()) == GLFW.GLFW_PRESS && ClickGUI.getInstance().moveInScreen(MinecraftClient.getInstance().currentScreen) && !Freecam.getInstance().isEnabled();
+		boolean forward = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.forwardKey).getBound().getCode()) == GLFW.GLFW_PRESS && ModuleManager.getModule(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
+		boolean back = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.backKey).getBound().getCode()) == GLFW.GLFW_PRESS && ModuleManager.getModule(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
+		boolean left = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.leftKey).getBound().getCode()) == GLFW.GLFW_PRESS && ModuleManager.getModule(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
+		boolean right = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.rightKey).getBound().getCode()) == GLFW.GLFW_PRESS && ModuleManager.getModule(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
+		boolean jump = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.jumpKey).getBound().getCode()) == GLFW.GLFW_PRESS && ModuleManager.getModule(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
+		boolean sneak = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.sneakKey).getBound().getCode()) == GLFW.GLFW_PRESS && ModuleManager.getModule(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
 		this.pressingForward = this.settings.forwardKey.isPressed() || forward;
 		this.pressingBack = this.settings.backKey.isPressed() || back;
 		this.pressingLeft = this.settings.leftKey.isPressed() || left;

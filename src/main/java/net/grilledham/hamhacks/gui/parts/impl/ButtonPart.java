@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.gui.parts.GuiPart;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -36,7 +37,7 @@ public class ButtonPart extends GuiPart {
 		bgC = RenderUtil.mix(0xffa0a0a0, bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
-		mc.textRenderer.drawWithShadow(stack, text, x + width / 2f - mc.textRenderer.getWidth(text) / 2f, y + height / 2f - mc.textRenderer.fontHeight / 2f, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, text, x + width / 2f - mc.textRenderer.getWidth(text) / 2f, y + height / 2f - mc.textRenderer.fontHeight / 2f, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();

@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.mixininterface.IMultiplayerScreen;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.AntiBan;
 import net.grilledham.hamhacks.modules.render.Notifications;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
@@ -34,15 +35,15 @@ public abstract class MixinDisconnectedScreen extends Screen {
 	private Text modifyReason(Text reason) {
 		if(reason.getContent() instanceof TranslatableTextContent) {
 			String key = (((TranslatableTextContent)reason.getContent())).getKey();
-			if(AntiBan.getInstance().isEnabled() && (key.equals("multiplayer.disconnect.missing_public_key") || key.equals("multiplayer.disconnect.invalid_public_key") || key.equals("multiplayer.disconnect.invalid_public_key_signature"))) {
+			if(ModuleManager.getModule(AntiBan.class).isEnabled() && (key.equals("multiplayer.disconnect.missing_public_key") || key.equals("multiplayer.disconnect.invalid_public_key") || key.equals("multiplayer.disconnect.invalid_public_key_signature"))) {
 				enforceSecureChat = true;
 			}
 		}
 		if(enforceSecureChat) {
-			AntiBan.getInstance().hasConnected = true;
-			if(AntiBan.getInstance().joinEnforcedServers) {
+			ModuleManager.getModule(AntiBan.class).hasConnected = true;
+			if(ModuleManager.getModule(AntiBan.class).joinEnforcedServers) {
 				((IMultiplayerScreen)parent).reconnect();
-				Notifications.notify(AntiBan.getInstance().getName(), "Connecting to unsafe server. To stop automatic connection to unsafe servers, disable Join Enforced Servers.");
+				Notifications.notify(ModuleManager.getModule(AntiBan.class).getName(), "Connecting to unsafe server. To stop automatic connection to unsafe servers, disable Join Enforced Servers.");
 			} else {
 				client.setScreen(new WarningScreen(Text.translatable("hamhacks.menu.securedServerWarning"), Text.translatable("hamhacks.menu.securedServerWarning"), Text.translatable("hamhacks.menu.securedServerWarning")) {
 					@Override
@@ -52,7 +53,7 @@ public abstract class MixinDisconnectedScreen extends Screen {
 						}));
 						this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 100 + yOffset, 150, 20, ScreenTexts.PROCEED, (button) -> {
 							if(checkbox != null && checkbox.isChecked()) {
-								AntiBan.getInstance().joinEnforcedServers = true;
+								ModuleManager.getModule(AntiBan.class).joinEnforcedServers = true;
 							}
 							((IMultiplayerScreen)parent).reconnect();
 						}));

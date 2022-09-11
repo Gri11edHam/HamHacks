@@ -4,6 +4,7 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventChat;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.ColorSetting;
@@ -42,15 +43,8 @@ public class Chat extends Module {
 	
 	private final List<String> sentMessages = new ArrayList<>();
 	
-	private static Chat INSTANCE;
-	
 	public Chat() {
 		super(Text.translatable("hamhacks.module.chat"), Category.MISC, new Keybind(0));
-		INSTANCE = this;
-	}
-	
-	public static Chat getInstance() {
-		return INSTANCE;
 	}
 	
 	public boolean shouldColorLine(ChatHudLine.Visible line) {
@@ -59,19 +53,19 @@ public class Chat extends Module {
 			sb.append((char)codePoint);
 			return true;
 		});
-		String username = (NameHider.getInstance().isEnabled() ? NameHider.getInstance().fakeName : MinecraftClient.getInstance().getSession().getUsername());
+		String username = (ModuleManager.getModule(NameHider.class).isEnabled() ? ModuleManager.getModule(NameHider.class).fakeName : MinecraftClient.getInstance().getSession().getUsername());
 		return sb.toString().contains(username) && !sentMessages.contains(sb.toString());
 	}
 	
 	@EventListener
 	public void sendChat(EventChat.EventChatSent e) {
-		String username = (NameHider.getInstance().isEnabled() ? NameHider.getInstance().fakeName : MinecraftClient.getInstance().getSession().getUsername());
+		String username = (ModuleManager.getModule(NameHider.class).isEnabled() ? ModuleManager.getModule(NameHider.class).fakeName : MinecraftClient.getInstance().getSession().getUsername());
 		sentMessages.add(e.preview == null ? "<" + username + "> " + e.message : e.preview.getString());
 	}
 	
 	@EventListener
 	public void receiveChat(EventChat.EventChatReceived e) {
-		if(e.message.contains(mc.player.getName()) && (sentMessages == null || !e.message.getString().equals(sentMessages))) {
+		if(pingOnMention && e.message.contains(mc.player.getName()) && (sentMessages == null || !sentMessages.contains(e.message.getString()))) {
 			mc.getSoundManager().play(new PositionedSoundInstance(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP.getId(), SoundCategory.VOICE, 1, 1, new Random() {
 				@Override
 				public Random split() {

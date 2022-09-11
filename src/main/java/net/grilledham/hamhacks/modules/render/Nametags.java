@@ -7,6 +7,7 @@ import net.grilledham.hamhacks.event.events.EventRender2D;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.NameHider;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.EnchantUtil;
@@ -184,7 +185,7 @@ public class Nametags extends Module {
 				
 				String name;
 				if(e == mc.player) {
-					name = NameHider.getInstance().modifyName(e.getDisplayName().getString());
+					name = ModuleManager.getModule(NameHider.class).modifyName(e.getDisplayName().getString());
 				} else if(e instanceof PlayerEntity || e.hasCustomName()) {
 					name = e.getDisplayName().getString();
 				} else {
@@ -210,7 +211,7 @@ public class Nametags extends Module {
 				
 				String distanceString = "";
 				if(distance) {
-					Vec3d distFrom = Freecam.getInstance().isEnabled() ? mc.gameRenderer.getCamera().getPos() : mc.cameraEntity.getPos();
+					Vec3d distFrom = ModuleManager.getModule(Freecam.class).isEnabled() ? mc.gameRenderer.getCamera().getPos() : mc.cameraEntity.getPos();
 					float dist = Math.round(distFrom.distanceTo(e.getPos()) * 10) / 10f;
 					distanceString = "\u00a79" + dist + "m ";
 				}
@@ -368,7 +369,7 @@ public class Nametags extends Module {
 	
 	public boolean shouldRender(Entity entity) {
 		boolean isAlive = !entity.isRemoved() && entity.isAlive();
-		boolean player = entity != mc.player || Freecam.getInstance().isEnabled() || self;
+		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || self;
 		boolean b = Math.abs(entity.getY() - mc.player.getY()) <= 1e6;
 		boolean shouldRender = (entity instanceof PlayerEntity) || (entity instanceof HostileEntity && hostiles) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives);
 		return isEnabled() && isAlive && player && b && shouldRender;

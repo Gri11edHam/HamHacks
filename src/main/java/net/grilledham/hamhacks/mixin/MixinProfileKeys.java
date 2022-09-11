@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.AntiBan;
 import net.minecraft.client.util.ProfileKeys;
 import net.minecraft.network.encryption.PlayerPublicKey;
@@ -16,21 +17,21 @@ public class MixinProfileKeys {
 	
 	@Inject(method = "getPublicKey", at = @At("HEAD"), cancellable = true)
 	private void removePublicKey(CallbackInfoReturnable<Optional<PlayerPublicKey>> cir) {
-		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
+		if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
 			cir.setReturnValue(Optional.empty());
 		}
 	}
 	
 	@Inject(method = "getPublicKeyData", at = @At("HEAD"), cancellable = true)
 	private void onProfilePublicKeyData(CallbackInfoReturnable<Optional<PlayerPublicKey.PublicKeyData>> cir) {
-		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
+		if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
 			cir.setReturnValue(Optional.empty());
 		}
 	}
 	
 	@Inject(method = "getSigner", at = @At("HEAD"), cancellable = true)
 	private void onSigner(CallbackInfoReturnable<Optional<Signer>> cir) {
-		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
+		if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
 			cir.setReturnValue(null);
 		}
 	}

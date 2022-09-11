@@ -74,54 +74,54 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void modelBobbingOnly(GameRenderer instance, MatrixStack matrices, float tickDelta) {
-		if(!HUD.getInstance().modelBobbingOnly || !HUD.getInstance().isEnabled()) {
+		if(!ModuleManager.getModule(HUD.class).modelBobbingOnly || !ModuleManager.getModule(HUD.class).isEnabled()) {
 			bobView(matrices, tickDelta);
 		}
 	}
 	
 	@Inject(method = "bobViewWhenHurt", at = @At("HEAD"), cancellable = true)
 	public void noHurtCam(MatrixStack matrices, float f, CallbackInfo ci) {
-		if(HUD.getInstance().noHurtCam && HUD.getInstance().isEnabled()) {
+		if(ModuleManager.getModule(HUD.class).noHurtCam && ModuleManager.getModule(HUD.class).isEnabled()) {
 			ci.cancel();
 		}
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 3)
 	public double modifyBlockReach(double d) {
-		if(Reach.getInstance() == null) {
+		if(ModuleManager.getModule(Reach.class) == null) {
 			return d;
 		}
-		return Reach.getInstance().isEnabled() ? Reach.getInstance().blockRange : d;
+		return ModuleManager.getModule(Reach.class).isEnabled() ? ModuleManager.getModule(Reach.class).blockRange : d;
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 8)
 	public double modifyEntityReach(double e) {
-		if(Reach.getInstance() == null) {
+		if(ModuleManager.getModule(Reach.class) == null) {
 			return e;
 		}
-		return Reach.getInstance().isEnabled() ? Reach.getInstance().entityRange * Reach.getInstance().entityRange : e;
+		return ModuleManager.getModule(Reach.class).isEnabled() ? ModuleManager.getModule(Reach.class).entityRange * ModuleManager.getModule(Reach.class).entityRange : e;
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 6)
 	public boolean setAlwaysExtendedReach(boolean bl) {
-		if(Reach.getInstance() == null) {
+		if(ModuleManager.getModule(Reach.class) == null) {
 			return bl;
 		}
-		return !Reach.getInstance().isEnabled() && bl;
+		return !ModuleManager.getModule(Reach.class).isEnabled() && bl;
 	}
 	
 	@Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
 	public void modifyFov(Camera camera, float tickDelta, boolean changingFov, CallbackInfoReturnable<Double> cir) {
-		if(changingFov || !Zoom.getInstance().renderHand) {
+		if(changingFov || !ModuleManager.getModule(Zoom.class).renderHand) {
 			double d = cir.getReturnValueD();
-			cir.setReturnValue(Zoom.getInstance().modifyFov(d));
+			cir.setReturnValue(ModuleManager.getModule(Zoom.class).modifyFov(d));
 		}
 	}
 	
 	@Redirect(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F"))
 	public float mitigateBob(float delta, float start, float end) {
-		if(Zoom.getInstance().isEnabled()) {
-			double divisor = Math.sqrt(Zoom.getInstance().getZoomAmount());
+		if(ModuleManager.getModule(Zoom.class).isEnabled()) {
+			double divisor = Math.sqrt(ModuleManager.getModule(Zoom.class).getZoomAmount());
 			start = (float)(start / divisor);
 			end = (float)(end / divisor);
 		}
@@ -130,16 +130,16 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;update(Lnet/minecraft/world/BlockView;Lnet/minecraft/entity/Entity;ZZF)V"))
 	public void overwriteCamera(Camera instance, BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta) {
-		if(Freecam.getInstance().isEnabled()) {
+		if(ModuleManager.getModule(Freecam.class).isEnabled()) {
 			if(!wasFreecamEnabled) {
 				instance.update(area, focusedEntity, true, inverseView, tickDelta);
 			}
-			((ICamera)instance).setCamPos(Freecam.getInstance().getPos(tickDelta).add(0, focusedEntity.getEyeHeight(focusedEntity.getPose()), 0));
-			((ICamera)instance).setCamRot(Freecam.getInstance().getYaw(tickDelta), Freecam.getInstance().getPitch(tickDelta));
+			((ICamera)instance).setCamPos(ModuleManager.getModule(Freecam.class).getPos(tickDelta).add(0, focusedEntity.getEyeHeight(focusedEntity.getPose()), 0));
+			((ICamera)instance).setCamRot(ModuleManager.getModule(Freecam.class).getYaw(tickDelta), ModuleManager.getModule(Freecam.class).getPitch(tickDelta));
 		} else {
 			instance.update(area, focusedEntity, thirdPerson, inverseView, tickDelta);
 		}
-		wasFreecamEnabled = Freecam.getInstance().isEnabled();
+		wasFreecamEnabled = ModuleManager.getModule(Freecam.class).isEnabled();
 	}
 	
 	@Inject(method = "updateTargetedEntity", at = @At("HEAD"), cancellable = true)
@@ -147,7 +147,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		if(client.getCameraEntity() == null) {
 			return;
 		}
-		if(Freecam.getInstance().isEnabled() && !calledFromFreecam) {
+		if(ModuleManager.getModule(Freecam.class).isEnabled() && !calledFromFreecam) {
 			ci.cancel();
 			
 			Entity entity = client.getCameraEntity();
@@ -161,14 +161,14 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 			float prevYaw = entity.prevYaw;
 			float prevPitch = entity.prevPitch;
 			
-			((IVec3d)entity.getPos()).set(Freecam.getInstance().pos);
-			entity.prevX = Freecam.getInstance().prevPos.x;
-			entity.prevY = Freecam.getInstance().prevPos.y;
-			entity.prevZ = Freecam.getInstance().prevPos.z;
-			entity.setYaw(Freecam.getInstance().yaw);
-			entity.setPitch(Freecam.getInstance().pitch);
-			entity.prevYaw = Freecam.getInstance().prevYaw;
-			entity.prevPitch = Freecam.getInstance().prevPitch;
+			((IVec3d)entity.getPos()).set(ModuleManager.getModule(Freecam.class).pos);
+			entity.prevX = ModuleManager.getModule(Freecam.class).prevPos.x;
+			entity.prevY = ModuleManager.getModule(Freecam.class).prevPos.y;
+			entity.prevZ = ModuleManager.getModule(Freecam.class).prevPos.z;
+			entity.setYaw(ModuleManager.getModule(Freecam.class).yaw);
+			entity.setPitch(ModuleManager.getModule(Freecam.class).pitch);
+			entity.prevYaw = ModuleManager.getModule(Freecam.class).prevYaw;
+			entity.prevPitch = ModuleManager.getModule(Freecam.class).prevPitch;
 			
 			calledFromFreecam = true;
 			updateTargetedEntity(tickDelta);

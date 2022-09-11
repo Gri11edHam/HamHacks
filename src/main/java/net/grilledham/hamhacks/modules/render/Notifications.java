@@ -16,8 +16,6 @@ import java.util.List;
 
 public class Notifications extends Module {
 	
-	private static Notifications INSTANCE;
-	
 	private static final List<Notification> notifications = new ArrayList<>();
 	
 	@ColorSetting(name = "hamhacks.module.notifications.accentColor")
@@ -47,13 +45,8 @@ public class Notifications extends Module {
 	
 	public Notifications() {
 		super(Text.translatable("hamhacks.module.notifications"), Category.RENDER, new Keybind(0));
-		INSTANCE = this;
 		enabled = true;
 		showModule = false;
-	}
-	
-	public static Notifications getInstance() {
-		return INSTANCE;
 	}
 	
 	@Override

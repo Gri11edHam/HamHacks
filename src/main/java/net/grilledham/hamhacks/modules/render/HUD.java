@@ -83,17 +83,10 @@ public class HUD extends Module {
 	@ColorSetting(name = "hamhacks.module.hud.textColor")
 	public Color textColor = new Color(1, 1, 1, 1, true);
 	
-	private static HUD INSTANCE;
-	
 	public HUD() {
 		super(Text.translatable("hamhacks.module.hud"), Category.RENDER, new Keybind(0));
 		setEnabled(true);
 		showModule = false;
-		INSTANCE = this;
-	}
-	
-	public static HUD getInstance() {
-		return INSTANCE;
 	}
 	
 	@Override
@@ -104,7 +97,7 @@ public class HUD extends Module {
 	public void applyHandTransform(LivingEntity entity, ItemStack stack, ModelTransformation.Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
 		if(isEnabled()) {
 			if(entity == mc.getCameraEntity() && mc.options.getPerspective().isFirstPerson()) {
-				matrices.scale(HUD.getInstance().heldItemScale, HUD.getInstance().heldItemScale, HUD.getInstance().heldItemScale);
+				matrices.scale(ModuleManager.getModule(HUD.class).heldItemScale, ModuleManager.getModule(HUD.class).heldItemScale, ModuleManager.getModule(HUD.class).heldItemScale);
 				if(stack.getItem() == Items.SHIELD) {
 					matrices.translate(0, shieldHeightModifier, 0);
 				}

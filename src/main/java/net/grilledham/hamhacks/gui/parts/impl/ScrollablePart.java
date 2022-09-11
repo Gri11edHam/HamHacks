@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.gui.parts.GuiPart;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -65,7 +66,7 @@ public class ScrollablePart extends GuiPart {
 		float y = this.y + scrollY;
 		stack.push();
 		
-		RenderUtil.adjustScissor(x, y, width, height, ClickGUI.getInstance().scale);
+		RenderUtil.adjustScissor(x, y, width, height, ModuleManager.getModule(ClickGUI.class).scale);
 		RenderUtil.applyScissor();
 		
 		float trueHeight = 0;
@@ -98,7 +99,7 @@ public class ScrollablePart extends GuiPart {
 		float y = this.y + scrollY;
 		stack.push();
 		
-		RenderUtil.pushScissor(x, y, width, height, ClickGUI.getInstance().scale);
+		RenderUtil.pushScissor(x, y, width, height, ModuleManager.getModule(ClickGUI.class).scale);
 		RenderUtil.applyScissor();
 		
 		float trueHeight = 0;

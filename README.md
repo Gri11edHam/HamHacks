@@ -1,4 +1,5 @@
-# HamHacks <p>
+# HamHacks
+<p>
   <a href="https://github.com/Gri11edHam/HamHacks/releases/latest">
       <img alt="Latest Release" src="https://img.shields.io/github/v/release/Gri11edHam/HamHacks">
   </a>
@@ -9,7 +10,7 @@
       <img alt="Lines of Code" src="https://img.shields.io/tokei/lines/github/Gri11edHam/HamHacks">
   </a>
 </p>
-HamHacks is a Minecraft mod that adds a lot of useful featers (that might get you banned).
+HamHacks is a Minecraft mod that adds a lot of useful features (that might get you banned).
 
 ## Download
 https://github.com/Gri11edHam/HamHacks/releases/latest

@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.mixininterface.IClientPlayerInteractionManager;
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.InstantKillBow;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -44,8 +45,8 @@ public abstract class MixinClientPlayerInteractionManager implements IClientPlay
 	
 	@Inject(method = "stopUsingItem", at = @At("HEAD"))
 	private void stopUsingItem(PlayerEntity player, CallbackInfo ci) {
-		if(player.getInventory().getMainHandStack().getItem().equals(Items.BOW) && InstantKillBow.getInstance() != null){
-			InstantKillBow.getInstance().preBow();
+		if(player.getInventory().getMainHandStack().getItem().equals(Items.BOW) && ModuleManager.getModule(InstantKillBow.class) != null){
+			ModuleManager.getModule(InstantKillBow.class).preBow();
 		}
 	}
 	

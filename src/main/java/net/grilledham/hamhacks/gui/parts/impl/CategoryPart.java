@@ -44,20 +44,20 @@ public class CategoryPart extends GuiPart {
 		
 		float scissorHeight = height + scrollArea.getHeight() * (float)(1 - openCloseAnimation.get());
 		
-		RenderUtil.pushScissor(x, y, width, scissorHeight, ClickGUI.getInstance().scale);
+		RenderUtil.pushScissor(x, y, width, scissorHeight, ModuleManager.getModule(ClickGUI.class).scale);
 		RenderUtil.applyScissor();
 		RenderUtil.preRender();
 		
-		int bgC = ClickGUI.getInstance().bgColor.getRGB();
+		int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ClickGUI.getInstance().bgColorHovered.getRGB(), bgC, hoverAnimation.get());
+		bgC = RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).bgColorHovered.getRGB(), bgC, hoverAnimation.get());
 		RenderUtil.drawRect(stack, x + 1, y + 1, width - 1, height - 1, bgC);
 		
-		RenderUtil.drawRect(stack, x + 1, y, width - 1, 1, ClickGUI.getInstance().accentColor.getRGB());
+		RenderUtil.drawRect(stack, x + 1, y, width - 1, 1, ModuleManager.getModule(ClickGUI.class).accentColor.getRGB());
 		
-		RenderUtil.drawRect(stack, x, y, 1, height, ClickGUI.getInstance().accentColor.getRGB());
+		RenderUtil.drawRect(stack, x, y, 1, height, ModuleManager.getModule(ClickGUI.class).accentColor.getRGB());
 		
-		mc.textRenderer.drawWithShadow(stack, category.getText(), x + 3, y + 5, ClickGUI.getInstance().textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, category.getText(), x + 3, y + 5, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		
 		scrollArea.draw(stack, mx, my, scrollX, scrollY, partialTicks);
 		

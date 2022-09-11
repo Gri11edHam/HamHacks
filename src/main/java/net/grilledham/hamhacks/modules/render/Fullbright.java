@@ -22,22 +22,15 @@ public class Fullbright extends Module {
 	@BoolSetting(name = "hamhacks.module.fullBright.smoothTransition", defaultValue = true)
 	public boolean smoothTransition = true;
 	
-	private static Fullbright INSTANCE;
-	
 	private final Animation newBrightness = Animation.getInOutQuad(0.25);
 	
 	public Fullbright() {
 		super(Text.translatable("hamhacks.module.fullBright"), Category.RENDER, new Keybind(0));
-		INSTANCE = this;
 	}
 	
 	@Override
 	public String getHUDText() {
 		return super.getHUDText() + " \u00a77" + (int)brightness;
-	}
-	
-	public static Fullbright getInstance() {
-		return INSTANCE;
 	}
 	
 	public float getBrightness(float original, float delta) {

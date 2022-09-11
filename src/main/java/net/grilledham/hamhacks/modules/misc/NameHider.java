@@ -15,15 +15,8 @@ public class NameHider extends Module {
 	)
 	public String fakeName = "GrilledHam";
 	
-	private static NameHider INSTANCE;
-	
 	public NameHider() {
 		super(Text.translatable("hamhacks.module.nameHider"), Category.MISC, new Keybind(0));
-		INSTANCE = this;
-	}
-	
-	public static NameHider getInstance() {
-		return INSTANCE;
 	}
 	
 	public String modifyName(String text) {

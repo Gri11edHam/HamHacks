@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
+import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Fullbright;
 import net.minecraft.client.render.LightmapTextureManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,6 +21,6 @@ public class MixinLightmapTextureManager {
 	
 	@ModifyVariable(method = "update", at = @At(value = "STORE", ordinal = 1), index = 21)
 	private float overwriteGamma(float original) {
-		return Fullbright.getInstance().getBrightness(original, delta);
+		return ModuleManager.getModule(Fullbright.class).getBrightness(original, delta);
 	}
 }
