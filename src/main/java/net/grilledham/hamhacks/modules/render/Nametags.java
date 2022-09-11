@@ -19,6 +19,7 @@ import net.grilledham.hamhacks.util.setting.ColorSetting;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
@@ -369,7 +370,7 @@ public class Nametags extends Module {
 	
 	public boolean shouldRender(Entity entity) {
 		boolean isAlive = !entity.isRemoved() && entity.isAlive();
-		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || self;
+		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || (self && mc.options.getPerspective() != Perspective.FIRST_PERSON);
 		boolean b = Math.abs(entity.getY() - mc.player.getY()) <= 1e6;
 		boolean shouldRender = (entity instanceof PlayerEntity) || (entity instanceof HostileEntity && hostiles) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives);
 		return isEnabled() && isAlive && player && b && shouldRender;
