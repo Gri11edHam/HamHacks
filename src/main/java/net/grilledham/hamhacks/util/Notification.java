@@ -30,6 +30,8 @@ public class Notification {
 	private static final float WIDTH = 200;
 	private final float height;
 	
+	private boolean clicked = false;
+	
 	private final Runnable clickEvent;
 	
 	public Notification(String title, String info, Runnable clickEvent) {
@@ -115,6 +117,14 @@ public class Notification {
 		inOutAnimation.update();
 		dropAnimation.update();
 		hoverAnimation.update();
+		if(!clicked) {
+			if(hovered) {
+				progressAnimation.setAbsolute(progressAnimation.get());
+				progressAnimation.setSpeed(ModuleManager.getModule(Notifications.class).lifeSpan * (1 - progressAnimation.get()));
+			} else {
+				progressAnimation.set(1);
+			}
+		}
 		progressAnimation.update();
 		
 		if(progressAnimation.get() >= 1) {
@@ -129,6 +139,7 @@ public class Notification {
 		float y = mc.getWindow().getScaledHeight() - height - 5 - (float)dropAnimation.get();
 		
 		if(mx >= x && mx <= x + WIDTH && my >= y && my <= y + height && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+			clicked = true;
 			progressAnimation.setSpeed(0.25);
 			progressAnimation.setAbsolute(progressAnimation.get());
 			progressAnimation.set(1);
