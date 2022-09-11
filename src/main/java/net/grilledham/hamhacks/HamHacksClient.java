@@ -89,7 +89,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new Commands());
 		ModuleManager.register(new InstantKillBow());
 		ModuleManager.register(new Fullbright());
-		ModuleManager.register(new AntiBan());
+		ModuleManager.register(AntiBan.getInstance());
 		ModuleManager.register(new Chat());
 		ModuleManager.register(new NameHider());
 		ModuleManager.register(new Timer());

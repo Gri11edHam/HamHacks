@@ -12,8 +12,14 @@ public class AntiBan extends Module {
 	
 	public boolean hasConnected = false;
 	
+	private static final AntiBan INSTANCE = new AntiBan();
+	
 	public AntiBan() {
 		super(Text.translatable("hamhacks.module.antiBan"), Category.MISC, new Keybind(0));
 		setEnabled(true);
+	}
+	
+	public static AntiBan getInstance() {
+		return INSTANCE;
 	}
 }

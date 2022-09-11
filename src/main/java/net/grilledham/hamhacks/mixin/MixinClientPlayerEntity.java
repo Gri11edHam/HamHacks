@@ -81,14 +81,14 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 	
 	@Inject(method = "signChatMessage", at = @At("HEAD"), cancellable = true)
 	private void cancelSignMessage(MessageMetadata metadata, DecoratedContents content, LastSeenMessageList lastSeenMessages, CallbackInfoReturnable<MessageSignatureData> cir) {
-		if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
+		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
 			cir.setReturnValue(MessageSignatureData.EMPTY);
 		}
 	}
 	
 	@Inject(method = "signArguments", at = @At("HEAD"), cancellable = true)
 	private void cancelSignMessage(MessageMetadata signer, ParseResults<CommandSource> parseResults, Text preview, LastSeenMessageList lastSeenMessages, CallbackInfoReturnable<ArgumentSignatureDataMap> cir) {
-		if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
+		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
 			cir.setReturnValue(ArgumentSignatureDataMap.EMPTY);
 		}
 	}

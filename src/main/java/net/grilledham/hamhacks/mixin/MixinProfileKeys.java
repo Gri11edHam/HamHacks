@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
 import com.mojang.authlib.yggdrasil.response.KeyPairResponse;
-import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.AntiBan;
 import net.minecraft.client.util.ProfileKeys;
 import net.minecraft.network.encryption.PlayerPublicKey;
@@ -19,33 +18,29 @@ public class MixinProfileKeys {
 	
 	@Inject(method = "getPublicKey", at = @At("HEAD"), cancellable = true)
 	private void removePublicKey(CallbackInfoReturnable<Optional<PlayerPublicKey>> cir) {
-		if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
+		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
 			cir.setReturnValue(Optional.empty());
 		}
 	}
 	
 	@Inject(method = "decodeKeyPairResponse", at = @At("HEAD"), cancellable = true)
 	private static void decodeKeyPairResponse(KeyPairResponse keyPairResponse, CallbackInfoReturnable<PlayerPublicKey.PublicKeyData> cir) {
-		try {
-			if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
-				cir.setReturnValue(null);
-			}
-		} catch(IllegalArgumentException e) {
-			e.printStackTrace();
+		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
+			cir.setReturnValue(null);
 		}
 	}
 	
 	@Dynamic("1.19.1")
 	@Inject(method = {"getPublicKeyData()Ljava/util/Optional;", "method_43784()Ljava/util/Optional;"}, at = @At("HEAD"), cancellable = true)
 	private void onProfilePublicKeyData(CallbackInfoReturnable<Optional<PlayerPublicKey.PublicKeyData>> cir) {
-		if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
+		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
 			cir.setReturnValue(Optional.empty());
 		}
 	}
 	
 	@Inject(method = "getSigner", at = @At("HEAD"), cancellable = true)
 	private void onSigner(CallbackInfoReturnable<Optional<Signer>> cir) {
-		if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
+		if(AntiBan.getInstance().isEnabled() && !AntiBan.getInstance().hasConnected) {
 			cir.setReturnValue(null);
 		}
 	}
