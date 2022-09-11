@@ -269,12 +269,16 @@ public class SettingHelper {
 	
 	public static void parseSelectionSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
 		String name = f.getAnnotation(SelectionSetting.class).name();
-		((SelectableList)f.get(o)).set(saveData.get(name).getAsString());
+		if(saveData.has(name)) {
+			((SelectableList)f.get(o)).set(saveData.get(name).getAsString());
+		}
 	}
 	
 	public static void parseStringSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
 		String name = f.getAnnotation(StringSetting.class).name();
-		f.set(o, saveData.get(name).getAsString());
+		if(saveData.has(name)) {
+			f.set(o, saveData.get(name).getAsString());
+		}
 	}
 	
 	public static void reset(Field f, Object o) throws IllegalAccessException {
