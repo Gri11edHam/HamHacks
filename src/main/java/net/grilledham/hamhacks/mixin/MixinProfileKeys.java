@@ -26,8 +26,12 @@ public class MixinProfileKeys {
 	
 	@Inject(method = "decodeKeyPairResponse", at = @At("HEAD"), cancellable = true)
 	private static void decodeKeyPairResponse(KeyPairResponse keyPairResponse, CallbackInfoReturnable<PlayerPublicKey.PublicKeyData> cir) {
-		if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
-			cir.setReturnValue(null);
+		try {
+			if(ModuleManager.getModule(AntiBan.class).isEnabled() && !ModuleManager.getModule(AntiBan.class).hasConnected) {
+				cir.setReturnValue(null);
+			}
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
 		}
 	}
 	

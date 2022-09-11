@@ -35,12 +35,19 @@ public class HamHacksClient implements ClientModInitializer {
 	
 	public static boolean firstTime = false;
 	
+	public static boolean initialized = false;
+	
 	@Override
 	public void onInitializeClient() {
 	
 	}
 	
 	public static void init() {
+		if(initialized) {
+			LOGGER.error("init() called twice");
+			return;
+		}
+		initialized = true;
 		LOGGER.info("Initializing HamHacks v" + VERSION.getVersion(0, true));
 		Updater.init();
 		RotationHack.init();

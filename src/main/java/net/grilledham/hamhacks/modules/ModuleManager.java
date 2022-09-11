@@ -2,9 +2,9 @@ package net.grilledham.hamhacks.modules;
 
 import com.google.common.collect.Lists;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ModuleManager {
 	
@@ -19,7 +19,7 @@ public class ModuleManager {
 	}
 	
 	public static List<Module> getModules(Module.Category category) {
-		return modules.stream().filter(module -> module.category == category).collect(Collectors.toList());
+		return modules.stream().filter(module -> module.category == category).toList();
 	}
 	
 	public static Module getModule(String name) {
@@ -27,7 +27,11 @@ public class ModuleManager {
 	}
 	
 	public static <T extends Module> T getModule(Class<T> clazz) {
-		return clazz.cast(modules.stream().filter(module -> module.getClass() == clazz).findFirst().orElse(null));
+		T m = clazz.cast(modules.stream().filter(module -> module.getClass() == clazz).findFirst().orElse(null));
+		if(m == null) {
+			throw new IllegalArgumentException("Module of class " + clazz.getName() + " is not registered:\n" + Arrays.toString(modules.toArray()));
+		}
+		return m;
 	}
 	
 	public static void updateKeybinds() {

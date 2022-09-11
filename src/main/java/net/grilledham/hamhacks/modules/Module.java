@@ -123,6 +123,14 @@ public class Module {
 		return getName();
 	}
 	
+	@Override
+	public String toString() {
+		return "Module{" +
+				"name=" + getName() +
+				", config_name=" + getConfigName() +
+				'}';
+	}
+	
 	public enum Category {
 		MOVEMENT(Text.translatable("hamhacks.category.movement")),
 		COMBAT(Text.translatable("hamhacks.category.combat")),
