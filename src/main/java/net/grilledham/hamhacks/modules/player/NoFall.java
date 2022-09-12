@@ -30,7 +30,7 @@ public class NoFall extends Module {
 		if(e.type == EventMotion.Type.PRE) {
 			switch(mode.get()) {
 				case "hamhacks.module.noFall.mode.packet" -> {
-					if(mc.player.fallDistance >= 3) {
+					if(mc.player.fallDistance >= 2) {
 						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
 					}
 				}
