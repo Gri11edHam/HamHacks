@@ -4,6 +4,7 @@ import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.KeySetting;
+import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
@@ -31,8 +32,8 @@ public class Module {
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
 	
-	@BoolSetting(name = "hamhacks.module.generic.internal.forceDisabled", neverShow = true)
-	public boolean forceDisabled = false;
+	@NumberSetting(name = "hamhacks.module.generic.internal.forceDisabled", min = 0, max = 500, step = 1, neverShow = true)
+	public float forceDisabled = 0;
 	protected boolean wasEnabled;
 	protected boolean lastEnabled;
 	
@@ -50,13 +51,13 @@ public class Module {
 	}
 	
 	public void toggle() {
-		if(!this.forceDisabled) {
+		if(this.forceDisabled == 0) {
 			enabled = !enabled;
 		}
 	}
 	
 	public void setEnabled(boolean enabled) {
-		if(!this.forceDisabled) {
+		if(this.forceDisabled == 0) {
 			this.enabled = enabled;
 		}
 	}
@@ -64,11 +65,11 @@ public class Module {
 	public void forceDisable() {
 		wasEnabled = isEnabled();
 		setEnabled(false);
-		forceDisabled = true;
+		forceDisabled++;
 	}
 	
 	public void reEnable() {
-		forceDisabled = false;
+		forceDisabled--;
 		setEnabled(wasEnabled);
 	}
 	
