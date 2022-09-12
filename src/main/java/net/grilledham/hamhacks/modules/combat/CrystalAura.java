@@ -66,13 +66,7 @@ public class CrystalAura extends Module {
 			for(int x = -2; x < 3; x++) {
 				for(int y = -2; y < 4; y++) {
 					for(int z = -2; z < 3; z++) {
-						Vec3i position = new Vec3i(x, y, z);
-						if(position.isWithinDistance(mc.player.getPos(), 3) && !ModuleManager.getModule(Encase.class).playerSafe) {
-							continue;
-						}
-						if(position.isWithinDistance(p.getPos(), 5)) {
-							possiblePositions.add(position);
-						}
+						possiblePositions.add(new Vec3i(x, y, z));
 					}
 				}
 			}
@@ -100,6 +94,13 @@ public class CrystalAura extends Module {
 			Direction side2 = side.getOpposite();
 			
 			Vec3d hitVec = Vec3d.ofCenter(neighbor).add(Vec3d.of(side2.getVector()).multiply(0.5));
+			
+			if(hitVec.distanceTo(mc.player.getPos()) <= 3 && !ModuleManager.getModule(Encase.class).playerSafe) {
+				continue;
+			}
+			if(hitVec.distanceTo(p.getPos()) >= 4) {
+				continue;
+			}
 			
 			if(eyesPos.distanceTo(hitVec) > 6) {
 				return false;
