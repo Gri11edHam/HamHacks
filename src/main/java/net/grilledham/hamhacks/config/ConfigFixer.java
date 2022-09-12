@@ -221,6 +221,12 @@ public class ConfigFixer {
 						modules.remove(oldKey);
 					}
 				}
+			case 2:
+				for(Module m : ModuleManager.getModules()) {
+					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(m.getName()).getAsJsonObject("settings");
+					boolean oldForceDisabled = settings.get("hamhacks.module.generic.internal.forceDisabled").getAsBoolean();
+					settings.addProperty("hamhacks.module.generic.internal.forceDisabled", oldForceDisabled ? 1f : 0f);
+				}
 			// Add more switch cases for new config changes
 		}
 	}

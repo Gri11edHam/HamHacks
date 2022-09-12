@@ -29,7 +29,7 @@ public class HamHacksClient implements ClientModInitializer {
 	public static final Version VERSION = new Version("$VERSION");
 	
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	public static final int CONFIG_VERSION = 2;
+	public static final int CONFIG_VERSION = 3;
 	
 	public static final Logger LOGGER = LogUtils.getLogger();
 	
