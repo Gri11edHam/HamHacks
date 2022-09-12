@@ -137,6 +137,8 @@ public class Tracers extends Module {
 		Vec3d start = getClientLookVec().add(getCameraPos());
 		
 		for(LivingEntity e : entities) {
+			if(!shouldRender(e)) continue;
+			
 			Vec3d interpolationOffset = new Vec3d(e.getX(), e.getY(), e.getZ()).subtract(e.prevX, e.prevY, e.prevZ).multiply(1 - partialTicks);
 			Vec3d endTop = e.getBoundingBox().getCenter().add(0, e.getEyeHeight(e.getPose()) / 2, 0).subtract(interpolationOffset);
 			Vec3d endCenter = e.getBoundingBox().getCenter().subtract(interpolationOffset);
@@ -219,5 +221,13 @@ public class Tracers extends Module {
 		float finalG = c1g * (1 - f) + c2g * f;
 		float finalB = c1b * (1 - f) + c2b * f;
 		return ((int)(finalA * 256) << 24) + ((int)(finalR * 256) << 16) + ((int)(finalG * 256) << 8) + (int)(finalB * 256);
+	}
+	
+	public boolean shouldRender(Entity entity) {
+		boolean isAlive = !entity.isRemoved() && entity.isAlive();
+		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled();
+		boolean b = Math.abs(entity.getY() - mc.player.getY()) <= 1e6;
+		boolean shouldRender = (entity instanceof PlayerEntity && tracePlayers) || (entity instanceof HostileEntity && traceHostile) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && tracePassive);
+		return isEnabled() && isAlive && player && b && shouldRender;
 	}
 }

@@ -153,6 +153,8 @@ public class Nametags extends Module {
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		
 		for(LivingEntity e : entities) {
+			if(!shouldRender(e)) continue;
+			
 			Vec3 interpolationOffset = new Vec3(e.getX(), e.getY(), e.getZ()).sub(e.prevX, e.prevY, e.prevZ).mul(1 - partialTicks);
 			float ex = (float)(e.getX() - interpolationOffset.getX());
 			float ey = (float)(e.getY() - interpolationOffset.getY());

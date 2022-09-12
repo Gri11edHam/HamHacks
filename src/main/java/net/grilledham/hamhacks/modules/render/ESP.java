@@ -16,6 +16,7 @@ import net.grilledham.hamhacks.util.math.Vec3;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.ColorSetting;
 import net.grilledham.hamhacks.util.setting.SelectionSetting;
+import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
@@ -165,6 +166,8 @@ public class ESP extends Module {
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		
 		for(LivingEntity e : entities) {
+			if(!shouldRender(e)) continue;
+			
 			Vec3 interpolationOffset = new Vec3(e.getX(), e.getY(), e.getZ()).sub(e.prevX, e.prevY, e.prevZ).mul(1 - partialTicks);
 			Box box = e.getBoundingBox(e.getPose());
 			float x = (float)(e.getX() - interpolationOffset.getX());
@@ -249,6 +252,8 @@ public class ESP extends Module {
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		
 		for(LivingEntity e : entities) {
+			if(!shouldRender(e)) continue;
+			
 			Vec3d interpolationOffset = new Vec3d(e.getX(), e.getY(), e.getZ()).subtract(e.prevX, e.prevY, e.prevZ).multiply(1 - partialTicks);
 			Box box = e.getBoundingBox(e.getPose());
 			float x1 = (float)(box.minX + e.getX() - interpolationOffset.getX());
@@ -365,5 +370,13 @@ public class ESP extends Module {
 	
 	private Vec3d getCameraPos() {
 		return mc.getBlockEntityRenderDispatcher().camera.getPos();
+	}
+	
+	public boolean shouldRender(Entity entity) {
+		boolean isAlive = !entity.isRemoved() && entity.isAlive();
+		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || (self && mc.options.getPerspective() != Perspective.FIRST_PERSON);
+		boolean b = Math.abs(entity.getY() - mc.player.getY()) <= 1e6;
+		boolean shouldRender = (entity instanceof PlayerEntity && players) || (entity instanceof HostileEntity && hostiles) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives);
+		return isEnabled() && isAlive && player && b && shouldRender;
 	}
 }
