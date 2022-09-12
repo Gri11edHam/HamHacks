@@ -202,6 +202,9 @@ public class Fly extends Module {
 		if(mc.player.input.sneaking) {
 			distanceVertical -= 1;
 		}
+		distanceForward *= speed;
+		distanceStrafe *= speed;
+		distanceVertical *= speed;
 		float dx = (float)(distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));
 		float dy = distanceVertical;
 		float dz = (float)(distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90)));
@@ -210,9 +213,6 @@ public class Fly extends Module {
 		dx = lastDx + (dx / 10f);
 		dy = lastDy + (dy / 10f);
 		dz = lastDz + (dz / 10f);
-		dx *= speed;
-		dy *= speed;
-		dz *= speed;
 		if(dx > speed) {
 			dx = speed;
 		} else if(dx < -speed) {
