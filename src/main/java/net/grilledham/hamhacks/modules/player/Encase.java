@@ -5,6 +5,9 @@ import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.movement.Speed;
+import net.grilledham.hamhacks.modules.render.Notifications;
 import net.grilledham.hamhacks.util.RotationHack;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.item.ItemStack;
@@ -22,6 +25,8 @@ public class Encase extends Module {
 	
 	private Vec3 anchorPos = new Vec3();
 	
+	private boolean disabledSpeed = false;
+	
 	public Encase() {
 		super(Text.translatable("hamhacks.module.encase"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_LEFT_ALT));
 	}
@@ -38,6 +43,14 @@ public class Encase extends Module {
 		super.onDisable();
 		anchorPos = null;
 		playerSafe = false;
+		Speed speed = ModuleManager.getModule(Speed.class);
+		if(disabledSpeed) {
+			speed.reEnable();
+			if(speed.isEnabled()) {
+				Notifications.notify(getName(), "Re-Enabled " + speed.getName());
+			}
+			disabledSpeed = false;
+		}
 	}
 	
 	@EventListener
@@ -93,12 +106,28 @@ public class Encase extends Module {
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
+			Speed speed = ModuleManager.getModule(Speed.class);
 			if(anchorPos != null) {
+				if(!disabledSpeed) {
+					if(speed.isEnabled()) {
+						Notifications.notify(getName(), "Disabled " + speed.getName());
+					}
+					speed.forceDisable();
+					disabledSpeed = true;
+				}
 				mc.player.setVelocity(mc.player.getVelocity().x, getVelocityTo(anchorPos, 0.25).y, mc.player.getVelocity().z);
 				if(mc.options.forwardKey.isPressed() || mc.options.backKey.isPressed() || mc.options.leftKey.isPressed() || mc.options.rightKey.isPressed()) {
 					return;
 				}
 				mc.player.setVelocity(getVelocityTo(anchorPos, 0.25));
+			} else {
+				if(disabledSpeed) {
+					speed.reEnable();
+					if(speed.isEnabled()) {
+						Notifications.notify(getName(), "Re-Enabled " + speed.getName());
+					}
+					disabledSpeed = false;
+				}
 			}
 		}
 	}
