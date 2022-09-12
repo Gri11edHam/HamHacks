@@ -66,7 +66,7 @@ public class Encase extends Module {
 			anchorPos = new Vec3();
 		}
 		anchorPos.set(Vec3d.ofCenter(mc.player.getBlockPos()));
-		anchorPos.setY((int)anchorPos.getY() - 0.1);
+		anchorPos.setY(Math.floor(anchorPos.getY()) - 0.1);
 		Vec3 eyesPos = new Vec3(mc.player.getX(), mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
 		BlockPos pos = mc.player.getBlockPos();
 		for(Direction side : Direction.stream().filter(d -> d != Direction.UP).toList()) {
