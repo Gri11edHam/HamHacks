@@ -2,10 +2,10 @@ package net.grilledham.hamhacks.modules.player;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.util.RotationHack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -64,19 +64,11 @@ public class Trap extends Module {
 						continue;
 					}
 					
-					double diffX = hitVec.x - eyesPos.x;
-					double diffY = hitVec.y - eyesPos.y;
-					double diffZ = hitVec.z - eyesPos.z;
-					
-					double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
-					
-					float yaw = (float)Math.toDegrees(Math.atan2(diffZ, diffX)) - 90F;
-					float pitch = (float)-Math.toDegrees(Math.atan2(diffY, diffXZ));
-					
-					PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, mc.player.isOnGround());
-					mc.player.networkHandler.sendPacket(packet);
-					imc.getInteractionManager().rightClickBlock(neighbor, side2, hitVec);
-					mc.player.swingHand(Hand.MAIN_HAND);
+					RotationHack.faceVectorPacket(hitVec);
+					if(imc.getInteractionManager().rightClickBlock(neighbor, side2, hitVec)) {
+						mc.player.swingHand(Hand.MAIN_HAND);
+						break;
+					}
 				}
 			}
 			mc.player.getInventory().selectedSlot = oldSlot;
