@@ -219,6 +219,7 @@
 	"hamhacks.module.notifications": "Notifications",
 	"hamhacks.module.notifications.backgroundColor": "Background Color",
 	"hamhacks.module.notifications.accentColor": "Accent Color",
+	"hamhacks.module.notifications.backgroundColorHovered": "Background Color (Hovered)",
 	"hamhacks.module.notifications.progressColorBackground": "Background Progress Color",
 	"hamhacks.module.notifications.progressColor": "Progress Color",
 	"hamhacks.module.notifications.lifeSpan": "Life Span",
