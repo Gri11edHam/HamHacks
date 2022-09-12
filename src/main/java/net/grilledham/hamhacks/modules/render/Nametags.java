@@ -186,13 +186,15 @@ public class Nametags extends Module {
 				
 				String name;
 				if(e == mc.player) {
-					name = ModuleManager.getModule(NameHider.class).modifyName(e.getDisplayName().getString());
-				} else if(e instanceof PlayerEntity || e.hasCustomName()) {
-					name = e.getDisplayName().getString();
+					name = ModuleManager.getModule(NameHider.class).modifyName(e.getEntityName());
 				} else {
-					name = e.getType().getName().getString();
+					name = e.getName().getString();
 				}
-				name = "\u00a7f" + name + " ";
+				String nameColor = "\u00a7f";
+				if(e.isSneaking()) {
+					nameColor = "\u00a77";
+				}
+				name = nameColor + name + " ";
 				
 				float hp = e.getHealth() + e.getAbsorptionAmount();
 				float healthPercentage = Math.round((hp / e.getMaxHealth()) * 1000) / 10f;
