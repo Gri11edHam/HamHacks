@@ -9,6 +9,7 @@ import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.grilledham.hamhacks.util.setting.StringSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 
 import java.lang.reflect.Field;
@@ -29,10 +30,13 @@ public class NumberSettingPart extends SettingPart {
 		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 314, setting, obj);
 		sliderAnimation.setAbsolute(setting.getAnnotation(NumberSetting.class).min());
 		try {
-			updateValue();
+			NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
+			if(numSetting.forceStep() && numSetting.step() == 1) {
+				strVal = (int)setting.getFloat(obj) + "";
+			} else {
+				strVal = setting.getFloat(obj) + "";
+			}
 			Field strValField = getClass().getField("strVal");
-			final Field finalSetting = setting;
-			final Object finalObj = obj;
 			editor = new StringSettingPart(x + width - 207, y, strValField, this) {
 				
 				@Override
@@ -40,7 +44,7 @@ public class NumberSettingPart extends SettingPart {
 					super.updateValue(value);
 					try {
 						if(!strVal.equals("")) {
-							finalSetting.setFloat(finalObj, Float.parseFloat(strVal));
+							NumberSettingPart.this.updateValue(Float.parseFloat(strVal), false);
 						}
 					} catch(Exception ignored) {}
 				}
@@ -48,7 +52,7 @@ public class NumberSettingPart extends SettingPart {
 				@Override
 				public boolean typeChar(char c, int modifiers) {
 					return switch(c) {
-						case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' -> super.typeChar(c, modifiers);
+						case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' -> super.typeChar(c, modifiers);
 						default -> false;
 					};
 				}
@@ -89,8 +93,7 @@ public class NumberSettingPart extends SettingPart {
 			float newPercentage = (mx - (x + width - 204)) / (float)200;
 			float newVal = (newPercentage * (setting.getAnnotation(NumberSetting.class).max() - setting.getAnnotation(NumberSetting.class).min())) + setting.getAnnotation(NumberSetting.class).min();
 			try {
-				setting.setFloat(obj, newVal);
-				updateValue();
+				updateValue(newVal, true);
 			} catch(IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -164,7 +167,7 @@ public class NumberSettingPart extends SettingPart {
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 				try {
 					SettingHelper.reset(setting, obj);
-					updateValue();
+					updateValue(setting.getFloat(obj), true);
 				} catch(IllegalAccessException e) {
 					e.printStackTrace();
 				}
@@ -173,11 +176,11 @@ public class NumberSettingPart extends SettingPart {
 		return super.release(mx, my, scrollX, scrollY, button);
 	}
 	
-	private void updateValue() throws IllegalAccessException {
-		float roundedSetting = setting.getFloat(obj);
+	private void updateValue(float newVal, boolean fromSlider) throws IllegalAccessException {
+		float roundedSetting = newVal;
 		NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
-		roundedSetting = Math.min(Math.max(roundedSetting, numSetting.min()), numSetting.max());
-		if(numSetting.forceStep() && numSetting.step() != -1) {
+		roundedSetting = MathHelper.clamp(roundedSetting, numSetting.min(), numSetting.max());
+		if((numSetting.forceStep() || fromSlider) && numSetting.step() != -1) {
 			float closest = numSetting.min();
 			for(float f = numSetting.min(); f <= numSetting.max(); f += numSetting.step()) {
 				float newDist = Math.abs(f - roundedSetting);
@@ -191,10 +194,12 @@ public class NumberSettingPart extends SettingPart {
 			roundedSetting = closest;
 		}
 		setting.setFloat(obj, roundedSetting);
-		if(numSetting.forceStep() && numSetting.step() == 1) {
-			strVal = (int)roundedSetting + "";
-		} else {
-			strVal = roundedSetting + "";
+		if(fromSlider) {
+			if(numSetting.forceStep() && numSetting.step() == 1) {
+				strVal = (int)roundedSetting + "";
+			} else {
+				strVal = roundedSetting + "";
+			}
 		}
 	}
 	
