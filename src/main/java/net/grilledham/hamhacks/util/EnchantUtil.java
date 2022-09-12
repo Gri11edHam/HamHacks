@@ -19,6 +19,7 @@ public class EnchantUtil {
 			case "enchantment.minecraft.projectile_protection" -> "PProt";
 			case "enchantment.minecraft.respiration" -> "Resp";
 			case "enchantment.minecraft.aqua_affinity" -> "Aqua";
+			case "enchantment.minecraft.swift_sneak" -> "Sneak";
 			case "enchantment.minecraft.depth_strider" -> "Depth";
 			case "enchantment.minecraft.frost_walker" -> "Frost";
 			case "enchantment.minecraft.soul_speed" -> "Soul";
