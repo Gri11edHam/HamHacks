@@ -98,6 +98,7 @@ public class HamHacksClient implements ClientModInitializer {
 		ModuleManager.register(new Freecam());
 		ModuleManager.register(new ESP());
 		ModuleManager.register(new Nametags());
+		ModuleManager.register(new AutoTotem());
 		
 		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 		

@@ -256,6 +256,9 @@
 	"hamhacks.module.nametags.outlineColor": "Outline Color",
 	"hamhacks.module.nametags.fillColor": "Fill Color",
 
+	"hamhacks.module.autoTotem": "Auto Totem",
+	"hamhacks.module.autoTotem.tooltip": "Automatically refills your offhand with totems",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",
