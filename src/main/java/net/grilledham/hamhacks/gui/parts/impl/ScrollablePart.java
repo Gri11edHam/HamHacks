@@ -64,6 +64,9 @@ public class ScrollablePart extends GuiPart {
 	protected void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
+		
+		boolean hovered = mx >= x && my >= y && mx <= x + width && my <= y + height;
+		
 		stack.push();
 		
 		RenderUtil.adjustScissor(x, y, width, height, ModuleManager.getModule(ClickGUI.class).scale);
@@ -72,7 +75,7 @@ public class ScrollablePart extends GuiPart {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				part.draw(stack, mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
+				part.draw(stack, hovered || part == selected ? mx : -1, hovered || part == selected ? my : -1, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
 				trueHeight += part.getHeight();
 			}
 		}
@@ -97,6 +100,9 @@ public class ScrollablePart extends GuiPart {
 	protected void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
+		
+		boolean hovered = mx >= x && my >= y && mx <= x + width && my <= y + height;
+		
 		stack.push();
 		
 		RenderUtil.pushScissor(x, y, width, height, ModuleManager.getModule(ClickGUI.class).scale);
@@ -105,7 +111,7 @@ public class ScrollablePart extends GuiPart {
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
-				part.drawTop(stack, mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
+				part.drawTop(stack, hovered || part == selected ? mx : -1, hovered || part == selected ? my : -1, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
 				trueHeight += part.getHeight();
 			}
 		}
@@ -141,6 +147,7 @@ public class ScrollablePart extends GuiPart {
 	
 	@Override
 	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
+		boolean hovered = mx >= x && my >= y && mx <= x + width && my <= y + height;
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
@@ -150,9 +157,11 @@ public class ScrollablePart extends GuiPart {
 						return true;
 					}
 				} else {
-					if(part.click(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button)) {
-						selected = part;
-						return true;
+					if(hovered) {
+						if(part.click(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button)) {
+							selected = part;
+							return true;
+						}
 					}
 				}
 				trueHeight += part.getHeight();
@@ -163,6 +172,7 @@ public class ScrollablePart extends GuiPart {
 	
 	@Override
 	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		boolean hovered = mx >= x && my >= y && mx <= x + width && my <= y + height;
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
@@ -174,9 +184,11 @@ public class ScrollablePart extends GuiPart {
 						return true;
 					}
 				} else {
-					if(part.release(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button)) {
-						selected = part;
-						return true;
+					if(hovered) {
+						if(part.release(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button)) {
+							selected = part;
+							return true;
+						}
 					}
 				}
 				trueHeight += part.getHeight();
@@ -187,6 +199,7 @@ public class ScrollablePart extends GuiPart {
 	
 	@Override
 	public boolean drag(double mx, double my, float scrollX, float scrollY, int button, double dx, double dy) {
+		boolean hovered = mx >= x && my >= y && mx <= x + width && my <= y + height;
 		float trueHeight = 0;
 		for(GuiPart part : subParts) {
 			if(isPartEnabled.get(part)) {
@@ -196,8 +209,10 @@ public class ScrollablePart extends GuiPart {
 						return true;
 					}
 				} else {
-					if(part.drag(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button, dx, dy)) {
-						return true;
+					if(hovered) {
+						if(part.drag(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, button, dx, dy)) {
+							return true;
+						}
 					}
 				}
 				trueHeight += part.getHeight();
