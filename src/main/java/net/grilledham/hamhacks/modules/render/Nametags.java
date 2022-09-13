@@ -41,15 +41,14 @@ import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class Nametags extends Module {
 	
 	private final ArrayList<LivingEntity> entities = new ArrayList<>();
+	
+	private final Map<LivingEntity, String> names = new HashMap<>();
 	
 	@BoolSetting(name = "hamhacks.module.nametags.self", defaultValue = true)
 	public boolean self = true;
@@ -144,6 +143,89 @@ public class Nametags extends Module {
 				.filter(this::shouldRender);
 		
 		entities.addAll(stream.toList());
+		
+		names.clear();
+		for(LivingEntity entity : entities) {
+			String gmString = "";
+			if(gamemode && entity instanceof PlayerEntity p) {
+				PlayerListEntry playerListEntry = mc.getNetworkHandler().getPlayerListEntry(p.getUuid());
+				if(playerListEntry == null) {
+					gmString = "\u00a77BOT";
+				} else {
+					GameMode mode = playerListEntry.getGameMode();
+					if(mode == null) {
+						gmString = "\u00a77BOT";
+					} else {
+						gmString = switch(mode) {
+							case SURVIVAL -> "\u00a79S";
+							case CREATIVE -> "\u00a7cC";
+							case ADVENTURE -> "\u00a7aA";
+							case SPECTATOR -> "\u00a77SP";
+						};
+					}
+				}
+				gmString = "\u00a77[" + gmString + "\u00a77] ";
+			}
+			
+			String name;
+			if(entity == mc.player) {
+				name = ModuleManager.getModule(NameHider.class).modifyName(entity.getEntityName());
+			} else {
+				name = entity.getName().getString();
+			}
+			String nameColor = "\u00a7f";
+			if(entity.isSneaking()) {
+				nameColor = "\u00a77";
+			}
+			name = nameColor + name + " ";
+			
+			float hp = entity.getHealth() + entity.getAbsorptionAmount();
+			float healthPercentage = Math.round((hp / entity.getMaxHealth()) * 1000) / 10f;
+			String healthColor = "\u00a72";
+			if(healthPercentage <= 25) {
+				healthColor = "\u00a74";
+			} else if(healthPercentage <= 50) {
+				healthColor = "\u00a7c";
+			} else if(healthPercentage <= 75) {
+				healthColor = "\u00a7e";
+			} else if(healthPercentage < 100) {
+				healthColor = "\u00a7a";
+			} else if(healthPercentage > 100) {
+				healthColor = "\u00a76";
+			}
+			String health = healthColor + healthPercentage + "% ";
+			
+			String distanceString = "";
+			if(distance) {
+				Vec3d distFrom = ModuleManager.getModule(Freecam.class).isEnabled() ? mc.gameRenderer.getCamera().getPos() : mc.cameraEntity.getPos();
+				float dist = Math.round(distFrom.distanceTo(entity.getPos()) * 10) / 10f;
+				distanceString = "\u00a79" + dist + "m ";
+			}
+			
+			String pingString = "";
+			if(ping && entity instanceof PlayerEntity p) {
+				PlayerListEntry playerListEntry = mc.getNetworkHandler().getPlayerListEntry(p.getUuid());
+				int latency = -1;
+				if(playerListEntry != null) {
+					latency = playerListEntry.getLatency();
+				}
+				String pingColor = "\u00a71";
+				if(latency >= 250) {
+					pingColor = "\u00a74";
+				} else if(latency >= 150) {
+					pingColor = "\u00a7c";
+				} else if(latency >= 75) {
+					pingColor = "\u00a7e";
+				} else if(latency >= 0) {
+					pingColor = "\u00a7a";
+				}
+				pingString = pingColor + latency + "ms ";
+			}
+			
+			String display = gmString + name + health + distanceString + pingString;
+			
+			names.put(entity, display.trim());
+		}
 	}
 	
 	private void render(MatrixStack matrixStack, double partialTicks) {
@@ -165,85 +247,7 @@ public class Nametags extends Module {
 			if(ProjectionUtil.to2D(pos, scale)) {
 				TextRenderer textRenderer = mc.textRenderer;
 				
-				String gmString = "";
-				if(gamemode && e instanceof PlayerEntity p) {
-					PlayerListEntry playerListEntry = mc.getNetworkHandler().getPlayerListEntry(p.getUuid());
-					if(playerListEntry == null) {
-						gmString = "\u00a77BOT";
-					} else {
-						GameMode mode = playerListEntry.getGameMode();
-						if(mode == null) {
-							gmString = "\u00a77BOT";
-						} else {
-							gmString = switch(mode) {
-								case SURVIVAL -> "\u00a79S";
-								case CREATIVE -> "\u00a7cC";
-								case ADVENTURE -> "\u00a7aA";
-								case SPECTATOR -> "\u00a77SP";
-							};
-						}
-					}
-					gmString = "\u00a77[" + gmString + "\u00a77] ";
-				}
-				
-				String name;
-				if(e == mc.player) {
-					name = ModuleManager.getModule(NameHider.class).modifyName(e.getEntityName());
-				} else {
-					name = e.getName().getString();
-				}
-				String nameColor = "\u00a7f";
-				if(e.isSneaking()) {
-					nameColor = "\u00a77";
-				}
-				name = nameColor + name + " ";
-				
-				float hp = e.getHealth() + e.getAbsorptionAmount();
-				float healthPercentage = Math.round((hp / e.getMaxHealth()) * 1000) / 10f;
-				String healthColor = "\u00a72";
-				if(healthPercentage <= 25) {
-					healthColor = "\u00a74";
-				} else if(healthPercentage <= 50) {
-					healthColor = "\u00a7c";
-				} else if(healthPercentage <= 75) {
-					healthColor = "\u00a7e";
-				} else if(healthPercentage < 100) {
-					healthColor = "\u00a7a";
-				} else if(healthPercentage > 100) {
-					healthColor = "\u00a76";
-				}
-				String health = healthColor + healthPercentage + "% ";
-				
-				String distanceString = "";
-				if(distance) {
-					Vec3d distFrom = ModuleManager.getModule(Freecam.class).isEnabled() ? mc.gameRenderer.getCamera().getPos() : mc.cameraEntity.getPos();
-					float dist = Math.round(distFrom.distanceTo(e.getPos()) * 10) / 10f;
-					distanceString = "\u00a79" + dist + "m ";
-				}
-				
-				String pingString = "";
-				if(ping && e instanceof PlayerEntity p) {
-					PlayerListEntry playerListEntry = mc.getNetworkHandler().getPlayerListEntry(p.getUuid());
-					int latency = -1;
-					if(playerListEntry != null) {
-						latency = playerListEntry.getLatency();
-					}
-					String pingColor = "\u00a71";
-					if(latency >= 250) {
-						pingColor = "\u00a74";
-					} else if(latency >= 150) {
-						pingColor = "\u00a7c";
-					} else if(latency >= 75) {
-						pingColor = "\u00a7e";
-					} else if(latency >= 0) {
-						pingColor = "\u00a7a";
-					}
-					pingString = pingColor + latency + "ms ";
-				}
-				
-				String display = gmString + name + health + distanceString + pingString;
-				
-				display = display.trim();
+				String display = names.get(e);
 				
 				float width = textRenderer.getWidth(display);
 				
