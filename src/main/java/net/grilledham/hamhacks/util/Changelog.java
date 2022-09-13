@@ -3,6 +3,37 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.7:
+				- Rewrote settings
+				- Changed how the Click GUI looks
+				- Changed setting in No Fall module:
+					: Momentum -> Fly Spoof
+				- Added modules:
+					: Zoom
+					: No Telemetry
+					: Freecam
+					: Notifications
+					: ESP
+					: Nametags
+					: Auto Totem
+				- Added settings to Tracers module:
+					: Draw Stem
+					: End Position
+				- Improved modules:
+					: Encase
+					: Crystal Aura
+					: Trap
+				- Improved secure server warning
+				- Improved No Fall packet mode
+				- Changed some default settings
+				- Added module-specific HUD text
+				- Added module sorting (currently only alphabetic)
+				- Added animations
+				- Fixed high speed values in Fly
+				- Fixed a crash when offline
+				- Fixed some modules causing a crash
+				- Bug fixes
+			
 			Update 1.6.1:
 				- Added module:
 					: Timer
