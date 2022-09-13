@@ -281,7 +281,7 @@ public class Nametags extends Module {
 							int size = 0;
 							for(Enchantment enchantment : enchantments.keySet()) {
 								String enchantName = EnchantUtil.getShortName(enchantment) + " " + enchantments.get(enchantment);
-								itemWidths[i] = Math.max(itemWidths[i], textRenderer.getWidth(enchantName) / 2f);
+								itemWidths[i] = Math.max(itemWidths[i], textRenderer.getWidth(enchantName + " "));
 								size++;
 							}
 							
@@ -306,14 +306,14 @@ public class Nametags extends Module {
 							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
 							
 							float itemWidth = itemWidths[i];
-							float enchantY = -(enchantments.size() * textRenderer.fontHeight);
+							float enchantY =  -itemsHeight / 2 - (enchantments.size() * textRenderer.fontHeight) + 12;
 							float enchantX;
 							
 							for(Enchantment enchantment : enchantments.keySet()) {
 								String enchantColor = enchantment.isCursed() ? "\u00a7c" : "\u00a7f";
 								String enchantName = enchantColor + EnchantUtil.getShortName(enchantment) + " " + enchantments.get(enchantment);
 								
-								enchantX = x + (itemWidth / 2) - (textRenderer.getWidth(enchantName) / 2f);
+								enchantX = x + (itemWidth / 2) - (textRenderer.getWidth(enchantName) / 2f) + 8;
 								
 								matrixStack.translate(0, 0, 300);
 								textRenderer.drawWithShadow(matrixStack, enchantName, enchantX, y + enchantY, -1);
