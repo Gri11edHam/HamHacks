@@ -28,12 +28,12 @@ public class CategoryPart extends GuiPart {
 		this.category = category;
 		openCloseAnimation.setAbsolute(1);
 		int i = 0;
-		scrollArea = new ScrollablePart(x, y + height, width, 16 * 8);
+		scrollArea = new ScrollablePart(x + 1, y + height, width - 2, 16 * 8);
 		for(Module m : ModuleManager.getModules(category)) {
-			scrollArea.addPart(new ModulePart(parent, x, y + height + (16 * i), width, 16, m));
+			scrollArea.addPart(new ModulePart(parent, x + 1, y + height + (16 * i), width - 2, 16, m));
 			i++;
 		}
-		scrollArea.moveTo(x, y + height);
+		scrollArea.moveTo(x + 1, y + height);
 	}
 	
 	@Override
@@ -48,14 +48,9 @@ public class CategoryPart extends GuiPart {
 		RenderUtil.applyScissor();
 		RenderUtil.preRender();
 		
-		int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
+		int bgC = ModuleManager.getModule(ClickGUI.class).accentColor.getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).bgColorHovered.getRGB(), bgC, hoverAnimation.get());
-		RenderUtil.drawRect(stack, x + 1, y + 1, width - 1, height - 1, bgC);
-		
-		RenderUtil.drawRect(stack, x + 1, y, width - 1, 1, ModuleManager.getModule(ClickGUI.class).accentColor.getRGB());
-		
-		RenderUtil.drawRect(stack, x, y, 1, height, ModuleManager.getModule(ClickGUI.class).accentColor.getRGB());
+		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
 		mc.textRenderer.drawWithShadow(stack, category.getText(), x + 3, y + 5, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		

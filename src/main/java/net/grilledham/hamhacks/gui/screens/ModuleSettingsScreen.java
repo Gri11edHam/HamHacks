@@ -36,7 +36,7 @@ public class ModuleSettingsScreen extends Screen {
 		height = (int)((height * client.getWindow().getScaleFactor()) / ModuleManager.getModule(ClickGUI.class).scale);
 		client.keyboard.setRepeatEvents(true);
 		float maxWidth = 0;
-		topPart = new GuiPart(0, 0, client.textRenderer.getWidth(module.getName()) + 2, 16) {
+		topPart = new GuiPart(-1, 0, client.textRenderer.getWidth(module.getName()) + 2 + 2, 16) {
 			@Override
 			public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 				float x = this.x + scrollX;
@@ -108,8 +108,8 @@ public class ModuleSettingsScreen extends Screen {
 		}
 		scrollArea.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))));
 		scrollArea.resize(maxWidth, 0);
-		topPart.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topPart.getHeight());
-		topPart.resize(maxWidth, topPart.getHeight());
+		topPart.moveTo(width / 2f - maxWidth / 2 - 1, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topPart.getHeight());
+		topPart.resize(maxWidth + 2, topPart.getHeight());
 		updatePartVisibility();
 	}
 	
@@ -130,8 +130,8 @@ public class ModuleSettingsScreen extends Screen {
 		}
 		scrollArea.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))));
 		scrollArea.resize(maxWidth, 0);
-		topPart.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topPart.getHeight());
-		topPart.resize(maxWidth, topPart.getHeight());
+		topPart.moveTo(width / 2f - maxWidth / 2 - 1, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topPart.getHeight());
+		topPart.resize(maxWidth + 2, topPart.getHeight());
 	}
 	
 	@Override
