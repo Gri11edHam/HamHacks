@@ -63,14 +63,18 @@ public class Module {
 	}
 	
 	public void forceDisable() {
-		wasEnabled = isEnabled();
+		if(forceDisabled == 0) {
+			wasEnabled = isEnabled();
+		}
 		setEnabled(false);
 		forceDisabled++;
 	}
 	
 	public void reEnable() {
 		forceDisabled--;
-		setEnabled(wasEnabled);
+		if(forceDisabled == 0) {
+			setEnabled(wasEnabled);
+		}
 	}
 	
 	public void onEnable() {
