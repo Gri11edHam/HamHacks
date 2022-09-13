@@ -275,7 +275,7 @@ public class Nametags extends Module {
 							itemWidths[i] = 0;
 						}
 						
-						if(enchants) {
+						if(enchants && !stack.isEmpty()) {
 							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
 							
 							int size = 0;
@@ -302,7 +302,7 @@ public class Nametags extends Module {
 						
 						RenderUtil.drawItem(matrixStack, stack, x + itemWidths[i] / 2, y, itemScale, true);
 						
-						if(enchantCount > 0 && enchants) {
+						if(enchantCount > 0 && enchants && !stack.isEmpty()) {
 							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
 							
 							float itemWidth = itemWidths[i];
