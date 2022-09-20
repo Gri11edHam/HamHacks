@@ -3,6 +3,13 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.7.1:
+				- Added more color options to the Click GUI
+				- Tweaked some default Click GUI colors
+				- Improved the changelog screens
+				- Fixed potion effects being behind module list
+				- Bug fixes
+			
 			Update 1.7:
 				- Rewrote settings
 				- Changed how the Click GUI looks
