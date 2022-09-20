@@ -257,8 +257,12 @@ public class ColorSettingPart extends SettingPart {
 		if(newY + h > mc.currentScreen.height) {
 			subPartScroll = -height - h;
 		}
-		chromaPart.click(mx, my, scrollX, scrollY + subPartScroll, button);
-		hexValPart.click(mx, my, scrollX, scrollY + subPartScroll, button);
+		if(chromaPart.click(mx, my, scrollX, scrollY + subPartScroll, button)) {
+			return true;
+		}
+		if(hexValPart.click(mx, my, scrollX, scrollY + subPartScroll, button)) {
+			return true;
+		}
 		if(selected) {
 			return true;
 		}
@@ -315,8 +319,12 @@ public class ColorSettingPart extends SettingPart {
 					}
 				}
 			}
-			chromaPart.release(mx, my, scrollX, scrollY + subPartScroll, button);
-			hexValPart.release(mx, my, scrollX, scrollY + subPartScroll, button);
+			if(chromaPart.release(mx, my, scrollX, scrollY + subPartScroll, button)) {
+				return true;
+			}
+			if(hexValPart.release(mx, my, scrollX, scrollY + subPartScroll, button)) {
+				return true;
+			}
 			if(mx >= newX && mx < newX + w && my >= newY && my < newY + h) {
 				return true;
 			}
@@ -347,13 +355,15 @@ public class ColorSettingPart extends SettingPart {
 	@Override
 	public boolean type(int code, int scanCode, int modifiers) {
 		if(selected) {
+			boolean stringPartSelected = hexValPart.type(0, 0, 0);
 			if(hexValPart.type(code, scanCode, modifiers)) {
 				return true;
 			}
-			if(code == GLFW.GLFW_KEY_ESCAPE) {
+			if(code == GLFW.GLFW_KEY_ESCAPE && !stringPartSelected) {
 				selected = false;
 				return false;
 			}
+			return true;
 		}
 		return super.type(code, scanCode, modifiers);
 	}
