@@ -3,6 +3,8 @@ package net.grilledham.hamhacks.gui.screens;
 import net.grilledham.hamhacks.gui.parts.impl.ButtonPart;
 import net.grilledham.hamhacks.util.Changelog;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
@@ -13,6 +15,8 @@ public class ChangelogScreen extends Screen {
 	private ButtonPart backButton;
 	private ButtonPart fullChangelogButton;
 	
+	private ScrollableWidget changelog;
+	
 	public ChangelogScreen(Screen last) {
 		super(Text.translatable("hamhacks.menu.changelog"));
 		this.last = last;
@@ -21,29 +25,55 @@ public class ChangelogScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		backButton = new ButtonPart("Back", width / 2f - 100, height - 32, 200, 20, this::close);
-		fullChangelogButton = new ButtonPart("Full Changelog", width / 2f - 100, height - 54, 200, 20, () -> client.setScreen(new FullChangelogScreen(this)));
+		backButton = new ButtonPart("Back", width / 2f - 102, height - 32, 100, 20, this::close);
+		fullChangelogButton = new ButtonPart("Full Changelog", width / 2f + 2, height - 32, 100, 20, () -> client.setScreen(new FullChangelogScreen(this)));
+		int changelogHeight = (textRenderer.fontHeight + 2) * Changelog.getLatest().split("\n").length;
+		float clw = 0;
+		for(String s : Changelog.getLatest().split("\n")) {
+			clw = Math.max(clw, client.textRenderer.getWidth(s.replace("\t", "    ").replace("\r", "")));
+		}
+		int finalChangelogHeight = Math.min(changelogHeight + 8, height - 38);
+		boolean overflows = changelogHeight + 8 > height - 38;
+		addDrawableChild(changelog = new ScrollableWidget((int)(width / 2f - clw / 2f) - 4, 4, (int)(clw + 8), finalChangelogHeight, Text.empty()) {
+			@Override
+			protected int getContentsHeight() {
+				return changelogHeight;
+			}
+			
+			@Override
+			protected boolean overflows() {
+				return overflows;
+			}
+			
+			@Override
+			protected double getDeltaYPerScroll() {
+				return 10;
+			}
+			
+			@Override
+			protected void renderContents(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+				int i = 0;
+				for(String s : Changelog.getLatest().split("\n")) {
+					client.textRenderer.drawWithShadow(matrices, s.replace("\t", "    ").replace("\r", ""), x + 4, y + 4 + i * (textRenderer.fontHeight + 2), 0xffffffff);
+					i++;
+				}
+			}
+			
+			@Override
+			public void appendNarrations(NarrationMessageBuilder builder) {
+			
+			}
+		});
 	}
 	
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		matrices.push();
+		renderBackground(matrices);
 		
 		super.render(matrices, mouseX, mouseY, delta);
-		renderBackground(matrices);
-		float clw = 0;
-		for(String s : Changelog.getLatest().split("\n")) {
-			clw = Math.max(clw, client.textRenderer.getWidth(s.replace("\t", "    ")));
-		}
-		int i = 0;
-		for(String s : Changelog.getLatest().split("\n")) {
-			client.textRenderer.drawWithShadow(matrices, s.replace("\t", "    "), width / 2f - clw / 2f, 12 + i * 12, 0xffffffff);
-			i++;
-		}
+		
 		backButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
 		fullChangelogButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
-		
-		matrices.pop();
 	}
 	
 	@Override
