@@ -20,4 +20,15 @@ public abstract class MixinInGameHud extends DrawableHelper {
 	public void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
 		IngameGui.getInstance().render(matrices, tickDelta, getTextRenderer());
 	}
+	
+	@Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V", shift = At.Shift.BEFORE, remap = false))
+	public void preRenderStatusEffectOverlay(MatrixStack matrices, CallbackInfo ci) {
+		matrices.push();
+		matrices.translate(0, IngameGui.getInstance().rightHeight, 0);
+	}
+	
+	@Inject(method = "renderStatusEffectOverlay", at = @At("TAIL"))
+	public void postRenderStatusEffectOverlay(MatrixStack matrices, CallbackInfo ci) {
+		matrices.pop();
+	}
 }

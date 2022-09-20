@@ -32,6 +32,9 @@ public class IngameGui {
 	
 	private final List<Animation> animations = new ArrayList<>();
 	
+	public float leftHeight = 0;
+	public float rightHeight = 0;
+	
 	public void render(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer) {
 		if(MinecraftClient.getInstance().options.debugEnabled) {
 			return;
@@ -148,6 +151,8 @@ public class IngameGui {
 				i++;
 			}
 		}
+		leftHeight = yAdd;
+		
 		yAdd = 0;
 		int k = j;
 		Map<Module, Animation> moduleAnimations = new HashMap<>();
@@ -168,6 +173,7 @@ public class IngameGui {
 				i++;
 			}
 		}
+		rightHeight = yAdd;
 		
 		matrices.pop();
 		
