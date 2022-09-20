@@ -96,6 +96,8 @@
 	"hamhacks.module.clickGui.accentColor": "Accent Color",
 	"hamhacks.module.clickGui.backgroundColor": "Background Color",
 	"hamhacks.module.clickGui.backgroundColorHovered": "Background Color (Hovered)",
+	"hamhacks.module.clickGui.enabledColor": "Enabled Color",
+	"hamhacks.module.clickGui.enabledColorHovered": "Enabled Color (Hovered)",
 	"hamhacks.module.clickGui.textColor": "Text Color",
 	"hamhacks.module.clickGui.scale": "Scale",
 

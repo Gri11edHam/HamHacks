@@ -16,9 +16,13 @@ public class ClickGUI extends Module {
 	@ColorSetting(name = "hamhacks.module.clickGui.accentColor")
 	public Color accentColor = Color.getDarkRed();
 	@ColorSetting(name = "hamhacks.module.clickGui.backgroundColor")
-	public Color bgColor = new Color(0, 0, 0, 0.5f);
+	public Color bgColor = new Color(0x80000000);
 	@ColorSetting(name = "hamhacks.module.clickGui.backgroundColorHovered")
-	public Color bgColorHovered = new Color(0, 0, 1, 0.5f);
+	public Color bgColorHovered = new Color(0x80777777);
+	@ColorSetting(name = "hamhacks.module.clickGui.enabledColor")
+	public Color enabledColor = new Color(0x80AA0000);
+	@ColorSetting(name = "hamhacks.module.clickGui.enabledColorHovered")
+	public Color enabledColorHovered = new Color(0x80AA5555);
 	@ColorSetting(name = "hamhacks.module.clickGui.textColor")
 	public Color textColor = Color.getWhite();
 	@NumberSetting(

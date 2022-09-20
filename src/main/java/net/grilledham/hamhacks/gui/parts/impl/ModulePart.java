@@ -40,8 +40,10 @@ public class ModulePart extends GuiPart {
 		int bgC = ModuleManager.getModule(ClickGUI.class).bgColor.getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
 		bgC = RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).bgColorHovered.getRGB(), bgC, hoverAnimation.get());
-		int bgCEnabled = ModuleManager.getModule(ClickGUI.class).accentColor.getRGB();
-		RenderUtil.drawRect(stack, x, y, width, height, RenderUtil.mix(bgCEnabled, bgC, enableAnimation.get() / 2));
+		int bgCEnabled = ModuleManager.getModule(ClickGUI.class).enabledColor.getRGB();
+		bgCEnabled = RenderUtil.mix(ModuleManager.getModule(ClickGUI.class).enabledColorHovered.getRGB(), bgCEnabled, hoverAnimation.get());
+		RenderUtil.drawRect(stack, (float)(x + width * enableAnimation.get()), y, (float)(width * (1 - enableAnimation.get())), height, bgC);
+		RenderUtil.drawRect(stack, x, y, (float)(width * enableAnimation.get()), height, bgCEnabled);
 		
 		mc.textRenderer.drawWithShadow(stack, module.getName(), x + 3, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		
