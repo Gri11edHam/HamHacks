@@ -7,12 +7,12 @@ import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Notifications;
+import net.grilledham.hamhacks.util.PositionHack;
 import net.grilledham.hamhacks.util.SelectableList;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.grilledham.hamhacks.util.setting.SelectionSetting;
 import net.minecraft.block.Material;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -102,22 +102,31 @@ public class Fly extends Module {
 					} else {
 						move();
 					}
-					
-					if(updates >= 0.5f) {
+					if(updates >= 1) {
 						updates = 0;
 					}
 					
-					boolean isAboveBlock = false;
-					for(int xAdd = -1; xAdd < 2; xAdd++) {
-						for(int zAdd = -1; zAdd < 2; zAdd++) {
-							if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 1, 0.3f * zAdd))).getMaterial() != Material.AIR) {
-								isAboveBlock = true;
-								break;
+					if(updates >= 0.5) {
+						boolean isAboveBlock = false;
+						for(int xAdd = -1; xAdd < 2; xAdd++) {
+							for(int zAdd = -1; zAdd < 2; zAdd++) {
+								if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 1, 0.3f * zAdd))).getMaterial() != Material.AIR) {
+									isAboveBlock = true;
+									break;
+								}
 							}
 						}
-					}
-					if(!isAboveBlock) {
-						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y - updates, mc.player.getPos().z, mc.player.isOnGround()));
+						if(!isAboveBlock) {
+							if(mc.player.getVelocity().getY() > 0) {
+								PositionHack.setOffsetPacket(0, -(mc.player.getVelocity().getY()) - 0.5, 0);
+							} else {
+								PositionHack.setOffsetPacket(0, -0.5, 0);
+							}
+						} else {
+							PositionHack.setOffsetPacket(0, 0, 0);
+						}
+					} else {
+						PositionHack.setOffsetPacket(0, 0, 0);
 					}
 					
 					updates += (System.currentTimeMillis() - lastTime) / 1000f;
