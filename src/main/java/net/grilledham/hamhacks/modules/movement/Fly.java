@@ -102,15 +102,15 @@ public class Fly extends Module {
 					} else {
 						move();
 					}
-					if(updates >= 1) {
+					if(updates >= 0.5) {
 						updates = 0;
 					}
 					
-					if(updates >= 0.5) {
+					if(updates >= 0.25) {
 						boolean isAboveBlock = false;
 						for(int xAdd = -1; xAdd < 2; xAdd++) {
 							for(int zAdd = -1; zAdd < 2; zAdd++) {
-								if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 1, 0.3f * zAdd))).getMaterial() != Material.AIR) {
+								if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 0.5f, 0.3f * zAdd))).getMaterial() != Material.AIR) {
 									isAboveBlock = true;
 									break;
 								}
