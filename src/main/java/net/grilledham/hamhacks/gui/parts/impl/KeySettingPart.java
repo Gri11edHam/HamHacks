@@ -11,6 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 public class KeySettingPart extends SettingPart {
 	
@@ -36,7 +37,7 @@ public class KeySettingPart extends SettingPart {
 		
 		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		try {
-			String text = "[" + (listening ? "Listening..." : ((Keybind)setting.get(obj)).getName()) + "]";
+			String text = "[" + (listening ? (((Keybind)setting.get(obj)).getName().equals("None") ? "Listening..." : ((Keybind)setting.get(obj)).getName() + "...") : ((Keybind)setting.get(obj)).getName()) + "]";
 			mc.textRenderer.drawWithShadow(stack, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ModuleManager.getModule(ClickGUI.class).textColor.getRGB());
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
@@ -53,6 +54,31 @@ public class KeySettingPart extends SettingPart {
 	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
+		if(listening) {
+			try {
+				int code = button - Keybind.MOUSE_SHIFT;
+				int[] codes = ((Keybind)setting.get(obj)).getKeyCombo();
+				if(codes.length == 1 && codes[0] == 0) {
+					((Keybind)setting.get(obj)).setKey(code);
+				} else {
+					boolean containsKey = false;
+					for(int i : codes) {
+						if(i == code) {
+							containsKey = true;
+							break;
+						}
+					}
+					if(!containsKey) {
+						codes = Arrays.copyOf(codes, codes.length + 1);
+						codes[codes.length - 1] = code;
+					}
+					((Keybind)setting.get(obj)).setKey(codes);
+				}
+			} catch(IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+			return true;
+		}
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			
@@ -71,12 +97,12 @@ public class KeySettingPart extends SettingPart {
 		super.release(mx, my, scrollX, scrollY, button);
 		try {
 			if(listening) {
-				((Keybind)setting.get(obj)).setKey(button, true);
-				listening = false;
-				return false;
+				return true;
 			} else if(mx >= x && mx < x + width && my >= y && my < y + height) {
 				if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+					((Keybind)setting.get(obj)).setKey(0);
 					listening = true;
+					ModuleManager.getModule(ClickGUI.class).typing = true;
 					return true;
 				} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 					SettingHelper.reset(setting, obj);
@@ -93,14 +119,31 @@ public class KeySettingPart extends SettingPart {
 		if(listening) {
 			try {
 				if(code == GLFW.GLFW_KEY_ESCAPE) {
-					((Keybind)setting.get(obj)).setKey(0);
+					listening = false;
+					ModuleManager.getModule(ClickGUI.class).typing = false;
 				} else {
-					((Keybind)setting.get(obj)).setKey(code, false);
+					int[] codes = ((Keybind)setting.get(obj)).getKeyCombo();
+					if(codes.length == 1 && codes[0] == 0) {
+						((Keybind)setting.get(obj)).setKey(code);
+					} else {
+						boolean containsKey = false;
+						for(int i : codes) {
+							if(i == code) {
+								containsKey = true;
+								break;
+							}
+						}
+						if(!containsKey) {
+							codes = Arrays.copyOf(codes, codes.length + 1);
+							codes[codes.length - 1] = code;
+						}
+						((Keybind)setting.get(obj)).setKey(codes);
+					}
+					return true;
 				}
 			} catch(IllegalAccessException e) {
 				e.printStackTrace();
 			}
-			listening = false;
 			return false;
 		}
 		return super.type(code, scanCode, modifiers);

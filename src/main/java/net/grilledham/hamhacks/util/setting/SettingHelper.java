@@ -136,8 +136,12 @@ public class SettingHelper {
 	}
 	
 	public static void addKeySaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
+		JsonArray arr = new JsonArray();
+		for(int i : ((Keybind)f.get(o)).getKeyCombo()) {
+			arr.add(i);
+		}
 		String name = f.getAnnotation(KeySetting.class).name();
-		saveData.addProperty(name, ((Keybind)f.get(o)).getKey());
+		saveData.add(name, arr);
 	}
 	
 	public static void addListSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {

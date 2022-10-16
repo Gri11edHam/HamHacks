@@ -16,6 +16,6 @@ public class Commands extends Module {
 	public void onEnable() {
 		super.onEnable();
 		toggle();
-		mc.setScreen(new ChatScreen(key.getName()));
+		mc.setScreen(new ChatScreen(key.getCombinedString()));
 	}
 }

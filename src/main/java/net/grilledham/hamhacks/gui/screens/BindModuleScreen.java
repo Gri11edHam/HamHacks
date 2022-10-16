@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.screens;
 
 import net.grilledham.hamhacks.command.CommandManager;
+import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.util.ChatUtil;
 import net.minecraft.client.gui.screen.Screen;
@@ -11,6 +12,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Arrays;
+
 public class BindModuleScreen extends Screen {
 	
 	private final Module module;
@@ -20,26 +23,71 @@ public class BindModuleScreen extends Screen {
 	public BindModuleScreen(Module module) {
 		super(Text.translatable("hamhacks.menu.bindModule"));
 		this.module = module;
+		module.getKey().setKey(0);
 	}
 	
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 		renderBackground(matrices);
 		super.render(matrices, mouseX, mouseY, delta);
-		textRenderer.drawWithShadow(matrices, "Listening...", width / 2f - textRenderer.getWidth("Listening...") / 2f, height / 2f - textRenderer.fontHeight / 2f, -1);
+		String text = module.getKey().getName().equals("None") ? "Listening..." : module.getKey().getName() + "...";
+		textRenderer.drawWithShadow(matrices, text, width / 2f - textRenderer.getWidth(text) / 2f, height / 2f - textRenderer.fontHeight / 2f, -1);
+	}
+	
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		int code = button - Keybind.MOUSE_SHIFT;
+		int[] codes = module.getKey().getKeyCombo();
+		if(codes.length == 1 && codes[0] == 0) {
+			module.getKey().setKey(code);
+		} else {
+			boolean containsKey = false;
+			for(int i : codes) {
+				if(i == code) {
+					containsKey = true;
+					break;
+				}
+			}
+			if(!containsKey) {
+				codes = Arrays.copyOf(codes, codes.length + 1);
+				codes[codes.length - 1] = code;
+			}
+			module.getKey().setKey(codes);
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
 	}
 	
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		module.getKey().setKey(button, true);
-		info(Text.of("Bound " + module.getName() + " to " + module.getKey().getName()));
-		close();
 		return super.mouseReleased(mouseX, mouseY, button);
 	}
 	
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		return false;
+		if(keyCode == GLFW.GLFW_KEY_ESCAPE) {
+			close();
+			info(Text.of("Bound " + module.getName() + " to " + module.getKey().getName()));
+			return true;
+		} else {
+			int[] codes = module.getKey().getKeyCombo();
+			if(codes.length == 1 && codes[0] == 0) {
+				module.getKey().setKey(keyCode);
+			} else {
+				boolean containsKey = false;
+				for(int i : codes) {
+					if(i == keyCode) {
+						containsKey = true;
+						break;
+					}
+				}
+				if(!containsKey) {
+					codes = Arrays.copyOf(codes, codes.length + 1);
+					codes[codes.length - 1] = keyCode;
+				}
+				module.getKey().setKey(codes);
+			}
+		}
+		return super.keyReleased(keyCode, scanCode, modifiers);
 	}
 	
 	@Override
@@ -48,13 +96,6 @@ public class BindModuleScreen extends Screen {
 			isFirstClick = false;
 			return super.keyReleased(keyCode, scanCode, modifiers);
 		}
-		if(keyCode == GLFW.GLFW_KEY_ESCAPE) {
-			module.getKey().setKey(0);
-		} else {
-			module.getKey().setKey(keyCode, false);
-		}
-		info(Text.of("Bound " + module.getName() + " to " + module.getKey().getName()));
-		close();
 		return super.keyReleased(keyCode, scanCode, modifiers);
 	}
 	

@@ -1,9 +1,11 @@
 package net.grilledham.hamhacks.config;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.util.setting.KeySetting;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
 
@@ -226,6 +228,17 @@ public class ConfigFixer {
 					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(m.getName()).getAsJsonObject("settings");
 					boolean oldForceDisabled = settings.get("hamhacks.module.generic.internal.forceDisabled").getAsBoolean();
 					settings.addProperty("hamhacks.module.generic.internal.forceDisabled", oldForceDisabled ? 1f : 0f);
+				}
+			case 3:
+				for(Module m : ModuleManager.getModules()) {
+					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(m.getName()).getAsJsonObject("settings");
+					for(Field f : SettingHelper.getKeySettings(m)) {
+						String name = f.getAnnotation(KeySetting.class).name();
+						float code = settings.get(name).getAsFloat();
+						JsonArray arr = new JsonArray();
+						arr.add(code);
+						settings.add(name, arr);
+					}
 				}
 			// Add more switch cases for new config changes
 		}

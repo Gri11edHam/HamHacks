@@ -64,7 +64,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 			ci.cancel();
 			return;
 		}
-		String prefix = ModuleManager.getModule(Commands.class).getKey().getName();
+		String prefix = ModuleManager.getModule(Commands.class).getKey().getCombinedString();
 		boolean previewIsCommand = preview != null && preview.getString().startsWith(prefix);
 		if(message.startsWith(prefix) || previewIsCommand) {
 			try {

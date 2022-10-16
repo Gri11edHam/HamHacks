@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.modules;
 
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.EventManager;
+import net.grilledham.hamhacks.event.events.EventClick;
 import net.grilledham.hamhacks.event.events.EventKey;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
@@ -14,67 +15,75 @@ public class Keybind {
 	 */
 	public static final int MOUSE_SHIFT = 100;
 	
-	private int code;
-	private final int defaultCode;
+	private int[] codes;
+	private final int[] defaultCodes;
 	
 	private boolean isPressed = false;
 	private int wasPressed = 0;
 	
-	public Keybind(int defaultCode) {
-		this.code = defaultCode;
-		this.defaultCode = defaultCode;
+	public Keybind(int... defaultCode) {
+		this.codes = defaultCode;
+		this.defaultCodes = defaultCode;
 		EventManager.register(this);
 	}
 	
 	@EventListener
 	public void keyPressed(EventKey e) {
-		checkKeyState(e.handle, e.key, e.scancode, e.action, e.modifiers);
+		checkKeyState(e.handle, e.key, e.scancode, e.action, e.modifiers, false);
+	}
+	
+	@EventListener
+	public void mouseClicked(EventClick e) {
+		checkKeyState(MinecraftClient.getInstance().getWindow().getHandle(), e.button, 0, GLFW.GLFW_PRESS, 0, true);
 	}
 	
 	/**
 	 * Resets the keybind to its default key code
 	 */
 	public void resetKey() {
-		code = defaultCode;
+		codes = defaultCodes;
 	}
 	
 	/**
 	 * Changes the key code for this keybind
-	 * @param code The key code
+	 * @param codes The key combination
 	 */
-	public void setKey(int code) {
-		if(code < 0) {
-			setKey(code + MOUSE_SHIFT, true);
-		} else {
-			setKey(code, false);
-		}
+	public void setKey(int... codes) {
+		this.codes = codes;
 	}
 	
-	/**
-	 * Changes the key code for this keybind
-	 * @param code The key code
-	 * @param isMouseButton Should this key be treated as a mouse button
-	 */
-	public void setKey(int code, boolean isMouseButton) {
-		if(isMouseButton) {
-			this.code = code - MOUSE_SHIFT;
+	public void checkKeyState(long handle, int key, int scancode, int action, int modifiers, boolean mouseEvent) {
+		int activator = codes[codes.length - 1];
+		boolean activated;
+		if(mouseEvent) {
+			if(activator < 0) {
+				activator += MOUSE_SHIFT;
+				activated = key == activator;
+			} else {
+				activated = false;
+			}
 		} else {
-			this.code = code;
+			activated = key == activator;
 		}
-	}
-	
-	public void checkKeyState(long handle, int key, int scancode, int action, int modifiers) {
-		if(key == code && MinecraftClient.getInstance().currentScreen == null) {
+		if(activated && MinecraftClient.getInstance().currentScreen == null) {
 			if(GLFW.glfwGetKey(handle, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS) {
 				isPressed = false;
 			} else {
-				if(code < 0) {
-					isPressed = GLFW.glfwGetMouseButton(handle, code + MOUSE_SHIFT) == GLFW.GLFW_PRESS;
-				} else if(code != 0) {
-					isPressed = action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT;
-				} else {
-					isPressed = false;
+				boolean pressed = true;
+				for(int code : codes) {
+					if(code < 0) {
+						if(GLFW.glfwGetMouseButton(handle, code + MOUSE_SHIFT) != GLFW.GLFW_PRESS && GLFW.glfwGetMouseButton(handle, code + MOUSE_SHIFT) != GLFW.GLFW_REPEAT) {
+							pressed = false;
+						}
+					} else if(code != 0) {
+						if(GLFW.glfwGetKey(handle, code) != GLFW.GLFW_PRESS && GLFW.glfwGetKey(handle, code) != GLFW.GLFW_REPEAT) {
+							pressed = false;
+						}
+					} else {
+						pressed = false;
+					}
 				}
+				isPressed = pressed;
 			}
 			if(isPressed) {
 				wasPressed++;
@@ -102,17 +111,40 @@ public class Keybind {
 		return isPressed;
 	}
 	
-	public int getKey() {
-		return code;
+	public int[] getKeyCombo() {
+		return codes;
 	}
 	
 	public String getName() {
-		if(code < 0) {
-			return InputUtil.fromTranslationKey("key.mouse." + (code + MOUSE_SHIFT)).getLocalizedText().getString();
-		} else if(code != 0) {
-			return InputUtil.fromKeyCode(code, GLFW.glfwGetKeyScancode(code)).getLocalizedText().getString();
-		} else {
-			return "None";
+		StringBuilder name = new StringBuilder();
+		int i = 0;
+		for(int code : codes) {
+			if(code < 0) {
+				name.append(InputUtil.fromTranslationKey("key.mouse." + (code + MOUSE_SHIFT + 1)).getLocalizedText().getString());
+			} else if(code != 0) {
+				name.append(InputUtil.fromKeyCode(code, GLFW.glfwGetKeyScancode(code)).getLocalizedText().getString());
+			} else {
+				name.append("None");
+			}
+			if(i < codes.length - 1) {
+				name.append("+");
+			}
+			i++;
 		}
+		return name.toString();
+	}
+	
+	public String getCombinedString() {
+		StringBuilder name = new StringBuilder();
+		for(int code : codes) {
+			if(code < 0) {
+				name.append(InputUtil.fromTranslationKey("key.mouse." + (code + MOUSE_SHIFT + 1)).getLocalizedText().getString());
+			} else if(code != 0) {
+				name.append(InputUtil.fromKeyCode(code, GLFW.glfwGetKeyScancode(code)).getLocalizedText().getString());
+			} else {
+				name.append("None");
+			}
+		}
+		return name.toString();
 	}
 }
