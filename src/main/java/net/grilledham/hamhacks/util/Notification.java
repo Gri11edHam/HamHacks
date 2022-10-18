@@ -127,7 +127,7 @@ public class Notification {
 		}
 		progressAnimation.update();
 		
-		if(progressAnimation.get() >= 1) {
+		if(progressAnimation.get() >= 1 && dropAnimation.get() <= 0 && (!hovered || clicked)) {
 			complete = true;
 		}
 		
