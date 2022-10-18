@@ -4,7 +4,6 @@ import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.KeySetting;
-import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
@@ -32,8 +31,7 @@ public class Module {
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
 	
-	@NumberSetting(name = "hamhacks.module.generic.internal.forceDisabled", min = 0, max = 500, step = 1, neverShow = true)
-	public float forceDisabled = 0;
+	private int forceDisabled = 0;
 	protected boolean wasEnabled;
 	protected boolean lastEnabled;
 	
