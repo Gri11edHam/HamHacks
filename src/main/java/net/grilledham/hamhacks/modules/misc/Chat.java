@@ -35,11 +35,26 @@ public class Chat extends Module {
 	)
 	public Color highlightUsernameColor = Color.getYellow();
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedIndicator")
-	public boolean hideUnsignedIndicator = false;
+	@BoolSetting(name = "hamhacks.module.chat.hideGrayStatus")
+	public boolean hideGrayStatus = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideSigningStatus")
-	public boolean hideSigningStatus = false;
+	@BoolSetting(name = "hamhacks.module.chat.hideYellowStatus")
+	public boolean hideYellowStatus = false;
+	
+	@BoolSetting(name = "hamhacks.module.chat.hideYellowStatusIcon")
+	public boolean hideYellowStatusIcon = false;
+	
+	@BoolSetting(name = "hamhacks.module.chat.hideRedStatus")
+	public boolean hideRedStatus = false;
+	
+	@BoolSetting(name = "hamhacks.module.chat.hideRedStatusIcon")
+	public boolean hideRedStatusIcon = false;
+	
+	@BoolSetting(name = "hamhacks.module.chat.hideOtherStatus")
+	public boolean hideOtherStatus = false;
+	
+	@BoolSetting(name = "hamhacks.module.chat.hideOtherStatusIcon")
+	public boolean hideOtherStatusIcon = false;
 	
 	private final List<String> sentMessages = new ArrayList<>();
 	

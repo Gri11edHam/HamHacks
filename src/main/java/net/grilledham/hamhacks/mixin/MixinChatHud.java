@@ -27,6 +27,7 @@ public class MixinChatHud extends DrawableHelper {
 	
 	@Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
 	private int lineIndex;
+	private MessageIndicator indicator;
 	
 	@Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V", at = @At("HEAD"), cancellable = true)
 	public void addMessage(Text message, MessageSignatureData signature, int ticks, MessageIndicator indicator, boolean refresh, CallbackInfo ci) {
@@ -58,26 +59,98 @@ public class MixinChatHud extends DrawableHelper {
 		fill(matrixStack, x1, y1, x2, y2, color);
 	}
 	
+	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHudLine$Visible;indicator()Lnet/minecraft/client/gui/hud/MessageIndicator;"))
+	public MessageIndicator getIndicator(ChatHudLine.Visible instance) {
+		indicator = instance.indicator();
+		return indicator;
+	}
+	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V", ordinal = 1))
 	public void removeIndicator(MatrixStack matrixStack, int x1, int y1, int x2, int y2, int c) {
-		if(ModuleManager.getModule(Chat.class).isEnabled() && ModuleManager.getModule(Chat.class).hideSigningStatus) {
+		if(indicator == null) {
 			return;
+		}
+		Chat chat = ModuleManager.getModule(Chat.class);
+		if(chat.isEnabled()) {
+			if(indicator == MessageIndicator.system()) {
+				if(chat.hideGrayStatus) {
+					return;
+				}
+			} else if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
+				if(chat.hideYellowStatus) {
+					return;
+				}
+			} else if(indicator == MessageIndicator.notSecure()) {
+				if(chat.hideRedStatus) {
+					return;
+				}
+			} else if(chat.hideOtherStatus) {
+				return;
+			}
 		}
 		fill(matrixStack, x1, y1, x2, y2, c);
 	}
 	
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/MessageIndicator;icon()Lnet/minecraft/client/gui/hud/MessageIndicator$Icon;"))
-	public MessageIndicator.Icon removeIcon(MessageIndicator instance) {
-		if(ModuleManager.getModule(Chat.class).isEnabled() && ModuleManager.getModule(Chat.class).hideUnsignedIndicator) {
-			return null;
+	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/MessageIndicator;icon()Lnet/minecraft/client/gui/hud/MessageIndicator$Icon;", ordinal = 0))
+	public MessageIndicator.Icon removeIcon(MessageIndicator indicator) {
+		Chat chat = ModuleManager.getModule(Chat.class);
+		if(chat.isEnabled()) {
+			if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
+				if(chat.hideYellowStatusIcon) {
+					return null;
+				}
+			} else if(indicator == MessageIndicator.notSecure()) {
+				if(chat.hideRedStatusIcon) {
+					return null;
+				}
+			} else if(indicator != MessageIndicator.system()) {
+				if(chat.hideOtherStatusIcon) {
+					return null;
+				}
+			}
 		}
-		return instance.icon();
+		return indicator.icon();
 	}
 	
-	@Inject(method = "getIndicatorAt", at = @At("HEAD"), cancellable = true)
-	public void removeIconTooltip(double mouseX, double mouseY, CallbackInfoReturnable<MessageIndicator> cir) {
-		if(ModuleManager.getModule(Chat.class).isEnabled() && ModuleManager.getModule(Chat.class).hideUnsignedIndicator) {
-			cir.setReturnValue(null);
+	@Inject(method = "isXInsideIndicatorIcon", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
+	public void removeIndicatorTooltip(double x, ChatHudLine.Visible line, MessageIndicator indicator, CallbackInfoReturnable<Boolean> cir) {
+		Chat chat = ModuleManager.getModule(Chat.class);
+		if(chat.isEnabled()) {
+			if(indicator == MessageIndicator.system()) {
+				if(chat.hideGrayStatus) {
+					cir.setReturnValue(false);
+				}
+			} else if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
+				if(chat.hideYellowStatus) {
+					cir.setReturnValue(false);
+				}
+			} else if(indicator == MessageIndicator.notSecure()) {
+				if(chat.hideRedStatus) {
+					cir.setReturnValue(false);
+				}
+			} else if(chat.hideOtherStatus) {
+				cir.setReturnValue(false);
+			}
+		}
+	}
+	
+	@Inject(method = "isXInsideIndicatorIcon", at = @At(value = "RETURN", ordinal = 0), cancellable = true)
+	public void removeIconTooltip(double x, ChatHudLine.Visible line, MessageIndicator indicator, CallbackInfoReturnable<Boolean> cir) {
+		Chat chat = ModuleManager.getModule(Chat.class);
+		if(chat.isEnabled()) {
+			if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
+				if(chat.hideYellowStatusIcon) {
+					cir.setReturnValue(false);
+				}
+			} else if(indicator == MessageIndicator.notSecure()) {
+				if(chat.hideRedStatusIcon) {
+					cir.setReturnValue(false);
+				}
+			} else if(indicator != MessageIndicator.system()) {
+				if(chat.hideOtherStatusIcon) {
+					cir.setReturnValue(false);
+				}
+			}
 		}
 	}
 }
