@@ -20,7 +20,7 @@ public class NameHider extends Module {
 	}
 	
 	public String modifyName(String text) {
-		if(isEnabled()) {
+		if(isEnabled() && !fakeName.equals("")) {
 			return text.replace(MinecraftClient.getInstance().getSession().getUsername(), fakeName);
 		}
 		return text;
