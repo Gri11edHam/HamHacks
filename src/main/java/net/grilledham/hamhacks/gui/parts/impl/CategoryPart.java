@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class CategoryPart extends GuiPart {
 	
+	public static final int PREFERED_SCROLL_HEIGHT = 16 * 16;
 	private final Module.Category category;
 	
 	private final Animation openCloseAnimation = Animation.getInOutQuad(0.25);
@@ -28,7 +29,7 @@ public class CategoryPart extends GuiPart {
 		this.category = category;
 		openCloseAnimation.setAbsolute(1);
 		int i = 0;
-		scrollArea = new ScrollablePart(x + 1, y + height, width - 2, 16 * 8);
+		scrollArea = new ScrollablePart(x + 1, y + height, width - 2, PREFERED_SCROLL_HEIGHT);
 		for(Module m : ModuleManager.getModules(category)) {
 			scrollArea.addPart(new ModulePart(parent, x + 1, y + height + (16 * i), width - 2, 16, m));
 			i++;
@@ -68,6 +69,8 @@ public class CategoryPart extends GuiPart {
 			lastMouseX = mx;
 			lastMouseY = my;
 		}
+		
+		scrollArea.setMaxHeight(Math.min(PREFERED_SCROLL_HEIGHT, (mc.getWindow().getHeight() / ModuleManager.getModule(ClickGUI.class).scale) - scrollArea.getY())); // Should change the scale based on context
 		
 		openCloseAnimation.set(category.isExpanded());
 		openCloseAnimation.update();
