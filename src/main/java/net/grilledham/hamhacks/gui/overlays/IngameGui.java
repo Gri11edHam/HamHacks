@@ -2,10 +2,13 @@ package net.grilledham.hamhacks.gui.overlays;
 
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.render.Freecam;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.ConnectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.grilledham.hamhacks.util.math.DirectionHelper;
+import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.PlayerListEntry;
@@ -100,7 +103,7 @@ public class IngameGui {
 		if(animation.get() > 0) {
 			String fps = MinecraftClient.getInstance().fpsDebugString;
 			fps = fps.split(" ")[0] + " " + fps.split(" ")[1];
-			yAdd += drawLeftAligned(matrices, tickDelta, fontRenderer, fps, i, yAdd, animation);
+			yAdd += drawLeftAligned(matrices, fontRenderer, fps, i, yAdd, animation);
 			i++;
 		}
 		animation = getAnimation(j++);
@@ -123,7 +126,7 @@ public class IngameGui {
 					}
 				}
 			}
-			yAdd += drawLeftAligned(matrices, tickDelta, fontRenderer, ping, i, yAdd, animation);
+			yAdd += drawLeftAligned(matrices, fontRenderer, ping, i, yAdd, animation);
 			i++;
 		}
 		animation = getAnimation(j++);
@@ -134,7 +137,7 @@ public class IngameGui {
 		}
 		if(animation.get() > 0) {
 			String tps = String.format("%.2f tps", ConnectionUtil.getTPS());
-			yAdd += drawLeftAligned(matrices, tickDelta, fontRenderer, tps, i, yAdd, animation);
+			yAdd += drawLeftAligned(matrices, fontRenderer, tps, i, yAdd, animation);
 			i++;
 		}
 		animation = getAnimation(j++);
@@ -147,7 +150,7 @@ public class IngameGui {
 			float timeSinceLastTick = ConnectionUtil.getTimeSinceLastTick() / 1000f;
 			if(timeSinceLastTick >= 2) {
 				String timeSinceLastTickString = String.format("Seconds Since Last Tick: %.2f", timeSinceLastTick);
-				yAdd += drawLeftAligned(matrices, tickDelta, fontRenderer, timeSinceLastTickString, i, yAdd, animation);
+				yAdd += drawLeftAligned(matrices, fontRenderer, timeSinceLastTickString, i, yAdd, animation);
 				i++;
 			}
 		}
@@ -169,18 +172,51 @@ public class IngameGui {
 			animation = moduleAnimations.get(m);
 			j++;
 			if(animation.get() > 0) {
-				yAdd += drawRightAligned(matrices, tickDelta, fontRenderer, m.getHUDText(), i, yAdd, animation);
+				yAdd += drawRightAligned(matrices, fontRenderer, m.getHUDText(), i, yAdd, animation);
 				i++;
 			}
 		}
 		rightHeight = yAdd;
+		
+		yAdd = 0;
+		animation = getAnimation(j++);
+		if(hud.animate) {
+			animation.set((hud.showCoordinates || hud.showDirection) && hud.isEnabled());
+		} else {
+			animation.setAbsolute((hud.showCoordinates || hud.showDirection) && hud.isEnabled());
+		}
+		if(animation.get() > 0 && MinecraftClient.getInstance().player != null) {
+			Freecam freecam = ModuleManager.getModule(Freecam.class);
+			Vec3 pos = new Vec3(freecam.isEnabled() ? freecam.getPos(0) : MinecraftClient.getInstance().player.getPos());
+			float yaw = freecam.isEnabled() ? freecam.yaw : MinecraftClient.getInstance().player.getYaw();
+			float pitch = freecam.isEnabled() ? freecam.pitch : MinecraftClient.getInstance().player.getPitch();
+			String coords = "";
+			if(hud.showCoordinates) {
+				coords += String.format("Coords: %.2f, %.2f, %.2f ", pos.getX(), pos.getY(), pos.getZ());
+			}
+			if(hud.showDirection) {
+				if(!coords.equals("")) {
+					coords += "| ";
+				} else {
+					coords += "Facing: ";
+				}
+				if(hud.directionYawPitch) {
+					coords += String.format("%.2f, %.2f ", yaw, pitch);
+				} else {
+					coords += String.format("%s ", DirectionHelper.getDirection(yaw));
+				}
+			}
+			coords = coords.trim();
+			yAdd += drawCoords(matrices, fontRenderer, coords, i, yAdd, animation);
+			i++;
+		}
 		
 		matrices.pop();
 		
 		animations.forEach(Animation::update);
 	}
 	
-	private float drawLeftAligned(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
+	private float drawLeftAligned(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
 		HUD hud = ModuleManager.getModule(HUD.class);
 		
 		float[] barC = hud.accentColor.getHSB();
@@ -217,7 +253,7 @@ public class IngameGui {
 		return (float)((fontRenderer.fontHeight + 2) * animation.get());
 	}
 	
-	private float drawRightAligned(MatrixStack matrices, float tickDelta, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
+	private float drawRightAligned(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
 		HUD hud = ModuleManager.getModule(HUD.class);
 		
 		float[] barC = hud.accentColor.getHSB();
@@ -252,6 +288,23 @@ public class IngameGui {
 		RenderUtil.postRender();
 		fontRenderer.drawWithShadow(matrices, text, textX, textY, textColor);
 		return (float)((fontRenderer.fontHeight + 2) * animation.get());
+	}
+	
+	private float drawCoords(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
+		HUD hud = ModuleManager.getModule(HUD.class);
+		
+		float[] textC = hud.textColor.getHSB();
+		float finalTextHue;
+		if(hud.textColor.getChroma()) {
+			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
+		} else {
+			finalTextHue = textC[0];
+		}
+		int textColor = (Color.HSBtoRGB(finalTextHue, textC[1], textC[2])) + ((int)(textC[3] * 255) << 24);
+		float textX = (float)(2 - ((fontRenderer.getWidth(text) + 7) * (1 - animation.get())));
+		float textY = MinecraftClient.getInstance().getWindow().getScaledHeight() - yAdd - (fontRenderer.fontHeight + 2);
+		fontRenderer.drawWithShadow(matrices, text, textX, textY, textColor);
+		return -(float)((fontRenderer.fontHeight + 2) * animation.get());
 	}
 	
 	private Animation getAnimation(int i) {

@@ -35,6 +35,15 @@ public class HUD extends Module {
 	@BoolSetting(name = "hamhacks.module.hud.showModules", defaultValue = true)
 	public boolean showModules = true;
 	
+	@BoolSetting(name = "hamhacks.module.hud.showCoordinates", defaultValue = true)
+	public boolean showCoordinates = true;
+	
+	@BoolSetting(name = "hamhacks.module.hud.showDirection", defaultValue = true)
+	public boolean showDirection = true;
+	
+	@BoolSetting(name = "hamhacks.module.hud.directionYawPitch", dependsOn = "showDirection")
+	public boolean directionYawPitch = false;
+	
 	@BoolSetting(name = "hamhacks.module.hud.animate", defaultValue = true)
 	public boolean animate = true;
 	
