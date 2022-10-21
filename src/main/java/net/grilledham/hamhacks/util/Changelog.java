@@ -3,6 +3,14 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.7.2:
+				- Improved vanilla fly bypass
+				- Keybinds can now be bound to a combinations of keys
+				- Added more customizability for chat status
+				- Added coordinates/direction to HUD module
+				- Increased max height of categories
+				- Bug fixes
+			
 			Update 1.7.1:
 				- Added more color options to the Click GUI
 				- Tweaked some default Click GUI colors
