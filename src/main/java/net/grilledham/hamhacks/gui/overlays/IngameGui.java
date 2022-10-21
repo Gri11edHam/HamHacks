@@ -203,7 +203,7 @@ public class IngameGui {
 				if(hud.directionYawPitch) {
 					coords += String.format("%.2f, %.2f ", yaw, pitch);
 				} else {
-					coords += String.format("%s ", DirectionHelper.getDirection(yaw));
+					coords += String.format("%s ", DirectionHelper.fromRotation(yaw));
 				}
 			}
 			coords = coords.trim();
