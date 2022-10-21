@@ -35,20 +35,20 @@ public class Chat extends Module {
 	)
 	public Color highlightUsernameColor = Color.getYellow();
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideGrayStatus")
-	public boolean hideGrayStatus = false;
+	@BoolSetting(name = "hamhacks.module.chat.hideSystemStatus")
+	public boolean hideSystemStatus = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideYellowStatus")
-	public boolean hideYellowStatus = false;
+	@BoolSetting(name = "hamhacks.module.chat.hideModifiedStatus")
+	public boolean hideModifiedStatus = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideYellowStatusIcon")
-	public boolean hideYellowStatusIcon = false;
+	@BoolSetting(name = "hamhacks.module.chat.hideModifiedStatusIcon")
+	public boolean hideModifiedStatusIcon = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideRedStatus")
-	public boolean hideRedStatus = false;
+	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedStatus")
+	public boolean hideUnsignedStatus = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideRedStatusIcon")
-	public boolean hideRedStatusIcon = false;
+	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedStatusIcon")
+	public boolean hideUnsignedStatusIcon = false;
 	
 	@BoolSetting(name = "hamhacks.module.chat.hideOtherStatus")
 	public boolean hideOtherStatus = false;

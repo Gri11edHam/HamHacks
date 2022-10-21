@@ -73,15 +73,15 @@ public class MixinChatHud extends DrawableHelper {
 		Chat chat = ModuleManager.getModule(Chat.class);
 		if(chat.isEnabled()) {
 			if(indicator == MessageIndicator.system()) {
-				if(chat.hideGrayStatus) {
+				if(chat.hideSystemStatus) {
 					return;
 				}
 			} else if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
-				if(chat.hideYellowStatus) {
+				if(chat.hideModifiedStatus) {
 					return;
 				}
 			} else if(indicator == MessageIndicator.notSecure()) {
-				if(chat.hideRedStatus) {
+				if(chat.hideUnsignedStatus) {
 					return;
 				}
 			} else if(chat.hideOtherStatus) {
@@ -96,11 +96,11 @@ public class MixinChatHud extends DrawableHelper {
 		Chat chat = ModuleManager.getModule(Chat.class);
 		if(chat.isEnabled()) {
 			if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
-				if(chat.hideYellowStatusIcon) {
+				if(chat.hideModifiedStatusIcon) {
 					return null;
 				}
 			} else if(indicator == MessageIndicator.notSecure()) {
-				if(chat.hideRedStatusIcon) {
+				if(chat.hideUnsignedStatusIcon) {
 					return null;
 				}
 			} else if(indicator != MessageIndicator.system()) {
@@ -117,15 +117,15 @@ public class MixinChatHud extends DrawableHelper {
 		Chat chat = ModuleManager.getModule(Chat.class);
 		if(chat.isEnabled()) {
 			if(indicator == MessageIndicator.system()) {
-				if(chat.hideGrayStatus) {
+				if(chat.hideSystemStatus) {
 					cir.setReturnValue(false);
 				}
 			} else if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
-				if(chat.hideYellowStatus) {
+				if(chat.hideModifiedStatus) {
 					cir.setReturnValue(false);
 				}
 			} else if(indicator == MessageIndicator.notSecure()) {
-				if(chat.hideRedStatus) {
+				if(chat.hideUnsignedStatus) {
 					cir.setReturnValue(false);
 				}
 			} else if(chat.hideOtherStatus) {
@@ -139,11 +139,11 @@ public class MixinChatHud extends DrawableHelper {
 		Chat chat = ModuleManager.getModule(Chat.class);
 		if(chat.isEnabled()) {
 			if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
-				if(chat.hideYellowStatusIcon) {
+				if(chat.hideModifiedStatusIcon) {
 					cir.setReturnValue(false);
 				}
 			} else if(indicator == MessageIndicator.notSecure()) {
-				if(chat.hideRedStatusIcon) {
+				if(chat.hideUnsignedStatusIcon) {
 					cir.setReturnValue(false);
 				}
 			} else if(indicator != MessageIndicator.system()) {
