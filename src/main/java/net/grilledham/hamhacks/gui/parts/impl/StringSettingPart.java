@@ -2,8 +2,10 @@ package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
-import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.grilledham.hamhacks.util.setting.StringSetting;
 import net.minecraft.client.MinecraftClient;
@@ -14,7 +16,7 @@ import java.lang.reflect.Field;
 
 public class StringSettingPart extends SettingPart {
 	
-	private final Animation cursorAnimation = Animation.getInOutQuad(true);
+	private final Animation cursorAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.5, true).build();
 	private boolean cursorShown = false;
 	private int cursorPos;
 	

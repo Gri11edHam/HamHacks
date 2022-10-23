@@ -4,8 +4,10 @@ import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
-import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
@@ -15,8 +17,8 @@ public class CategoryPart extends GuiPart {
 	public static final int PREFERED_SCROLL_HEIGHT = 16 * 16;
 	private final Module.Category category;
 	
-	private final Animation openCloseAnimation = Animation.getInOutQuad(0.25);
-	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	private final Animation openCloseAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
 	private final ScrollablePart scrollArea;
 	

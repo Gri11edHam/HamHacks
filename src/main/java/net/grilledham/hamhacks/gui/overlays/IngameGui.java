@@ -4,9 +4,11 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Freecam;
 import net.grilledham.hamhacks.modules.render.HUD;
-import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.ConnectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.grilledham.hamhacks.util.math.DirectionHelper;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.MinecraftClient;
@@ -309,7 +311,7 @@ public class IngameGui {
 	
 	private Animation getAnimation(int i) {
 		while(animations.size() <= i) {
-			animations.add(i, Animation.getInOutQuad(0.25));
+			animations.add(i, AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build());
 		}
 		return animations.get(i);
 	}

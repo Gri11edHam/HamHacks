@@ -2,6 +2,9 @@ package net.grilledham.hamhacks.util;
 
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Notifications;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -12,12 +15,12 @@ import java.util.List;
 
 public class Notification {
 	
-	private final Animation inOutAnimation = Animation.getInOutQuad(0.25, true);
-	private final Animation dropAnimation = Animation.getInOutQuad(0.25);
+	private final Animation inOutAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.1, true).then(AnimationType.IN_OUT_QUAD, 0.15, true).build();
+	private final Animation dropAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
-	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
-	private final Animation progressAnimation = Animation.getAnimation(t -> t, ModuleManager.getModule(Notifications.class).lifeSpan, false);
+	private final Animation progressAnimation = AnimationBuilder.create(AnimationType.LINEAR, ModuleManager.getModule(Notifications.class).lifeSpan).build();
 	
 	private final List<String> titleTexts = new ArrayList<>();
 	private final List<String> infoTexts = new ArrayList<>();
@@ -82,7 +85,15 @@ public class Notification {
 	public float render(MatrixStack matrices, double mx, double my, float yAdd, float partialTicks) {
 		matrices.push();
 		
-		float x = mc.getWindow().getScaledWidth() - WIDTH - 5 + ((WIDTH + 5) * (float)(1 - inOutAnimation.get()));
+		double totalWidth = WIDTH + 5 + 10;
+		double inOutAdd;
+		if(inOutAnimation.getCurrentStage() == 0) {
+			inOutAdd = inOutAnimation.getStage() * totalWidth;
+		} else {
+			inOutAdd = totalWidth - (inOutAnimation.getStage() * 10);
+		}
+		
+		float x = mc.getWindow().getScaledWidth() - (float)inOutAdd;
 		float y = mc.getWindow().getScaledHeight() - height - 5 - (float)dropAnimation.get();
 		
 		boolean hovered = mx >= x && mx <= x + WIDTH && my >= y && my <= y + height;
@@ -120,7 +131,7 @@ public class Notification {
 		if(!clicked) {
 			if(hovered) {
 				progressAnimation.setAbsolute(progressAnimation.get());
-				progressAnimation.setSpeed(ModuleManager.getModule(Notifications.class).lifeSpan * (1 - progressAnimation.get()));
+				progressAnimation.setDuration(ModuleManager.getModule(Notifications.class).lifeSpan * (1 - progressAnimation.get()));
 			} else {
 				progressAnimation.set(1);
 			}
@@ -140,7 +151,7 @@ public class Notification {
 		
 		if(mx >= x && mx <= x + WIDTH && my >= y && my <= y + height && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 			clicked = true;
-			progressAnimation.setSpeed(0.25);
+			progressAnimation.setDuration(0.25);
 			progressAnimation.setAbsolute(progressAnimation.get());
 			progressAnimation.set(1);
 			if(clickEvent != null) {

@@ -5,18 +5,20 @@ import net.grilledham.hamhacks.gui.screens.ModuleSettingsScreen;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
-import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
 public class ModulePart extends GuiPart {
 	
-	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
-	private final Animation enableAnimation = Animation.getInOutQuad(0.25);
+	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation enableAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
-	private final Animation tooltipAnimation = Animation.getAnimation(t -> t, 1, false);
+	private final Animation tooltipAnimation = AnimationBuilder.create(AnimationType.LINEAR).build();
 	
 	private boolean hasClicked = false;
 	

@@ -3,14 +3,16 @@ package net.grilledham.hamhacks.gui.parts.impl;
 import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
-import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
 public class ButtonPart extends GuiPart {
 	
-	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
+	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
 	private String text;
 	private final Runnable onClick;

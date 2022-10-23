@@ -3,8 +3,10 @@ package net.grilledham.hamhacks.gui.parts.impl;
 import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
-import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ public class ScrollablePart extends GuiPart {
 	
 	private float nextScroll;
 	
-	private final Animation scroll = Animation.getAnimation(t -> t, 0.05, false);
+	private final Animation scroll = AnimationBuilder.create(AnimationType.LINEAR, 0.05).build();
 	
 	private float maxHeight;
 	

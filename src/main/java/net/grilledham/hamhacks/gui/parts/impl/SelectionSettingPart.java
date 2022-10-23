@@ -3,9 +3,11 @@ package net.grilledham.hamhacks.gui.parts.impl;
 import net.grilledham.hamhacks.gui.parts.GuiPart;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
-import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.SelectableList;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
@@ -18,8 +20,8 @@ import java.util.List;
 
 public class SelectionSettingPart extends SettingPart {
 	
-	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
-	private final Animation selectionAnimation = Animation.getInOutQuad(0.25);
+	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation selectionAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
 	private boolean selected = false;
 	

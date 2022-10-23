@@ -2,9 +2,11 @@ package net.grilledham.hamhacks.gui.parts.impl;
 
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
-import net.grilledham.hamhacks.util.Animation;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.SettingHelper;
 import net.grilledham.hamhacks.util.setting.StringSetting;
@@ -16,8 +18,8 @@ import java.util.HexFormat;
 
 public class ColorSettingPart extends SettingPart {
 	
-	private final Animation hoverAnimation = Animation.getInOutQuad(0.25);
-	private final Animation selectionAnimation = Animation.getInOutQuad(0.25, true);
+	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation selectionAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25, true).build();
 	
 	@BoolSetting(name = "hamhacks.setting.colorSettingPart.chroma", neverShow = true)
 	public boolean chroma;

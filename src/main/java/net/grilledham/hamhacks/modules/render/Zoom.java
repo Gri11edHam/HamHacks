@@ -4,7 +4,9 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventScroll;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.Animation;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.KeySetting;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
@@ -89,7 +91,7 @@ public class Zoom extends Module {
 	private double prevSensitivity = 0;
 	private boolean wasSmoothCameraEnabled = false;
 	
-	private final Animation animation = Animation.getInOutQuad(animationSpeed, true);
+	private final Animation animation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, animationSpeed, true).build();
 	
 	public Zoom() {
 		super(Text.translatable("hamhacks.module.zoom"), Category.RENDER, new Keybind(0));
@@ -138,9 +140,12 @@ public class Zoom extends Module {
 			
 			if(smoothZoom) {
 				animation.set(zoom);
-				animation.setSpeed(animationSpeed);
+				animation.setDuration(animationSpeed);
 				animation.update();
 				zoomAmount = animation.get();
+				if(clampZoom) {
+					zoomAmount = MathHelper.clamp(zoomAmount, minZoom, maxZoom);
+				}
 				if(zoomAmount != 0) {
 					fov /= zoomAmount;
 				}

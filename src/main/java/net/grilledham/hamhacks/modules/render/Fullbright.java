@@ -2,7 +2,9 @@ package net.grilledham.hamhacks.modules.render;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.Animation;
+import net.grilledham.hamhacks.util.animation.Animation;
+import net.grilledham.hamhacks.util.animation.AnimationBuilder;
+import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.grilledham.hamhacks.util.setting.BoolSetting;
 import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.text.Text;
@@ -22,7 +24,7 @@ public class Fullbright extends Module {
 	@BoolSetting(name = "hamhacks.module.fullBright.smoothTransition", defaultValue = true)
 	public boolean smoothTransition = true;
 	
-	private final Animation newBrightness = Animation.getInOutQuad(0.25);
+	private final Animation newBrightness = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
 	public Fullbright() {
 		super(Text.translatable("hamhacks.module.fullBright"), Category.RENDER, new Keybind(0));
