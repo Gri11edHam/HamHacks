@@ -126,7 +126,7 @@
 	"hamhacks.module.tracers.tooltip": "Traces a line from your crosshair\nto entities in the world",
 	"hamhacks.module.tracers.category.options": "Options",
 	"hamhacks.module.tracers.category.players": "Players",
-	"hamhacks.module.tracers.category.hostil": "Hostile Mobs",
+	"hamhacks.module.tracers.category.hostile": "Hostile Mobs",
 	"hamhacks.module.tracers.category.passive": "Passive Mobs",
 	"hamhacks.module.tracers.drawStem": "Draw Stem",
 	"hamhacks.module.tracers.drawStem.tooltip": "Draws a line through the center of the entity",
