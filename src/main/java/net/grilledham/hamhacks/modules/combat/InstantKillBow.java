@@ -2,7 +2,7 @@ package net.grilledham.hamhacks.modules.combat;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;

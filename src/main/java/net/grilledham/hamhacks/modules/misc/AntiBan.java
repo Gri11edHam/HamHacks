@@ -2,7 +2,7 @@ package net.grilledham.hamhacks.modules.misc;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.setting.BoolSetting;
+import net.grilledham.hamhacks.setting.BoolSetting;
 import net.minecraft.text.Text;
 
 public class AntiBan extends Module {

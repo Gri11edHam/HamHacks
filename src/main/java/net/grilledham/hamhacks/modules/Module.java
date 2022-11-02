@@ -2,8 +2,8 @@ package net.grilledham.hamhacks.modules;
 
 import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
-import net.grilledham.hamhacks.util.setting.BoolSetting;
-import net.grilledham.hamhacks.util.setting.KeySetting;
+import net.grilledham.hamhacks.setting.BoolSetting;
+import net.grilledham.hamhacks.setting.KeySetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;

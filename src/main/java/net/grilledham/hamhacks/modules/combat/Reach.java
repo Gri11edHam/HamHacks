@@ -2,7 +2,7 @@ package net.grilledham.hamhacks.modules.combat;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
 import net.minecraft.text.Text;
 
 public class Reach extends Module {

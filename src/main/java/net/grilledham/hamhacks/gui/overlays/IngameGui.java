@@ -1,14 +1,14 @@
 package net.grilledham.hamhacks.gui.overlays;
 
+import net.grilledham.hamhacks.animation.Animation;
+import net.grilledham.hamhacks.animation.AnimationBuilder;
+import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Freecam;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.util.ConnectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.grilledham.hamhacks.util.animation.Animation;
-import net.grilledham.hamhacks.util.animation.AnimationBuilder;
-import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.grilledham.hamhacks.util.math.DirectionHelper;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.MinecraftClient;

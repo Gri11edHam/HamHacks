@@ -1,4 +1,4 @@
-package net.grilledham.hamhacks.util.setting;
+package net.grilledham.hamhacks.setting;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,17 +7,12 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BoolSetting {
+public @interface SelectionSetting {
 	
 	/**
 	 * The translatable name of this setting
 	 */
 	String name();
-	
-	/**
-	 * The default value of this setting
-	 */
-	boolean defaultValue() default false;
 	
 	/**
 	 * <code>true</code> if this setting should never be displayed to the player

@@ -2,7 +2,7 @@ package net.grilledham.hamhacks.modules.misc;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.setting.StringSetting;
+import net.grilledham.hamhacks.setting.StringSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 

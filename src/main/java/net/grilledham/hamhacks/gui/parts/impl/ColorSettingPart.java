@@ -1,15 +1,15 @@
 package net.grilledham.hamhacks.gui.parts.impl;
 
+import net.grilledham.hamhacks.animation.Animation;
+import net.grilledham.hamhacks.animation.AnimationBuilder;
+import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.ClickGUI;
+import net.grilledham.hamhacks.setting.BoolSetting;
+import net.grilledham.hamhacks.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.grilledham.hamhacks.util.animation.Animation;
-import net.grilledham.hamhacks.util.animation.AnimationBuilder;
-import net.grilledham.hamhacks.util.animation.AnimationType;
-import net.grilledham.hamhacks.util.setting.BoolSetting;
-import net.grilledham.hamhacks.util.setting.SettingHelper;
-import net.grilledham.hamhacks.util.setting.StringSetting;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 

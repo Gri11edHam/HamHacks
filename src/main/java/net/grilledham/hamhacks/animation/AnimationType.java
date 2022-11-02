@@ -1,4 +1,4 @@
-package net.grilledham.hamhacks.util.animation;
+package net.grilledham.hamhacks.animation;
 
 import java.util.function.Function;
 

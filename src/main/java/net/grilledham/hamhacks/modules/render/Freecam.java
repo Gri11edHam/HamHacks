@@ -8,7 +8,7 @@ import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.util.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;

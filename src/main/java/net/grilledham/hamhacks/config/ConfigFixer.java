@@ -5,9 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.util.setting.KeySetting;
-import net.grilledham.hamhacks.util.setting.NumberSetting;
-import net.grilledham.hamhacks.util.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.KeySetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.SettingHelper;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;

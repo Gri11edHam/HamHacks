@@ -5,10 +5,10 @@ import net.grilledham.hamhacks.event.events.EventClick;
 import net.grilledham.hamhacks.event.events.EventRender;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.setting.ColorSetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.Notification;
-import net.grilledham.hamhacks.util.setting.ColorSetting;
-import net.grilledham.hamhacks.util.setting.NumberSetting;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;

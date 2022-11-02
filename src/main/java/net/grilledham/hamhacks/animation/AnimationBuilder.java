@@ -1,4 +1,4 @@
-package net.grilledham.hamhacks.util.animation;
+package net.grilledham.hamhacks.animation;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;

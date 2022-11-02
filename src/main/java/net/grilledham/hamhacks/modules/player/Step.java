@@ -4,7 +4,7 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
 import net.minecraft.text.Text;
 
 public class Step extends Module {

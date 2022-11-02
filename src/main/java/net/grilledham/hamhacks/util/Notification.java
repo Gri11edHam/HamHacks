@@ -1,10 +1,10 @@
 package net.grilledham.hamhacks.util;
 
+import net.grilledham.hamhacks.animation.Animation;
+import net.grilledham.hamhacks.animation.AnimationBuilder;
+import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Notifications;
-import net.grilledham.hamhacks.util.animation.Animation;
-import net.grilledham.hamhacks.util.animation.AnimationBuilder;
-import net.grilledham.hamhacks.util.animation.AnimationType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;

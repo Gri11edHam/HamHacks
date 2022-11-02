@@ -7,7 +7,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.util.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.SettingHelper;
 
 import java.io.*;
 import java.util.List;

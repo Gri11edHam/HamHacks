@@ -2,10 +2,10 @@ package net.grilledham.hamhacks.modules.misc;
 
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.setting.*;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.SelectableList;
 import net.grilledham.hamhacks.util.StringList;
-import net.grilledham.hamhacks.util.setting.*;
 import net.minecraft.text.Text;
 
 public class TestModule extends Module {

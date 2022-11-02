@@ -1,4 +1,4 @@
-package net.grilledham.hamhacks.util.setting;
+package net.grilledham.hamhacks.setting;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface KeySetting {
+public @interface ColorSetting {
 	
 	/**
 	 * The translatable name of this setting

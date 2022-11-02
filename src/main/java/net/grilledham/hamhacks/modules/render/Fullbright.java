@@ -1,12 +1,12 @@
 package net.grilledham.hamhacks.modules.render;
 
+import net.grilledham.hamhacks.animation.Animation;
+import net.grilledham.hamhacks.animation.AnimationBuilder;
+import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.util.animation.Animation;
-import net.grilledham.hamhacks.util.animation.AnimationBuilder;
-import net.grilledham.hamhacks.util.animation.AnimationType;
-import net.grilledham.hamhacks.util.setting.BoolSetting;
-import net.grilledham.hamhacks.util.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.BoolSetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
 import net.minecraft.text.Text;
 
 public class Fullbright extends Module {

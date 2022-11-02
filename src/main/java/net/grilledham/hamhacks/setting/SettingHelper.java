@@ -1,4 +1,4 @@
-package net.grilledham.hamhacks.util.setting;
+package net.grilledham.hamhacks.setting;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
