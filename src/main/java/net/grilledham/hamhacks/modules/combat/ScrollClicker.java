@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.modules.combat;
 
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventScroll;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.minecraft.client.option.KeyBinding;

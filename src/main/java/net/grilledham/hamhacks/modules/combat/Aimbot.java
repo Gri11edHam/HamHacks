@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.modules.combat;
 import com.google.common.collect.Lists;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventTick;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 public class Aimbot extends Module {
 	
 	@NumberSetting(
-			name = "hamhacks.module.aimbot.speed",
+			name = "hamhacks.module.aimbot.speed", category = "hamhacks.module.aimbot.category.options",
 			defaultValue = 10,
 			min = 0.1f,
 			max = 100
@@ -34,42 +35,42 @@ public class Aimbot extends Module {
 	public float speed = 10;
 	
 	@NumberSetting(
-			name = "hamhacks.module.aimbot.fov",
+			name = "hamhacks.module.aimbot.fov", category = "hamhacks.module.aimbot.category.options",
 			defaultValue = 90,
 			min = 0.1f,
 			max = 360
 	)
 	public float fov = 90;
 	
-	@BoolSetting(name = "hamhacks.module.aimbot.targetEntities", defaultValue = true)
+	@BoolSetting(name = "hamhacks.module.aimbot.targetEntities", category = "hamhacks.module.aimbot.category.targeting", defaultValue = true)
 	public boolean targetEntities = true;
 	
 	@BoolSetting(
-			name = "hamhacks.module.aimbot.keepAiming",
+			name = "hamhacks.module.aimbot.keepAiming", category = "hamhacks.module.aimbot.category.targeting",
 			dependsOn = "targetEntities"
 	)
 	public boolean keepAiming = false;
 	
 	@BoolSetting(
-			name = "hamhacks.module.aimbot.targetPlayers",
+			name = "hamhacks.module.aimbot.targetPlayers", category = "hamhacks.module.aimbot.category.targeting",
 			dependsOn = "targetEntities",
 			defaultValue = true
 	)
 	public boolean targetPlayers = true;
 	
 	@BoolSetting(
-			name = "hamhacks.module.aimbot.targetPassive",
+			name = "hamhacks.module.aimbot.targetPassive", category = "hamhacks.module.aimbot.category.targeting",
 			dependsOn = "targetEntities"
 	)
 	public boolean targetPassive = false;
 	
 	@BoolSetting(
-			name = "hamhacks.module.aimbot.targetHostile",
+			name = "hamhacks.module.aimbot.targetHostile", category = "hamhacks.module.aimbot.category.targeting",
 			dependsOn = "targetEntities"
 	)
 	public boolean targetHostile = false;
 	
-	@BoolSetting(name = "hamhacks.module.aimbot.targetBlocks")
+	@BoolSetting(name = "hamhacks.module.aimbot.targetBlocks", category = "hamhacks.module.aimbot.category.targeting")
 	public boolean targetBlocks = false;
 	
 	private Entity entityToAim = null;

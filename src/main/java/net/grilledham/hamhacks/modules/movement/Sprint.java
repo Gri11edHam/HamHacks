@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.modules.movement;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.mixininterface.IClientEntityPlayer;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.minecraft.entity.effect.StatusEffects;

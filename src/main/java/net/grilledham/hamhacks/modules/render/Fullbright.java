@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.modules.render;
 import net.grilledham.hamhacks.animation.Animation;
 import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;

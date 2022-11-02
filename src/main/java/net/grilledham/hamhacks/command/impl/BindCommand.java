@@ -3,7 +3,7 @@ package net.grilledham.hamhacks.command.impl;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.grilledham.hamhacks.command.Command;
-import net.grilledham.hamhacks.gui.screens.BindModuleScreen;
+import net.grilledham.hamhacks.gui.screen.impl.BindModuleScreen;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.ChatUtil;

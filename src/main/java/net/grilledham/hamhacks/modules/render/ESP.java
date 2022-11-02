@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventRender2D;
 import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.event.events.EventTick;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
@@ -14,7 +15,6 @@ import net.grilledham.hamhacks.setting.SelectionSetting;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.grilledham.hamhacks.util.SelectableList;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.*;
@@ -43,37 +43,37 @@ public class ESP extends Module {
 	
 	private final ArrayList<LivingEntity> entities = new ArrayList<>();
 	
-	@SelectionSetting(name = "hamhacks.module.esp.mode")
-	public SelectableList mode = new SelectableList("hamhacks.module.esp.mode.3d", "hamhacks.module.esp.mode.2d", "hamhacks.module.esp.mode.3d");
+	@SelectionSetting(name = "hamhacks.module.esp.mode", category = "hamhacks.module.esp.category.mode", options = {"hamhacks.module.esp.mode.2d", "hamhacks.module.esp.mode.3d"})
+	public int mode = 1;
 	
-	@BoolSetting(name = "hamhacks.module.esp.players", defaultValue = true)
+	@BoolSetting(name = "hamhacks.module.esp.players", category = "hamhacks.module.esp.category.players", defaultValue = true)
 	public boolean players = true;
 	
-	@BoolSetting(name = "hamhacks.module.esp.self", defaultValue = true, dependsOn = "players")
+	@BoolSetting(name = "hamhacks.module.esp.self", category = "hamhacks.module.esp.category.players", defaultValue = true, dependsOn = "players")
 	public boolean self = true;
 	
-	@ColorSetting(name = "hamhacks.module.esp.playerOutlineColor", dependsOn = "players")
+	@ColorSetting(name = "hamhacks.module.esp.playerOutlineColor", category = "hamhacks.module.esp.category.players", dependsOn = "players")
 	public Color playerOutline = new Color(0xFF00FFFF);
 	
-	@ColorSetting(name = "hamhacks.module.esp.playerFillColor", dependsOn = "players")
+	@ColorSetting(name = "hamhacks.module.esp.playerFillColor", category = "hamhacks.module.esp.category.players", dependsOn = "players")
 	public Color playerFill = new Color(0x4000FFFF);
 	
-	@BoolSetting(name = "hamhacks.module.esp.hostiles")
+	@BoolSetting(name = "hamhacks.module.esp.hostiles", category = "hamhacks.module.esp.category.hostiles")
 	public boolean hostiles = false;
 	
-	@ColorSetting(name = "hamhacks.module.esp.hostileOutlineColor", dependsOn = "hostiles")
+	@ColorSetting(name = "hamhacks.module.esp.hostileOutlineColor", category = "hamhacks.module.esp.category.hostiles", dependsOn = "hostiles")
 	public Color hostileOutline = new Color(0xFFFF0000);
 	
-	@ColorSetting(name = "hamhacks.module.esp.hostileFillColor", dependsOn = "hostiles")
+	@ColorSetting(name = "hamhacks.module.esp.hostileFillColor", category = "hamhacks.module.esp.category.hostiles", dependsOn = "hostiles")
 	public Color hostileFill = new Color(0x40FF0000);
 	
-	@BoolSetting(name = "hamhacks.module.esp.passives")
+	@BoolSetting(name = "hamhacks.module.esp.passives", category = "hamhacks.module.esp.category.passives")
 	public boolean passives = false;
 	
-	@ColorSetting(name = "hamhacks.module.esp.passiveOutlineColor", dependsOn = "passives")
+	@ColorSetting(name = "hamhacks.module.esp.passiveOutlineColor", category = "hamhacks.module.esp.category.passives", dependsOn = "passives")
 	public Color passiveOutline = new Color(0xFF00FF00);
 	
-	@ColorSetting(name = "hamhacks.module.esp.passiveFillColor", dependsOn = "passives")
+	@ColorSetting(name = "hamhacks.module.esp.passiveFillColor", category = "hamhacks.module.esp.category.passives", dependsOn = "passives")
 	public Color passiveFill = new Color(0x4000FF00);
 	
 	public ESP() {
@@ -82,7 +82,7 @@ public class ESP extends Module {
 	
 	@EventListener
 	public void onRender3D(EventRender3D e) {
-		if(mode.get().equals("hamhacks.module.esp.mode.2d")) {
+		if(mode == 0) {
 			return;
 		}
 		
@@ -111,7 +111,7 @@ public class ESP extends Module {
 	
 	@EventListener
 	public void onRender2D(EventRender2D e) {
-		if(!mode.get().equals("hamhacks.module.esp.mode.2d")) {
+		if(mode != 0) {
 			return;
 		}
 		

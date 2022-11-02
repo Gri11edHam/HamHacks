@@ -15,6 +15,11 @@ public @interface NumberSetting {
 	String name();
 	
 	/**
+	 * The category of this setting
+	 */
+	String category() default "";
+	
+	/**
 	 * The default value of this setting
 	 */
 	float defaultValue() default 0;

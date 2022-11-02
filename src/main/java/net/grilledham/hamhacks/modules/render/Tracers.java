@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.event.events.EventTick;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
@@ -11,7 +12,6 @@ import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.SelectionSetting;
 import net.grilledham.hamhacks.util.Color;
-import net.grilledham.hamhacks.util.SelectableList;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
@@ -35,37 +35,37 @@ public class Tracers extends Module {
 	
 	private final ArrayList<LivingEntity> entities = new ArrayList<>();
 	
-	@BoolSetting(name = "hamhacks.module.tracers.drawStem", defaultValue = true)
+	@BoolSetting(name = "hamhacks.module.tracers.drawStem", category = "hamhacks.module.tracers.category.options", defaultValue = true)
 	public boolean drawStem = true;
 	
-	@SelectionSetting(name = "hamhacks.module.tracers.endPosition")
-	public SelectableList endPos = new SelectableList("hamhacks.module.tracers.endPosition.center", "hamhacks.module.tracers.endPosition.eyes", "hamhacks.module.tracers.endPosition.center", "hamhacks.module.tracers.endPosition.feet");
+	@SelectionSetting(name = "hamhacks.module.tracers.endPosition", category = "hamhacks.module.tracers.category.options", options = {"hamhacks.module.tracers.endPosition.eyes", "hamhacks.module.tracers.endPosition.center", "hamhacks.module.tracers.endPosition.feet"})
+	public int endPos = 1;
 	
-	@BoolSetting(name = "hamhacks.module.tracers.tracePlayers", defaultValue = true)
+	@BoolSetting(name = "hamhacks.module.tracers.tracePlayers", category = "hamhacks.module.tracers.category.players", defaultValue = true)
 	public boolean tracePlayers = true;
 	
-	@ColorSetting(name = "hamhacks.module.tracers.playerColorClose", dependsOn = "tracePlayers")
+	@ColorSetting(name = "hamhacks.module.tracers.playerColorClose", category = "hamhacks.module.tracers.category.players", dependsOn = "tracePlayers")
 	public Color playerClose = new Color(0xFFFF0000);
 	
-	@ColorSetting(name = "hamhacks.module.tracers.playerColorFar", dependsOn = "tracePlayers")
+	@ColorSetting(name = "hamhacks.module.tracers.playerColorFar", category = "hamhacks.module.tracers.category.players", dependsOn = "tracePlayers")
 	public Color playerFar = new Color(0xFF00FF00);
 	
-	@BoolSetting(name = "hamhacks.module.tracers.traceHostile")
+	@BoolSetting(name = "hamhacks.module.tracers.traceHostile", category = "hamhacks.module.tracers.category.hostile")
 	public boolean traceHostile = false;
 	
-	@ColorSetting(name = "hamhacks.module.tracers.hostileColorClose", dependsOn = "traceHostile")
+	@ColorSetting(name = "hamhacks.module.tracers.hostileColorClose", category = "hamhacks.module.tracers.category.hostile", dependsOn = "traceHostile")
 	public Color hostileClose = new Color(0xFFFF0000);
 	
-	@ColorSetting(name = "hamhacks.module.tracers.hostileColorFar", dependsOn = "traceHostile")
+	@ColorSetting(name = "hamhacks.module.tracers.hostileColorFar", category = "hamhacks.module.tracers.category.hostile", dependsOn = "traceHostile")
 	public Color hostileFar = new Color(0xFF00FF00);
 	
-	@BoolSetting(name = "hamhacks.module.tracers.tracePassive")
+	@BoolSetting(name = "hamhacks.module.tracers.tracePassive", category = "hamhacks.module.tracers.category.passive")
 	public boolean tracePassive = false;
 	
-	@ColorSetting(name = "hamhacks.module.tracers.passiveColorClose", dependsOn = "tracePassive")
+	@ColorSetting(name = "hamhacks.module.tracers.passiveColorClose", category = "hamhacks.module.tracers.category.passive", dependsOn = "tracePassive")
 	public Color passiveClose = new Color(0xFFFF0000);
 	
-	@ColorSetting(name = "hamhacks.module.tracers.passiveColorFar", dependsOn = "tracePassive")
+	@ColorSetting(name = "hamhacks.module.tracers.passiveColorFar", category = "hamhacks.module.tracers.category.passive", dependsOn = "tracePassive")
 	public Color passiveFar = new Color(0xFF00FF00);
 	
 	public Tracers() {
@@ -144,9 +144,9 @@ public class Tracers extends Module {
 			Vec3d endCenter = e.getBoundingBox().getCenter().subtract(interpolationOffset);
 			Vec3d endBottom = e.getBoundingBox().getCenter().subtract(0, e.getEyeHeight(e.getPose()) / 2, 0).subtract(interpolationOffset);
 			
-			Vec3d end = switch(endPos.get()) {
-				case "hamhacks.module.tracers.endPosition.eyes" -> endTop;
-				case "hamhacks.module.tracers.endPosition.feet" -> endBottom;
+			Vec3d end = switch(endPos) {
+				case 0 -> endTop;
+				case 2 -> endBottom;
 				default -> endCenter;
 			};
 			

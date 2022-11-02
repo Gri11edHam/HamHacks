@@ -2,24 +2,35 @@ package net.grilledham.hamhacks.modules;
 
 import com.google.common.collect.Lists;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class ModuleManager {
 	
 	private static final List<Module> modules = Lists.newArrayList();
+	private static final Map<String, List<Module>> moduleMap = new HashMap<>();
 	
-	public static void register(Module m) {
+	public static void register(String modId, Module m) {
 		modules.add(m);
+		if(!moduleMap.containsKey(modId)) {
+			moduleMap.put(modId, new ArrayList<>());
+		}
+		moduleMap.get(modId).add(m);
 	}
 	
 	public static List<Module> getModules() {
 		return modules;
 	}
 	
-	public static List<Module> getModules(Module.Category category) {
+	public static List<Module> getModules(Category category) {
 		return modules.stream().filter(module -> module.category == category).toList();
+	}
+	
+	public static List<Module> getModules(String modId) {
+		if(moduleMap.containsKey(modId)) {
+			return new ArrayList<>(moduleMap.get(modId));
+		} else {
+			return new ArrayList<>();
+		}
 	}
 	
 	public static Module getModule(String name) {

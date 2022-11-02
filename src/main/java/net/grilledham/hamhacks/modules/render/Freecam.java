@@ -5,9 +5,12 @@ import net.grilledham.hamhacks.event.events.EventKey;
 import net.grilledham.hamhacks.event.events.EventLookDirection;
 import net.grilledham.hamhacks.event.events.EventPacket;
 import net.grilledham.hamhacks.event.events.EventTick;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
-import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.notification.Notifications;
+import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.NumberSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
@@ -101,7 +104,7 @@ public class Freecam extends Module {
 			return;
 		}
 		
-		if(!ModuleManager.getModule(ClickGUI.class).moveInScreen(mc.currentScreen)) {
+		if(!PageManager.getPage(ClickGUI.class).moveInScreen(mc.currentScreen)) {
 			forward = false;
 			back = false;
 			left = false;
@@ -178,7 +181,7 @@ public class Freecam extends Module {
 	
 	@EventListener
 	public void onKey(EventKey e) {
-		if(!ModuleManager.getModule(ClickGUI.class).moveInScreen(mc.currentScreen) || GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS) {
+		if(!PageManager.getPage(ClickGUI.class).moveInScreen(mc.currentScreen) || GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS) {
 			return;
 		}
 		

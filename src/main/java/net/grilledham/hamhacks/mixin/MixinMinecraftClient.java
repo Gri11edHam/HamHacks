@@ -2,12 +2,12 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.event.events.EventTick;
-import net.grilledham.hamhacks.gui.screens.NewVersionScreen;
+import net.grilledham.hamhacks.gui.screen.impl.NewVersionScreen;
 import net.grilledham.hamhacks.mixininterface.IClientPlayerInteractionManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.mixininterface.IRenderTickCounter;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.render.Notifications;
+import net.grilledham.hamhacks.notification.Notifications;
 import net.grilledham.hamhacks.util.MouseUtil;
 import net.grilledham.hamhacks.util.Updater;
 import net.minecraft.client.MinecraftClient;

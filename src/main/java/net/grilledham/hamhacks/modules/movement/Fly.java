@@ -3,15 +3,15 @@ package net.grilledham.hamhacks.modules.movement;
 import com.google.common.collect.Lists;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.render.Notifications;
+import net.grilledham.hamhacks.notification.Notifications;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.setting.SelectionSetting;
 import net.grilledham.hamhacks.util.PositionHack;
-import net.grilledham.hamhacks.util.SelectableList;
 import net.minecraft.block.Material;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -23,19 +23,19 @@ public class Fly extends Module {
 	
 	private float updates = 0;
 	
-	@SelectionSetting(name = "hamhacks.module.fly.mode")
-	public SelectableList mode = new SelectableList("hamhacks.module.fly.mode.default", "hamhacks.module.fly.mode.default", "hamhacks.module.fly.mode.vanilla", "hamhacks.module.fly.mode.jetpack");
+	@SelectionSetting(name = "hamhacks.module.fly.mode", options = {"hamhacks.module.fly.mode.default", "hamhacks.module.fly.mode.vanilla", "hamhacks.module.fly.mode.jetpack"})
+	public int mode = 0;
 	
 	@NumberSetting(
 			name = "hamhacks.module.fly.speed",
 			defaultValue = 1,
 			min = 0,
 			max = 10,
-			dependsOn = "!mode->hamhacks.module.fly.mode.jetpack"
+			dependsOn = "!mode->2"
 	)
 	public float speed = 1;
 	
-	@BoolSetting(name = "hamhacks.module.fly.smoothMovement", dependsOn = "!mode->hamhacks.module.fly.mode.jetpack")
+	@BoolSetting(name = "hamhacks.module.fly.smoothMovement", dependsOn = "!mode->2")
 	public boolean smoothMovement = false;
 	
 	@NumberSetting(
@@ -43,11 +43,11 @@ public class Fly extends Module {
 			defaultValue = 0.2f,
 			min = 0.1f,
 			max = 1,
-			dependsOn = "mode->hamhacks.module.fly.mode.jetpack"
+			dependsOn = "mode->2"
 	)
 	public float jetpackSpeed = 0.2f;
 	
-	@BoolSetting(name = "hamhacks.module.fly.autoLand", dependsOn = "mode->hamhacks.module.fly.mode.jetpack")
+	@BoolSetting(name = "hamhacks.module.fly.autoLand", dependsOn = "mode->2")
 	public boolean autoLand = false;
 	
 	private boolean landing = false;
@@ -60,7 +60,11 @@ public class Fly extends Module {
 	
 	@Override
 	public String getHUDText() {
-		return super.getHUDText() + " \u00a77" + Text.translatable(mode.get()).getString();
+		try {
+			return super.getHUDText() + " \u00a77" + Text.translatable(getClass().getField("mode").getAnnotation(SelectionSetting.class).options()[mode]).getString();
+		} catch(NoSuchFieldException e) {
+			return super.getHUDText();
+		}
 	}
 	
 	@Override
@@ -73,12 +77,12 @@ public class Fly extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		if(mode.get().equalsIgnoreCase("hamhacks.module.fly.mode.default")) {
+		if(mode == 0) {
 			if(!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
 		}
-		if(mode.get().equalsIgnoreCase("hamhacks.module.fly.mode.vanilla")) {
+		if(mode == 1) {
 			if(!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
@@ -88,15 +92,15 @@ public class Fly extends Module {
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
-			switch(mode.get()) {
-				case "hamhacks.module.fly.mode.default" -> {
+			switch(mode) {
+				case 0 -> {
 					if(smoothMovement) {
 						moveSmooth();
 					} else {
 						move();
 					}
 				}
-				case "hamhacks.module.fly.mode.vanilla" -> {
+				case 1 -> {
 					if(smoothMovement) {
 						moveSmooth();
 					} else {
@@ -132,7 +136,7 @@ public class Fly extends Module {
 					updates += (System.currentTimeMillis() - lastTime) / 1000f;
 					lastTime = System.currentTimeMillis();
 				}
-				case "hamhacks.module.fly.mode.jetpack" -> {
+				case 2 -> {
 					mc.player.addVelocity(0, mc.player.input.jumping ? jetpackSpeed : 0, 0);
 					if(autoLand) {
 						if(mc.world.getBlockState(mc.player.getBlockPos().add(0, 20 * mc.player.getVelocity().getY(), 0)).getMaterial() != Material.AIR) {
@@ -263,9 +267,9 @@ public class Fly extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		if(mode.get().equalsIgnoreCase("hamhacks.module.fly.mode.default")) {
+		if(mode == 0) {
 			mc.player.getAbilities().flying = false;
-		} else if(mode.get().equalsIgnoreCase("hamhacks.module.fly.mode.vanilla")) {
+		} else if(mode == 1) {
 			mc.player.getAbilities().flying = false;
 		}
 	}

@@ -1,8 +1,8 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.gui.parts.impl.ButtonPart;
-import net.grilledham.hamhacks.gui.screens.ChangelogScreen;
-import net.grilledham.hamhacks.gui.screens.NewVersionScreen;
+import net.grilledham.hamhacks.gui.element.impl.ButtonElement;
+import net.grilledham.hamhacks.gui.screen.impl.ChangelogScreen;
+import net.grilledham.hamhacks.gui.screen.impl.NewVersionScreen;
 import net.grilledham.hamhacks.util.Updater;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,12 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(TitleScreen.class)
 public class MixinTitleScreen extends Screen {
 	
-	private final ButtonPart changelogButton = new ButtonPart("Changelog", 2, 2, 100, 20, () -> {
+	private final ButtonElement changelogButton = new ButtonElement("Changelog", 2F, 2, 100, 20, (float)MinecraftClient.getInstance().getWindow().getScaleFactor(), () -> {
 		TitleScreen $this = (TitleScreen)(Object)this;
 		MinecraftClient.getInstance().setScreen(new ChangelogScreen($this));
 	});
 	
-	private final ButtonPart updateButton = new ButtonPart("Update", 2, 24, 100, 20, () -> {
+	private final ButtonElement updateButton = new ButtonElement("Update", 2, 24, 100, 20, (float)MinecraftClient.getInstance().getWindow().getScaleFactor(), () -> {
 		TitleScreen $this = (TitleScreen)(Object)this;
 		MinecraftClient.getInstance().setScreen(new NewVersionScreen($this));
 	});
@@ -34,10 +34,10 @@ public class MixinTitleScreen extends Screen {
 	
 	@Inject(method = "render", at = @At("TAIL"))
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		changelogButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
+		changelogButton.render(matrices, mouseX, mouseY, 0, 0, delta);
 		if(Updater.newVersionAvailable()) {
 			updateButton.setText("Update (" + Updater.getLatest().getVersion(0, true) + ")");
-			updateButton.draw(matrices, mouseX, mouseY, 0, 0, delta);
+			updateButton.render(matrices, mouseX, mouseY, 0, 0, delta);
 		}
 	}
 	

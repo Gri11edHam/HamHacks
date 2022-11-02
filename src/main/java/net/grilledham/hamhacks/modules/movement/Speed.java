@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.modules.movement;
 
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;
@@ -16,18 +17,21 @@ import org.lwjgl.glfw.GLFW;
 public class Speed extends Module {
 	
 	@NumberSetting(
-			name = "hamhacks.module.speed.speed",
+			name = "hamhacks.module.speed.speed", category = "hamhacks.module.speed.category.options",
 			defaultValue = 2.5f,
 			min = 0,
 			max = 10
 	)
 	public float speed = 2.5f;
 	
-	@BoolSetting(name = "hamhacks.module.speed.autoJump")
+	@BoolSetting(name = "hamhacks.module.speed.autoJump", category = "hamhacks.module.speed.category.options")
 	public boolean autoJump = false;
 	
+	@BoolSetting(name = "hamhacks.module.speed.disableWithElytra", category = "hamhacks.module.speed.category.options", defaultValue = true)
+	public boolean disableWithElytra = true;
+	
 	@NumberSetting(
-			name = "hamhacks.module.speed.inAirMultiplier",
+			name = "hamhacks.module.speed.inAirMultiplier", category = "hamhacks.module.speed.category.multipliers",
 			defaultValue = 1.7f,
 			min = 0.25f,
 			max = 4
@@ -35,7 +39,7 @@ public class Speed extends Module {
 	public float inAirMult = 1.7f;
 	
 	@NumberSetting(
-			name = "hamhacks.module.speed.onIceMultiplier",
+			name = "hamhacks.module.speed.onIceMultiplier", category = "hamhacks.module.speed.category.multipliers",
 			defaultValue = 2,
 			min = 0.25f,
 			max = 4
@@ -43,7 +47,7 @@ public class Speed extends Module {
 	public float onIceMult = 2;
 	
 	@NumberSetting(
-			name = "hamhacks.module.speed.inTunnelMultiplier",
+			name = "hamhacks.module.speed.inTunnelMultiplier", category = "hamhacks.module.speed.category.multipliers",
 			defaultValue = 1.7f,
 			min = 0.25f,
 			max = 4
@@ -51,15 +55,12 @@ public class Speed extends Module {
 	public float inTunnelMult = 1.7f;
 	
 	@NumberSetting(
-			name = "hamhacks.module.speed.inWaterMultiplier",
+			name = "hamhacks.module.speed.inWaterMultiplier", category = "hamhacks.module.speed.category.multipliers",
 			defaultValue = 0.6f,
 			min = 0.25f,
 			max = 4
 	)
 	public float inWaterMult = 0.6f;
-	
-	@BoolSetting(name = "hamhacks.module.speed.disableWithElytra", defaultValue = true)
-	public boolean disableWithElytra = true;
 	
 	public Speed() {
 		super(Text.translatable("hamhacks.module.speed"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_K));

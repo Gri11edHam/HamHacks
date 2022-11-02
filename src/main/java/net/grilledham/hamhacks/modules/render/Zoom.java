@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventScroll;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;
@@ -16,25 +17,25 @@ import org.lwjgl.glfw.GLFW;
 
 public class Zoom extends Module {
 	
-	@KeySetting(name = "hamhacks.module.zoom.zoomKey")
+	@KeySetting(name = "hamhacks.module.zoom.zoomKey", category = "hamhacks.module.zoom.category.options")
 	public Keybind zoomKey = new Keybind(GLFW.GLFW_KEY_V);
 	
 	@NumberSetting(
-			name = "hamhacks.module.zoom.initialZoom",
+			name = "hamhacks.module.zoom.initialZoom", category = "hamhacks.module.zoom.category.options",
 			defaultValue = 4,
 			min = 1,
 			max = 50
 	)
 	public float initialZoom = 4;
 	
-	@BoolSetting(name = "hamhacks.module.zoom.scrollToZoom")
+	@BoolSetting(name = "hamhacks.module.zoom.scrollToZoom", category = "hamhacks.module.zoom.category.scroll")
 	public boolean scrollToZoom = false;
 	
-	@BoolSetting(name = "hamhacks.module.zoom.linearScrollSpeed", dependsOn = "scrollToZoom")
+	@BoolSetting(name = "hamhacks.module.zoom.linearScrollSpeed", category = "hamhacks.module.zoom.category.scroll", dependsOn = "scrollToZoom")
 	public boolean linearScrollSpeed = false;
 	
 	@NumberSetting(
-			name = "hamhacks.module.zoom.scrollSpeed",
+			name = "hamhacks.module.zoom.scrollSpeed", category = "hamhacks.module.zoom.category.scroll",
 			defaultValue = 1,
 			min = 1,
 			max = 10,
@@ -42,11 +43,11 @@ public class Zoom extends Module {
 	)
 	public float scrollSpeed = 1;
 	
-	@BoolSetting(name = "hamhacks.module.zoom.clampZoom", defaultValue = true, dependsOn = "scrollToZoom")
+	@BoolSetting(name = "hamhacks.module.zoom.clampZoom", category = "hamhacks.module.zoom.category.clamp", defaultValue = true, dependsOn = "scrollToZoom")
 	public boolean clampZoom = true;
 	
 	@NumberSetting(
-			name = "hamhacks.module.zoom.minZoom",
+			name = "hamhacks.module.zoom.minZoom", category = "hamhacks.module.zoom.category.clamp",
 			min = 1,
 			max = 4,
 			dependsOn = {"clampZoom", "scrollToZoom"}
@@ -54,7 +55,7 @@ public class Zoom extends Module {
 	public float minZoom = 0;
 	
 	@NumberSetting(
-			name = "hamhacks.module.zoom.maxZoom",
+			name = "hamhacks.module.zoom.maxZoom", category = "hamhacks.module.zoom.category.clamp",
 			defaultValue = 50,
 			min = 4,
 			max = 500,
@@ -62,14 +63,14 @@ public class Zoom extends Module {
 	)
 	public float maxZoom = 50;
 	
-	@BoolSetting(name = "hamhacks.module.zoom.adjustSensitivity")
+	@BoolSetting(name = "hamhacks.module.zoom.adjustSensitivity", category = "hamhacks.module.zoom.category.advanced")
 	public boolean adjustSensitivity = false;
 	
-	@BoolSetting(name = "hamhacks.module.zoom.smoothZoom")
+	@BoolSetting(name = "hamhacks.module.zoom.smoothZoom", category = "hamhacks.module.zoom.category.advanced")
 	public boolean smoothZoom = false;
 	
 	@NumberSetting(
-			name = "hamhacks.module.zoom.animationSpeed",
+			name = "hamhacks.module.zoom.animationSpeed", category = "hamhacks.module.zoom.category.advanced",
 			defaultValue = 0.5f,
 			min = 0,
 			max = 1,
@@ -77,10 +78,10 @@ public class Zoom extends Module {
 	)
 	public float animationSpeed = 0.5f;
 	
-	@BoolSetting(name = "hamhacks.module.zoom.smoothCamera")
+	@BoolSetting(name = "hamhacks.module.zoom.smoothCamera", category = "hamhacks.module.zoom.category.advanced")
 	public boolean smoothCamera = false;
 	
-	@BoolSetting(name = "hamhacks.module.zoom.renderHand", defaultValue = true)
+	@BoolSetting(name = "hamhacks.module.zoom.renderHand", category = "hamhacks.module.zoom.category.advanced", defaultValue = true)
 	public boolean renderHand = true;
 	
 	private boolean zooming = false;

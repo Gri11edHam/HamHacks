@@ -1,8 +1,6 @@
 package net.grilledham.hamhacks.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.render.ClickGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
@@ -60,10 +58,10 @@ public class RenderUtil {
 	
 	public static void applyScissor() {
 		float scaleFactor = scissorStack.get(0)[4];
-		int x = (int)(scissorStack.get(0)[0] * scaleFactor);
-		int y = (int)(scissorStack.get(0)[1] * scaleFactor);
-		int w = (int)(scissorStack.get(0)[2] * scaleFactor);
-		int h = (int)(scissorStack.get(0)[3] * scaleFactor);
+		int x = (int)Math.floor(scissorStack.get(0)[0] * scaleFactor);
+		int y = (int)Math.floor(scissorStack.get(0)[1] * scaleFactor);
+		int w = (int)Math.ceil(scissorStack.get(0)[2] * scaleFactor);
+		int h = (int)Math.ceil(scissorStack.get(0)[3] * scaleFactor);
 		if(!(w < 0 || h < 0)) {
 			RenderSystem.enableScissor(x, mc.getWindow().getHeight() - y - h, w, h);
 		}
@@ -256,7 +254,7 @@ public class RenderUtil {
 		RenderSystem.enableTexture();
 	}
 	
-	public static void drawToolTip(MatrixStack stack, String title, String tooltip, float mx, float my) {
+	public static void drawToolTip(MatrixStack stack, String title, String tooltip, float mx, float my, float scale) {
 		String[] lines = tooltip.split("\n");
 		
 		float w = mc.textRenderer.getWidth(Arrays.stream(lines).sorted(Comparator.comparingInt(s -> mc.textRenderer.getWidth((String)s)).reversed()).toList().get(0)) + 8;
@@ -274,7 +272,7 @@ public class RenderUtil {
 			x -= w - (shift ? 4 : 8);
 		}
 		
-		pushScissor(x, y, w, h, ModuleManager.getModule(ClickGUI.class).scale);
+		pushScissor(x, y, w, h, scale);
 		applyScissor();
 		
 		preRender();

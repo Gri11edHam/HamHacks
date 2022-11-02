@@ -8,9 +8,9 @@ import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.event.events.EventChat;
 import net.grilledham.hamhacks.event.events.EventMotion;
 import net.grilledham.hamhacks.mixininterface.IClientEntityPlayer;
-import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.AntiBan;
-import net.grilledham.hamhacks.modules.misc.Commands;
+import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.Commands;
 import net.grilledham.hamhacks.util.ChatUtil;
 import net.grilledham.hamhacks.util.PositionHack;
 import net.grilledham.hamhacks.util.RotationHack;
@@ -64,7 +64,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 			ci.cancel();
 			return;
 		}
-		String prefix = ModuleManager.getModule(Commands.class).getKey().getCombinedString();
+		String prefix = PageManager.getPage(Commands.class).prefix.getCombinedString();
 		boolean previewIsCommand = preview != null && preview.getString().startsWith(prefix);
 		if(message.startsWith(prefix) || previewIsCommand) {
 			try {

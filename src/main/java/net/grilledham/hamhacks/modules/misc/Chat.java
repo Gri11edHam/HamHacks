@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.modules.misc;
 
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventChat;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
@@ -23,37 +24,37 @@ import java.util.List;
 
 public class Chat extends Module {
 	
-	@BoolSetting(name = "hamhacks.module.chat.pingOnMention")
+	@BoolSetting(name = "hamhacks.module.chat.pingOnMention", category = "hamhacks.module.chat.category.username")
 	public boolean pingOnMention = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.highlightUsername")
+	@BoolSetting(name = "hamhacks.module.chat.highlightUsername", category = "hamhacks.module.chat.category.username")
 	public boolean highlightUsername = false;
 	
 	@ColorSetting(
-			name = "hamhacks.module.chat.highlightUsernameColor",
+			name = "hamhacks.module.chat.highlightUsernameColor", category = "hamhacks.module.chat.category.username",
 			dependsOn = "highlightUsername"
 	)
 	public Color highlightUsernameColor = Color.getYellow();
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideSystemStatus")
+	@BoolSetting(name = "hamhacks.module.chat.hideSystemStatus", category = "hamhacks.module.chat.category.status")
 	public boolean hideSystemStatus = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideModifiedStatus")
+	@BoolSetting(name = "hamhacks.module.chat.hideModifiedStatus", category = "hamhacks.module.chat.category.status")
 	public boolean hideModifiedStatus = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideModifiedStatusIcon")
+	@BoolSetting(name = "hamhacks.module.chat.hideModifiedStatusIcon", category = "hamhacks.module.chat.category.status")
 	public boolean hideModifiedStatusIcon = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedStatus")
+	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedStatus", category = "hamhacks.module.chat.category.status")
 	public boolean hideUnsignedStatus = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedStatusIcon")
+	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedStatusIcon", category = "hamhacks.module.chat.category.status")
 	public boolean hideUnsignedStatusIcon = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideOtherStatus")
+	@BoolSetting(name = "hamhacks.module.chat.hideOtherStatus", category = "hamhacks.module.chat.category.status")
 	public boolean hideOtherStatus = false;
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideOtherStatusIcon")
+	@BoolSetting(name = "hamhacks.module.chat.hideOtherStatusIcon", category = "hamhacks.module.chat.category.status")
 	public boolean hideOtherStatusIcon = false;
 	
 	private final List<String> sentMessages = new ArrayList<>();

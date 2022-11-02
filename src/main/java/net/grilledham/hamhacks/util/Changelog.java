@@ -3,6 +3,14 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.8:
+				- Added pages to the Click GUI
+				- Improved notification animation
+				- Allow for easier addon mods
+				- Moved some modules into pages
+				- Added setting categories
+				- Tweaked default colors
+			
 			Update 1.7.2:
 				- Improved vanilla fly bypass
 				- Keybinds can now be bound to a combinations of keys

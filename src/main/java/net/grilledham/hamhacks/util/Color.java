@@ -7,7 +7,6 @@ public class Color {
 	public static Color getBlack() {
 		return new Color(0xFF000000); // 0
 	}
-	
 	public static Color getDarkBlue() {
 		return new Color(0xFF0000AA); // 1
 	}
@@ -194,39 +193,33 @@ public class Color {
 	}
 	
 	public static int toRGB(float[] vals) {
-		vals[0] = vals[0] * 360;
-		float c = vals[1] * vals[2];
-		float x = c * (1 - Math.abs((vals[0] / 60) % 2 - 1));
-		float m = vals[2] - c;
 		float r;
 		float g;
 		float b;
-		if(0 <= vals[0] && vals[0] < 60) {
-			r = c;
-			g = x;
-			b = 0;
-		} else if(60 <= vals[0] && vals[0] < 120) {
-			r = x;
-			g = c;
-			b = 0;
-		} else if(120 <= vals[0] && vals[0] < 180) {
-			r = 0;
-			g = c;
-			b = x;
-		} else if(180 <= vals[0] && vals[0] < 240) {
-			r = 0;
-			g = x;
-			b = c;
-		} else if(240 <= vals[0] && vals[0] < 300) {
-			r = x;
-			g = 0;
-			b = c;
+		if(vals[1] == 0) {
+			r = vals[2] * 255;
+			g = vals[2] * 255;
+			b = vals[2] * 255;
 		} else {
-			r = c;
-			g = 0;
-			b = x;
+			float h = vals[0] * 6;
+			if(h == 6) h = 0;
+			int i = (int)Math.floor(h);
+			float f1 = vals[2] * (1 - vals[1]);
+			float f2 = vals[2] * (1 - vals[1] * (h - i));
+			float f3 = vals[2] * (1 - vals[1] * (1 - (h - i)));
+			switch(i) {
+				case 0 ->	{ r = vals[2];	g = f3;			b = f1;		 }
+				case 1 ->	{ r = f2;		g = vals[2];	b = f1;		 }
+				case 2 ->	{ r = f1;		g = vals[2];	b = f3;		 }
+				case 3 ->	{ r = f1;		g = f2;			b = vals[2]; }
+				case 4 ->	{ r = f3;		g = f1;			b = vals[2]; }
+				default ->	{ r = vals[2];	g = f1;			b = f2;		 }
+			}
+			r = r * 255;
+			g = g * 255;
+			b = b * 255;
 		}
-		return ((int)(vals[3] * 255) << 24) + ((int)((r + m) * 255) << 16) + ((int)((g + m) * 255) << 8) + (int)((b + m) * 255);
+		return ((int)(vals[3] * 255) << 24) + ((int)r << 16) + ((int)g << 8) + (int)b;
 	}
 	
 	public static float[] toHSB(int c) {
@@ -235,38 +228,30 @@ public class Color {
 		float g = ((c >> 8) & 255) / 255f;
 		float b = (c & 255) / 255f;
 		float a = ((c >> 24) & 255) / 255f;
-		float cmax = Floats.max(r, g, b);
-		float cmin = Floats.min(r, g, b);
-		float delta = cmax - cmin;
-		// alpha
+		float min = Floats.min(r, g, b);
+		float max = Floats.max(r, g, b);
+		float d = max - min;
+		float H = 0;
+		float S;
+		float B = max;
+		if(d == 0) {
+			H = 0;
+			S = 0;
+		} else {
+			S = d / max;
+			float dr = (((max - r) / 6) + (d / 2)) / d;
+			float dg = (((max - g) / 6) + (d / 2)) / d;
+			float db = (((max - b) / 6) + (d / 2)) / d;
+			if		(r == max)	H = db - dg;
+			else if	(g == max)	H = (1 / 3f) + dr - db;
+			else if	(b == max)	H = (2 / 3f) + dg - dr;
+			if(H < 0) H += 1;
+			if(H > 1) H -= 1;
+		}
+		vals[0] = H;
+		vals[1] = S;
+		vals[2] = B;
 		vals[3] = a;
-		// brightness
-		vals[2] = cmax;
-		// saturation
-		if (cmax != 0) {
-			vals[1] = delta / cmax;
-		} else {
-			vals[1] = 0;
-		}
-		// hue
-		if (vals[1] == 0) {
-			vals[0] = 0;
-		} else {
-			float redc = (cmax - r) / delta;
-			float greenc = (cmax - g) / delta;
-			float bluec = (cmax - b) / delta;
-			if (r == cmax) {
-				vals[0] = bluec - greenc;
-			} else if (g == cmax) {
-				vals[0] = 2.0f + redc - bluec;
-			} else {
-				vals[0] = 4.0f + greenc - redc;
-			}
-			vals[0] = vals[0] / 6.0f;
-			if (vals[0] < 0) {
-				vals[0] = vals[0] + 1.0f;
-			}
-		}
 		return vals;
 	}
 }

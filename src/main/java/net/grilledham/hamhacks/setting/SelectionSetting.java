@@ -15,6 +15,21 @@ public @interface SelectionSetting {
 	String name();
 	
 	/**
+	 * The category of this setting
+	 */
+	String category() default "";
+	
+	/**
+	 * The default value of this setting
+	 */
+	int defaultValue() default 0;
+	
+	/**
+	 * The possible values for this setting
+	 */
+	String[] options();
+	
+	/**
 	 * <code>true</code> if this setting should never be displayed to the player
 	 */
 	boolean neverShow() default false;

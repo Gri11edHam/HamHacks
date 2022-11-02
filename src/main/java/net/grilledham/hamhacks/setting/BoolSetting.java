@@ -15,6 +15,11 @@ public @interface BoolSetting {
 	String name();
 	
 	/**
+	 * The category of this setting
+	 */
+	String category() default "";
+	
+	/**
 	 * The default value of this setting
 	 */
 	boolean defaultValue() default false;

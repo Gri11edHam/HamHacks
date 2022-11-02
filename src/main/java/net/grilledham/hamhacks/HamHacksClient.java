@@ -6,17 +6,16 @@ import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.grilledham.hamhacks.command.Command;
 import net.grilledham.hamhacks.command.CommandManager;
-import net.grilledham.hamhacks.config.HamHacksConfig;
-import net.grilledham.hamhacks.gui.overlays.IngameGui;
+import net.grilledham.hamhacks.config.Config;
+import net.grilledham.hamhacks.config.ConfigManager;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.combat.*;
-import net.grilledham.hamhacks.modules.misc.*;
-import net.grilledham.hamhacks.modules.movement.*;
-import net.grilledham.hamhacks.modules.player.*;
-import net.grilledham.hamhacks.modules.render.*;
-import net.grilledham.hamhacks.modules.world.Timer;
 import net.grilledham.hamhacks.util.*;
 import org.slf4j.Logger;
 
@@ -29,7 +28,7 @@ public class HamHacksClient implements ClientModInitializer {
 	public static final Version VERSION = new Version("$VERSION");
 	
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	public static final int CONFIG_VERSION = 4;
+	public static final int CONFIG_VERSION = 5;
 	
 	public static final Logger LOGGER = LogUtils.getLogger();
 	
@@ -54,55 +53,29 @@ public class HamHacksClient implements ClientModInitializer {
 		PositionHack.init();
 		ConnectionUtil.init();
 		ChatUtil.init();
-		registerModules();
-		Module.Category.init();
-		CommandManager.init();
-		HamHacksConfig.initializeConfig();
-		IngameGui.register();
+		
+		FabricLoader loader = FabricLoader.getInstance();
+		for(EntrypointContainer<Config> configEntry : loader.getEntrypointContainers("hamhacks", Config.class)) {
+			ModMetadata meta = configEntry.getProvider().getMetadata();
+			String modId = meta.getId();
+			try {
+				Config config = configEntry.getEntrypoint();
+				ConfigManager.register(config);
+			} catch(Throwable t) {
+				LOGGER.error("Failed to load config from {}", modId, t);
+			}
+		}
+		
+		ConfigManager.init(); // registers modules/pages/etc
+		Category.init(); // set initial category positions
+		ConfigManager.initialLoad(); // load configs
+		
+		ModuleManager.sortModules(Comparator.comparing(Module::getName));
+		CommandManager.sortCommands(Comparator.comparing(Command::getName));
 	}
 	
 	public static void shutdown() {
-		HamHacksConfig.save();
+		ConfigManager.save();
 		LOGGER.info("Bye for now :)");
-	}
-	
-	private static void registerModules() {
-		ModuleManager.register(new Notifications());
-		
-		ModuleManager.register(new Fly());
-		ModuleManager.register(new Trap());
-		ModuleManager.register(new Encase());
-		ModuleManager.register(new CrystalAura());
-		ModuleManager.register(new ScrollClicker());
-		ModuleManager.register(new NoFall());
-		ModuleManager.register(new Aimbot());
-		ModuleManager.register(new BoatFly());
-		ModuleManager.register(new AutoElytra());
-		ModuleManager.register(new Speed());
-		ModuleManager.register(new Jesus());
-		ModuleManager.register(new ClickGUI());
-		ModuleManager.register(new HUD());
-		ModuleManager.register(new Sprint());
-		ModuleManager.register(new Step());
-		ModuleManager.register(new Tracers());
-		ModuleManager.register(new KillAura());
-		ModuleManager.register(new Reach());
-		ModuleManager.register(new Commands());
-		ModuleManager.register(new InstantKillBow());
-		ModuleManager.register(new Fullbright());
-		ModuleManager.register(AntiBan.getInstance());
-		ModuleManager.register(new Chat());
-		ModuleManager.register(new NameHider());
-		ModuleManager.register(new Timer());
-		ModuleManager.register(new Zoom());
-		ModuleManager.register(new NoTelemetry());
-		ModuleManager.register(new Freecam());
-		ModuleManager.register(new ESP());
-		ModuleManager.register(new Nametags());
-		ModuleManager.register(new AutoTotem());
-		
-		ModuleManager.sortModules(Comparator.comparing(Module::getName));
-		
-//		ModuleManager.register(new TestModule()); // For testing
 	}
 }

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventRender2D;
 import net.grilledham.hamhacks.event.events.EventTick;
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
@@ -50,23 +51,42 @@ public class Nametags extends Module {
 	
 	private final Map<LivingEntity, String> names = new HashMap<>();
 	
-	@BoolSetting(name = "hamhacks.module.nametags.self", defaultValue = true)
+	@BoolSetting(name = "hamhacks.module.nametags.self", category = "hamhacks.module.nametags.category.entities", defaultValue = true)
 	public boolean self = true;
 	
-	@BoolSetting(name = "hamhacks.module.nametags.hostiles", defaultValue = true)
+	@BoolSetting(name = "hamhacks.module.nametags.hostiles", category = "hamhacks.module.nametags.category.entities", defaultValue = true)
 	public boolean hostiles = true;
 	
-	@BoolSetting(name = "hamhacks.module.nametags.passives", defaultValue = true)
+	@BoolSetting(name = "hamhacks.module.nametags.passives", category = "hamhacks.module.nametags.category.entities", defaultValue = true)
 	public boolean passives = true;
 	
-	@BoolSetting(name = "hamhacks.module.nametags.entityItems", defaultValue = true)
+	@BoolSetting(name = "hamhacks.module.nametags.entityItems", category = "hamhacks.module.nametags.category.elements", defaultValue = true)
 	public boolean entityItems = true;
 	
-	@BoolSetting(name = "hamhacks.module.nametags.enchants", defaultValue = true, dependsOn = "entityItems")
+	@BoolSetting(name = "hamhacks.module.nametags.enchants", category = "hamhacks.module.nametags.category.elements", defaultValue = true, dependsOn = "entityItems")
 	public boolean enchants = true;
 	
+	@BoolSetting(name = "hamhacks.module.nametags.gamemode", category = "hamhacks.module.nametags.category.elements", defaultValue = true)
+	public boolean gamemode = true;
+	
+	@BoolSetting(name = "hamhacks.module.nametags.distance", category = "hamhacks.module.nametags.category.elements", defaultValue = true)
+	public boolean distance = true;
+	
+	@BoolSetting(name = "hamhacks.module.nametags.ping", category = "hamhacks.module.nametags.category.elements", defaultValue = true)
+	public boolean ping = true;
+	
 	@NumberSetting(
-			name = "hamhacks.module.nametags.itemScale",
+			name = "hamhacks.module.nametags.scale", category = "hamhacks.module.nametags.category.appearance",
+			defaultValue = 2,
+			min = 0.25f,
+			max = 4f,
+			step = 0.25f,
+			forceStep = false
+	)
+	public float scale = 2;
+	
+	@NumberSetting(
+			name = "hamhacks.module.nametags.itemScale", category = "hamhacks.module.nametags.category.appearance",
 			defaultValue = 2,
 			min = 0.25f,
 			max = 4,
@@ -76,29 +96,10 @@ public class Nametags extends Module {
 	)
 	public float itemScale = 2;
 	
-	@BoolSetting(name = "hamhacks.module.nametags.gamemode", defaultValue = true)
-	public boolean gamemode = true;
-	
-	@BoolSetting(name = "hamhacks.module.nametags.distance", defaultValue = true)
-	public boolean distance = true;
-	
-	@BoolSetting(name = "hamhacks.module.nametags.ping", defaultValue = true)
-	public boolean ping = true;
-	
-	@NumberSetting(
-			name = "hamhacks.module.nametags.scale",
-			defaultValue = 2,
-			min = 0.25f,
-			max = 4f,
-			step = 0.25f,
-			forceStep = false
-	)
-	public float scale = 2;
-	
-	@ColorSetting(name = "hamhacks.module.nametags.outlineColor")
+	@ColorSetting(name = "hamhacks.module.nametags.outlineColor", category = "hamhacks.module.nametags.category.appearance")
 	public Color outlineColor = new Color(0x80AA0000);
 	
-	@ColorSetting(name = "hamhacks.module.nametags.fillColor")
+	@ColorSetting(name = "hamhacks.module.nametags.fillColor", category = "hamhacks.module.nametags.category.appearance")
 	public Color fillColor = new Color(0x80000000);
 	
 	public Nametags() {

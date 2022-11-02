@@ -5,8 +5,8 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.suggestion.Suggestions;
 import net.grilledham.hamhacks.command.CommandManager;
-import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.misc.Commands;
+import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.Commands;
 import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.command.CommandSource;
@@ -38,7 +38,7 @@ public abstract class MixinCommandSuggestor {
 	
 	@Inject(method = "refresh", at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/StringReader;canRead()Z"), cancellable = true, remap = false, locals = LocalCapture.CAPTURE_FAILHARD)
 	public void refresh(CallbackInfo ci, String string, StringReader stringReader) {
-		String prefix = ModuleManager.getModule(Commands.class).getKey().getCombinedString();
+		String prefix = PageManager.getPage(Commands.class).prefix.getCombinedString();
 		int length = prefix.length();
 		
 		if (stringReader.canRead(length) && stringReader.getString().startsWith(prefix, stringReader.getCursor())) {

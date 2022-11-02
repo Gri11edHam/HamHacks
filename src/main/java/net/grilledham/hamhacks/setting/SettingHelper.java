@@ -5,25 +5,167 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.util.Color;
-import net.grilledham.hamhacks.util.SelectableList;
-import net.grilledham.hamhacks.util.StringList;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class SettingHelper {
 	
+	private static final Map<Object, List<String>> settingCategories = new HashMap<>();
+	private static final Map<Object, Map<String, Boolean>> isCategoryExpanded = new HashMap<>();
+	
 	public static List<Field> getSettings(Object o) {
-		return Arrays.stream(o.getClass().getFields()).filter(field ->
-				field.isAnnotationPresent(BoolSetting.class)
-				|| field.isAnnotationPresent(ColorSetting.class)
-				|| field.isAnnotationPresent(NumberSetting.class)
-				|| field.isAnnotationPresent(KeySetting.class)
-				|| field.isAnnotationPresent(ListSetting.class)
-				|| field.isAnnotationPresent(SelectionSetting.class)
-				|| field.isAnnotationPresent(StringSetting.class)).toList();
+		if(!settingCategories.containsKey(o)) {
+			List<String> categories = new ArrayList<>();
+			Map<String, Boolean> categoryExpanded = new HashMap<>();
+			List<Field> settings = Arrays.stream(o.getClass().getFields())
+					.filter(field ->
+							field.isAnnotationPresent(BoolSetting.class)
+									|| field.isAnnotationPresent(ColorSetting.class)
+									|| field.isAnnotationPresent(NumberSetting.class)
+									|| field.isAnnotationPresent(KeySetting.class)
+									|| field.isAnnotationPresent(ListSetting.class)
+									|| field.isAnnotationPresent(SelectionSetting.class)
+									|| field.isAnnotationPresent(StringSetting.class))
+					.toList();
+			for(Field setting : settings) {
+				String key = ((TranslatableTextContent)getCategory(setting).getContent()).getKey();
+				if(!categories.contains(key)) {
+					categories.add(key);
+					categoryExpanded.put(key, true);
+				}
+			}
+			settingCategories.put(o, categories);
+			isCategoryExpanded.put(o, categoryExpanded);
+		}
+		return Arrays.stream(o.getClass().getFields())
+				.filter(field ->
+						field.isAnnotationPresent(BoolSetting.class)
+								|| field.isAnnotationPresent(ColorSetting.class)
+								|| field.isAnnotationPresent(NumberSetting.class)
+								|| field.isAnnotationPresent(KeySetting.class)
+								|| field.isAnnotationPresent(ListSetting.class)
+								|| field.isAnnotationPresent(SelectionSetting.class)
+								|| field.isAnnotationPresent(StringSetting.class))
+				.sorted((a, b) -> {
+						List<String> categories = settingCategories.get(o);
+						String aKey = ((TranslatableTextContent)getCategory(a).getContent()).getKey();
+						String bKey = ((TranslatableTextContent)getCategory(b).getContent()).getKey();
+						int ai = categories.indexOf(aKey);
+						int bi = categories.indexOf(bKey);
+						return Integer.compare(ai, bi);
+				}).toList();
+	}
+	
+	public static List<Field> getSettings(Object o, Text category) {
+		return Arrays.stream(o.getClass().getFields())
+				.filter(field ->
+						field.isAnnotationPresent(BoolSetting.class)
+								|| field.isAnnotationPresent(ColorSetting.class)
+								|| field.isAnnotationPresent(NumberSetting.class)
+								|| field.isAnnotationPresent(KeySetting.class)
+								|| field.isAnnotationPresent(ListSetting.class)
+								|| field.isAnnotationPresent(SelectionSetting.class)
+								|| field.isAnnotationPresent(StringSetting.class))
+				.filter(field -> ((TranslatableTextContent)getCategory(field).getContent()).getKey().equals(getTranslationKey(category)))
+				.sorted((a, b) -> {
+					List<String> categories = settingCategories.get(o);
+					String aKey = ((TranslatableTextContent)getCategory(a).getContent()).getKey();
+					String bKey = ((TranslatableTextContent)getCategory(b).getContent()).getKey();
+					int ai = categories.indexOf(aKey);
+					int bi = categories.indexOf(bKey);
+					return Integer.compare(ai, bi);
+				}).toList();
+	}
+	
+	public static List<Text> getCategories(Object o) {
+		if(!settingCategories.containsKey(o)) {
+			List<String> categories = new ArrayList<>();
+			Map<String, Boolean> categoryExpanded = new HashMap<>();
+			List<Field> settings = Arrays.stream(o.getClass().getFields())
+					.filter(field ->
+							field.isAnnotationPresent(BoolSetting.class)
+									|| field.isAnnotationPresent(ColorSetting.class)
+									|| field.isAnnotationPresent(NumberSetting.class)
+									|| field.isAnnotationPresent(KeySetting.class)
+									|| field.isAnnotationPresent(ListSetting.class)
+									|| field.isAnnotationPresent(SelectionSetting.class)
+									|| field.isAnnotationPresent(StringSetting.class))
+					.toList();
+			for(Field setting : settings) {
+				String key = ((TranslatableTextContent)getCategory(setting).getContent()).getKey();
+				if(!categories.contains(key)) {
+					categories.add(key);
+					categoryExpanded.put(key, true);
+				}
+			}
+			settingCategories.put(o, categories);
+			isCategoryExpanded.put(o, categoryExpanded);
+		}
+		List<Text> categories = new ArrayList<>();
+		for(String category : settingCategories.get(o)) {
+			categories.add(Text.translatable(category));
+		}
+		return categories;
+	}
+	
+	public static boolean isExpanded(Object o, Text category) {
+		if(!settingCategories.containsKey(o)) {
+			List<String> categories = new ArrayList<>();
+			Map<String, Boolean> categoryExpanded = new HashMap<>();
+			List<Field> settings = Arrays.stream(o.getClass().getFields())
+					.filter(field ->
+							field.isAnnotationPresent(BoolSetting.class)
+									|| field.isAnnotationPresent(ColorSetting.class)
+									|| field.isAnnotationPresent(NumberSetting.class)
+									|| field.isAnnotationPresent(KeySetting.class)
+									|| field.isAnnotationPresent(ListSetting.class)
+									|| field.isAnnotationPresent(SelectionSetting.class)
+									|| field.isAnnotationPresent(StringSetting.class))
+					.toList();
+			for(Field setting : settings) {
+				String key = ((TranslatableTextContent)getCategory(setting).getContent()).getKey();
+				if(!categories.contains(key)) {
+					categories.add(key);
+					categoryExpanded.put(key, true);
+				}
+			}
+			settingCategories.put(o, categories);
+			isCategoryExpanded.put(o, categoryExpanded);
+		}
+		return isCategoryExpanded.get(o).get(getTranslationKey(category));
+	}
+	
+	public static void setExpanded(Object o, Text category, boolean b) {
+		if(!settingCategories.containsKey(o)) {
+			List<String> categories = new ArrayList<>();
+			Map<String, Boolean> categoryExpanded = new HashMap<>();
+			List<Field> settings = Arrays.stream(o.getClass().getFields())
+					.filter(field ->
+							field.isAnnotationPresent(BoolSetting.class)
+									|| field.isAnnotationPresent(ColorSetting.class)
+									|| field.isAnnotationPresent(NumberSetting.class)
+									|| field.isAnnotationPresent(KeySetting.class)
+									|| field.isAnnotationPresent(ListSetting.class)
+									|| field.isAnnotationPresent(SelectionSetting.class)
+									|| field.isAnnotationPresent(StringSetting.class))
+					.toList();
+			for(Field setting : settings) {
+				String key = ((TranslatableTextContent)getCategory(setting).getContent()).getKey();
+				if(!categories.contains(key)) {
+					categories.add(key);
+				}
+			}
+			settingCategories.put(o, categories);
+			isCategoryExpanded.put(o, categoryExpanded);
+		}
+		isCategoryExpanded.get(o).put(getTranslationKey(category), b);
+	}
+	
+	private static String getTranslationKey(Text text) {
+		return ((TranslatableTextContent)text.getContent()).getKey();
 	}
 	
 	public static List<Field> getBoolSettings(Object o) {
@@ -155,7 +297,7 @@ public class SettingHelper {
 	
 	public static void addSelectionSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
 		String name = f.getAnnotation(SelectionSetting.class).name();
-		saveData.addProperty(name, ((SelectableList)f.get(o)).get());
+		saveData.addProperty(name, f.getInt(o));
 	}
 	
 	public static void addStringSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
@@ -262,7 +404,7 @@ public class SettingHelper {
 		String name = f.getAnnotation(ListSetting.class).name();
 		if(saveData.has(name)) {
 			JsonArray arr = saveData.getAsJsonArray(name);
-			StringList list = ((StringList)f.get(o));
+			List<String> list = ((StringList)f.get(o)).getList();
 			list.clear();
 			for(JsonElement el : arr) {
 				String s = el.getAsString();
@@ -274,7 +416,7 @@ public class SettingHelper {
 	public static void parseSelectionSaveData(Field f, Object o, JsonObject saveData) throws IllegalAccessException {
 		String name = f.getAnnotation(SelectionSetting.class).name();
 		if(saveData.has(name)) {
-			((SelectableList)f.get(o)).set(saveData.get(name).getAsString());
+			f.setInt(o, saveData.get(name).getAsInt());
 		}
 	}
 	
@@ -297,7 +439,7 @@ public class SettingHelper {
 		} else if(f.isAnnotationPresent(ListSetting.class)) {
 			((StringList)f.get(o)).reset();
 		} else if(f.isAnnotationPresent(SelectionSetting.class)) {
-			((SelectableList)f.get(o)).reset();
+			f.setInt(o, f.getAnnotation(SelectionSetting.class).defaultValue());
 		} else if(f.isAnnotationPresent(StringSetting.class)) {
 			f.set(o, f.getAnnotation(StringSetting.class).defaultValue());
 		}
@@ -318,6 +460,25 @@ public class SettingHelper {
 			return getName(f.getAnnotation(SelectionSetting.class));
 		} else if(f.isAnnotationPresent(StringSetting.class)) {
 			return getName(f.getAnnotation(StringSetting.class));
+		}
+		return Text.empty();
+	}
+	
+	public static Text getCategory(Field f) {
+		if(f.isAnnotationPresent(BoolSetting.class)) {
+			return getCategory(f.getAnnotation(BoolSetting.class));
+		} else if(f.isAnnotationPresent(ColorSetting.class)) {
+			return getCategory(f.getAnnotation(ColorSetting.class));
+		} else if(f.isAnnotationPresent(NumberSetting.class)) {
+			return getCategory(f.getAnnotation(NumberSetting.class));
+		} else if(f.isAnnotationPresent(KeySetting.class)) {
+			return getCategory(f.getAnnotation(KeySetting.class));
+		} else if(f.isAnnotationPresent(ListSetting.class)) {
+			return getCategory(f.getAnnotation(ListSetting.class));
+		} else if(f.isAnnotationPresent(SelectionSetting.class)) {
+			return getCategory(f.getAnnotation(SelectionSetting.class));
+		} else if(f.isAnnotationPresent(StringSetting.class)) {
+			return getCategory(f.getAnnotation(StringSetting.class));
 		}
 		return Text.empty();
 	}
@@ -364,6 +525,10 @@ public class SettingHelper {
 		return Text.translatable(setting.name());
 	}
 	
+	private static Text getCategory(BoolSetting setting) {
+		return Text.translatable(setting.category());
+	}
+	
 	private static boolean hasTooltip(BoolSetting setting) {
 		return !getTooltip(setting).getString().equals(setting.name() + ".tooltip");
 	}
@@ -374,6 +539,10 @@ public class SettingHelper {
 	
 	private static Text getName(ColorSetting setting) {
 		return Text.translatable(setting.name());
+	}
+	
+	private static Text getCategory(ColorSetting setting) {
+		return Text.translatable(setting.category());
 	}
 	
 	private static boolean hasTooltip(ColorSetting setting) {
@@ -388,6 +557,10 @@ public class SettingHelper {
 		return Text.translatable(setting.name());
 	}
 	
+	private static Text getCategory(NumberSetting setting) {
+		return Text.translatable(setting.category());
+	}
+	
 	private static boolean hasTooltip(NumberSetting setting) {
 		return !getTooltip(setting).getString().equals(setting.name() + ".tooltip");
 	}
@@ -398,6 +571,10 @@ public class SettingHelper {
 	
 	private static Text getName(KeySetting setting) {
 		return Text.translatable(setting.name());
+	}
+	
+	private static Text getCategory(KeySetting setting) {
+		return Text.translatable(setting.category());
 	}
 	
 	private static boolean hasTooltip(KeySetting setting) {
@@ -412,6 +589,10 @@ public class SettingHelper {
 		return Text.translatable(setting.name());
 	}
 	
+	private static Text getCategory(ListSetting setting) {
+		return Text.translatable(setting.category());
+	}
+	
 	private static boolean hasTooltip(ListSetting setting) {
 		return !getTooltip(setting).getString().equals(setting.name() + ".tooltip");
 	}
@@ -424,6 +605,10 @@ public class SettingHelper {
 		return Text.translatable(setting.name());
 	}
 	
+	private static Text getCategory(SelectionSetting setting) {
+		return Text.translatable(setting.category());
+	}
+	
 	private static boolean hasTooltip(SelectionSetting setting) {
 		return !getTooltip(setting).getString().equals(setting.name() + ".tooltip");
 	}
@@ -434,6 +619,10 @@ public class SettingHelper {
 	
 	private static Text getName(StringSetting setting) {
 		return Text.translatable(setting.name());
+	}
+	
+	private static Text getCategory(StringSetting setting) {
+		return Text.translatable(setting.category());
 	}
 	
 	private static boolean hasTooltip(StringSetting setting) {
@@ -529,7 +718,7 @@ public class SettingHelper {
 				if(args.length == 1) {
 					dependencyMet = o.getClass().getField(args[0]).getBoolean(o);
 				} else if(args.length == 2) {
-					dependencyMet = ((SelectableList)o.getClass().getField(args[0]).get(o)).get().equals(args[1]);
+					dependencyMet = ((int)o.getClass().getField(args[0]).get(o)) == Integer.parseInt(args[1]);
 				} else {
 					throw new IllegalStateException("args.length must be 1 or 2 but was " + args.length);
 				}

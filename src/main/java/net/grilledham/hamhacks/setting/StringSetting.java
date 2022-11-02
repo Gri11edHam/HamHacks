@@ -15,6 +15,11 @@ public @interface StringSetting {
 	String name();
 	
 	/**
+	 * The category of this setting
+	 */
+	String category() default "";
+	
+	/**
 	 * The default value of this setting
 	 */
 	String defaultValue() default "";

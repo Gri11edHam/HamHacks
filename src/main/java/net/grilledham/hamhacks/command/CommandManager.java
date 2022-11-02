@@ -3,9 +3,6 @@ package net.grilledham.hamhacks.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.grilledham.hamhacks.command.impl.BindCommand;
-import net.grilledham.hamhacks.command.impl.HelpCommand;
-import net.grilledham.hamhacks.command.impl.ToggleCommand;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommandSource;
 import net.minecraft.command.CommandSource;
@@ -18,14 +15,6 @@ public class CommandManager {
 	private static final CommandSource SOURCE = new ClientSideCommandSource(MinecraftClient.getInstance());
 	private static final List<Command> commands = new ArrayList<>();
 	private static final Map<Class<? extends Command>, Command> instances = new HashMap<>();
-	
-	public static void init() {
-		addCommand(new HelpCommand());
-		addCommand(new ToggleCommand());
-		addCommand(new BindCommand());
-		
-		commands.sort(Comparator.comparing(Command::getName));
-	}
 	
 	public static void dispatch(String message) throws CommandSyntaxException {
 		dispatch(message, new ClientSideCommandSource(MinecraftClient.getInstance()));
@@ -59,6 +48,10 @@ public class CommandManager {
 	
 	public static List<Command> getCommands() {
 		return commands;
+	}
+	
+	public static void sortCommands(Comparator<Command> comparator) {
+		commands.sort(comparator);
 	}
 	
 	private static final class ClientSideCommandSource extends ClientCommandSource {

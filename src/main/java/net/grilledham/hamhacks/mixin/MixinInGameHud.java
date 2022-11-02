@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.gui.overlays.IngameGui;
+import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -18,13 +19,13 @@ public abstract class MixinInGameHud extends DrawableHelper {
 	
 	@Inject(method = "render", at = @At("TAIL"))
 	public void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
-		IngameGui.getInstance().render(matrices, tickDelta, getTextRenderer());
+		ModuleManager.getModule(HUD.class).render(matrices, tickDelta, getTextRenderer());
 	}
 	
 	@Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V", shift = At.Shift.BEFORE, remap = false))
 	public void preRenderStatusEffectOverlay(MatrixStack matrices, CallbackInfo ci) {
 		matrices.push();
-		matrices.translate(0, IngameGui.getInstance().rightHeight, 0);
+		matrices.translate(0, ModuleManager.getModule(HUD.class).rightHeight, 0);
 	}
 	
 	@Inject(method = "renderStatusEffectOverlay", at = @At("TAIL"))

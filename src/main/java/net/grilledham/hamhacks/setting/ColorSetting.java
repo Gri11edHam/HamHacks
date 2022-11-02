@@ -15,6 +15,11 @@ public @interface ColorSetting {
 	String name();
 	
 	/**
+	 * The category of this setting
+	 */
+	String category() default "";
+	
+	/**
 	 * <code>true</code> if this setting should never be displayed to the player
 	 */
 	boolean neverShow() default false;

@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.minecraft.client.resource.language.LanguageDefinition;
@@ -18,14 +19,14 @@ public abstract class MixinLanguageManager implements SynchronousResourceReloade
 	
 	@Inject(method = "setLanguage", at = @At("TAIL"))
 	public void setLanguage(LanguageDefinition language, CallbackInfo ci) {
-		Module.Category.updateLanguage();
+		Category.updateLanguage();
 		
 		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 	}
 	
 	@Inject(method = "reload", at = @At("TAIL"))
 	public void reloadLanguage(ResourceManager manager, CallbackInfo ci) {
-		Module.Category.updateLanguage();
+		Category.updateLanguage();
 		
 		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 	}

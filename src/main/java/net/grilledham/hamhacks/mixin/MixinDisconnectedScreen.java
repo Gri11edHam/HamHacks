@@ -2,7 +2,7 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.mixininterface.IMultiplayerScreen;
 import net.grilledham.hamhacks.modules.misc.AntiBan;
-import net.grilledham.hamhacks.modules.render.Notifications;
+import net.grilledham.hamhacks.notification.Notifications;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;

@@ -10,6 +10,8 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.util.regex.Pattern;
+
 public class ChatUtil {
 	
 	private ChatUtil() {}
@@ -20,6 +22,8 @@ public class ChatUtil {
 	
 	private static Screen toOpen = null;
 	private static int ticksWaited = 0;
+	
+	private static final Pattern FORMAT_PATERN = Pattern.compile("([&§])([0-9a-fklmnorA-FKLMNOR])");
 	
 	public static void sendMsg(Text prefix, Text message, Object... args) {
 		String newMessage = message.getString();
@@ -91,6 +95,14 @@ public class ChatUtil {
 		}
 		message = Text.of(newMessage);
 		sendMsg(prefix, message, Formatting.RED);
+	}
+	
+	public static String format(String msg) {
+		return FORMAT_PATERN.matcher(msg).replaceAll("§$2");
+	}
+	
+	public static String unformat(String msg) {
+		return FORMAT_PATERN.matcher(msg).replaceAll("");
 	}
 	
 	public static void openFromChat(Screen screen) {

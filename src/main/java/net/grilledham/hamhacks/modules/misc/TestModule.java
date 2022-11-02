@@ -1,11 +1,10 @@
 package net.grilledham.hamhacks.modules.misc;
 
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.*;
 import net.grilledham.hamhacks.util.Color;
-import net.grilledham.hamhacks.util.SelectableList;
-import net.grilledham.hamhacks.util.StringList;
 import net.minecraft.text.Text;
 
 public class TestModule extends Module {
@@ -41,8 +40,8 @@ public class TestModule extends Module {
 	@ListSetting(name = "setting.test.testlist", dependsOn = "testBool")
 	public StringList testList = new StringList("Test1", "Test2");
 	
-	@SelectionSetting(name = "setting.test.testselector", dependsOn = "testBool")
-	public SelectableList testSelector = new SelectableList("setting.test.testselector.test1", "setting.test.testselector.test1", "setting.test.testselector.test2", "setting.test.testselector.test3");
+	@SelectionSetting(name = "setting.test.testselector", dependsOn = "testBool", options = {"setting.test.testselector.test1", "setting.test.testselector.test2", "setting.test.testselector.test3"})
+	public int testSelector = 0;
 	
 	@StringSetting(
 			name = "setting.test.teststring",

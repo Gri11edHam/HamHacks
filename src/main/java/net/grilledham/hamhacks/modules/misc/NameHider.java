@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.modules.misc;
 
+import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.StringSetting;

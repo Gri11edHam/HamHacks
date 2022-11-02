@@ -20,6 +20,9 @@
 		],
 		"main": [
 			"net.grilledham.hamhacks.HamHacks"
+		],
+		"hamhacks": [
+			"net.grilledham.hamhacks.config.impl.HamHacksConfig"
 		]
 	},
 	"mixins": [
