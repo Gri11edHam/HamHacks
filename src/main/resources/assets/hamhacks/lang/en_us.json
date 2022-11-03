@@ -285,6 +285,17 @@
 	"hamhacks.module.autoTotem": "Auto Totem",
 	"hamhacks.module.autoTotem.tooltip": "Automatically refills your offhand with totems",
 
+	"hamhacks.module.teleport": "Teleport",
+	"hamhacks.module.teleport.tooltip": "Teleports you in the direction you're facing",
+	"hamhacks.module.teleport.distance": "Distance",
+	"hamhacks.module.teleport.distance.tooltip": "How far you get teleported",
+	"hamhacks.module.teleport.increaseDistance": "Increase Distance",
+	"hamhacks.module.teleport.increaseDistance.tooltip": "Increases how fare you go",
+	"hamhacks.module.teleport.decreaseDistance": "Decrease Distance",
+	"hamhacks.module.teleport.decreaseDistance.tooltip": "Decreases how fare you go",
+	"hamhacks.module.teleport.activate": "Activate",
+	"hamhacks.module.teleport.activate.tooltip": "Press this key to teleport",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",

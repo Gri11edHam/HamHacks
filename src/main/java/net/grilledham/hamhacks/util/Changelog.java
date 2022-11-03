@@ -11,6 +11,8 @@ public class Changelog {
 				- Added setting categories
 				- Tweaked default colors
 				- Added anti-spam to Chat module
+				- Added modules:
+					: Teleport
 			
 			Update 1.7.2:
 				- Improved vanilla fly bypass
