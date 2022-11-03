@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.event.events.EventChat;
+import net.grilledham.hamhacks.mixininterface.IChat;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.Chat;
 import net.minecraft.client.gui.DrawableHelper;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.hud.MessageIndicator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,18 +25,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(ChatHud.class)
-public class MixinChatHud extends DrawableHelper {
+public abstract class MixinChatHud extends DrawableHelper implements IChat {
 	
 	@Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
+	@Shadow @Final private List<ChatHudLine> messages;
+	
+	@Shadow protected abstract void addMessage(Text message, @Nullable MessageSignatureData signature, int ticks, @Nullable MessageIndicator indicator, boolean refresh);
+	
 	private int lineIndex;
 	private MessageIndicator indicator;
 	
+	private boolean calledFromMixin = false;
+	
 	@Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V", at = @At("HEAD"), cancellable = true)
 	public void addMessage(Text message, MessageSignatureData signature, int ticks, MessageIndicator indicator, boolean refresh, CallbackInfo ci) {
-		EventChat.EventChatReceived event = new EventChat.EventChatReceived(message, signature, ticks, indicator, refresh);
-		event.call();
-		if(event.canceled) {
+		if(!calledFromMixin) {
+			EventChat.EventChatReceived event = new EventChat.EventChatReceived(message, signature, ticks, indicator, refresh);
+			event.call();
 			ci.cancel();
+			if(!event.canceled) {
+				calledFromMixin = true;
+				addMessage(event.message, event.signature, event.ticks, event.indicator, event.refresh);
+			}
+		} else {
+			calledFromMixin = false;
 		}
 	}
 	
@@ -152,5 +166,15 @@ public class MixinChatHud extends DrawableHelper {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public List<ChatHudLine> getMessages() {
+		return messages;
+	}
+	
+	@Override
+	public List<ChatHudLine.Visible> getVisibleMessages() {
+		return visibleMessages;
 	}
 }

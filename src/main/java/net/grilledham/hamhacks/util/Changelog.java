@@ -10,6 +10,7 @@ public class Changelog {
 				- Moved some modules into pages
 				- Added setting categories
 				- Tweaked default colors
+				- Added anti-spam to Chat module
 			
 			Update 1.7.2:
 				- Improved vanilla fly bypass
