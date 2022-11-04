@@ -114,7 +114,7 @@ public class Fly extends Module {
 						boolean isAboveBlock = false;
 						for(int xAdd = -1; xAdd < 2; xAdd++) {
 							for(int zAdd = -1; zAdd < 2; zAdd++) {
-								if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 0.5f, 0.3f * zAdd))).getMaterial() != Material.AIR) {
+								if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 0.05f, 0.3f * zAdd))).getMaterial() != Material.AIR) {
 									isAboveBlock = true;
 									break;
 								}
@@ -122,9 +122,9 @@ public class Fly extends Module {
 						}
 						if(!isAboveBlock) {
 							if(mc.player.getVelocity().getY() > 0) {
-								PositionHack.setOffsetPacket(0, -(mc.player.getVelocity().getY()) - 0.5, 0);
+								PositionHack.setOffsetPacket(0, -(mc.player.getVelocity().getY()) - 0.2, 0);
 							} else {
-								PositionHack.setOffsetPacket(0, -0.5, 0);
+								PositionHack.setOffsetPacket(0, -0.05, 0);
 							}
 						} else {
 							PositionHack.setOffsetPacket(0, 0, 0);
@@ -271,6 +271,7 @@ public class Fly extends Module {
 			mc.player.getAbilities().flying = false;
 		} else if(mode == 1) {
 			mc.player.getAbilities().flying = false;
+			PositionHack.setOffsetPacket(0, 0, 0);
 		}
 	}
 }
