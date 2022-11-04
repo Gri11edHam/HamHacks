@@ -296,6 +296,9 @@
 	"hamhacks.module.teleport.activate": "Activate",
 	"hamhacks.module.teleport.activate.tooltip": "Press this key to teleport",
 
+	"hamhacks.module.packetFly": "Packet Fly",
+	"hamhacks.module.packetFly.timerMultiplier": "Timer Multiplier",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",

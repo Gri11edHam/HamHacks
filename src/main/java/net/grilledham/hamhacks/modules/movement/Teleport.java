@@ -45,6 +45,7 @@ public class Teleport extends Module {
 	
 	@EventListener
 	public void onTick(EventTick e) {
+		if(mc.player == null) return;
 		NumberSetting annotation;
 		try {
 			annotation = getClass().getField("distance").getAnnotation(NumberSetting.class);

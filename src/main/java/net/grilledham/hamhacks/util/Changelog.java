@@ -13,6 +13,7 @@ public class Changelog {
 				- Added anti-spam to Chat module
 				- Added modules:
 					: Teleport
+					: Packet Fly
 			
 			Update 1.7.2:
 				- Improved vanilla fly bypass
