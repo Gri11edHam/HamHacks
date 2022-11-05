@@ -299,6 +299,9 @@
 	"hamhacks.module.packetFly": "Packet Fly",
 	"hamhacks.module.packetFly.timerMultiplier": "Timer Multiplier",
 
+	"hamhacks.module.xray": "XRay",
+	"hamhacks.module.xray.visibleBlocks": "Visible Blocks",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",

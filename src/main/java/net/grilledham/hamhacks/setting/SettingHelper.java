@@ -28,7 +28,8 @@ public class SettingHelper {
 									|| field.isAnnotationPresent(KeySetting.class)
 									|| field.isAnnotationPresent(ListSetting.class)
 									|| field.isAnnotationPresent(SelectionSetting.class)
-									|| field.isAnnotationPresent(StringSetting.class))
+									|| field.isAnnotationPresent(StringSetting.class)
+									|| field.isAnnotationPresent(SettingPage.class))
 					.toList();
 			for(Field setting : settings) {
 				String key = ((TranslatableTextContent)getCategory(setting).getContent()).getKey();
@@ -48,7 +49,8 @@ public class SettingHelper {
 								|| field.isAnnotationPresent(KeySetting.class)
 								|| field.isAnnotationPresent(ListSetting.class)
 								|| field.isAnnotationPresent(SelectionSetting.class)
-								|| field.isAnnotationPresent(StringSetting.class))
+								|| field.isAnnotationPresent(StringSetting.class)
+								|| field.isAnnotationPresent(SettingPage.class))
 				.sorted((a, b) -> {
 						List<String> categories = settingCategories.get(o);
 						String aKey = ((TranslatableTextContent)getCategory(a).getContent()).getKey();
@@ -68,7 +70,8 @@ public class SettingHelper {
 								|| field.isAnnotationPresent(KeySetting.class)
 								|| field.isAnnotationPresent(ListSetting.class)
 								|| field.isAnnotationPresent(SelectionSetting.class)
-								|| field.isAnnotationPresent(StringSetting.class))
+								|| field.isAnnotationPresent(StringSetting.class)
+								|| field.isAnnotationPresent(SettingPage.class))
 				.filter(field -> ((TranslatableTextContent)getCategory(field).getContent()).getKey().equals(getTranslationKey(category)))
 				.sorted((a, b) -> {
 					List<String> categories = settingCategories.get(o);
@@ -92,7 +95,8 @@ public class SettingHelper {
 									|| field.isAnnotationPresent(KeySetting.class)
 									|| field.isAnnotationPresent(ListSetting.class)
 									|| field.isAnnotationPresent(SelectionSetting.class)
-									|| field.isAnnotationPresent(StringSetting.class))
+									|| field.isAnnotationPresent(StringSetting.class)
+									|| field.isAnnotationPresent(SettingPage.class))
 					.toList();
 			for(Field setting : settings) {
 				String key = ((TranslatableTextContent)getCategory(setting).getContent()).getKey();
@@ -123,7 +127,8 @@ public class SettingHelper {
 									|| field.isAnnotationPresent(KeySetting.class)
 									|| field.isAnnotationPresent(ListSetting.class)
 									|| field.isAnnotationPresent(SelectionSetting.class)
-									|| field.isAnnotationPresent(StringSetting.class))
+									|| field.isAnnotationPresent(StringSetting.class)
+									|| field.isAnnotationPresent(SettingPage.class))
 					.toList();
 			for(Field setting : settings) {
 				String key = ((TranslatableTextContent)getCategory(setting).getContent()).getKey();
@@ -150,7 +155,8 @@ public class SettingHelper {
 									|| field.isAnnotationPresent(KeySetting.class)
 									|| field.isAnnotationPresent(ListSetting.class)
 									|| field.isAnnotationPresent(SelectionSetting.class)
-									|| field.isAnnotationPresent(StringSetting.class))
+									|| field.isAnnotationPresent(StringSetting.class)
+									|| field.isAnnotationPresent(SettingPage.class))
 					.toList();
 			for(Field setting : settings) {
 				String key = ((TranslatableTextContent)getCategory(setting).getContent()).getKey();
@@ -196,6 +202,10 @@ public class SettingHelper {
 		return Arrays.stream(o.getClass().getFields()).filter(field -> field.isAnnotationPresent(StringSetting.class)).toList();
 	}
 	
+	public static List<Field> getSettingPages(Object o) {
+		return Arrays.stream(o.getClass().getFields()).filter(field -> field.isAnnotationPresent(SettingPage.class)).toList();
+	}
+	
 	public static void addSaveData(Object o, JsonObject saveData) {
 		List<Field> boolSettings = getBoolSettings(o);
 		List<Field> colorSettings = getColorSettings(o);
@@ -204,6 +214,7 @@ public class SettingHelper {
 		List<Field> listSettings = getListSettings(o);
 		List<Field> selectionSettings = getSelectionSettings(o);
 		List<Field> stringSettings = getStringSettings(o);
+		List<Field> settingPages = getSettingPages(o);
 		for(Field setting : boolSettings) {
 			try {
 				addBoolSaveData(setting, o, saveData);
@@ -249,6 +260,13 @@ public class SettingHelper {
 		for(Field setting : stringSettings) {
 			try {
 				addStringSaveData(setting, o, saveData);
+			} catch(IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		for(Field page : settingPages) {
+			try {
+				((SettingContainer)page.get(o)).addSaveData(saveData);
 			} catch(IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
@@ -313,6 +331,7 @@ public class SettingHelper {
 		List<Field> listSettings = getListSettings(o);
 		List<Field> selectionSettings = getSelectionSettings(o);
 		List<Field> stringSettings = getStringSettings(o);
+		List<Field> settingPages = getSettingPages(o);
 		for(Field setting : boolSettings) {
 			try {
 				parseBoolSaveData(setting, o, saveData);
@@ -358,6 +377,13 @@ public class SettingHelper {
 		for(Field setting : stringSettings) {
 			try {
 				parseStringSaveData(setting, o, saveData);
+			} catch(IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		for(Field page : settingPages) {
+			try {
+				((SettingContainer)page.get(o)).parseSaveData(saveData);
 			} catch(IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
@@ -442,6 +468,8 @@ public class SettingHelper {
 			f.setInt(o, f.getAnnotation(SelectionSetting.class).defaultValue());
 		} else if(f.isAnnotationPresent(StringSetting.class)) {
 			f.set(o, f.getAnnotation(StringSetting.class).defaultValue());
+		} else if(f.isAnnotationPresent(SettingPage.class)) {
+			((SettingContainer)f.get(o)).reset();
 		}
 	}
 	
@@ -460,6 +488,8 @@ public class SettingHelper {
 			return getName(f.getAnnotation(SelectionSetting.class));
 		} else if(f.isAnnotationPresent(StringSetting.class)) {
 			return getName(f.getAnnotation(StringSetting.class));
+		} else if(f.isAnnotationPresent(SettingPage.class)) {
+			return getName(f.getAnnotation(SettingPage.class));
 		}
 		return Text.empty();
 	}
@@ -479,6 +509,8 @@ public class SettingHelper {
 			return getCategory(f.getAnnotation(SelectionSetting.class));
 		} else if(f.isAnnotationPresent(StringSetting.class)) {
 			return getCategory(f.getAnnotation(StringSetting.class));
+		} else if(f.isAnnotationPresent(SettingPage.class)) {
+			return getCategory(f.getAnnotation(SettingPage.class));
 		}
 		return Text.empty();
 	}
@@ -498,6 +530,8 @@ public class SettingHelper {
 			return hasTooltip(f.getAnnotation(SelectionSetting.class));
 		} else if(f.isAnnotationPresent(StringSetting.class)) {
 			return hasTooltip(f.getAnnotation(StringSetting.class));
+		} else if(f.isAnnotationPresent(SettingPage.class)) {
+			return hasTooltip(f.getAnnotation(SettingPage.class));
 		}
 		return false;
 	}
@@ -517,6 +551,8 @@ public class SettingHelper {
 			return getTooltip(f.getAnnotation(SelectionSetting.class));
 		} else if(f.isAnnotationPresent(StringSetting.class)) {
 			return getTooltip(f.getAnnotation(StringSetting.class));
+		} else if(f.isAnnotationPresent(SettingPage.class)) {
+			return getTooltip(f.getAnnotation(SettingPage.class));
 		}
 		return Text.empty();
 	}
@@ -633,6 +669,22 @@ public class SettingHelper {
 		return Text.translatable(setting.name() + ".tooltip");
 	}
 	
+	private static Text getName(SettingPage setting) {
+		return Text.translatable(setting.name());
+	}
+	
+	private static Text getCategory(SettingPage setting) {
+		return Text.translatable(setting.category());
+	}
+	
+	private static boolean hasTooltip(SettingPage setting) {
+		return !getTooltip(setting).getString().equals(setting.name() + ".tooltip");
+	}
+	
+	private static Text getTooltip(SettingPage setting) {
+		return Text.translatable(setting.name() + ".tooltip");
+	}
+	
 	public static boolean shouldShow(Field f, Object o) {
 		if(f.isAnnotationPresent(BoolSetting.class)) {
 			return shouldShow(f.getAnnotation(BoolSetting.class), o);
@@ -648,6 +700,8 @@ public class SettingHelper {
 			return shouldShow(f.getAnnotation(SelectionSetting.class), o);
 		} else if(f.isAnnotationPresent(StringSetting.class)) {
 			return shouldShow(f.getAnnotation(StringSetting.class), o);
+		} else if(f.isAnnotationPresent(SettingPage.class)) {
+			return shouldShow(f.getAnnotation(SettingPage.class), o);
 		}
 		return true;
 	}
@@ -704,6 +758,11 @@ public class SettingHelper {
 		if(setting.neverShow()) {
 			return false;
 		}
+		String[] dependsOn = setting.dependsOn();
+		return shouldShow(o, dependsOn);
+	}
+	
+	private static boolean shouldShow(SettingPage setting, Object o) {
 		String[] dependsOn = setting.dependsOn();
 		return shouldShow(o, dependsOn);
 	}

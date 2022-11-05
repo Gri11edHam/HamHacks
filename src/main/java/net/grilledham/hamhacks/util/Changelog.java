@@ -14,6 +14,8 @@ public class Changelog {
 				- Added modules:
 					: Teleport
 					: Packet Fly
+					: XRay
+				- Improved Boat Fly
 			
 			Update 1.7.2:
 				- Improved vanilla fly bypass
