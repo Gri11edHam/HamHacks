@@ -1,10 +1,13 @@
 package net.grilledham.hamhacks.mixin;
 
+import net.grilledham.hamhacks.gui.screen.impl.WaitingToConnectScreen;
 import net.grilledham.hamhacks.mixininterface.IMultiplayerScreen;
 import net.grilledham.hamhacks.modules.misc.AntiBan;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.network.LanServerInfo;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;
@@ -20,8 +23,19 @@ public abstract class MixinMultiplayerScreen extends Screen implements IMultipla
 	@Shadow private ServerInfo selectedEntry;
 	@Shadow protected MultiplayerServerListWidget serverListWidget;
 	
+	private TextFieldWidget serverTextField;
+	private ButtonWidget waitToConnectButton;
+	
 	private MixinMultiplayerScreen(Text title) {
 		super(title);
+	}
+	
+	@Inject(method = "init", at = @At("TAIL"))
+	public void init(CallbackInfo ci) {
+		serverTextField = new TextFieldWidget(textRenderer, width - 104, height - 55, 100, 20, Text.empty());
+		addDrawableChild(serverTextField);
+		waitToConnectButton = new ButtonWidget(width - 104, height - 30, 100, 20, Text.literal("Try to Join"), (button) -> client.setScreen(new WaitingToConnectScreen(this, serverTextField.getText())));
+		addDrawableChild(waitToConnectButton);
 	}
 	
 	@Inject(method = {"connect()V", "directConnect"}, at = @At("HEAD"))
