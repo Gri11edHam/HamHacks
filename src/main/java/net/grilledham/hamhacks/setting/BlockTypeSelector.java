@@ -53,15 +53,12 @@ public class BlockTypeSelector implements SettingContainer<Boolean> {
 	
 	@Override
 	public void addSaveData(JsonObject saveData) {
-		JsonObject blockData = new JsonObject();
-		selectedBlocks.forEach(blockData::addProperty);
-		saveData.add(this.getClass().getAnnotation(SettingPage.class).name(), blockData);
+		selectedBlocks.forEach(saveData::addProperty);
 	}
 	
 	@Override
 	public void parseSaveData(JsonObject saveData) {
-		JsonObject blockData = saveData.getAsJsonObject(this.getClass().getAnnotation(SettingPage.class).name());
-		selectedBlocks.forEach((key, value) -> selectedBlocks.put(key, blockData.get(key).getAsBoolean()));
+		selectedBlocks.forEach((key, value) -> selectedBlocks.put(key, saveData.get(key).getAsBoolean()));
 	}
 	
 	@Override

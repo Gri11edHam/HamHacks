@@ -33,7 +33,9 @@
 	],
 	"mixins": [
 		"MixinAbstractBlockState",
+		"MixinBoatEntity",
 		"MixinMatrix4f",
+		"MixinPlayerEntity",
 		"MixinVec3d"
 	]
 }

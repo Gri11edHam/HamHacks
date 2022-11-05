@@ -266,7 +266,9 @@ public class SettingHelper {
 		}
 		for(Field page : settingPages) {
 			try {
-				((SettingContainer)page.get(o)).addSaveData(saveData);
+				JsonObject pageData = new JsonObject();
+				((SettingContainer<?>)page.get(o)).addSaveData(pageData);
+				saveData.add(page.getAnnotation(SettingPage.class).name(), pageData);
 			} catch(IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
@@ -383,7 +385,8 @@ public class SettingHelper {
 		}
 		for(Field page : settingPages) {
 			try {
-				((SettingContainer)page.get(o)).parseSaveData(saveData);
+				JsonObject pageData = saveData.getAsJsonObject(page.getAnnotation(SettingPage.class).name());
+				((SettingContainer)page.get(o)).parseSaveData(pageData);
 			} catch(IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}

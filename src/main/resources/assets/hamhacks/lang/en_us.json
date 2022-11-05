@@ -52,6 +52,8 @@
 
 	"hamhacks.module.boatFly": "Boat Fly",
 	"hamhacks.module.boatFly.tooltip": "Allows boats and other rideable entities to fly",
+	"hamhacks.module.boatFly.autoBreak": "Auto Break",
+	"hamhacks.module.boatFly.autoBreak.tooltip": "Automatically break the boat when you get out",
 
 	"hamhacks.module.autoElytra": "Auto Elytra",
 	"hamhacks.module.autoElytra.tooltip": "Toggles your elytra (even if you dont have any)",

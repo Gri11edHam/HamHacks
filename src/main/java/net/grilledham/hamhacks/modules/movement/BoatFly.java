@@ -5,10 +5,13 @@ import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.block.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.vehicle.BoatEntity;
+import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.network.packet.c2s.play.VehicleMoveC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +23,13 @@ public class BoatFly extends Module {
 	private long lastTime;
 	
 	private float updates = 0;
+	
+	@BoolSetting(name = "hamhacks.module.boatFly.autoBreak")
+	public boolean autoBreak = false;
+	
+	private boolean shouldDismount = false;
+	
+	private BoatEntity lastBoat = null;
 	
 	public BoatFly() {
 		super(Text.translatable("hamhacks.module.boatFly"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_B));
@@ -50,8 +60,14 @@ public class BoatFly extends Module {
 			if(mc.player.input.jumping) {
 				distanceVertical += 1;
 			}
-			if(mc.options.sprintKey.isPressed()) {
+			if(mc.options.sneakKey.isPressed()) {
 				distanceVertical -= 1;
+			}
+			if(mc.options.sprintKey.isPressed()) {
+				shouldDismount = true;
+				if(autoBreak && vehicle.getType() == EntityType.BOAT && vehicle.getPrimaryPassenger() == mc.player) {
+					lastBoat = (BoatEntity)vehicle;
+				}
 			}
 			float dx = (float)(distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));
 			float dy = distanceVertical;
@@ -89,6 +105,19 @@ public class BoatFly extends Module {
 			
 			updates += (System.currentTimeMillis() - lastTime) / 1000f;
 			lastTime = System.currentTimeMillis();
+		} else {
+			shouldDismount = false;
 		}
+		if(lastBoat != null && !mc.player.hasVehicle()) {
+			if(lastBoat.isAlive()) {
+				mc.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.attack(lastBoat, mc.player.isSneaking()));
+			} else {
+				lastBoat = null;
+			}
+		}
+	}
+	
+	public boolean shouldDismount() {
+		return shouldDismount;
 	}
 }
