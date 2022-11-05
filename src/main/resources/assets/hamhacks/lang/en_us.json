@@ -302,6 +302,12 @@
 	"hamhacks.module.xray": "XRay",
 	"hamhacks.module.xray.visibleBlocks": "Visible Blocks",
 
+	"hamhacks.module.1337": "1337",
+	"hamhacks.module.1337.tooltip": "M4k35 y0ur ch47 m3554635 1337",
+	"hamhacks.module.1337.mode": "M0d3",
+	"hamhacks.module.1337.mode.basic": "B451c",
+	"hamhacks.module.1337.mode.advanced": "@|)\\/4|\\|(3|]",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",

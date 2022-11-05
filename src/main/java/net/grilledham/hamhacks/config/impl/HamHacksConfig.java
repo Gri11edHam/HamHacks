@@ -10,10 +10,7 @@ import net.grilledham.hamhacks.config.Config;
 import net.grilledham.hamhacks.config.ConfigFixer;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.*;
-import net.grilledham.hamhacks.modules.misc.AntiBan;
-import net.grilledham.hamhacks.modules.misc.Chat;
-import net.grilledham.hamhacks.modules.misc.NameHider;
-import net.grilledham.hamhacks.modules.misc.NoTelemetry;
+import net.grilledham.hamhacks.modules.misc.*;
 import net.grilledham.hamhacks.modules.movement.*;
 import net.grilledham.hamhacks.modules.player.*;
 import net.grilledham.hamhacks.modules.render.*;
@@ -77,6 +74,7 @@ public class HamHacksConfig extends Config {
 		ModuleManager.register(modId, new Teleport());
 		ModuleManager.register(modId, new PacketFly());
 		ModuleManager.register(modId, new XRay());
+		ModuleManager.register(modId, new M1337());
 		
 		CommandManager.addCommand(new HelpCommand());
 		CommandManager.addCommand(new ToggleCommand());

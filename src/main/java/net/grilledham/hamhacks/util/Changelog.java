@@ -15,6 +15,7 @@ public class Changelog {
 					: Teleport
 					: Packet Fly
 					: XRay
+					: 1337
 				- Improved Boat Fly
 			
 			Update 1.7.2:
