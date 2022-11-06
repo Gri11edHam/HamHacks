@@ -76,6 +76,7 @@ public class WaitingToConnectScreen extends GuiScreen {
 			int onlinePlayers = Integer.parseInt(splitCount[0]);
 			int maxPlayers = Integer.parseInt(splitCount[1]);
 			if(onlinePlayers < maxPlayers) {
+				serverInfo = new ServerInfo(serverInfo.name, serverInfo.address, serverInfo.isLocal());
 				ConnectScreen.connect(this, client, ServerAddress.parse(serverInfo.address), serverInfo);
 			}
 		} catch(Exception ignored) {}
