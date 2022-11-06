@@ -270,9 +270,10 @@ public class HUD extends Module {
 			animation.setAbsolute((showCoordinates || showDirection) && isEnabled());
 		}
 		if(animation.get() > 0 && MinecraftClient.getInstance().player != null) {
-			Vec3 pos = new Vec3(MinecraftClient.getInstance().player.getPos());
-			float yaw = MinecraftClient.getInstance().player.getYaw();
-			float pitch = MinecraftClient.getInstance().player.getPitch();
+			Freecam freecam = ModuleManager.getModule(Freecam.class);
+			Vec3 pos = freecam.isEnabled() ? new Vec3(freecam.pos) : new Vec3(MinecraftClient.getInstance().player.getPos());
+			float yaw = freecam.isEnabled() ? freecam.yaw : MinecraftClient.getInstance().player.getYaw();
+			float pitch = freecam.isEnabled() ? freecam.pitch : MinecraftClient.getInstance().player.getPitch();
 			String coords = "";
 			if(showCoordinates) {
 				coords += String.format("Coords: %.2f, %.2f, %.2f ", pos.getX(), pos.getY(), pos.getZ());

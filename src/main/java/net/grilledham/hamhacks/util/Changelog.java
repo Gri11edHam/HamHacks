@@ -17,6 +17,7 @@ public class Changelog {
 					: XRay
 					: 1337
 				- Improved Boat Fly
+				- Added server joiner (joins when there is an open space)
 			
 			Update 1.7.2:
 				- Improved vanilla fly bypass
