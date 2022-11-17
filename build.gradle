@@ -14,6 +14,11 @@ group = project.maven_group
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        // use meteor's baritone fork
+        name = "meteor-maven-snapshots"
+        url = "https://maven.meteordev.org/snapshots"
+    }
 }
 
 blossom {
@@ -21,11 +26,18 @@ blossom {
     replaceToken '$MOD_ID', project.archives_base_name
 }
 
+configurations {
+    modImplementation.extendsFrom(modInclude)
+    include.extendsFrom(modInclude)
+}
+
 dependencies {
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    
+    modInclude "baritone:fabric:${project.minecraft_version}-SNAPSHOT"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
 //    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

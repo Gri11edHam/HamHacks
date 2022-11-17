@@ -36,6 +36,7 @@
 		"MixinBoatEntity",
 		"MixinMatrix4f",
 		"MixinPlayerEntity",
-		"MixinVec3d"
+		"MixinVec3d",
+		"baritone.MixinComeCommand"
 	]
 }

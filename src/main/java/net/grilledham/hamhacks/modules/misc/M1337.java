@@ -1,10 +1,13 @@
 package net.grilledham.hamhacks.modules.misc;
 
+import baritone.api.BaritoneAPI;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventChat;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
+import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.Commands;
 import net.grilledham.hamhacks.setting.SelectionSetting;
 import net.minecraft.text.Text;
 
@@ -105,7 +108,7 @@ public class M1337 extends Module {
 	
 	@EventListener
 	public void onChat(EventChat.EventChatSent e) {
-		if(mc.player == null) return;
+		if(mc.player == null || e.message.startsWith(PageManager.getPage(Commands.class).prefix.getCombinedString()) || e.message.startsWith(BaritoneAPI.getSettings().prefix.value)) return;
 		if(modify) {
 			e.canceled = true;
 			modify = false;

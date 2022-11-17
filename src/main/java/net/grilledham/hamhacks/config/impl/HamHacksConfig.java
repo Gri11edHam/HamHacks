@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.config.impl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.command.CommandManager;
+import net.grilledham.hamhacks.command.impl.BaritoneCommand;
 import net.grilledham.hamhacks.command.impl.BindCommand;
 import net.grilledham.hamhacks.command.impl.HelpCommand;
 import net.grilledham.hamhacks.command.impl.ToggleCommand;
@@ -79,6 +80,7 @@ public class HamHacksConfig extends Config {
 		CommandManager.addCommand(new HelpCommand());
 		CommandManager.addCommand(new ToggleCommand());
 		CommandManager.addCommand(new BindCommand());
+		CommandManager.addCommand(new BaritoneCommand());
 
 //		ModuleManager.register(new TestModule()); // For testing
 	}
