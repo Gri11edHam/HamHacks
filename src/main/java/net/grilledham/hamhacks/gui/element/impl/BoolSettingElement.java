@@ -5,28 +5,22 @@ import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
-import net.grilledham.hamhacks.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-import java.lang.reflect.Field;
-
-public class BoolSettingElement extends SettingElement {
+public class BoolSettingElement extends SettingElement<BoolSetting> {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	private final Animation enableAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
 	protected boolean drawBackground = true;
 	
-	public BoolSettingElement(float x, float y, float scale, Field setting, Object obj) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 22, scale, setting, obj);
-		try {
-			enableAnimation.setAbsolute(setting.getBoolean(obj));
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		}
+	public BoolSettingElement(float x, float y, double scale, BoolSetting setting) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 22, scale, setting);
+		enableAnimation.setAbsolute(setting.get());
 	}
 	
 	@Override
@@ -38,7 +32,7 @@ public class BoolSettingElement extends SettingElement {
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
 		if(drawBackground) {
-			int bgC = ui.bgColor.getRGB();
+			int bgC = ui.bgColor.get().getRGB();
 			RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		}
 		
@@ -46,10 +40,10 @@ public class BoolSettingElement extends SettingElement {
 		RenderUtil.drawHRect(stack, x + width - 14, y + 2, 12, 12, outlineC);
 		
 		boolean hovered = mx >= x + width - 12 && mx < x + width - 4 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((ui.accentColor.getRGB() & 0xff000000) + 0xffffff, (ui.accentColor.getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation.get()), hoverAnimation.get() / 4);
+		int boxC = RenderUtil.mix((ui.accentColor.get().getRGB() & 0xff000000) + 0xffffff, (ui.accentColor.get().getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation.get()), hoverAnimation.get() / 4);
 		RenderUtil.drawRect(stack, x + width - 12, y + 4, 8, 8, boxC);
 		
-		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ui.textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -57,11 +51,7 @@ public class BoolSettingElement extends SettingElement {
 		hoverAnimation.set(hovered);
 		hoverAnimation.update();
 		
-		try {
-			enableAnimation.set(setting.getBoolean(obj));
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		enableAnimation.set(setting.get());
 		enableAnimation.update();
 	}
 	
@@ -72,17 +62,9 @@ public class BoolSettingElement extends SettingElement {
 		float y = this.y + scrollY;
 		if(mx >= x + width - 12 && mx < x + width - 4 && my >= y + 4 && my < y + 12) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-				try {
-					setting.setBoolean(obj, !setting.getBoolean(obj));
-				} catch(IllegalAccessException e) {
-					e.printStackTrace();
-				}
+				setting.toggle();
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-				try {
-					SettingHelper.reset(setting, obj);
-				} catch(IllegalAccessException e) {
-					e.printStackTrace();
-				}
+				setting.reset();
 			}
 		}
 		return super.release(mx, my, scrollX, scrollY, button);

@@ -27,35 +27,27 @@ import java.util.stream.Stream;
 
 public class KillAura extends Module {
 	
-	@NumberSetting(
-			name = "hamhacks.module.killAura.range",
-			defaultValue = 3,
-			min = 1,
-			max = 8
-	)
-	public float range = 3;
+	private final NumberSetting range = new NumberSetting("hamhacks.module.killAura.range", 3, () -> true, 1, 8);
 	
-	@BoolSetting(
-			name = "hamhacks.module.killAura.targetPlayers",
-			defaultValue = true
-	)
-	public boolean targetPlayers = true;
+	private final BoolSetting targetPlayers = new BoolSetting("hamhacks.module.killAura.targetPlayers", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.killAura.targetPassive")
-	public boolean targetPassive = false;
+	private final BoolSetting targetPassive = new BoolSetting("hamhacks.module.killAura.targetPassive", false, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.killAura.targetHostile")
-	public boolean targetHostile = false;
+	private final BoolSetting targetHostile = new BoolSetting("hamhacks.module.killAura.targetHostile", false, () -> true);
 	
 	private LivingEntity target;
 	
 	public KillAura() {
 		super(Text.translatable("hamhacks.module.killAura"), Category.COMBAT, new Keybind(GLFW.GLFW_KEY_R));
+		GENERAL_CATEGORY.add(range);
+		GENERAL_CATEGORY.add(targetPlayers);
+		GENERAL_CATEGORY.add(targetPassive);
+		GENERAL_CATEGORY.add(targetHostile);
 	}
 	
 	@Override
 	public String getHUDText() {
-		return super.getHUDText() + " \u00a77" + String.format("%.2f", range);
+		return super.getHUDText() + " \u00a77" + String.format("%.2f", range.get());
 	}
 	
 	@EventListener
@@ -79,7 +71,7 @@ public class KillAura extends Module {
 					.filter(entity -> !entity.isRemoved() && entity.isAlive())
 					.filter(entity -> entity != mc.player)
 					.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-					.filter(entity -> (entity instanceof PlayerEntity && targetPlayers) || (entity instanceof HostileEntity && targetHostile) || (entity instanceof PassiveEntity && targetPassive));
+					.filter(entity -> (entity instanceof PlayerEntity && targetPlayers.get()) || (entity instanceof HostileEntity && targetHostile.get()) || (entity instanceof PassiveEntity && targetPassive.get()));
 			
 			List<LivingEntity> entities = stream.toList();
 			if(!entities.isEmpty()) {
@@ -89,7 +81,7 @@ public class KillAura extends Module {
 						closest = entity;
 					}
 				}
-				if(mc.player.distanceTo(closest) <= range) {
+				if(mc.player.distanceTo(closest) <= range.get()) {
 					target = closest;
 				} else {
 					target = null;

@@ -6,11 +6,10 @@ import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
-import net.grilledham.hamhacks.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
@@ -20,8 +19,7 @@ import java.util.List;
 
 public class SettingCategoryElement extends GuiElement {
 	
-	private final Object obj;
-	private final Text category;
+	private final SettingCategory category;
 	
 	private final Animation openCloseAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
@@ -33,9 +31,8 @@ public class SettingCategoryElement extends GuiElement {
 	private float elementsHeight = 0;
 	private final float collapsedHeight = 19;
 	
-	public SettingCategoryElement(Object obj, Text category, float x, float y, float scale) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(category) + 12 + 8, 0, scale);
-		this.obj = obj;
+	public SettingCategoryElement(SettingCategory category, float x, float y, double scale) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(category.getName()) + 12 + 8, 0, scale);
 		this.category = category;
 	}
 	
@@ -88,27 +85,27 @@ public class SettingCategoryElement extends GuiElement {
 		float y = this.y + offY;
 		stack.push();
 		
-		RenderUtil.adjustScissor(x, y, width, (float)(collapsedHeight + elementsHeight * openCloseAnimation.get()), scale);
+		RenderUtil.adjustScissor(x, y, width, (float)(collapsedHeight + elementsHeight * openCloseAnimation.get()), (float)scale);
 		RenderUtil.applyScissor();
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
-		int bgC = ui.bgColor.getRGB();
+		int bgC = ui.bgColor.get().getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + collapsedHeight;
 		RenderUtil.drawRect(stack, x, y, width, collapsedHeight, bgC);
-		float lineX = x + 6 + mc.textRenderer.getWidth(category);
+		float lineX = x + 6 + mc.textRenderer.getWidth(category.getName());
 		float arrowWidth = 8;
-		float lineW = width - 6 - mc.textRenderer.getWidth(category) - (arrowWidth + 8);
-		RenderUtil.drawRect(stack, lineX - (category.getString().equals("") ? 3 : 0), y + 9, lineW + (category.getString().equals("") ? 3 : 0), 2, ui.textColor.getRGB());
+		float lineW = width - 6 - mc.textRenderer.getWidth(category.getName()) - (arrowWidth + 8);
+		RenderUtil.drawRect(stack, lineX - (category.getName().equals("") ? 3 : 0), y + 9, lineW + (category.getName().equals("") ? 3 : 0), 2, ui.textColor.get().getRGB());
 		
 		stack.push();
 		stack.translate(lineX + lineW + arrowWidth / 2 + 4, y + 11, 0);
 		stack.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 0, (float)(-90 * openCloseAnimation.get()))));
 		stack.translate(-lineX - lineW - arrowWidth / 2 - 4, -y - 11, 0);
-		mc.textRenderer.drawWithShadow(stack, "<", lineX + lineW + 6, y + 7, ui.textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, "<", lineX + lineW + 6, y + 7, ui.textColor.get().getRGB());
 		stack.pop();
 		
-		mc.textRenderer.drawWithShadow(stack, category, x + 3, y + 7, ui.textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, category.getName(), x + 3, y + 7, ui.textColor.get().getRGB());
 		
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
@@ -125,7 +122,7 @@ public class SettingCategoryElement extends GuiElement {
 		
 		height = (float)(collapsedHeight + (trueHeight * openCloseAnimation.get()));
 		
-		openCloseAnimation.set(SettingHelper.isExpanded(obj, category));
+		openCloseAnimation.set(category.isExpanded());
 		openCloseAnimation.update();
 		
 		hoverAnimation.set(hovered);
@@ -139,7 +136,7 @@ public class SettingCategoryElement extends GuiElement {
 		
 		stack.push();
 		
-		RenderUtil.pushScissor(x, y, width, height, scale);
+		RenderUtil.pushScissor(x, y, width, height, (float)scale);
 		RenderUtil.applyScissor();
 		
 		float trueHeight = 0;
@@ -231,7 +228,7 @@ public class SettingCategoryElement extends GuiElement {
 			}
 		}
 		if(mx >= x && mx <= x + width && my >= y && my <= y + collapsedHeight) {
-			SettingHelper.setExpanded(obj, category, !SettingHelper.isExpanded(obj, category));
+			category.setExpanded(!category.isExpanded());
 			return false;
 		}
 		return super.release(mx, my, offX, offY, button);

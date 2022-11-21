@@ -5,16 +5,13 @@ import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
-import net.grilledham.hamhacks.setting.SettingHelper;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-import java.lang.reflect.Field;
-
-public class StringSettingElement extends SettingElement {
+public class StringSettingElement extends SettingElement<StringSetting> {
 	
 	private final Animation cursorAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.5, true).build();
 	private boolean cursorShown = false;
@@ -32,31 +29,14 @@ public class StringSettingElement extends SettingElement {
 	
 	protected boolean drawBackground = true;
 	
-	@StringSetting(name = "")
-	public String internalSetting;
-	
-	public StringSettingElement(float x, float y, float scale, Field setting, Object obj) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 106, scale, setting, obj);
+	public StringSettingElement(float x, float y, double scale, StringSetting setting) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 106, scale, setting);
 		cursorPos = getValue().length();
 		stringScroll = cursorPos;
 	}
 	
-	public StringSettingElement(float x, float y, float scale, String setting) {
-		super(x, y, 106, scale, null, null);
-		this.internalSetting = setting;
-		try {
-			Field settingField = SettingElement.class.getDeclaredField("setting");
-			settingField.setAccessible(true);
-			settingField.set(this, getClass().getField("internalSetting"));
-			settingField.setAccessible(false);
-			
-			Field objField = SettingElement.class.getDeclaredField("obj");
-			objField.setAccessible(true);
-			objField.set(this, this);
-			objField.setAccessible(false);
-		} catch(NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+	public StringSettingElement(float x, float y, double scale, String setting) {
+		super(x, y, 106, scale, new StringSetting("", "", () -> false));
 		cursorPos = setting.length();
 		stringScroll = cursorPos;
 	}
@@ -77,23 +57,23 @@ public class StringSettingElement extends SettingElement {
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
 		if(drawBackground) {
-			int bgC = ui.bgColor.getRGB();
+			int bgC = ui.bgColor.get().getRGB();
 			RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		}
 		
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - 104, y, 104, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ui.textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
 		
-		RenderUtil.adjustScissor(x + width - 102, y, 100, height, scale);
+		RenderUtil.adjustScissor(x + width - 102, y, 100, height, (float)scale);
 		RenderUtil.applyScissor();
 		
 		if(getValue() == null || getValue().equals("")) {
-			String value = setting.getAnnotation(StringSetting.class).placeholder();
-			mc.textRenderer.drawWithShadow(stack, value, x + width - mc.textRenderer.getWidth(value) - 2, y + 4, RenderUtil.mix(ui.bgColor.getRGB(), ui.textColor.getRGB(), 0.75f));
+			String value = setting.placeholder();
+			mc.textRenderer.drawWithShadow(stack, value, x + width - mc.textRenderer.getWidth(value) - 2, y + 4, RenderUtil.mix(ui.bgColor.get().getRGB(), ui.textColor.get().getRGB(), 0.75f));
 		} else {
-			mc.textRenderer.drawWithShadow(stack, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ui.textColor.getRGB());
+			mc.textRenderer.drawWithShadow(stack, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ui.textColor.get().getRGB());
 		}
 		
 		RenderUtil.preRender();
@@ -105,7 +85,7 @@ public class StringSettingElement extends SettingElement {
 		
 		RenderUtil.popScissor();
 		
-		int cursorColor = RenderUtil.mix(ui.textColor.getRGB(), ui.textColor.getRGB() & 0xffffff, cursorAnimation.get());
+		int cursorColor = RenderUtil.mix(ui.textColor.get().getRGB(), ui.textColor.get().getRGB() & 0xffffff, cursorAnimation.get());
 		RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, 1, mc.textRenderer.fontHeight + 1, cursorColor);
 		
 		RenderUtil.postRender();
@@ -415,19 +395,10 @@ public class StringSettingElement extends SettingElement {
 	}
 	
 	public void updateValue(String value) {
-		try {
-			setting.set(obj, value);
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		setting.set(value);
 	}
 	
 	public String getValue() {
-		try {
-			return (String)setting.get(obj);
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return setting.get();
 	}
 }

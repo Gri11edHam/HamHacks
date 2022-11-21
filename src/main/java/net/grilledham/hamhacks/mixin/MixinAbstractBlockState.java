@@ -26,7 +26,7 @@ public abstract class MixinAbstractBlockState {
 	public void isSideInvisible(BlockState state, Direction direction, CallbackInfoReturnable<Boolean> cir) {
 		XRay xRay = ModuleManager.getModule(XRay.class);
 		if(xRay.isEnabled()) {
-			cir.setReturnValue(!xRay.visibleBlocks.isSelected(getBlock()));
+			cir.setReturnValue(!xRay.visibleBlocks.get(getBlock()));
 		}
 	}
 	
@@ -34,7 +34,7 @@ public abstract class MixinAbstractBlockState {
 	public void isSideSolid(BlockView world, BlockPos pos, Direction direction, SideShapeType shapeType, CallbackInfoReturnable<Boolean> cir) {
 		XRay xRay = ModuleManager.getModule(XRay.class);
 		if(xRay.isEnabled()) {
-			cir.setReturnValue(xRay.visibleBlocks.isSelected(getBlock()));
+			cir.setReturnValue(xRay.visibleBlocks.get(getBlock()));
 		}
 	}
 	
@@ -42,7 +42,7 @@ public abstract class MixinAbstractBlockState {
 	public void getCullingFace(BlockView world, BlockPos pos, Direction direction, CallbackInfoReturnable<VoxelShape> cir) {
 		XRay xRay = ModuleManager.getModule(XRay.class);
 		if(xRay.isEnabled()) {
-			if(xRay.visibleBlocks.isSelected(getBlock())) {
+			if(xRay.visibleBlocks.get(getBlock())) {
 				cir.setReturnValue(VoxelShapes.fullCube());
 			} else {
 				cir.setReturnValue(VoxelShapes.empty());
@@ -54,7 +54,7 @@ public abstract class MixinAbstractBlockState {
 	public void getAmbientOcclusionLightLevel(BlockView world, BlockPos pos, CallbackInfoReturnable<Float> cir) {
 		XRay xRay = ModuleManager.getModule(XRay.class);
 		if(xRay.isEnabled()) {
-			if(xRay.visibleBlocks.isSelected(getBlock())) {
+			if(xRay.visibleBlocks.get(getBlock())) {
 				cir.setReturnValue(1F);
 			}
 		}
@@ -64,7 +64,7 @@ public abstract class MixinAbstractBlockState {
 	public void getLuminance(CallbackInfoReturnable<Integer> cir) {
 		XRay xRay = ModuleManager.getModule(XRay.class);
 		if(xRay.isEnabled()) {
-			if(xRay.visibleBlocks.isSelected(getBlock())) {
+			if(xRay.visibleBlocks.get(getBlock())) {
 				cir.setReturnValue(12);
 			}
 		}

@@ -10,23 +10,18 @@ import net.minecraft.text.Text;
 
 public class Step extends Module {
 	
-	@NumberSetting(
-			name = "hamhacks.module.step.height",
-			defaultValue = 1,
-			min = 0,
-			max = 10
-	)
-	public float height = 1;
+	private final NumberSetting height = new NumberSetting("hamhacks.module.step.height", 1, () -> true, 0, 10);
 	
 	private float originalStepHeight;
 	
 	public Step() {
 		super(Text.translatable("hamhacks.module.step"), Category.PLAYER, new Keybind(0));
+		GENERAL_CATEGORY.add(height);
 	}
 	
 	@Override
 	public String getHUDText() {
-		return super.getHUDText() + " \u00a77" + String.format("%.2f", height);
+		return super.getHUDText() + " \u00a77" + String.format("%.2f", height.get());
 	}
 	
 	@Override
@@ -37,7 +32,7 @@ public class Step extends Module {
 			return;
 		}
 		originalStepHeight = mc.player.stepHeight;
-		mc.player.stepHeight = height;
+		mc.player.stepHeight = (float)(double)height.get();
 	}
 	
 	@EventListener
@@ -49,7 +44,7 @@ public class Step extends Module {
 		if(originalStepHeight == -1) {
 			originalStepHeight = mc.player.stepHeight;
 		}
-		mc.player.stepHeight = height;
+		mc.player.stepHeight = (float)(double)height.get();
 	}
 	
 	@Override

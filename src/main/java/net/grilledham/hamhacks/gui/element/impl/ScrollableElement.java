@@ -24,7 +24,7 @@ public class ScrollableElement extends GuiElement {
 	
 	private GuiElement selected = null;
 	
-	public ScrollableElement(float x, float y, float width, float maxHeight, float scale) {
+	public ScrollableElement(float x, float y, float width, float maxHeight, double scale) {
 		super(x, y, width, 0, scale);
 		this.maxHeight = maxHeight;
 	}
@@ -69,13 +69,15 @@ public class ScrollableElement extends GuiElement {
 		
 		stack.push();
 		
-		RenderUtil.adjustScissor(x, y, width, height, scale);
+		RenderUtil.adjustScissor(x, y, width, height, (float)scale);
 		RenderUtil.applyScissor();
 		
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
 			if(isElementEnabled.get(element)) {
-				element.render(stack, hovered || element == selected ? mx : -1, hovered || element == selected ? my : -1, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
+				if(element.getX() + element.getWidth() >= x - 2 + scrollX && element.getY() + element.getHeight() + trueHeight >= y - 2 + scrollY + scroll.get() && element.getX() - element.getWidth() <= x + width + 2 + scrollX && element.getY() - element.getHeight() + trueHeight <= y + height + 2 + scrollY + scroll.get()) {
+					element.render(stack, hovered || element == selected ? mx : -1, hovered || element == selected ? my : -1, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
+				}
 				trueHeight += element.getHeight();
 			}
 		}
@@ -105,7 +107,7 @@ public class ScrollableElement extends GuiElement {
 		
 		stack.push();
 		
-		RenderUtil.pushScissor(x, y, width, height, scale);
+		RenderUtil.pushScissor(x, y, width, height, (float)scale);
 		RenderUtil.applyScissor();
 		
 		float trueHeight = 0;

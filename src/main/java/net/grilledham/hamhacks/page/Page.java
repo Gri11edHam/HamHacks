@@ -1,15 +1,21 @@
 package net.grilledham.hamhacks.page;
 
 import net.grilledham.hamhacks.event.EventManager;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Page {
 
 	protected Text name;
 	
 	protected Text toolTip;
+	
+	protected final List<SettingCategory> settingCategories = new ArrayList<>();
 	
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	
@@ -29,6 +35,10 @@ public class Page {
 	
 	public boolean hasToolTip() {
 		return !getToolTip().equals(getConfigName() + ".tooltip");
+	}
+	
+	public List<SettingCategory> getSettingCategories() {
+		return settingCategories;
 	}
 	
 	public String getConfigName() {

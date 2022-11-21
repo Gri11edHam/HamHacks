@@ -39,22 +39,17 @@ public class Freecam extends Module {
 	private boolean up;
 	private boolean down;
 	
-	private float lastDx;
-	private float lastDy;
-	private float lastDz;
+	private double lastDx;
+	private double lastDy;
+	private double lastDz;
 	
 	private Perspective perspective = Perspective.FIRST_PERSON;
 	
-	@NumberSetting(
-			name = "hamhacks.module.freecam.speed",
-			defaultValue = 1,
-			min = 0,
-			max = 10
-	)
-	public float speed = 1;
+	private final NumberSetting speed = new NumberSetting("hamhacks.module.freecam.speed", 1, () -> true, 0, 10);
 	
 	public Freecam() {
 		super(Text.translatable("hamhacks.module.freecam"), Category.RENDER, new Keybind(0));
+		GENERAL_CATEGORY.add(speed);
 	}
 	
 	@Override
@@ -138,31 +133,31 @@ public class Freecam extends Module {
 		if(down) {
 			distanceVertical -= 1;
 		}
-		distanceForward *= speed;
-		distanceStrafe *= speed;
-		distanceVertical *= speed;
-		float dx = (float)(distanceForward * Math.cos(Math.toRadians(yaw + 90)));
-		float dy = distanceVertical;
-		float dz = (float)(distanceForward * Math.sin(Math.toRadians(yaw + 90)));
+		distanceForward *= speed.get();
+		distanceStrafe *= speed.get();
+		distanceVertical *= speed.get();
+		double dx = (float)(distanceForward * Math.cos(Math.toRadians(yaw + 90)));
+		double dy = distanceVertical;
+		double dz = (float)(distanceForward * Math.sin(Math.toRadians(yaw + 90)));
 		dx += (float)(distanceStrafe * Math.cos(Math.toRadians(yaw)));
 		dz += (float)(distanceStrafe * Math.sin(Math.toRadians(yaw)));
 		dx = lastDx + (dx / 10f);
 		dy = lastDy + (dy / 10f);
 		dz = lastDz + (dz / 10f);
-		if(dx > speed) {
-			dx = speed;
-		} else if(dx < -speed) {
-			dx = -speed;
+		if(dx > speed.get()) {
+			dx = speed.get();
+		} else if(dx < -speed.get()) {
+			dx = -speed.get();
 		}
-		if(dy > speed) {
-			dy = speed;
-		} else if(dy < -speed) {
-			dy = -speed;
+		if(dy > speed.get()) {
+			dy = speed.get();
+		} else if(dy < -speed.get()) {
+			dy = -speed.get();
 		}
-		if(dz > speed) {
-			dz = speed;
-		} else if(dz < -speed) {
-			dz = -speed;
+		if(dz > speed.get()) {
+			dz = speed.get();
+		} else if(dz < -speed.get()) {
+			dz = -speed.get();
 		}
 		if(distanceVertical == 0) {
 			dy = 0;

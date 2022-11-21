@@ -4,33 +4,25 @@ import net.grilledham.hamhacks.animation.Animation;
 import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
-import net.grilledham.hamhacks.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.Setting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.util.math.MatrixStack;
 
-import java.lang.reflect.Field;
-
-public abstract class SettingElement extends GuiElement {
+public abstract class SettingElement<T extends Setting<?>> extends GuiElement {
 	
 	private final Animation tooltipAnimation = AnimationBuilder.create(AnimationType.LINEAR).build();
 	
 	private boolean hasClicked = false;
 	
-	protected final Field setting;
-	protected final Object obj;
+	protected final T setting;
 	
-	public SettingElement(float x, float y, float width, float scale, Field setting, Object obj) {
+	public SettingElement(float x, float y, float width, double scale, T setting) {
 		super(x, y, width, 16, scale);
 		this.setting = setting;
-		this.obj = obj;
 	}
 	
-	public Field getSetting() {
+	public T getSetting() {
 		return setting;
-	}
-	
-	public Object getObject() {
-		return obj;
 	}
 	
 	@Override
@@ -40,10 +32,10 @@ public abstract class SettingElement extends GuiElement {
 		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
 		
-		if(setting != null && obj != null) {
-			if(SettingHelper.hasTooltip(setting)) {
+		if(setting != null) {
+			if(setting.hasTooltip()) {
 				if(tooltipAnimation.get() >= 1 && !hasClicked) {
-					RenderUtil.drawToolTip(stack, SettingHelper.getName(setting).getString(), SettingHelper.getTooltip(setting).getString(), mx, my, scale);
+					RenderUtil.drawToolTip(stack, setting.getName(), setting.getTooltip(), mx, my, scale);
 				}
 			}
 		}

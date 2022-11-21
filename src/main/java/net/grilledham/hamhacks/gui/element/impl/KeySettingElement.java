@@ -6,23 +6,22 @@ import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
-import net.grilledham.hamhacks.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.KeySetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 
-public class KeySettingElement extends SettingElement {
+public class KeySettingElement extends SettingElement<KeySetting> {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
 	private boolean listening = false;
 	
-	public KeySettingElement(float x, float y, float scale, Field setting, Object obj) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString() + " [________________]") + 4, scale, setting, obj);
+	public KeySettingElement(float x, float y, double scale, KeySetting setting) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName() + " [________________]") + 4, scale, setting);
 	}
 	
 	@Override
@@ -33,22 +32,18 @@ public class KeySettingElement extends SettingElement {
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
-		int bgC = ui.bgColor.getRGB();
-		bgC = RenderUtil.mix(ui.bgColorHovered.getRGB(), bgC, hoverAnimation.get());
+		int bgC = ui.bgColor.get().getRGB();
+		bgC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), bgC, hoverAnimation.get());
 		
-		boolean hovered = false;
-		try {
-			String text = "[" + (listening ? (((Keybind)setting.get(obj)).getName().equals("None") ? "Listening..." : ((Keybind)setting.get(obj)).getName() + "...") : ((Keybind)setting.get(obj)).getName()) + "]";
-			float textWidth = mc.textRenderer.getWidth(text);
-			hovered = mx >= x + width - textWidth - 4 && mx < x + width && my >= y && my < y + height;
-			RenderUtil.drawRect(stack, x, y, width - textWidth - 4, height, ui.bgColor.getRGB());
-			RenderUtil.drawRect(stack, x + width - textWidth - 4, y, textWidth + 4, height, bgC);
-			
-			mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ui.textColor.getRGB());
-			mc.textRenderer.drawWithShadow(stack, text, x + width - textWidth - 2, y + 4, ui.textColor.getRGB());
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		boolean hovered;
+		String text = "[" + (listening ? (setting.get().getName().equals("None") ? "Listening..." : setting.get().getName() + "...") : setting.get().getName()) + "]";
+		float textWidth = mc.textRenderer.getWidth(text);
+		hovered = mx >= x + width - textWidth - 4 && mx < x + width && my >= y && my < y + height;
+		RenderUtil.drawRect(stack, x, y, width - textWidth - 4, height, ui.bgColor.get().getRGB());
+		RenderUtil.drawRect(stack, x + width - textWidth - 4, y, textWidth + 4, height, bgC);
+		
+		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
+		mc.textRenderer.drawWithShadow(stack, text, x + width - textWidth - 2, y + 4, ui.textColor.get().getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -62,27 +57,23 @@ public class KeySettingElement extends SettingElement {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		if(listening) {
-			try {
-				int code = button - Keybind.MOUSE_SHIFT;
-				int[] codes = ((Keybind)setting.get(obj)).getKeyCombo();
-				if(codes.length == 1 && codes[0] == 0) {
-					((Keybind)setting.get(obj)).setKey(code);
-				} else {
-					boolean containsKey = false;
-					for(int i : codes) {
-						if(i == code) {
-							containsKey = true;
-							break;
-						}
+			int code = button - Keybind.MOUSE_SHIFT;
+			int[] codes = setting.get().getKeyCombo();
+			if(codes.length == 1 && codes[0] == 0) {
+				setting.get().setKey(code);
+			} else {
+				boolean containsKey = false;
+				for(int i : codes) {
+					if(i == code) {
+						containsKey = true;
+						break;
 					}
-					if(!containsKey) {
-						codes = Arrays.copyOf(codes, codes.length + 1);
-						codes[codes.length - 1] = code;
-					}
-					((Keybind)setting.get(obj)).setKey(codes);
 				}
-			} catch(IllegalAccessException e) {
-				throw new RuntimeException(e);
+				if(!containsKey) {
+					codes = Arrays.copyOf(codes, codes.length + 1);
+					codes[codes.length - 1] = code;
+				}
+				setting.get().setKey(codes);
 			}
 			return true;
 		}
@@ -103,27 +94,19 @@ public class KeySettingElement extends SettingElement {
 		float y = this.y + scrollY;
 		super.release(mx, my, scrollX, scrollY, button);
 		String text;
-		try {
-			text = "[" + (listening ? (((Keybind)setting.get(obj)).getName().equals("None") ? "Listening..." : ((Keybind)setting.get(obj)).getName() + "...") : ((Keybind)setting.get(obj)).getName()) + "]";
-		} catch(IllegalAccessException e) {
-			text = "";
-		}
+		text = "[" + (listening ? (setting.get().getName().equals("None") ? "Listening..." : setting.get().getName() + "...") : setting.get().getName()) + "]";
 		float textWidth = mc.textRenderer.getWidth(text);
-		try {
-			if(listening) {
+		if(listening) {
+			return true;
+		} else if(mx >= x + width - textWidth - 4 && mx < x + width && my >= y && my < y + height) {
+			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+				setting.get().setKey(0);
+				listening = true;
+				PageManager.getPage(ClickGUI.class).typing = true;
 				return true;
-			} else if(mx >= x + width - textWidth - 4 && mx < x + width && my >= y && my < y + height) {
-				if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-					((Keybind)setting.get(obj)).setKey(0);
-					listening = true;
-					PageManager.getPage(ClickGUI.class).typing = true;
-					return true;
-				} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-					SettingHelper.reset(setting, obj);
-				}
+			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+				setting.reset();
 			}
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
 	}
@@ -131,32 +114,28 @@ public class KeySettingElement extends SettingElement {
 	@Override
 	public boolean type(int code, int scanCode, int modifiers) {
 		if(listening) {
-			try {
-				if(code == GLFW.GLFW_KEY_ESCAPE) {
-					listening = false;
-					PageManager.getPage(ClickGUI.class).typing = false;
+			if(code == GLFW.GLFW_KEY_ESCAPE) {
+				listening = false;
+				PageManager.getPage(ClickGUI.class).typing = false;
+			} else {
+				int[] codes = setting.get().getKeyCombo();
+				if(codes.length == 1 && codes[0] == 0) {
+					setting.get().setKey(code);
 				} else {
-					int[] codes = ((Keybind)setting.get(obj)).getKeyCombo();
-					if(codes.length == 1 && codes[0] == 0) {
-						((Keybind)setting.get(obj)).setKey(code);
-					} else {
-						boolean containsKey = false;
-						for(int i : codes) {
-							if(i == code) {
-								containsKey = true;
-								break;
-							}
+					boolean containsKey = false;
+					for(int i : codes) {
+						if(i == code) {
+							containsKey = true;
+							break;
 						}
-						if(!containsKey) {
-							codes = Arrays.copyOf(codes, codes.length + 1);
-							codes[codes.length - 1] = code;
-						}
-						((Keybind)setting.get(obj)).setKey(codes);
 					}
-					return true;
+					if(!containsKey) {
+						codes = Arrays.copyOf(codes, codes.length + 1);
+						codes[codes.length - 1] = code;
+					}
+					setting.get().setKey(codes);
 				}
-			} catch(IllegalAccessException e) {
-				e.printStackTrace();
+				return true;
 			}
 			return false;
 		}

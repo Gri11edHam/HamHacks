@@ -8,28 +8,18 @@ import net.minecraft.text.Text;
 
 public class Reach extends Module {
 	
-	@NumberSetting(
-			name = "hamhacks.module.reach.entityRange",
-			defaultValue = 3,
-			min = 0,
-			max = 8
-	)
-	public float entityRange = 3;
+	public final NumberSetting entityRange = new NumberSetting("hamhacks.module.reach.entityRange", 3, () -> true, 0, 8);
 	
-	@NumberSetting(
-			name = "hamhacks.module.reach.blockRange",
-			defaultValue = 4.5f,
-			min = 0,
-			max = 8
-	)
-	public float blockRange = 4.5f;
+	public final NumberSetting blockRange = new NumberSetting("hamhacks.module.reach.blockRange", 4.5, () -> true, 0, 8);
 	
 	public Reach() {
 		super(Text.translatable("hamhacks.module.reach"), Category.COMBAT, new Keybind(0));
+		GENERAL_CATEGORY.add(entityRange);
+		GENERAL_CATEGORY.add(blockRange);
 	}
 	
 	@Override
 	public String getHUDText() {
-		return super.getHUDText() + " \u00a77" + String.format("%.2f|%.2f", entityRange, blockRange);
+		return super.getHUDText() + " \u00a77" + String.format("%.2f|%.2f", entityRange.get(), blockRange.get());
 	}
 }

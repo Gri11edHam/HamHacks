@@ -25,7 +25,7 @@ public class WaitingToConnectScreen extends GuiScreen {
 	private MultiplayerServerListPinger pinger = new MultiplayerServerListPinger();
 	
 	public WaitingToConnectScreen(Screen last, String serverIP) {
-		super(Text.translatable("hamhacks.menu.waitingToConnect"), last, PageManager.getPage(ClickGUI.class).scale);
+		super(Text.translatable("hamhacks.menu.waitingToConnect"), last, PageManager.getPage(ClickGUI.class).scale.get());
 		serverInfo = new ServerInfo("", serverIP, false);
 	}
 	

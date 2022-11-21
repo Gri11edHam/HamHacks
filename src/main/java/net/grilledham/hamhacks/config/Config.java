@@ -10,7 +10,8 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.page.PageManager;
-import net.grilledham.hamhacks.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.Setting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 
 import java.io.*;
 import java.util.List;
@@ -96,7 +97,11 @@ public abstract class Config {
 			for(Module m : ModuleManager.getModules(modId)) {
 				JsonObject mod = new JsonObject();
 				JsonObject modSettings = new JsonObject();
-				SettingHelper.addSaveData(m, modSettings);
+				for(SettingCategory c : m.getSettingCategories()) {
+					for(Setting<?> s : c.getSettings()) {
+						modSettings.add(s.getConfigName(), s.save());
+					}
+				}
 				mod.add("settings", modSettings);
 				modules.add(m.getConfigName(), mod);
 			}
@@ -105,7 +110,11 @@ public abstract class Config {
 			for(Page p : PageManager.getPages(modId)) {
 				JsonObject page = new JsonObject();
 				JsonObject pageSettings = new JsonObject();
-				SettingHelper.addSaveData(p, pageSettings);
+				for(SettingCategory c : p.getSettingCategories()) {
+					for(Setting<?> s : c.getSettings()) {
+						pageSettings.add(s.getConfigName(), s.save());
+					}
+				}
 				page.add("settings", pageSettings);
 				pages.add(p.getConfigName(), page);
 			}
@@ -142,7 +151,13 @@ public abstract class Config {
 					continue;
 				}
 				JsonObject modSettings = mod.getAsJsonObject("settings");
-				SettingHelper.parseSaveData(m, modSettings);
+				for(SettingCategory c : m.getSettingCategories()) {
+					for(Setting<?> s : c.getSettings()) {
+						if(modSettings.has(s.getConfigName())) {
+							s.load(modSettings.get(s.getConfigName()));
+						}
+					}
+				}
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -155,7 +170,13 @@ public abstract class Config {
 					continue;
 				}
 				JsonObject pageSettings = page.getAsJsonObject("settings");
-				SettingHelper.parseSaveData(p, pageSettings);
+				for(SettingCategory c : p.getSettingCategories()) {
+					for(Setting<?> s : c.getSettings()) {
+						if(pageSettings.has(s.getConfigName())) {
+							s.load(pageSettings.get(s.getConfigName()));
+						}
+					}
+				}
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

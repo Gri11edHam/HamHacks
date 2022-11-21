@@ -31,7 +31,7 @@ public class ProjectionUtil {
 		windowScale = mc.getWindow().calculateScaleFactor(1, false);
 	}
 	
-	public static boolean to2D(Vec3 pos, float scale) {
+	public static boolean to2D(Vec3 pos, double scale) {
 		ProjectionUtil.scale = getScale(pos) * scale;
 		
 		vec4.set(pos.getX() - camPos.getX(), pos.getY() - camPos.getY(), pos.getZ() - camPos.getZ(), 1);

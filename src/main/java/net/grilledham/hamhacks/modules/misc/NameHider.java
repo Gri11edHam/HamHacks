@@ -9,20 +9,16 @@ import net.minecraft.text.Text;
 
 public class NameHider extends Module {
 	
-	@StringSetting(
-			name = "hamhacks.module.nameHider.fakeName",
-			defaultValue = "GrilledHam",
-			placeholder = "Fake Name"
-	)
-	public String fakeName = "GrilledHam";
+	public final StringSetting fakeName = new StringSetting("hamhacks.module.nameHider.fakeName", "GrilledHam", () -> true, "hamhacks.module.nameHider.fakeName.placeholder");
 	
 	public NameHider() {
 		super(Text.translatable("hamhacks.module.nameHider"), Category.MISC, new Keybind(0));
+		GENERAL_CATEGORY.add(fakeName);
 	}
 	
 	public String modifyName(String text) {
-		if(isEnabled() && !fakeName.equals("")) {
-			return text.replace(MinecraftClient.getInstance().getSession().getUsername(), fakeName);
+		if(isEnabled() && !fakeName.get().equals("")) {
+			return text.replace(MinecraftClient.getInstance().getSession().getUsername(), fakeName.get());
 		}
 		return text;
 	}

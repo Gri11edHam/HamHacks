@@ -24,8 +24,7 @@ public class BoatFly extends Module {
 	
 	private float updates = 0;
 	
-	@BoolSetting(name = "hamhacks.module.boatFly.autoBreak")
-	public boolean autoBreak = false;
+	private final BoolSetting autoBreak = new BoolSetting("hamhacks.module.boatFly.autoBreak", false, () -> true);
 	
 	private boolean shouldDismount = false;
 	
@@ -33,6 +32,7 @@ public class BoatFly extends Module {
 	
 	public BoatFly() {
 		super(Text.translatable("hamhacks.module.boatFly"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_B));
+		GENERAL_CATEGORY.add(autoBreak);
 	}
 	
 	@EventListener
@@ -65,7 +65,7 @@ public class BoatFly extends Module {
 			}
 			if(mc.options.sprintKey.isPressed()) {
 				shouldDismount = true;
-				if(autoBreak && vehicle.getType() == EntityType.BOAT && vehicle.getPrimaryPassenger() == mc.player) {
+				if(autoBreak.get() && vehicle.getType() == EntityType.BOAT && vehicle.getPrimaryPassenger() == mc.player) {
 					lastBoat = (BoatEntity)vehicle;
 				}
 			}

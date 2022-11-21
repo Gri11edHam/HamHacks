@@ -13,26 +13,22 @@ import org.lwjgl.glfw.GLFW;
 
 public class NoFall extends Module {
 	
-	@SelectionSetting(name = "hamhacks.module.noFall.mode", options = {"hamhacks.module.noFall.mode.packet", "hamhacks.module.noFall.mode.flySpoof"})
-	public int mode = 0;
+	private final SelectionSetting mode = new SelectionSetting("hamhacks.module.noFall.mode", 0, () -> true, "hamhacks.module.noFall.mode.packet", "hamhacks.module.noFall.mode.flySpoof");
 	
 	public NoFall() {
 		super(Text.translatable("hamhacks.module.noFall"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
+		GENERAL_CATEGORY.add(mode);
 	}
 	
 	@Override
 	public String getHUDText() {
-		try {
-			return super.getHUDText() + " \u00a77" + Text.translatable(getClass().getField("mode").getAnnotation(SelectionSetting.class).options()[mode]).getString();
-		} catch(NoSuchFieldException e) {
-			return super.getHUDText();
-		}
+		return super.getHUDText() + " \u00a77" + mode.options()[mode.get()];
 	}
 	
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
-			switch(mode) {
+			switch(mode.get()) {
 				case 0 -> {
 					if(mc.player.fallDistance >= 2) {
 						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));

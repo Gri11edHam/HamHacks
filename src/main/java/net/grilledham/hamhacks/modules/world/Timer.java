@@ -10,29 +10,22 @@ import net.minecraft.text.Text;
 
 public class Timer extends Module {
 	
-	@NumberSetting(
-			name = "hamhacks.module.timer.speed",
-			defaultValue = 20,
-			min = 1,
-			max = 100,
-			step = 0.5f,
-			forceStep = false
-	)
-	public float speed = 20;
+	private final NumberSetting speed = new NumberSetting("hamhacks.module.timer.speed", 20, () -> true, 1, 100, 0.5, false);
 	
 	public Timer() {
 		super(Text.translatable("hamhacks.module.timer"), Category.WORLD, new Keybind(0));
+		GENERAL_CATEGORY.add(speed);
 	}
 	
 	@Override
 	public String getHUDText() {
-		return super.getHUDText() + " \u00a77" + String.format("%.2f", speed);
+		return super.getHUDText() + " \u00a77" + String.format("%.2f", speed.get());
 	}
 	
 	@EventListener
 	public void onTick(EventTick e) {
-		if(imc.getRenderTickCounter().getTPS() != speed) {
-			imc.getRenderTickCounter().setTPS(speed);
+		if(imc.getRenderTickCounter().getTPS() != speed.get()) {
+			imc.getRenderTickCounter().setTPS((float)(double)speed.get());
 		}
 	}
 	

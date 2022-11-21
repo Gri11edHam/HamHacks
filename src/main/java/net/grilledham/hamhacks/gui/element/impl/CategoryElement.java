@@ -28,7 +28,7 @@ public class CategoryElement extends GuiElement {
 	private double lastMouseX = 0;
 	private double lastMouseY = 0;
 	
-	public CategoryElement(Screen parent, Category category, float scale) {
+	public CategoryElement(Screen parent, Category category, double scale) {
 		super(category.getX(), category.getY(), category.getWidth(), category.getHeight(), scale);
 		this.category = category;
 		openCloseAnimation.setAbsolute(1);
@@ -49,16 +49,16 @@ public class CategoryElement extends GuiElement {
 		
 		float scissorHeight = height + scrollArea.getHeight() * (float)(1 - openCloseAnimation.get());
 		
-		RenderUtil.pushScissor(x, y, width, scissorHeight, scale);
+		RenderUtil.pushScissor(x, y, width, scissorHeight, (float)scale);
 		RenderUtil.applyScissor();
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
-		int bgC = ui.accentColor.getRGB();
+		int bgC = ui.accentColor.get().getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
-		mc.textRenderer.drawWithShadow(stack, category.getName(), x + 3, y + 5, ui.textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, category.getName(), x + 3, y + 5, ui.textColor.get().getRGB());
 		
 		scrollArea.render(stack, mx, my, scrollX, scrollY, partialTicks);
 		
@@ -75,7 +75,7 @@ public class CategoryElement extends GuiElement {
 			lastMouseY = my;
 		}
 		
-		scrollArea.setMaxHeight(Math.min(PREFERED_SCROLL_HEIGHT, (mc.getWindow().getHeight() / scale) - scrollArea.getY()));
+		scrollArea.setMaxHeight((float)Math.min(PREFERED_SCROLL_HEIGHT, (mc.getWindow().getHeight() / scale) - scrollArea.getY()));
 		
 		openCloseAnimation.set(category.isExpanded());
 		openCloseAnimation.update();

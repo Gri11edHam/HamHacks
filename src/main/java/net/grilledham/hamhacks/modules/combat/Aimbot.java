@@ -8,6 +8,7 @@ import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.MouseUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.HostileEntity;
@@ -26,58 +27,41 @@ import java.util.stream.Collectors;
 
 public class Aimbot extends Module {
 	
-	@NumberSetting(
-			name = "hamhacks.module.aimbot.speed", category = "hamhacks.module.aimbot.category.options",
-			defaultValue = 10,
-			min = 0.1f,
-			max = 100
-	)
-	public float speed = 10;
+	private final SettingCategory OPTIONS_CATEGORY = new SettingCategory("hamhacks.module.aimbot.category.options");
 	
-	@NumberSetting(
-			name = "hamhacks.module.aimbot.fov", category = "hamhacks.module.aimbot.category.options",
-			defaultValue = 90,
-			min = 0.1f,
-			max = 360
-	)
-	public float fov = 90;
+	private final NumberSetting speed = new NumberSetting("hamhacks.module.aimbot.speed", 10, () -> true, 0.1, 100);
 	
-	@BoolSetting(name = "hamhacks.module.aimbot.targetEntities", category = "hamhacks.module.aimbot.category.targeting", defaultValue = true)
-	public boolean targetEntities = true;
+	private final NumberSetting fov = new NumberSetting("hamhacks.module.aimbot.fov", 90, () -> true, 0.1, 360);
 	
-	@BoolSetting(
-			name = "hamhacks.module.aimbot.keepAiming", category = "hamhacks.module.aimbot.category.targeting",
-			dependsOn = "targetEntities"
-	)
-	public boolean keepAiming = false;
+	private final SettingCategory TARGETING_CATEGORY = new SettingCategory("hamhacks.module.aimbot.category.targeting");
 	
-	@BoolSetting(
-			name = "hamhacks.module.aimbot.targetPlayers", category = "hamhacks.module.aimbot.category.targeting",
-			dependsOn = "targetEntities",
-			defaultValue = true
-	)
-	public boolean targetPlayers = true;
+	private final BoolSetting targetEntities = new BoolSetting("hamhacks.module.aimbot.targetEntities", true, () -> true);
 	
-	@BoolSetting(
-			name = "hamhacks.module.aimbot.targetPassive", category = "hamhacks.module.aimbot.category.targeting",
-			dependsOn = "targetEntities"
-	)
-	public boolean targetPassive = false;
+	private final BoolSetting keepAiming = new BoolSetting("hamhacks.module.aimbot.keepAiming", false, targetEntities::get);
 	
-	@BoolSetting(
-			name = "hamhacks.module.aimbot.targetHostile", category = "hamhacks.module.aimbot.category.targeting",
-			dependsOn = "targetEntities"
-	)
-	public boolean targetHostile = false;
+	private final BoolSetting targetPlayers = new BoolSetting("hamhacks.module.aimbot.targetPlayers", true, targetEntities::get);
 	
-	@BoolSetting(name = "hamhacks.module.aimbot.targetBlocks", category = "hamhacks.module.aimbot.category.targeting")
-	public boolean targetBlocks = false;
+	private final BoolSetting targetPassive = new BoolSetting("hamhacks.module.aimbot.targetPassive", false, targetEntities::get);
+	
+	private final BoolSetting targetHostile = new BoolSetting("hamhacks.module.aimbot.targetHostile", false, targetEntities::get);
+	
+	private final BoolSetting targetBlocks = new BoolSetting("hamhacks.module.aimbot.targetBlocks", false, () -> true);
 	
 	private Entity entityToAim = null;
 	private HitResult blockToAim = null;
 	
 	public Aimbot() {
 		super(Text.translatable("hamhacks.module.aimbot"), Category.COMBAT, new Keybind(0));
+		settingCategories.add(0, OPTIONS_CATEGORY);
+		OPTIONS_CATEGORY.add(speed);
+		OPTIONS_CATEGORY.add(fov);
+		settingCategories.add(1, TARGETING_CATEGORY);
+		TARGETING_CATEGORY.add(targetEntities);
+		TARGETING_CATEGORY.add(keepAiming);
+		TARGETING_CATEGORY.add(targetPlayers);
+		TARGETING_CATEGORY.add(targetPassive);
+		TARGETING_CATEGORY.add(targetHostile);
+		TARGETING_CATEGORY.add(targetBlocks);
 	}
 	
 	@EventListener
@@ -85,34 +69,34 @@ public class Aimbot extends Module {
 		if(mc.world == null) {
 			return;
 		}
-		if(keepAiming) {
+		if(keepAiming.get()) {
 			if(entityToAim != null && !MouseUtil.mouseMoved()) {
 				entityToAim.getPos().floorAlongAxes(EnumSet.allOf(Direction.Axis.class)).add(0.5, 0.5, 0.5);
-				float[] rotation = getRotationsNeeded(entityToAim, null, fov, fov, speed, speed);
+				float[] rotation = getRotationsNeeded(entityToAim, null, fov.get(), fov.get(), speed.get(), speed.get());
 				
 				mc.player.setPitch(rotation[1]);
 				mc.player.setYaw(rotation[0]);
 			} else if(MouseUtil.mouseMoved()) {
-				if((mc.targetedEntity instanceof PlayerEntity && targetPlayers) || (mc.targetedEntity instanceof PassiveEntity && targetPassive) || (mc.targetedEntity instanceof HostileEntity && targetHostile)) {
+				if((mc.targetedEntity instanceof PlayerEntity && targetPlayers.get()) || (mc.targetedEntity instanceof PassiveEntity && targetPassive.get()) || (mc.targetedEntity instanceof HostileEntity && targetHostile.get())) {
 					entityToAim = mc.targetedEntity;
 				}
 			}
 		} else {
 			Entity entity = getClosestEntityToCrosshair(Lists.newCopyOnWriteArrayList(mc.world.getEntities()).stream().filter(ent -> ent.getPos().distanceTo(mc.player.getPos()) < 6 && ent != mc.player/* && ent instanceof PlayerEntity*/).collect(Collectors.toList()));
-			if(entity != null && targetEntities) {
-				if((entity instanceof PlayerEntity && targetPlayers) || (entity instanceof PassiveEntity && targetPassive) || (entity instanceof HostileEntity && targetHostile)) {
-					float[] rotation = getRotationsNeeded(entity, null, fov, fov, speed, speed);
+			if(entity != null && targetEntities.get()) {
+				if((entity instanceof PlayerEntity && targetPlayers.get()) || (entity instanceof PassiveEntity && targetPassive.get()) || (entity instanceof HostileEntity && targetHostile.get())) {
+					float[] rotation = getRotationsNeeded(entity, null, fov.get(), fov.get(), speed.get(), speed.get());
 					
 					mc.player.setPitch(rotation[1]);
 					mc.player.setYaw(rotation[0]);
 				}
 			}
 		}
-		if(targetBlocks) {
+		if(targetBlocks.get()) {
 			HitResult pos = blockToAim;
 			if(pos != null && !MouseUtil.mouseMoved()) {
 				pos.getPos().floorAlongAxes(EnumSet.allOf(Direction.Axis.class)).add(0.5, 0.5, 0.5);
-				float[] rotation = getRotationsNeeded(null, pos.getPos(), 360, 360, speed, speed);
+				float[] rotation = getRotationsNeeded(null, pos.getPos(), 360, 360, speed.get(), speed.get());
 				
 				mc.player.setPitch(rotation[1]);
 				mc.player.setYaw(rotation[0]);
@@ -126,7 +110,7 @@ public class Aimbot extends Module {
 		}
 	}
 	
-	public float[] getRotationsNeeded(Entity target, Vec3d blockPos, float fovX, float fovY, float stepX, float stepY) {
+	public float[] getRotationsNeeded(Entity target, Vec3d blockPos, double fovX, double fovY, double stepX, double stepY) {
 		float[] yawPitch = new float[2];
 		if(target != null) {
 			yawPitch = getClosestYawPitchBetween(
@@ -153,8 +137,8 @@ public class Aimbot extends Module {
 		
 		if(inFovX && inFovY) {
 			float yawFinal, pitchFinal;
-			yawFinal = ((MathHelper.wrapDegrees(yaw - mc.player.headYaw)) * stepX) / 100;
-			pitchFinal = ((MathHelper.wrapDegrees(pitch - mc.player.renderPitch)) * stepY) / 100;
+			yawFinal = (float)(((MathHelper.wrapDegrees(yaw - mc.player.headYaw)) * stepX) / 100);
+			pitchFinal = (float)(((MathHelper.wrapDegrees(pitch - mc.player.renderPitch)) * stepY) / 100);
 			
 			return new float[]{mc.player.headYaw + yawFinal, mc.player.renderPitch + pitchFinal};
 		} else {

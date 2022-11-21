@@ -1,42 +1,51 @@
 package net.grilledham.hamhacks.setting;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import net.grilledham.hamhacks.gui.element.GuiElement;
+import net.grilledham.hamhacks.gui.element.impl.SelectionSettingElement;
+import net.minecraft.text.Text;
 
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface SelectionSetting {
+public class SelectionSetting extends Setting<Integer> {
 	
-	/**
-	 * The translatable name of this setting
-	 */
-	String name();
+	private final Text[] options;
 	
-	/**
-	 * The category of this setting
-	 */
-	String category() default "";
+	public SelectionSetting(String name, int defaultValue, ShouldShow shouldShow, String... options) {
+		super(name, defaultValue, shouldShow);
+		this.options = new Text[options.length];
+		for(int i = 0; i < options.length; i++) {
+			this.options[i] = Text.translatable(options[i]);
+		}
+	}
 	
-	/**
-	 * The default value of this setting
-	 */
-	int defaultValue() default 0;
+	public String[] options() {
+		String[] options = new String[this.options.length];
+		for(int i = 0; i < this.options.length; i++) {
+			options[i] = this.options[i].getString();
+		}
+		return options;
+	}
 	
-	/**
-	 * The possible values for this setting
-	 */
-	String[] options();
+	@Override
+	public void set(Integer value) {
+		if(value > options.length || value < 0) {
+			throw new IllegalArgumentException("Out of bounds: " + value + " | 0-" + options.length);
+		}
+		super.set(value);
+	}
 	
-	/**
-	 * <code>true</code> if this setting should never be displayed to the player
-	 */
-	boolean neverShow() default false;
+	@Override
+	public GuiElement getElement(float x, float y, double scale) {
+		return new SelectionSettingElement(x, y, scale, this);
+	}
 	
-	/**
-	 * <p>Names of fields within the containing class that this setting depends on</p>
-	 * <p>When a dependency is <code>false</code>, this setting will not be displayed to the player</p>
-	 */
-	String[] dependsOn() default {};
+	@Override
+	public JsonElement save() {
+		return new JsonPrimitive(value);
+	}
+	
+	@Override
+	public void load(JsonElement e) {
+		value = e.getAsInt();
+	}
 }

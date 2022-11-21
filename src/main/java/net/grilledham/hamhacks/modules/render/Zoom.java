@@ -11,78 +11,46 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.KeySetting;
 import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 
 public class Zoom extends Module {
 	
-	@KeySetting(name = "hamhacks.module.zoom.zoomKey", category = "hamhacks.module.zoom.category.options")
-	public Keybind zoomKey = new Keybind(GLFW.GLFW_KEY_V);
+	private final SettingCategory OPTIONS_CATEGORY = new SettingCategory("hamhacks.module.zoom.category.options");
 	
-	@NumberSetting(
-			name = "hamhacks.module.zoom.initialZoom", category = "hamhacks.module.zoom.category.options",
-			defaultValue = 4,
-			min = 1,
-			max = 50
-	)
-	public float initialZoom = 4;
+	private final KeySetting zoomKey = new KeySetting("hamhacks.module.zoom.zoomKey", new Keybind(GLFW.GLFW_KEY_V), () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.zoom.scrollToZoom", category = "hamhacks.module.zoom.category.scroll")
-	public boolean scrollToZoom = false;
+	private final NumberSetting initialZoom = new NumberSetting("hamhacks.module.zoom.initialZoom", 4, () -> true, 1, 50);
 	
-	@BoolSetting(name = "hamhacks.module.zoom.linearScrollSpeed", category = "hamhacks.module.zoom.category.scroll", dependsOn = "scrollToZoom")
-	public boolean linearScrollSpeed = false;
+	private final SettingCategory SCROLL_CATEGORY = new SettingCategory("hamhacks.module.zoom.category.scroll");
 	
-	@NumberSetting(
-			name = "hamhacks.module.zoom.scrollSpeed", category = "hamhacks.module.zoom.category.scroll",
-			defaultValue = 1,
-			min = 1,
-			max = 10,
-			dependsOn = "scrollToZoom"
-	)
-	public float scrollSpeed = 1;
+	private final BoolSetting scrollToZoom = new BoolSetting("hamhacks.module.zoom.scrollToZoom", false, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.zoom.clampZoom", category = "hamhacks.module.zoom.category.clamp", defaultValue = true, dependsOn = "scrollToZoom")
-	public boolean clampZoom = true;
+	private final BoolSetting linearScrollSpeed = new BoolSetting("hamhacks.module.zoom.linearScrollSpeed", false, scrollToZoom::get);
 	
-	@NumberSetting(
-			name = "hamhacks.module.zoom.minZoom", category = "hamhacks.module.zoom.category.clamp",
-			min = 1,
-			max = 4,
-			dependsOn = {"clampZoom", "scrollToZoom"}
-	)
-	public float minZoom = 0;
+	private final NumberSetting scrollSpeed = new NumberSetting("hamhacks.module.zoom.scrollSpeed", 1, scrollToZoom::get, 1, 10);
 	
-	@NumberSetting(
-			name = "hamhacks.module.zoom.maxZoom", category = "hamhacks.module.zoom.category.clamp",
-			defaultValue = 50,
-			min = 4,
-			max = 500,
-			dependsOn = {"clampZoom", "scrollToZoom"}
-	)
-	public float maxZoom = 50;
+	private final SettingCategory CLAMP_CATEGORY = new SettingCategory("hamhacks.module.zoom.category.clamp");
 	
-	@BoolSetting(name = "hamhacks.module.zoom.adjustSensitivity", category = "hamhacks.module.zoom.category.advanced")
-	public boolean adjustSensitivity = false;
+	private final BoolSetting clampZoom = new BoolSetting("hamhacks.module.zoom.clampZoom", true, scrollToZoom::get);
 	
-	@BoolSetting(name = "hamhacks.module.zoom.smoothZoom", category = "hamhacks.module.zoom.category.advanced")
-	public boolean smoothZoom = false;
+	private final NumberSetting minZoom = new NumberSetting("hamhacks.module.zoom.minZoom", 1, () -> clampZoom.get() || scrollToZoom.get(), 1, 4);
 	
-	@NumberSetting(
-			name = "hamhacks.module.zoom.animationSpeed", category = "hamhacks.module.zoom.category.advanced",
-			defaultValue = 0.5f,
-			min = 0,
-			max = 1,
-			dependsOn = "smoothZoom"
-	)
-	public float animationSpeed = 0.5f;
+	private final NumberSetting maxZoom = new NumberSetting("hamhacks.module.zoom.maxZoom", 50, () -> clampZoom.get() || scrollToZoom.get(), 4, 500);
 	
-	@BoolSetting(name = "hamhacks.module.zoom.smoothCamera", category = "hamhacks.module.zoom.category.advanced")
-	public boolean smoothCamera = false;
+	private final SettingCategory ADVANCED_CATEGORY = new SettingCategory("hamhacks.module.zoom.category.advanced");
 	
-	@BoolSetting(name = "hamhacks.module.zoom.renderHand", category = "hamhacks.module.zoom.category.advanced", defaultValue = true)
-	public boolean renderHand = true;
+	private final BoolSetting adjustSensitivity = new BoolSetting("hamhacks.module.zoom.adjustSensitivity", false, () -> true);
+	
+	private final BoolSetting smoothZoom = new BoolSetting("hamhacks.module.zoom.smoothZoom", false, () -> true);
+	
+	private final NumberSetting animationSpeed = new NumberSetting("hamhacks.module.zoom.animationSpeed", 0.5, smoothZoom::get, 0, 1);
+	
+	private final BoolSetting smoothCamera = new BoolSetting("hamhacks.module.zoom.smoothCamera", false, () -> true);
+	
+	public final BoolSetting renderHand = new BoolSetting("hamhacks.module.zoom.renderHand", true, () -> true);
 	
 	private boolean zooming = false;
 	
@@ -92,28 +60,45 @@ public class Zoom extends Module {
 	private double prevSensitivity = 0;
 	private boolean wasSmoothCameraEnabled = false;
 	
-	private final Animation animation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, animationSpeed, true).build();
+	private final Animation animation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, animationSpeed.get(), true).build();
 	
 	public Zoom() {
 		super(Text.translatable("hamhacks.module.zoom"), Category.RENDER, new Keybind(0));
 		setEnabled(true);
 		animation.setAbsolute(1);
+		settingCategories.add(0, OPTIONS_CATEGORY);
+		OPTIONS_CATEGORY.add(zoomKey);
+		OPTIONS_CATEGORY.add(initialZoom);
+		settingCategories.add(1, SCROLL_CATEGORY);
+		SCROLL_CATEGORY.add(scrollToZoom);
+		SCROLL_CATEGORY.add(linearScrollSpeed);
+		SCROLL_CATEGORY.add(scrollSpeed);
+		settingCategories.add(2, CLAMP_CATEGORY);
+		CLAMP_CATEGORY.add(clampZoom);
+		CLAMP_CATEGORY.add(minZoom);
+		CLAMP_CATEGORY.add(maxZoom);
+		settingCategories.add(3, ADVANCED_CATEGORY);
+		ADVANCED_CATEGORY.add(adjustSensitivity);
+		ADVANCED_CATEGORY.add(smoothZoom);
+		ADVANCED_CATEGORY.add(animationSpeed);
+		ADVANCED_CATEGORY.add(smoothCamera);
+		ADVANCED_CATEGORY.add(renderHand);
 	}
 	
 	@Override
 	public String getHUDText() {
-		return super.getHUDText() + " \u00a77" + String.format("%.2f", smoothZoom ? zoomAmount : zoom);
+		return super.getHUDText() + " \u00a77" + String.format("%.2f", smoothZoom.get() ? zoomAmount : zoom);
 	}
 	
 	
 	public double modifyFov(double fov) {
 		if(isEnabled()) {
-			if(zoomKey.isPressed() && !zooming) {
-				zoom = initialZoom;
+			if(zoomKey.get().isPressed() && !zooming) {
+				zoom = initialZoom.get();
 				prevSensitivity = mc.options.getMouseSensitivity().getValue().floatValue();
 				wasSmoothCameraEnabled = mc.options.smoothCameraEnabled;
 				zooming = true;
-			} else if(!zoomKey.isPressed() && zooming) {
+			} else if(!zoomKey.get().isPressed() && zooming) {
 				zoom = 1;
 				mc.options.getMouseSensitivity().setValue(prevSensitivity);
 				mc.options.smoothCameraEnabled = wasSmoothCameraEnabled;
@@ -121,7 +106,7 @@ public class Zoom extends Module {
 			}
 			
 			if(zooming) {
-				if(adjustSensitivity) {
+				if(adjustSensitivity.get()) {
 					if(zoom == 0) {
 						mc.options.getMouseSensitivity().setValue(prevSensitivity);
 					} else {
@@ -131,21 +116,21 @@ public class Zoom extends Module {
 						}
 					}
 				}
-				if(smoothCamera) {
+				if(smoothCamera.get()) {
 					mc.options.smoothCameraEnabled = true;
 				}
-				if(clampZoom) {
-					zoom = MathHelper.clamp(zoom, minZoom, maxZoom);
+				if(clampZoom.get()) {
+					zoom = MathHelper.clamp(zoom, minZoom.get(), maxZoom.get());
 				}
 			}
 			
-			if(smoothZoom) {
+			if(smoothZoom.get()) {
 				animation.set(zoom);
-				animation.setDuration(animationSpeed);
+				animation.setDuration(animationSpeed.get());
 				animation.update();
 				zoomAmount = animation.get();
-				if(clampZoom) {
-					zoomAmount = MathHelper.clamp(zoomAmount, minZoom, maxZoom);
+				if(clampZoom.get()) {
+					zoomAmount = MathHelper.clamp(zoomAmount, minZoom.get(), maxZoom.get());
 				}
 				if(zoomAmount != 0) {
 					fov /= zoomAmount;
@@ -160,23 +145,23 @@ public class Zoom extends Module {
 	}
 	
 	public double getZoomAmount() {
-		return smoothZoom ? zoomAmount : zoom;
+		return smoothZoom.get() ? zoomAmount : zoom;
 	}
 	
 	@EventListener
 	public void onScroll(EventScroll e) {
-		if(!scrollToZoom || !zooming) {
+		if(!scrollToZoom.get() || !zooming) {
 			return;
 		}
 		e.canceled = true;
-		if(linearScrollSpeed) {
+		if(linearScrollSpeed.get()) {
 			float direction = 0;
 			if(e.vertical > 0) {
 				direction = 1;
 			} else if(e.vertical < 0) {
 				direction = -1;
 			}
-			zoom += scrollSpeed * direction;
+			zoom += scrollSpeed.get() * direction;
 		} else {
 			float direction = 1;
 			if(e.vertical > 0) {
@@ -184,7 +169,7 @@ public class Zoom extends Module {
 			} else if(e.vertical < 0) {
 				direction = 0.5f;
 			}
-			zoom *= scrollSpeed * direction;
+			zoom *= scrollSpeed.get() * direction;
 		}
 	}
 }

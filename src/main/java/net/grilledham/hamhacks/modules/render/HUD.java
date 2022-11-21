@@ -9,7 +9,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.ColorSetting;
-import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.ChatUtil;
 import net.grilledham.hamhacks.util.Color;
@@ -26,7 +26,6 @@ import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -36,88 +35,94 @@ import java.util.Map;
 
 public class HUD extends Module {
 	
-	@BoolSetting(name = "hamhacks.module.hud.animate", category = "hamhacks.module.hud.category.appearance", defaultValue = true)
-	public boolean animate = true;
+	private final SettingCategory APPEARANCE_CATEGORY = new SettingCategory("hamhacks.module.hud.category.appearance");
 	
-	@ColorSetting(name = "hamhacks.module.hud.accentColor", category = "hamhacks.module.hud.category.appearance")
-	public Color accentColor = new Color(1, 1, 1, 1, true);
+	private final BoolSetting animate = new BoolSetting("hamhacks.module.hud.animate", true, () -> true);
 	
-	@ColorSetting(name = "hamhacks.module.hud.backgroundColor", category = "hamhacks.module.hud.category.appearance")
-	public Color bgColor = new Color(0x80000000);
+	private final ColorSetting accentColor = new ColorSetting("hamhacks.module.hud.accentColor", new Color(1, 1, 1, 1, true), () -> true);
 	
-	@ColorSetting(name = "hamhacks.module.hud.textColor", category = "hamhacks.module.hud.category.appearance")
-	public Color textColor = Color.getWhite();
+	private final ColorSetting bgColor = new ColorSetting("hamhacks.module.hud.backgroundColor", new Color(0x80000000), () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.hud.showLogo", category = "hamhacks.module.hud.category.elements", defaultValue = true)
-	public boolean showLogo = true;
+	private final ColorSetting textColor = new ColorSetting("hamhacks.module.hud.textColor", Color.getWhite(), () -> true);
 	
-	@StringSetting(name = "hamhacks.module.hud.logoText", category = "hamhacks.module.hud.category.elements", dependsOn = "showLogo", placeholder = "&4&l&oHamHacks")
-	public String logoText = "";
+	private final SettingCategory ELEMENTS_CATEGORY = new SettingCategory("hamhacks.module.hud.category.elements");
 	
-	@BoolSetting(name = "hamhacks.module.hud.showFps", category = "hamhacks.module.hud.category.elements", defaultValue = true)
-	public boolean showFPS = true;
+	private final BoolSetting showLogo = new BoolSetting("hamhacks.module.hud.showLogo", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.hud.showPing", category = "hamhacks.module.hud.category.elements", defaultValue = true)
-	public boolean showPing = true;
+	private final StringSetting logoText = new StringSetting("hamhacks.module.hud.logoText", "", showLogo::get, "&4&l&oHamHacks");
 	
-	@BoolSetting(name = "hamhacks.module.hud.showTps", category = "hamhacks.module.hud.category.elements", defaultValue = true)
-	public boolean showTPS = true;
+	private final BoolSetting showFPS = new BoolSetting("hamhacks.module.hud.showFps", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.hud.showTimeSinceLastTick", category = "hamhacks.module.hud.category.elements", defaultValue = true)
-	public boolean showTimeSinceLastTick = true;
+	private final BoolSetting showPing = new BoolSetting("hamhacks.module.hud.showPing", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.hud.showModules", category = "hamhacks.module.hud.category.elements", defaultValue = true)
-	public boolean showModules = true;
+	private final BoolSetting showTPS = new BoolSetting("hamhacks.module.hud.showTps", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.hud.showCoordinates", category = "hamhacks.module.hud.category.elements", defaultValue = true)
-	public boolean showCoordinates = true;
+	private final BoolSetting showTimeSinceLastTick = new BoolSetting("hamhacks.module.hud.showTimeSinceLastTick", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.hud.showDirection", category = "hamhacks.module.hud.category.elements", defaultValue = true)
-	public boolean showDirection = true;
+	private final BoolSetting showModules = new BoolSetting("hamhacks.module.hud.showModules", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.hud.directionYawPitch", category = "hamhacks.module.hud.category.elements", dependsOn = "showDirection")
-	public boolean directionYawPitch = false;
+	private final BoolSetting showCoordinates = new BoolSetting("hamhacks.module.hud.showCoordinates", true, () -> true);
 	
-	@NumberSetting(
-			name = "hamhacks.module.hud.heldItemScale",
-			defaultValue = 1,
-			min = 0.1f,
-			max = 2, category = "hamhacks.module.hud.category.other"
-	)
-	public float heldItemScale = 1;
+	private final BoolSetting showDirection = new BoolSetting("hamhacks.module.hud.showDirection", true, () -> true);
 	
-	@NumberSetting(
-			name = "hamhacks.module.hud.shieldHeight",
-			min = -0.5f,
-			max = 0.5f, category = "hamhacks.module.hud.category.other"
-	)
-	public float shieldHeightModifier = 0;
+	private final BoolSetting directionYawPitch = new BoolSetting("hamhacks.module.hud.directionYawPitch", false, showDirection::get);
 	
-	@NumberSetting(
-			name = "hamhacks.module.hud.fireHeight",
-			min = -0.5f,
-			max = 0.5f, category = "hamhacks.module.hud.category.other"
-	)
-	public float fireHeightModifier = 0;
+//	@NumberSetting( // TODO: Move to module
+//			name = "hamhacks.module.hud.heldItemScale",
+//			defaultValue = 1,
+//			min = 0.1f,
+//			max = 2, category = "hamhacks.module.hud.category.other"
+//	)
+//	public float heldItemScale = 1;
 	
-	@NumberSetting(
-			name = "hamhacks.module.hud.overlayTransparency",
-			defaultValue = 1,
-			min = 0,
-			max = 1, category = "hamhacks.module.hud.category.other"
-	)
-	public float overlayTransparency = 1;
+//	@NumberSetting( // TODO: Move to module + fireHeight + overlayTransparency
+//			name = "hamhacks.module.hud.shieldHeight",
+//			min = -0.5f,
+//			max = 0.5f, category = "hamhacks.module.hud.category.other"
+//	)
+//	public float shieldHeightModifier = 0;
+//
+//	@NumberSetting(
+//			name = "hamhacks.module.hud.fireHeight",
+//			min = -0.5f,
+//			max = 0.5f, category = "hamhacks.module.hud.category.other"
+//	)
+//	public float fireHeightModifier = 0;
+//
+//	@NumberSetting(
+//			name = "hamhacks.module.hud.overlayTransparency",
+//			defaultValue = 1,
+//			min = 0,
+//			max = 1, category = "hamhacks.module.hud.category.other"
+//	)
+//	public float overlayTransparency = 1;
 	
-	@BoolSetting(name = "hamhacks.module.hud.modelBobbingOnly", category = "hamhacks.module.hud.category.other")
-	public boolean modelBobbingOnly = false;
+//	@BoolSetting(name = "hamhacks.module.hud.modelBobbingOnly", category = "hamhacks.module.hud.category.other") // TODO: Move to module
+//	public boolean modelBobbingOnly = false;
 	
-	@BoolSetting(name = "hamhacks.module.hud.noHurtCam", category = "hamhacks.module.hud.category.other")
-	public boolean noHurtCam = false;
+//	@BoolSetting(name = "hamhacks.module.hud.noHurtCam", category = "hamhacks.module.hud.category.other") // TODO: Move to module
+//	public boolean noHurtCam = false;
 	
 	public HUD() {
 		super(Text.translatable("hamhacks.module.hud"), Category.RENDER, new Keybind(0));
 		setEnabled(true);
-		showModule = false;
+		showModule.set(true);
+		settingCategories.add(0, APPEARANCE_CATEGORY);
+		APPEARANCE_CATEGORY.add(animate);
+		APPEARANCE_CATEGORY.add(accentColor);
+		APPEARANCE_CATEGORY.add(bgColor);
+		APPEARANCE_CATEGORY.add(textColor);
+		settingCategories.add(1, ELEMENTS_CATEGORY);
+		ELEMENTS_CATEGORY.add(showLogo);
+		ELEMENTS_CATEGORY.add(logoText);
+		ELEMENTS_CATEGORY.add(showFPS);
+		ELEMENTS_CATEGORY.add(showPing);
+		ELEMENTS_CATEGORY.add(showTPS);
+		ELEMENTS_CATEGORY.add(showTimeSinceLastTick);
+		ELEMENTS_CATEGORY.add(showModules);
+		ELEMENTS_CATEGORY.add(showCoordinates);
+		ELEMENTS_CATEGORY.add(showDirection);
+		ELEMENTS_CATEGORY.add(directionYawPitch);
 	}
 	
 	@Override
@@ -147,26 +152,26 @@ public class HUD extends Module {
 		
 		matrices.push();
 		
-		float[] textC = textColor.getHSB();
+		float[] textC = textColor.get().getHSB();
 		
 		int j = 0;
 		int i = 0;
 		float yAdd = 0;
 		Animation animation = getAnimation(j++);
-		if(animate) {
-			animation.set(showLogo && isEnabled());
+		if(animate.get()) {
+			animation.set(showLogo.get() && isEnabled());
 		} else {
-			animation.setAbsolute(showLogo && isEnabled());
+			animation.setAbsolute(showLogo.get() && isEnabled());
 		}
 		if(animation.get() > 0) {
 			float finalTextHue;
-			if(textColor.getChroma()) {
+			if(textColor.get().getChroma()) {
 				finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 			} else {
 				finalTextHue = textC[0];
 			}
 			int textColor = Color.toRGB(finalTextHue, textC[1], textC[2], textC[3]);
-			String text = logoText.equals("") ? "§4§l§oHamHacks" : ChatUtil.format(logoText);
+			String text = logoText.get().equals("") ? "§4§l§oHamHacks" : ChatUtil.format(logoText.get());
 			float textX = 2;
 			float textY = 2;
 			matrices.push();
@@ -179,10 +184,10 @@ public class HUD extends Module {
 			i++;
 		}
 		animation = getAnimation(j++);
-		if(animate) {
-			animation.set(showFPS && isEnabled());
+		if(animate.get()) {
+			animation.set(showFPS.get() && isEnabled());
 		} else {
-			animation.setAbsolute(showFPS && isEnabled());
+			animation.setAbsolute(showFPS.get() && isEnabled());
 		}
 		if(animation.get() > 0) {
 			String fps = MinecraftClient.getInstance().fpsDebugString;
@@ -191,10 +196,10 @@ public class HUD extends Module {
 			i++;
 		}
 		animation = getAnimation(j++);
-		if(animate) {
-			animation.set(showPing && isEnabled());
+		if(animate.get()) {
+			animation.set(showPing.get() && isEnabled());
 		} else {
-			animation.setAbsolute(showPing && isEnabled());
+			animation.setAbsolute(showPing.get() && isEnabled());
 		}
 		if(animation.get() > 0) {
 			String ping = "0 ms";
@@ -214,10 +219,10 @@ public class HUD extends Module {
 			i++;
 		}
 		animation = getAnimation(j++);
-		if(animate) {
-			animation.set(showTPS && isEnabled());
+		if(animate.get()) {
+			animation.set(showTPS.get() && isEnabled());
 		} else {
-			animation.setAbsolute(showTPS && isEnabled());
+			animation.setAbsolute(showTPS.get() && isEnabled());
 		}
 		if(animation.get() > 0) {
 			String tps = String.format("%.2f tps", ConnectionUtil.getTPS());
@@ -225,10 +230,10 @@ public class HUD extends Module {
 			i++;
 		}
 		animation = getAnimation(j++);
-		if(animate) {
-			animation.set(showTimeSinceLastTick && isEnabled());
+		if(animate.get()) {
+			animation.set(showTimeSinceLastTick.get() && isEnabled());
 		} else {
-			animation.setAbsolute(showTimeSinceLastTick && isEnabled());
+			animation.setAbsolute(showTimeSinceLastTick.get() && isEnabled());
 		}
 		if(animation.get() > 0) {
 			float timeSinceLastTick = ConnectionUtil.getTimeSinceLastTick() / 1000f;
@@ -245,10 +250,10 @@ public class HUD extends Module {
 		Map<Module, Animation> moduleAnimations = new HashMap<>();
 		for(Module m : ModuleManager.getModules()) {
 			animation = getAnimation(k++);
-			if(animate) {
-				animation.set(m.isEnabled() && m.shouldShowModule() && showModules && isEnabled());
+			if(animate.get()) {
+				animation.set(m.isEnabled() && m.shouldShowModule() && showModules.get() && isEnabled());
 			} else {
-				animation.setAbsolute(m.isEnabled() && m.shouldShowModule() && showModules && isEnabled());
+				animation.setAbsolute(m.isEnabled() && m.shouldShowModule() && showModules.get() && isEnabled());
 			}
 			moduleAnimations.put(m, animation);
 		}
@@ -264,10 +269,10 @@ public class HUD extends Module {
 		
 		yAdd = 0;
 		animation = getAnimation(j++);
-		if(animate) {
-			animation.set((showCoordinates || showDirection) && isEnabled());
+		if(animate.get()) {
+			animation.set((showCoordinates.get() || showDirection.get()) && isEnabled());
 		} else {
-			animation.setAbsolute((showCoordinates || showDirection) && isEnabled());
+			animation.setAbsolute((showCoordinates.get() || showDirection.get()) && isEnabled());
 		}
 		if(animation.get() > 0 && MinecraftClient.getInstance().player != null) {
 			Freecam freecam = ModuleManager.getModule(Freecam.class);
@@ -275,16 +280,16 @@ public class HUD extends Module {
 			float yaw = freecam.isEnabled() ? freecam.yaw : MinecraftClient.getInstance().player.getYaw();
 			float pitch = freecam.isEnabled() ? freecam.pitch : MinecraftClient.getInstance().player.getPitch();
 			String coords = "";
-			if(showCoordinates) {
+			if(showCoordinates.get()) {
 				coords += String.format("Coords: %.2f, %.2f, %.2f ", pos.getX(), pos.getY(), pos.getZ());
 			}
-			if(showDirection) {
+			if(showDirection.get()) {
 				if(!coords.equals("")) {
 					coords += "| ";
 				} else {
 					coords += "Facing: ";
 				}
-				if(directionYawPitch) {
+				if(directionYawPitch.get()) {
 					coords += String.format("%.2f, %.2f ", yaw, pitch);
 				} else {
 					coords += String.format("%s ", DirectionHelper.fromRotation(yaw));
@@ -301,23 +306,23 @@ public class HUD extends Module {
 	}
 	
 	private float drawLeftAligned(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
-		float[] barC = accentColor.getHSB();
-		float[] bgC = bgColor.getHSB();
-		float[] textC = textColor.getHSB();
+		float[] barC = accentColor.get().getHSB();
+		float[] bgC = bgColor.get().getHSB();
+		float[] textC = textColor.get().getHSB();
 		float finalBarHue;
-		if(accentColor.getChroma()) {
+		if(accentColor.get().getChroma()) {
 			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBarHue = barC[0];
 		}
 		float finalBGHue;
-		if(bgColor.getChroma()) {
+		if(bgColor.get().getChroma()) {
 			finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBGHue = bgC[0];
 		}
 		float finalTextHue;
-		if(textColor.getChroma()) {
+		if(textColor.get().getChroma()) {
 			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalTextHue = textC[0];
@@ -336,23 +341,23 @@ public class HUD extends Module {
 	}
 	
 	private float drawRightAligned(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
-		float[] barC = accentColor.getHSB();
-		float[] bgC = bgColor.getHSB();
-		float[] textC = textColor.getHSB();
+		float[] barC = accentColor.get().getHSB();
+		float[] bgC = bgColor.get().getHSB();
+		float[] textC = textColor.get().getHSB();
 		float finalBarHue;
-		if(accentColor.getChroma()) {
+		if(accentColor.get().getChroma()) {
 			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBarHue = barC[0];
 		}
 		float finalBGHue;
-		if(bgColor.getChroma()) {
+		if(bgColor.get().getChroma()) {
 			finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalBGHue = bgC[0];
 		}
 		float finalTextHue;
-		if(textColor.getChroma()) {
+		if(textColor.get().getChroma()) {
 			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalTextHue = textC[0];
@@ -371,9 +376,9 @@ public class HUD extends Module {
 	}
 	
 	private float drawCoords(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
-		float[] textC = textColor.getHSB();
+		float[] textC = textColor.get().getHSB();
 		float finalTextHue;
-		if(textColor.getChroma()) {
+		if(textColor.get().getChroma()) {
 			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
 		} else {
 			finalTextHue = textC[0];
@@ -395,21 +400,22 @@ public class HUD extends Module {
 	public void applyHandTransform(LivingEntity entity, ItemStack stack, ModelTransformation.Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
 		if(isEnabled()) {
 			if(entity == mc.getCameraEntity() && mc.options.getPerspective().isFirstPerson()) {
-				matrices.scale(ModuleManager.getModule(HUD.class).heldItemScale, ModuleManager.getModule(HUD.class).heldItemScale, ModuleManager.getModule(HUD.class).heldItemScale);
-				if(stack.getItem() == Items.SHIELD) {
-					matrices.translate(0, shieldHeightModifier, 0);
-				}
+//				matrices.scale(ModuleManager.getModule(HUD.class).heldItemScale, ModuleManager.getModule(HUD.class).heldItemScale, ModuleManager.getModule(HUD.class).heldItemScale);
+//				if(stack.getItem() == Items.SHIELD) {
+//					matrices.translate(0, shieldHeightModifier, 0);
+//				} // TODO: Move to module
 			}
 		}
 	}
 	
 	public void applyFireTransform(MatrixStack matrices) {
 		if(isEnabled()) {
-			matrices.translate(0, fireHeightModifier, 0);
+//			matrices.translate(0, fireHeightModifier, 0); // TODO: Move to module
 		}
 	}
 	
 	public float getOverlayTransparency(float original) {
-		return isEnabled() ? (overlayTransparency * original) : original;
+//		return isEnabled() ? (overlayTransparency * original) : original; // TODO: Move to module
+		return  original;
 	}
 }

@@ -12,16 +12,11 @@ import net.minecraft.text.Text;
 
 public class PacketFly extends Module {
 	
-	@NumberSetting(
-			name = "hamhacks.module.packetFly.timerMultiplier",
-			defaultValue = 1,
-			min = 1,
-			max = 5
-	)
-	public float timerMultiplier = 1;
+	private final NumberSetting timerMultiplier = new NumberSetting("hamhacks.module.packetFly.timerMultiplier", 1, () -> true, 1, 5);
 	
 	public PacketFly() {
 		super(Text.translatable("hamhacks.module.packetFly"), Category.MOVEMENT, new Keybind(0));
+		GENERAL_CATEGORY.add(timerMultiplier);
 	}
 	
 	@EventListener
@@ -30,8 +25,8 @@ public class PacketFly extends Module {
 			return;
 		}
 		
-		if(timerMultiplier > 1) {
-			imc.getRenderTickCounter().setTPS(20 * timerMultiplier);
+		if(timerMultiplier.get() > 1) {
+			imc.getRenderTickCounter().setTPS((float)(20 * timerMultiplier.get()));
 		}
 		
 		mc.player.setVelocity(0, 0, 0);
@@ -72,9 +67,7 @@ public class PacketFly extends Module {
 		dz *= step;
 		
 		if(mc.player.age % 8 == 0) {
-			dy = -0.03F;
-		} else if(mc.player.age % 8 == 1) {
-			dy = 0.03F;
+			dy = -0.05F;
 		}
 		
 		Vec3 pos = new Vec3(mc.player.getPos());

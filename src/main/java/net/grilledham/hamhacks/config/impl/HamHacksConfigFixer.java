@@ -8,12 +8,8 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.page.PageManager;
-import net.grilledham.hamhacks.setting.KeySetting;
-import net.grilledham.hamhacks.setting.NumberSetting;
-import net.grilledham.hamhacks.setting.SelectionSetting;
-import net.grilledham.hamhacks.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.*;
 
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -197,9 +193,12 @@ public class HamHacksConfigFixer implements ConfigFixer {
 			case 0:
 				for(Module m : ModuleManager.getModules()) {
 					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(m.getConfigName()).getAsJsonObject("settings");
-					for(Field f : SettingHelper.getNumberSettings(m)) {
-						String name = f.getAnnotation(NumberSetting.class).name();
-						settings.addProperty(name, settings.get(name).getAsJsonObject().get("value").getAsFloat());
+					for(SettingCategory c : m.getSettingCategories()) {
+						for(Setting<?> s : c.getSettings()) {
+							if(s instanceof NumberSetting) {
+								settings.addProperty(s.getConfigName(), settings.get(s.getConfigName()).getAsJsonObject().get("value").getAsFloat());
+							}
+						}
 					}
 				}
 			case 1:
@@ -237,12 +236,15 @@ public class HamHacksConfigFixer implements ConfigFixer {
 			case 3:
 				for(Module m : ModuleManager.getModules()) {
 					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(m.getConfigName()).getAsJsonObject("settings");
-					for(Field f : SettingHelper.getKeySettings(m)) {
-						String name = f.getAnnotation(KeySetting.class).name();
-						int code = settings.get(name).getAsInt();
-						JsonArray arr = new JsonArray();
-						arr.add(code);
-						settings.add(name, arr);
+					for(SettingCategory c : m.getSettingCategories()) {
+						for(Setting<?> s : c.getSettings()) {
+							if(s instanceof KeySetting) {
+								int code = settings.get(s.getConfigName()).getAsInt();
+								JsonArray arr = new JsonArray();
+								arr.add(code);
+								settings.add(s.getConfigName(), arr);
+							}
+						}
 					}
 				}
 			case 4:
@@ -250,17 +252,21 @@ public class HamHacksConfigFixer implements ConfigFixer {
 				for(Page p : PageManager.getPages()) {
 					String name = p.getConfigName().replace("page", "module"); // should work for most converted pages
 					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(name).getAsJsonObject("settings");
-					for(Field f : SettingHelper.getSelectionSettings(p)) {
-						String settingName = f.getAnnotation(SelectionSetting.class).name().replace("module", "page");
-						String selection = settings.get(settingName).getAsString();
-						int index = 0;
-						for(int i = 0; i < f.getAnnotation(SelectionSetting.class).options().length; i++) {
-							if(f.getAnnotation(SelectionSetting.class).options()[i].equals(selection)) {
-								index = i;
-								break;
+					for(SettingCategory c : p.getSettingCategories()) {
+						for(Setting<?> s : c.getSettings()) {
+							if(s instanceof SelectionSetting) {
+								String settingName = s.getConfigName().replace("module", "page");
+								String selection = settings.get(settingName).getAsString();
+								int index = 0;
+								for(int i = 0; i < ((SelectionSetting)s).options().length; i++) {
+									if(((SelectionSetting)s).options()[i].equals(selection)) {
+										index = i;
+										break;
+									}
+								}
+								settings.addProperty(settingName, index);
 							}
 						}
-						settings.addProperty(settingName, index);
 					}
 					JsonObject page = new JsonObject();
 					page.add("settings", settings);
@@ -269,17 +275,21 @@ public class HamHacksConfigFixer implements ConfigFixer {
 				obj.add("pages", pages);
 				for(Module m : ModuleManager.getModules()) {
 					JsonObject settings = obj.getAsJsonObject("modules").getAsJsonObject(m.getConfigName()).getAsJsonObject("settings");
-					for(Field f : SettingHelper.getSelectionSettings(m)) {
-						String name = f.getAnnotation(SelectionSetting.class).name();
-						String selection = settings.get(name).getAsString();
-						int index = 0;
-						for(int i = 0; i < f.getAnnotation(SelectionSetting.class).options().length; i++) {
-							if(f.getAnnotation(SelectionSetting.class).options()[i].equals(selection)) {
-								index = i;
-								break;
+					for(SettingCategory c : m.getSettingCategories()) {
+						for(Setting<?> s : c.getSettings()) {
+							if(s instanceof SelectionSetting) {
+								String name = s.getConfigName();
+								String selection = settings.get(name).getAsString();
+								int index = 0;
+								for(int i = 0; i < ((SelectionSetting)s).options().length; i++) {
+									if(((SelectionSetting)s).options()[i].equals(selection)) {
+										index = i;
+										break;
+									}
+								}
+								settings.addProperty(name, index);
 							}
 						}
-						settings.addProperty(name, index);
 					}
 				}
 		}

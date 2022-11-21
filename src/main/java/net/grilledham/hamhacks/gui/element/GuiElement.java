@@ -15,9 +15,9 @@ public abstract class GuiElement {
 	protected final float preferredWidth;
 	protected final float preferredHeight;
 	
-	protected final float scale;
+	protected final double scale;
 	
-	public GuiElement(float x, float y, float width, float height, float scale) {
+	public GuiElement(float x, float y, float width, float height, double scale) {
 		this.x = x;
 		this.y = y;
 		this.width = width;

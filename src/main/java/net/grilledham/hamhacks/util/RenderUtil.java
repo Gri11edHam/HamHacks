@@ -254,25 +254,25 @@ public class RenderUtil {
 		RenderSystem.enableTexture();
 	}
 	
-	public static void drawToolTip(MatrixStack stack, String title, String tooltip, float mx, float my, float scale) {
+	public static void drawToolTip(MatrixStack stack, String title, String tooltip, double mx, double my, double scale) {
 		String[] lines = tooltip.split("\n");
 		
 		float w = mc.textRenderer.getWidth(Arrays.stream(lines).sorted(Comparator.comparingInt(s -> mc.textRenderer.getWidth((String)s)).reversed()).toList().get(0)) + 8;
 		float h = (lines.length + (!title.equals("") ? 1 : 0)) * (mc.textRenderer.fontHeight + 2) + 8;
-		float x = mx - 4;
-		float y = my - 2 - h;
+		float x = (float)(mx - 4);
+		float y = (float)(my - 2 - h);
 		
 		boolean shift = false;
 		if(y < 0) {
-			y = my + 4;
-			x = mx + 4;
+			y = (float)(my + 4);
+			x = (float)(mx + 4);
 			shift = true;
 		}
 		if(x + w > mc.getWindow().getScaledWidth()) {
 			x -= w - (shift ? 4 : 8);
 		}
 		
-		pushScissor(x, y, w, h, scale);
+		pushScissor(x, y, w, h, (float)scale);
 		applyScissor();
 		
 		preRender();

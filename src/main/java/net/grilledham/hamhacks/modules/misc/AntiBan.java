@@ -8,8 +8,7 @@ import net.minecraft.text.Text;
 
 public class AntiBan extends Module {
 	
-	@BoolSetting(name = "hamhacks.module.antiBan.joinEnforcedServers", defaultValue = true)
-	public boolean joinEnforcedServers = true;
+	public final BoolSetting joinEnforcedServers = new BoolSetting("hamhacks.module.antiBan.joinEnforcedServers", true, () -> true);
 	
 	public boolean hasConnected = false;
 	
@@ -18,6 +17,7 @@ public class AntiBan extends Module {
 	public AntiBan() {
 		super(Text.translatable("hamhacks.module.antiBan"), Category.MISC, new Keybind(0));
 		setEnabled(true);
+		GENERAL_CATEGORY.add(joinEnforcedServers);
 	}
 	
 	public static AntiBan getInstance() {

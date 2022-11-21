@@ -12,6 +12,7 @@ import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.SelectionSetting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -43,46 +44,58 @@ public class ESP extends Module {
 	
 	private final ArrayList<LivingEntity> entities = new ArrayList<>();
 	
-	@SelectionSetting(name = "hamhacks.module.esp.mode", category = "hamhacks.module.esp.category.mode", options = {"hamhacks.module.esp.mode.2d", "hamhacks.module.esp.mode.3d"})
-	public int mode = 1;
+	private final SettingCategory MODE_CATEGORY = new SettingCategory("hamhacks.module.esp.category.mode");
 	
-	@BoolSetting(name = "hamhacks.module.esp.players", category = "hamhacks.module.esp.category.players", defaultValue = true)
-	public boolean players = true;
+	private final SelectionSetting mode = new SelectionSetting("hamhacks.module.esp.mode", 1, () -> true, "hamhacks.module.esp.mode.2d", "hamhacks.module.esp.mode.3d");
 	
-	@BoolSetting(name = "hamhacks.module.esp.self", category = "hamhacks.module.esp.category.players", defaultValue = true, dependsOn = "players")
-	public boolean self = true;
+	private final SettingCategory PLAYERS_CATEGORY = new SettingCategory("hamhacks.module.esp.category.players");
 	
-	@ColorSetting(name = "hamhacks.module.esp.playerOutlineColor", category = "hamhacks.module.esp.category.players", dependsOn = "players")
-	public Color playerOutline = new Color(0xFF00FFFF);
+	private final BoolSetting players = new BoolSetting("hamhacks.module.esp.players", true, () -> true);
 	
-	@ColorSetting(name = "hamhacks.module.esp.playerFillColor", category = "hamhacks.module.esp.category.players", dependsOn = "players")
-	public Color playerFill = new Color(0x4000FFFF);
+	private final BoolSetting self = new BoolSetting("hamhacks.module.esp.self", true, players::get);
 	
-	@BoolSetting(name = "hamhacks.module.esp.hostiles", category = "hamhacks.module.esp.category.hostiles")
-	public boolean hostiles = false;
+	private final ColorSetting playerOutline = new ColorSetting("hamhacks.module.esp.playerOutlineColor", new Color(0xFF00FFFF), players::get);
 	
-	@ColorSetting(name = "hamhacks.module.esp.hostileOutlineColor", category = "hamhacks.module.esp.category.hostiles", dependsOn = "hostiles")
-	public Color hostileOutline = new Color(0xFFFF0000);
+	private final ColorSetting playerFill = new ColorSetting("hamhacks.module.esp.playerFillColor", new Color(0x4000FFFF), players::get);
 	
-	@ColorSetting(name = "hamhacks.module.esp.hostileFillColor", category = "hamhacks.module.esp.category.hostiles", dependsOn = "hostiles")
-	public Color hostileFill = new Color(0x40FF0000);
+	private final SettingCategory HOSTILES_CATEGORY = new SettingCategory("hamhacks.module.esp.category.hostiles");
 	
-	@BoolSetting(name = "hamhacks.module.esp.passives", category = "hamhacks.module.esp.category.passives")
-	public boolean passives = false;
+	private final BoolSetting hostiles = new BoolSetting("hamhacks.module.esp.hostiles", false, () -> true);
 	
-	@ColorSetting(name = "hamhacks.module.esp.passiveOutlineColor", category = "hamhacks.module.esp.category.passives", dependsOn = "passives")
-	public Color passiveOutline = new Color(0xFF00FF00);
+	private final ColorSetting hostileOutline = new ColorSetting("hamhacks.module.esp.hostileOutlineColor", new Color(0xFFFF0000), hostiles::get);
 	
-	@ColorSetting(name = "hamhacks.module.esp.passiveFillColor", category = "hamhacks.module.esp.category.passives", dependsOn = "passives")
-	public Color passiveFill = new Color(0x4000FF00);
+	private final ColorSetting hostileFill = new ColorSetting("hamhacks.module.esp.hostileFillColor", new Color(0x40FF0000), hostiles::get);
+	
+	private final SettingCategory PASSIVES_CATEGORY = new SettingCategory("hamhacks.module.esp.category.passives");
+	
+	private final BoolSetting passives = new BoolSetting("hamhacks.module.esp.passives", false, () -> true);
+	
+	private final ColorSetting passiveOutline = new ColorSetting("hamhacks.module.esp.passiveOutlineColor", new Color(0xFF00FF00), passives::get);
+	
+	private final ColorSetting passiveFill = new ColorSetting("hamhacks.module.esp.passiveFillColor", new Color(0x4000FF00), passives::get);
 	
 	public ESP() {
 		super(Text.translatable("hamhacks.module.esp"), Category.RENDER, new Keybind(0));
+		settingCategories.add(0, MODE_CATEGORY);
+		MODE_CATEGORY.add(mode);
+		settingCategories.add(1, PLAYERS_CATEGORY);
+		PLAYERS_CATEGORY.add(players);
+		PLAYERS_CATEGORY.add(self);
+		PLAYERS_CATEGORY.add(playerOutline);
+		PLAYERS_CATEGORY.add(playerFill);
+		settingCategories.add(2, HOSTILES_CATEGORY);
+		HOSTILES_CATEGORY.add(hostiles);
+		HOSTILES_CATEGORY.add(hostileOutline);
+		HOSTILES_CATEGORY.add(hostileFill);
+		settingCategories.add(2, PASSIVES_CATEGORY);
+		PASSIVES_CATEGORY.add(passives);
+		PASSIVES_CATEGORY.add(passiveOutline);
+		PASSIVES_CATEGORY.add(passiveFill);
 	}
 	
 	@EventListener
 	public void onRender3D(EventRender3D e) {
-		if(mode == 0) {
+		if(mode.get() == 0) {
 			return;
 		}
 		
@@ -111,7 +124,7 @@ public class ESP extends Module {
 	
 	@EventListener
 	public void onRender2D(EventRender2D e) {
-		if(mode != 0) {
+		if(mode.get() != 0) {
 			return;
 		}
 		
@@ -152,9 +165,9 @@ public class ESP extends Module {
 					}
 				}, new Box(mc.player.getBlockPos().add(-256, -256, -256), mc.player.getBlockPos().add(256, 256, 256)), Objects::nonNull).stream()
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
-				.filter(entity -> entity != player || ModuleManager.getModule(Freecam.class).isEnabled() || self)
+				.filter(entity -> entity != player || ModuleManager.getModule(Freecam.class).isEnabled() || self.get())
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-				.filter(entity -> (entity instanceof PlayerEntity && players) || (entity instanceof HostileEntity && hostiles) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives));
+				.filter(entity -> (entity instanceof PlayerEntity && players.get()) || (entity instanceof HostileEntity && hostiles.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives.get()));
 		
 		entities.addAll(stream.toList());
 	}
@@ -190,14 +203,14 @@ public class ESP extends Module {
 			int oc;
 			int fc;
 			if(e instanceof PlayerEntity) {
-				oc = playerOutline.getRGB();
-				fc = playerFill.getRGB();
+				oc = playerOutline.get().getRGB();
+				fc = playerFill.get().getRGB();
 			} else if(e instanceof HostileEntity) {
-				oc = hostileOutline.getRGB();
-				fc = hostileFill.getRGB();
+				oc = hostileOutline.get().getRGB();
+				fc = hostileFill.get().getRGB();
 			} else if(e instanceof PassiveEntity || e instanceof WaterCreatureEntity) {
-				oc = passiveOutline.getRGB();
-				fc = passiveFill.getRGB();
+				oc = passiveOutline.get().getRGB();
+				fc = passiveFill.get().getRGB();
 			} else {
 				oc = 0xFFFFFFFF;
 				fc = 0x40FFFFFF;
@@ -266,14 +279,14 @@ public class ESP extends Module {
 			int oc;
 			int fc;
 			if(e instanceof PlayerEntity) {
-				oc = playerOutline.getRGB();
-				fc = playerFill.getRGB();
+				oc = playerOutline.get().getRGB();
+				fc = playerFill.get().getRGB();
 			} else if(e instanceof HostileEntity) {
-				oc = hostileOutline.getRGB();
-				fc = hostileFill.getRGB();
+				oc = hostileOutline.get().getRGB();
+				fc = hostileFill.get().getRGB();
 			} else if(e instanceof PassiveEntity || e instanceof WaterCreatureEntity) {
-				oc = passiveOutline.getRGB();
-				fc = passiveFill.getRGB();
+				oc = passiveOutline.get().getRGB();
+				fc = passiveFill.get().getRGB();
 			} else {
 				oc = 0xFFFFFFFF;
 				fc = 0x40FFFFFF;
@@ -374,9 +387,9 @@ public class ESP extends Module {
 	
 	public boolean shouldRender(Entity entity) {
 		boolean isAlive = !entity.isRemoved() && entity.isAlive();
-		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || (self && mc.options.getPerspective() != Perspective.FIRST_PERSON);
+		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || (self.get() && mc.options.getPerspective() != Perspective.FIRST_PERSON);
 		boolean b = Math.abs(entity.getY() - mc.player.getY()) <= 1e6;
-		boolean shouldRender = (entity instanceof PlayerEntity && players) || (entity instanceof HostileEntity && hostiles) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives);
+		boolean shouldRender = (entity instanceof PlayerEntity && players.get()) || (entity instanceof HostileEntity && hostiles.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives.get());
 		return isEnabled() && isAlive && player && b && shouldRender;
 	}
 }

@@ -1,37 +1,32 @@
 package net.grilledham.hamhacks.setting;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import net.grilledham.hamhacks.gui.element.GuiElement;
+import net.grilledham.hamhacks.gui.element.impl.BoolSettingElement;
 
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface BoolSetting {
+public class BoolSetting extends Setting<Boolean> {
 	
-	/**
-	 * The translatable name of this setting
-	 */
-	String name();
+	public BoolSetting(String name, boolean defaultValue, ShouldShow shouldShow) {
+		super(name, defaultValue, shouldShow);
+	}
 	
-	/**
-	 * The category of this setting
-	 */
-	String category() default "";
+	public void toggle() {
+		this.value = !this.value;
+	}
 	
-	/**
-	 * The default value of this setting
-	 */
-	boolean defaultValue() default false;
+	@Override
+	public GuiElement getElement(float x, float y, double scale) {
+		return new BoolSettingElement(x, y, scale, this);
+	}
 	
-	/**
-	 * <code>true</code> if this setting should never be displayed to the player
-	 */
-	boolean neverShow() default false;
+	@Override
+	public JsonElement save() {
+		return new JsonPrimitive(value);
+	}
 	
-	/**
-	 * <p>Names of fields within the containing class that this setting depends on</p>
-	 * <p>When a dependency is <code>false</code>, this setting will not be displayed to the player</p>
-	 */
-	String[] dependsOn() default {};
+	@Override
+	public void load(JsonElement e) {
+		value = e.getAsBoolean();
+	}
 }

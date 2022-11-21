@@ -1,57 +1,81 @@
 package net.grilledham.hamhacks.setting;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import net.grilledham.hamhacks.gui.element.GuiElement;
+import net.grilledham.hamhacks.gui.element.impl.NumberSettingElement;
 
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface NumberSetting {
+public class NumberSetting extends Setting<Double> {
 	
-	/**
-	 * The translatable name of this setting
-	 */
-	String name();
+	private final double min;
+	private final double max;
 	
-	/**
-	 * The category of this setting
-	 */
-	String category() default "";
+	private final double step;
+	private final boolean forceStep;
 	
-	/**
-	 * The default value of this setting
-	 */
-	float defaultValue() default 0;
+	public NumberSetting(String name, double defaultValue, ShouldShow shouldShow, double min, double max, double step, boolean forceStep) {
+		super(name, defaultValue, shouldShow);
+		this.min = min;
+		this.max = max;
+		this.step = step;
+		this.forceStep = forceStep;
+	}
 	
-	/**
-	 * <code>true</code> if this setting should never be displayed to the player
-	 */
-	boolean neverShow() default false;
+	public NumberSetting(String name, double defaultValue, ShouldShow shouldShow, double min, double max, double step) {
+		this(name, defaultValue, shouldShow, min, max, step, true);
+	}
 	
-	/**
-	 * <p>Names of fields within the containing class that this setting depends on</p>
-	 * <p>When a dependency is <code>false</code>, this setting will not be displayed to the player</p>
-	 */
-	String[] dependsOn() default {};
+	public NumberSetting(String name, double defaultValue, ShouldShow shouldShow, double min, double max) {
+		this(name, defaultValue, shouldShow, min, max, -1);
+	}
 	
-	/**
-	 * The minimum value for this setting
-	 */
-	float min();
+	public double min() {
+		return min;
+	}
 	
-	/**
-	 * The maximum value for this setting
-	 */
-	float max();
+	public double max() {
+		return max;
+	}
 	
-	/**
-	 * How large of a step in between values
-	 */
-	float step() default -1;
+	public double step() {
+		return step;
+	}
 	
-	/**
-	 * Should the step be forced
-	 */
-	boolean forceStep() default true;
+	public boolean forceStep() {
+		return forceStep;
+	}
+	
+	@Override
+	public void set(Double value) {
+		if(value > max) {
+			this.value = max;
+		} else if(value < min) {
+			this.value = min;
+		} else {
+			this.value = value;
+		}
+	}
+	
+	public void increment() {
+		set(value + 1);
+	}
+	
+	public void decrement() {
+		set(value - 1);
+	}
+	
+	@Override
+	public GuiElement getElement(float x, float y, double scale) {
+		return new NumberSettingElement(x, y, scale, this);
+	}
+	
+	@Override
+	public JsonElement save() {
+		return new JsonPrimitive(value);
+	}
+	
+	@Override
+	public void load(JsonElement e) {
+		value = e.getAsDouble();
+	}
 }

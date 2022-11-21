@@ -200,6 +200,7 @@
 	"hamhacks.module.nameHider": "Name Hider",
 	"hamhacks.module.nameHider.tooltip": "Hides/replaces your username",
 	"hamhacks.module.nameHider.fakeName": "Fake Name",
+	"hamhacks.module.nameHider.fakeName.placeholder": "Fake Name",
 	"hamhacks.module.nameHider.fakeName.tooltip": "Your new name",
 
 	"hamhacks.module.timer": "Timer",
@@ -271,6 +272,7 @@
 	"hamhacks.module.nametags.tooltips": "Improves nametags",
 	"hamhacks.module.nametags.category.entities": "Entities",
 	"hamhacks.module.nametags.category.elements": "Elements",
+	"hamhacks.module.nametags.category.appearance": "Appearance",
 	"hamhacks.module.nametags.self": "Self",
 	"hamhacks.module.nametags.hostiles": "Hostile Mobs",
 	"hamhacks.module.nametags.passives": "Passive Mobs",
@@ -313,12 +315,15 @@
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",
+	"hamhacks.module.generic.category.general": "General",
 
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
+	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
 
 	"hamhacks.page.null": "Modules",
 
 	"hamhacks.page.notifications": "Notifications",
+	"hamhacks.page.notifications.category.general": "General",
 	"hamhacks.page.notifications.backgroundColor": "Background Color",
 	"hamhacks.page.notifications.accentColor": "Accent Color",
 	"hamhacks.page.notifications.backgroundColorHovered": "Background Color (Hovered)",
@@ -341,6 +346,7 @@
 	"hamhacks.page.clickGui.openMenu": "Open Menu",
 
 	"hamhacks.page.command": "Commands",
+	"hamhacks.page.command.category.general": "General",
 	"hamhacks.page.command.prefix": "Prefix",
 
 	"hamhacks.category.movement": "Movement",
@@ -353,6 +359,7 @@
 	"hamhacks.menu.options": "HamHacks Options",
 	"hamhacks.menu.clickGui": "Click GUI",
 	"hamhacks.menu.clickGui.module": "Click GUI Module",
+	"hamhacks.menu.clickGui.module.settings": "Click GUI Module Settings",
 	"hamhacks.menu.changelog": "Changelog GUI",
 	"hamhacks.menu.fullChangelog": "Full Changelog GUI",
 	"hamhacks.menu.bindModule": "Bind Module GUI",

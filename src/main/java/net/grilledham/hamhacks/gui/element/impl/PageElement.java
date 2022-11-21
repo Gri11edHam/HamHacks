@@ -25,7 +25,7 @@ public class PageElement extends GuiElement {
 	
 	private final ClickGUIScreen parent;
 	
-	public PageElement(ClickGUIScreen parent, float x, float y, float scale, Page page, boolean left, boolean right) {
+	public PageElement(ClickGUIScreen parent, float x, float y, double scale, Page page, boolean left, boolean right) {
 		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(page == null ? Text.translatable("hamhacks.page.null").getString() : page.getName()) + 8 + (left ? 2 : 0) + (right ? 2 : 0), 20, scale);
 		this.parent = parent;
 		this.page = page;
@@ -42,8 +42,8 @@ public class PageElement extends GuiElement {
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		int bgC = ui.bgColor.getRGB();
-		bgC = RenderUtil.mix(ui.bgColorHovered.getRGB(), bgC, hoverAnimation.get());
+		int bgC = ui.bgColor.get().getRGB();
+		bgC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), bgC, hoverAnimation.get());
 		float width = this.width;
 		float height = this.height - 2;
 		if(left) {
@@ -54,16 +54,16 @@ public class PageElement extends GuiElement {
 			width -= 2;
 		}
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
-		RenderUtil.drawRect(stack, x, y + height, width, 2, ui.accentColor.getRGB());
+		RenderUtil.drawRect(stack, x, y + height, width, 2, ui.accentColor.get().getRGB());
 		if(left) {
-			RenderUtil.drawRect(stack, this.x + offX, y, 2, this.height, ui.accentColor.getRGB());
+			RenderUtil.drawRect(stack, this.x + offX, y, 2, this.height, ui.accentColor.get().getRGB());
 		}
 		if(right) {
-			RenderUtil.drawRect(stack, x + width, y, 2, this.height, ui.accentColor.getRGB());
+			RenderUtil.drawRect(stack, x + width, y, 2, this.height, ui.accentColor.get().getRGB());
 		}
 		
 		String name = page == null ? Text.translatable("hamhacks.page.null").getString() : page.getName();
-		mc.textRenderer.drawWithShadow(stack, name, x + width / 2f - mc.textRenderer.getWidth(name) / 2f, y + height / 2f - mc.textRenderer.fontHeight / 2f, ui.textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, name, x + width / 2f - mc.textRenderer.getWidth(name) / 2f, y + height / 2f - mc.textRenderer.fontHeight / 2f, ui.textColor.get().getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();

@@ -60,12 +60,12 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V", ordinal = 0))
 	public void modifyBGColor(MatrixStack matrixStack, int x1, int y1, int x2, int y2, int color) {
-		if(ModuleManager.getModule(Chat.class).isEnabled() && ModuleManager.getModule(Chat.class).highlightUsername) {
+		if(ModuleManager.getModule(Chat.class).isEnabled() && ModuleManager.getModule(Chat.class).highlightUsername.get()) {
 			ChatHudLine.Visible line = visibleMessages.get(lineIndex);
 			if(ModuleManager.getModule(Chat.class).shouldColorLine(line)) {
-				int newRGB = ModuleManager.getModule(Chat.class).highlightUsernameColor.getRGB() - 0xff000000;
+				int newRGB = ModuleManager.getModule(Chat.class).highlightUsernameColor.get().getRGB() - 0xff000000;
 				int newAlpha = color >> 24;
-				newAlpha = (int)((float)newAlpha * ModuleManager.getModule(Chat.class).highlightUsernameColor.getAlpha());
+				newAlpha = (int)((float)newAlpha * ModuleManager.getModule(Chat.class).highlightUsernameColor.get().getAlpha());
 				newAlpha = newAlpha << 24;
 				color = newAlpha + newRGB;
 			}
@@ -87,18 +87,18 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 		Chat chat = ModuleManager.getModule(Chat.class);
 		if(chat.isEnabled()) {
 			if(indicator == MessageIndicator.system()) {
-				if(chat.hideSystemStatus) {
+				if(chat.hideSystemStatus.get()) {
 					return;
 				}
 			} else if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
-				if(chat.hideModifiedStatus) {
+				if(chat.hideModifiedStatus.get()) {
 					return;
 				}
 			} else if(indicator == MessageIndicator.notSecure()) {
-				if(chat.hideUnsignedStatus) {
+				if(chat.hideUnsignedStatus.get()) {
 					return;
 				}
-			} else if(chat.hideOtherStatus) {
+			} else if(chat.hideOtherStatus.get()) {
 				return;
 			}
 		}
@@ -110,15 +110,15 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 		Chat chat = ModuleManager.getModule(Chat.class);
 		if(chat.isEnabled()) {
 			if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
-				if(chat.hideModifiedStatusIcon) {
+				if(chat.hideModifiedStatusIcon.get()) {
 					return null;
 				}
 			} else if(indicator == MessageIndicator.notSecure()) {
-				if(chat.hideUnsignedStatusIcon) {
+				if(chat.hideUnsignedStatusIcon.get()) {
 					return null;
 				}
 			} else if(indicator != MessageIndicator.system()) {
-				if(chat.hideOtherStatusIcon) {
+				if(chat.hideOtherStatusIcon.get()) {
 					return null;
 				}
 			}
@@ -131,18 +131,18 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 		Chat chat = ModuleManager.getModule(Chat.class);
 		if(chat.isEnabled()) {
 			if(indicator == MessageIndicator.system()) {
-				if(chat.hideSystemStatus) {
+				if(chat.hideSystemStatus.get()) {
 					cir.setReturnValue(false);
 				}
 			} else if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
-				if(chat.hideModifiedStatus) {
+				if(chat.hideModifiedStatus.get()) {
 					cir.setReturnValue(false);
 				}
 			} else if(indicator == MessageIndicator.notSecure()) {
-				if(chat.hideUnsignedStatus) {
+				if(chat.hideUnsignedStatus.get()) {
 					cir.setReturnValue(false);
 				}
-			} else if(chat.hideOtherStatus) {
+			} else if(chat.hideOtherStatus.get()) {
 				cir.setReturnValue(false);
 			}
 		}
@@ -153,15 +153,15 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 		Chat chat = ModuleManager.getModule(Chat.class);
 		if(chat.isEnabled()) {
 			if(indicator.icon() == MessageIndicator.Icon.CHAT_MODIFIED) {
-				if(chat.hideModifiedStatusIcon) {
+				if(chat.hideModifiedStatusIcon.get()) {
 					cir.setReturnValue(false);
 				}
 			} else if(indicator == MessageIndicator.notSecure()) {
-				if(chat.hideUnsignedStatusIcon) {
+				if(chat.hideUnsignedStatusIcon.get()) {
 					cir.setReturnValue(false);
 				}
 			} else if(indicator != MessageIndicator.system()) {
-				if(chat.hideOtherStatusIcon) {
+				if(chat.hideOtherStatusIcon.get()) {
 					cir.setReturnValue(false);
 				}
 			}

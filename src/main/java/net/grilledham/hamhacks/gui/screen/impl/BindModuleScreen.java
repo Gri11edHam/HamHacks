@@ -23,7 +23,7 @@ public class BindModuleScreen extends GuiScreen {
 	private boolean isFirstClick = true;
 	
 	public BindModuleScreen(Module module) {
-		super(Text.translatable("hamhacks.menu.bindModule"), null, PageManager.getPage(ClickGUI.class).scale);
+		super(Text.translatable("hamhacks.menu.bindModule"), null, PageManager.getPage(ClickGUI.class).scale.get());
 		this.module = module;
 		module.getKey().setKey(0);
 	}

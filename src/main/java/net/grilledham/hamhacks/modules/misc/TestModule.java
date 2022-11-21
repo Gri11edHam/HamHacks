@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.modules.misc;
 
+import com.google.common.collect.Lists;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
@@ -9,48 +10,31 @@ import net.minecraft.text.Text;
 
 public class TestModule extends Module {
 	
-	@BoolSetting(name = "setting.test.testbool")
-	public boolean testBool = false;
+	public final BoolSetting testBool = new BoolSetting("test bool", false, () -> true);
 	
-	@ColorSetting(name = "setting.test.testcolor", dependsOn = "testBool")
-	public Color testColor = Color.getWhite();
+	public final ColorSetting testColor = new ColorSetting("test color", Color.getWhite(), testBool::get);
 	
-	@NumberSetting(
-			name = "setting.test.testfloat",
-			defaultValue = 0.5f,
-			min = 0,
-			max = 1,
-			dependsOn = "testBool"
-	)
-	public float testFloat = 0.5f;
+	public final NumberSetting testDouble = new NumberSetting("test double", 0.5, testBool::get, 0, 1);
 	
-	@NumberSetting(
-			name = "setting.test.testint",
-			defaultValue = 100,
-			min = 0,
-			max = 200,
-			step = 1,
-			dependsOn = "testBool"
-	)
-	public float testInt = 100;
+	public final NumberSetting testInt = new NumberSetting("test int", 100, testBool::get, 0, 200, 1);
 	
-	@KeySetting(name = "setting.test.testkey", dependsOn = "testBool")
-	public Keybind testKey = new Keybind(0);
+	public final KeySetting testKey = new KeySetting("test key", new Keybind(0), testBool::get);
 	
-	@ListSetting(name = "setting.test.testlist", dependsOn = "testBool")
-	public StringList testList = new StringList("Test1", "Test2");
+	public final ListSetting testList = new ListSetting("test list", Lists.newArrayList("test 1", "test 2", "test 3"), testBool::get);
 	
-	@SelectionSetting(name = "setting.test.testselector", dependsOn = "testBool", options = {"setting.test.testselector.test1", "setting.test.testselector.test2", "setting.test.testselector.test3"})
-	public int testSelector = 0;
+	public final SelectionSetting testSelector = new SelectionSetting("test selector", 0, testBool::get, "test 1", "test 2", "test 3");
 	
-	@StringSetting(
-			name = "setting.test.teststring",
-			defaultValue = "Test",
-			dependsOn = "testBool"
-	)
-	public String testString = "Test";
+	public final StringSetting testString = new StringSetting("test string", "test", testBool::get, "1337");
 	
 	public TestModule() {
 		super(Text.translatable("module.hamhacks.test"), Category.MISC, new Keybind(0));
+		GENERAL_CATEGORY.add(testBool);
+		GENERAL_CATEGORY.add(testColor);
+		GENERAL_CATEGORY.add(testDouble);
+		GENERAL_CATEGORY.add(testInt);
+		GENERAL_CATEGORY.add(testKey);
+		GENERAL_CATEGORY.add(testList);
+		GENERAL_CATEGORY.add(testSelector);
+		GENERAL_CATEGORY.add(testString);
 	}
 }

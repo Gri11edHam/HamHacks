@@ -12,38 +12,31 @@ import net.minecraft.text.Text;
 
 public class Fullbright extends Module {
 	
-	@NumberSetting(
-			name = "hamhacks.module.fullBright.brightness",
-			defaultValue = 500,
-			min = 0,
-			max = 1000,
-			step = 1,
-			forceStep = false
-	)
-	public float brightness = 500;
+	private final NumberSetting brightness = new NumberSetting("hamhacks.module.fullBright.brightness", 500, () -> true, 0, 1000, 1, false);
 	
-	@BoolSetting(name = "hamhacks.module.fullBright.smoothTransition", defaultValue = true)
-	public boolean smoothTransition = true;
+	private final BoolSetting smoothTransition = new BoolSetting("hamhacks.module.fullBright.smoothTransition", true, () -> true);
 	
 	private final Animation newBrightness = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
 	public Fullbright() {
 		super(Text.translatable("hamhacks.module.fullBright"), Category.RENDER, new Keybind(0));
+		GENERAL_CATEGORY.add(brightness);
+		GENERAL_CATEGORY.add(smoothTransition);
 	}
 	
 	@Override
 	public String getHUDText() {
-		return super.getHUDText() + " \u00a77" + (int)brightness;
+		return super.getHUDText() + " \u00a77" + (int)(double)brightness.get();
 	}
 	
 	public float getBrightness(float original, float delta) {
-		float nextBrightness;
+		double nextBrightness;
 		if(isEnabled()) {
-			nextBrightness = brightness / 100f;
+			nextBrightness = brightness.get() / 100;
 		} else {
 			nextBrightness = original;
 		}
-		if(smoothTransition) {
+		if(smoothTransition.get()) {
 			newBrightness.set(nextBrightness);
 			newBrightness.update();
 		} else {

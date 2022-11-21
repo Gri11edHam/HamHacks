@@ -25,7 +25,7 @@ public class ModuleElement extends GuiElement {
 	private final Module module;
 	private final Screen parent;
 	
-	public ModuleElement(Screen parent, float x, float y, float width, float height, float scale, Module module) {
+	public ModuleElement(Screen parent, float x, float y, float width, float height, double scale, Module module) {
 		super(x, y, width, height, scale);
 		this.module = module;
 		this.parent = parent;
@@ -40,15 +40,15 @@ public class ModuleElement extends GuiElement {
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
-		int bgC = ui.bgColor.getRGB();
+		int bgC = ui.bgColor.get().getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
-		bgC = RenderUtil.mix(ui.bgColorHovered.getRGB(), bgC, hoverAnimation.get());
-		int bgCEnabled = ui.enabledColor.getRGB();
-		bgCEnabled = RenderUtil.mix(ui.enabledColorHovered.getRGB(), bgCEnabled, hoverAnimation.get());
+		bgC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), bgC, hoverAnimation.get());
+		int bgCEnabled = ui.enabledColor.get().getRGB();
+		bgCEnabled = RenderUtil.mix(ui.enabledColorHovered.get().getRGB(), bgCEnabled, hoverAnimation.get());
 		RenderUtil.drawRect(stack, (float)(x + width * enableAnimation.get()), y, (float)(width * (1 - enableAnimation.get())), height, bgC);
 		RenderUtil.drawRect(stack, x, y, (float)(width * enableAnimation.get()), height, bgCEnabled);
 		
-		mc.textRenderer.drawWithShadow(stack, module.getName(), x + 3, y + 4, ui.textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, module.getName(), x + 3, y + 4, ui.textColor.get().getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();

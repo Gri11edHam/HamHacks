@@ -10,6 +10,7 @@ import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.ChatUtil;
 import net.grilledham.hamhacks.util.Color;
 import net.minecraft.client.MinecraftClient;
@@ -35,55 +36,38 @@ import java.util.Map;
 
 public class Chat extends Module {
 	
-	@BoolSetting(name = "hamhacks.module.chat.pingOnMention", category = "hamhacks.module.chat.category.username")
-	public boolean pingOnMention = false;
+	private final SettingCategory USERNAME_CATEGORY = new SettingCategory("hamhacks.module.chat.category.username");
 	
-	@BoolSetting(name = "hamhacks.module.chat.highlightUsername", category = "hamhacks.module.chat.category.username")
-	public boolean highlightUsername = false;
+	private final BoolSetting pingOnMention = new BoolSetting("hamhacks.module.chat.pingOnMention", false, () -> true);
 	
-	@ColorSetting(
-			name = "hamhacks.module.chat.highlightUsernameColor", category = "hamhacks.module.chat.category.username",
-			dependsOn = "highlightUsername"
-	)
-	public Color highlightUsernameColor = Color.getYellow();
+	public final BoolSetting highlightUsername = new BoolSetting("hamhacks.module.chat.highlightUsername", false, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.chat.stackSpam", category = "hamhacks.module.chat.category.spam", defaultValue = true)
-	public boolean stackSpam = true;
+	public final ColorSetting highlightUsernameColor = new ColorSetting("hamhacks.module.chat.highlightUsernameColor", Color.getYellow(), highlightUsername::get);
 	
-	@BoolSetting(name = "hamhacks.module.chat.consecutiveOnly", category = "hamhacks.module.chat.category.spam", dependsOn = "stackSpam")
-	public boolean consecutiveOnly;
+	private final SettingCategory SPAM_CATEGORY = new SettingCategory("hamhacks.module.chat.category.spam");
 	
-	@NumberSetting(name = "hamhacks.module.chat.spamTime", category = "hamhacks.module.chat.category.spam",
-			defaultValue = 30,
-			min = 5,
-			max = 60,
-			step = 1,
-			forceStep = false,
-			dependsOn = {"stackSpam", "!consecutiveOnly"}
-	)
-	public float spamTime = 30;
+	private final BoolSetting stackSpam = new BoolSetting("hamhacks.module.chat.stackSpam", true, () -> true);
+	
+	private final BoolSetting consecutiveOnly = new BoolSetting("hamhacks.module.chat.consecutiveOnly", false, stackSpam::get);
+	
+	private final NumberSetting spamTime = new NumberSetting("hamhacks.module.chat.spamTime", 30, () -> stackSpam.get() && !consecutiveOnly.get(), 5, 60, 1, false);
 	
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideSystemStatus", category = "hamhacks.module.chat.category.status")
-	public boolean hideSystemStatus = false;
+	private final SettingCategory STATUS_CATEGORY = new SettingCategory("hamhacks.module.chat.category.status");
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideModifiedStatus", category = "hamhacks.module.chat.category.status")
-	public boolean hideModifiedStatus = false;
+	public final BoolSetting hideSystemStatus = new BoolSetting("hamhacks.module.chat.hideSystemStatus", false, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideModifiedStatusIcon", category = "hamhacks.module.chat.category.status")
-	public boolean hideModifiedStatusIcon = false;
+	public final BoolSetting hideModifiedStatus = new BoolSetting("hamhacks.module.chat.hideModifiedStatus", false, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedStatus", category = "hamhacks.module.chat.category.status")
-	public boolean hideUnsignedStatus = false;
+	public final BoolSetting hideModifiedStatusIcon = new BoolSetting("hamhacks.module.chat.hideModifiedStatusIcon", false, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideUnsignedStatusIcon", category = "hamhacks.module.chat.category.status")
-	public boolean hideUnsignedStatusIcon = false;
+	public final BoolSetting hideUnsignedStatus = new BoolSetting("hamhacks.module.chat.hideUnsignedStatus", false, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideOtherStatus", category = "hamhacks.module.chat.category.status")
-	public boolean hideOtherStatus = false;
+	public final BoolSetting hideUnsignedStatusIcon = new BoolSetting("hamhacks.module.chat.hideUnsignedStatusIcon", false, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.chat.hideOtherStatusIcon", category = "hamhacks.module.chat.category.status")
-	public boolean hideOtherStatusIcon = false;
+	public final BoolSetting hideOtherStatus = new BoolSetting("hamhacks.module.chat.hideOtherStatus", false, () -> true);
+	
+	public final BoolSetting hideOtherStatusIcon = new BoolSetting("hamhacks.module.chat.hideOtherStatusIcon", false, () -> true);
 	
 	private final List<String> sentMessages = new ArrayList<>();
 	
@@ -97,6 +81,22 @@ public class Chat extends Module {
 	
 	public Chat() {
 		super(Text.translatable("hamhacks.module.chat"), Category.MISC, new Keybind(0));
+		settingCategories.add(0, USERNAME_CATEGORY);
+		USERNAME_CATEGORY.add(pingOnMention);
+		USERNAME_CATEGORY.add(highlightUsername);
+		USERNAME_CATEGORY.add(highlightUsernameColor);
+		settingCategories.add(1, SPAM_CATEGORY);
+		SPAM_CATEGORY.add(stackSpam);
+		SPAM_CATEGORY.add(consecutiveOnly);
+		SPAM_CATEGORY.add(spamTime);
+		settingCategories.add(2, STATUS_CATEGORY);
+		STATUS_CATEGORY.add(hideSystemStatus);
+		STATUS_CATEGORY.add(hideModifiedStatus);
+		STATUS_CATEGORY.add(hideModifiedStatusIcon);
+		STATUS_CATEGORY.add(hideUnsignedStatus);
+		STATUS_CATEGORY.add(hideUnsignedStatusIcon);
+		STATUS_CATEGORY.add(hideOtherStatus);
+		STATUS_CATEGORY.add(hideOtherStatusIcon);
 	}
 	
 	public boolean shouldColorLine(ChatHudLine.Visible line) {
@@ -105,19 +105,19 @@ public class Chat extends Module {
 			sb.append((char)codePoint);
 			return true;
 		});
-		String username = (ModuleManager.getModule(NameHider.class).isEnabled() ? ModuleManager.getModule(NameHider.class).fakeName : MinecraftClient.getInstance().getSession().getUsername());
+		String username = (ModuleManager.getModule(NameHider.class).isEnabled() ? ModuleManager.getModule(NameHider.class).fakeName.get() : MinecraftClient.getInstance().getSession().getUsername());
 		return sb.toString().contains(username) && !sentMessages.contains(sb.toString());
 	}
 	
 	@EventListener
 	public void sendChat(EventChat.EventChatSent e) {
-		String username = (ModuleManager.getModule(NameHider.class).isEnabled() ? ModuleManager.getModule(NameHider.class).fakeName : MinecraftClient.getInstance().getSession().getUsername());
+		String username = (ModuleManager.getModule(NameHider.class).isEnabled() ? ModuleManager.getModule(NameHider.class).fakeName.get() : MinecraftClient.getInstance().getSession().getUsername());
 		sentMessages.add(e.preview == null ? "<" + username + "> " + e.message : e.preview.getString());
 	}
 	
 	@EventListener
 	public void receiveChat(EventChat.EventChatReceived e) {
-		if(pingOnMention && e.message.contains(mc.player.getName()) && (sentMessages == null || !sentMessages.contains(e.message.getString()))) {
+		if(pingOnMention.get() && e.message.contains(mc.player.getName()) && (sentMessages == null || !sentMessages.contains(e.message.getString()))) {
 			mc.getSoundManager().play(new PositionedSoundInstance(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP.getId(), SoundCategory.VOICE, 1, 1, new Random() {
 				@Override
 				public Random split() {
@@ -170,9 +170,9 @@ public class Chat extends Module {
 				}
 			}, false, 0, SoundInstance.AttenuationType.LINEAR, 0, 0, 0, true));
 		}
-		if(stackSpam) {
+		if(stackSpam.get()) {
 			String message = ChatUtil.unformat(e.message.getString());
-			if(consecutiveOnly) {
+			if(consecutiveOnly.get()) {
 				if(lastMessage.equals(message)) {
 					removeLastMessage(null);
 					e.message = e.message.copy().append(Text.literal(" (" + ++times + ")").formatted(Formatting.GRAY));
@@ -195,7 +195,7 @@ public class Chat extends Module {
 				// remove if we haven't seen the message for some time
 				List<String> toRemove = new ArrayList<>();
 				lastSent.forEach((m, t) -> {
-					if(System.currentTimeMillis() - t > spamTime * 1000) {
+					if(System.currentTimeMillis() - t > spamTime.get() * 1000) {
 						toRemove.add(m);
 					}
 				});

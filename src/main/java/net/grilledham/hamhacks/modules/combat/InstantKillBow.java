@@ -10,23 +10,17 @@ import net.minecraft.text.Text;
 
 public class InstantKillBow extends Module {
 	
-	@NumberSetting(
-			name = "hamhacks.module.instantKillBow.iterations",
-			defaultValue = 100,
-			min = 10,
-			max = 500,
-			step = 1
-	)
-	public float iterations = 100;
+	private final NumberSetting iterations = new NumberSetting("hamhacks.module.instantKillBow.iterations", 100, () -> true, 10, 500, 1);
 	
 	public InstantKillBow() {
 		super(Text.translatable("hamhacks.module.instantKillBow"), Category.COMBAT, new Keybind(0));
+		GENERAL_CATEGORY.add(iterations);
 	}
 	
 	public void preBow() {
 		if(isEnabled()) {
 			mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_SPRINTING));
-			for (int i = 0; i < iterations; i++) {
+			for (int i = 0; i < iterations.get(); i++) {
 				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.000000001, mc.player.getZ(), true));
 				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + 0.000000001, mc.player.getZ(), false));
 			}
@@ -35,6 +29,6 @@ public class InstantKillBow extends Module {
 	
 	@Override
 	public String getHUDText() {
-		return super.getHUDText() + " \u00a77" + (int)iterations;
+		return super.getHUDText() + " \u00a77" + (int)(double)iterations.get();
 	}
 }

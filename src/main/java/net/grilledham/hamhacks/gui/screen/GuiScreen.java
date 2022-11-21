@@ -12,7 +12,7 @@ public class GuiScreen extends Screen {
 	
 	protected final Screen last;
 	
-	protected final float scale;
+	protected final double scale;
 	
 	protected final List<GuiElement> elements = new ArrayList<>();
 	
@@ -20,7 +20,7 @@ public class GuiScreen extends Screen {
 	
 	private boolean dirty = false;
 	
-	protected GuiScreen(Text title, Screen last, float scale) {
+	protected GuiScreen(Text title, Screen last, double scale) {
 		super(title);
 		this.last = last;
 		this.scale = scale;

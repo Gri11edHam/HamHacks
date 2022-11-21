@@ -10,7 +10,6 @@ import net.grilledham.hamhacks.mixininterface.IVec3d;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.Reach;
 import net.grilledham.hamhacks.modules.render.Freecam;
-import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.modules.render.Zoom;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.minecraft.client.MinecraftClient;
@@ -74,32 +73,26 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void modelBobbingOnly(GameRenderer instance, MatrixStack matrices, float tickDelta) {
-		if(!ModuleManager.getModule(HUD.class).modelBobbingOnly || !ModuleManager.getModule(HUD.class).isEnabled()) {
+//		if(!ModuleManager.getModule(HUD.class).modelBobbingOnly || !ModuleManager.getModule(HUD.class).isEnabled()) { // TODO: Move to module
 			bobView(matrices, tickDelta);
-		}
+//		}
 	}
 	
 	@Inject(method = "bobViewWhenHurt", at = @At("HEAD"), cancellable = true)
 	public void noHurtCam(MatrixStack matrices, float f, CallbackInfo ci) {
-		if(ModuleManager.getModule(HUD.class).noHurtCam && ModuleManager.getModule(HUD.class).isEnabled()) {
+//		if(ModuleManager.getModule(HUD.class).noHurtCam && ModuleManager.getModule(HUD.class).isEnabled()) { // TODO: Move to module
 			ci.cancel();
-		}
+//		}
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 3)
 	public double modifyBlockReach(double d) {
-		if(ModuleManager.getModule(Reach.class) == null) {
-			return d;
-		}
-		return ModuleManager.getModule(Reach.class).isEnabled() ? ModuleManager.getModule(Reach.class).blockRange : d;
+		return ModuleManager.getModule(Reach.class).isEnabled() ? ModuleManager.getModule(Reach.class).blockRange.get() : d;
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 8)
 	public double modifyEntityReach(double e) {
-		if(ModuleManager.getModule(Reach.class) == null) {
-			return e;
-		}
-		return ModuleManager.getModule(Reach.class).isEnabled() ? ModuleManager.getModule(Reach.class).entityRange * ModuleManager.getModule(Reach.class).entityRange : e;
+		return ModuleManager.getModule(Reach.class).isEnabled() ? ModuleManager.getModule(Reach.class).entityRange.get() * ModuleManager.getModule(Reach.class).entityRange.get() : e;
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 6)
@@ -112,7 +105,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
 	public void modifyFov(Camera camera, float tickDelta, boolean changingFov, CallbackInfoReturnable<Double> cir) {
-		if(changingFov || !ModuleManager.getModule(Zoom.class).renderHand) {
+		if(changingFov || !ModuleManager.getModule(Zoom.class).renderHand.get()) {
 			double d = cir.getReturnValueD();
 			cir.setReturnValue(ModuleManager.getModule(Zoom.class).modifyFov(d));
 		}

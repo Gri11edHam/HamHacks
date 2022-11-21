@@ -6,26 +6,22 @@ import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.BoolSetting;
-import net.grilledham.hamhacks.setting.SettingHelper;
+import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.StringSetting;
-import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-import java.lang.reflect.Field;
 import java.util.HexFormat;
 
-public class ColorSettingElement extends SettingElement {
+public class ColorSettingElement extends SettingElement<ColorSetting> {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	private final Animation selectionAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25, true).build();
 	
-	@BoolSetting(name = "hamhacks.setting.colorSettingElement.chroma", neverShow = true)
-	public boolean chroma;
+	public BoolSetting chroma;
 	
-	@StringSetting(name = "", placeholder = "ffffffff", neverShow = true)
-	public String hexVal;
+	public StringSetting hexVal;
 	
 	private final BoolSettingElement chromaPart;
 	private final StringSettingElement hexValPart;
@@ -36,97 +32,83 @@ public class ColorSettingElement extends SettingElement {
 	private double dragStartX = -1;
 	private double dragStartY = -1;
 	
-	public ColorSettingElement(float x, float y, float scale, Field setting, Object obj) {
-		super(x, y, 16, scale, setting, obj);
-		try {
-			chroma = ((Color)setting.get(obj)).getChroma();
-			Field chromaField = getClass().getField("chroma");
-			final Object finalObj = obj;
-			Field finalSetting = setting;
-			chromaPart = new BoolSettingElement(x, y, scale, chromaField, this) {
-				@Override
-				public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
-					boolean superReturn = super.release(mx, my, scrollX, scrollY, button);
+	public ColorSettingElement(float x, float y, double scale, ColorSetting setting) {
+		super(x, y, 16, scale, setting);
+		chroma = new BoolSetting("hamhacks.setting.colorSettingElement.chroma", setting.getDefault().getChroma(), () -> false);
+		chroma.set(setting.get().getChroma());
+		ColorSetting finalSetting = setting;
+		chromaPart = new BoolSettingElement(x, y, scale, chroma) {
+			@Override
+			public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+				boolean superReturn = super.release(mx, my, scrollX, scrollY, button);
+				finalSetting.set(setting.get());
+				return superReturn;
+			}
+		};
+		chromaPart.drawBackground = false;
+		StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+		while(hex.length() < 8) {
+			hex.insert(0, "0");
+		}
+		hexVal = new StringSetting("", hex.toString(), () -> false, "ffffffff");
+		hexValPart = new StringSettingElement(x, y, scale, hexVal) {
+			@Override
+			public boolean type(int code, int scanCode, int modifiers) {
+				if(code == GLFW.GLFW_KEY_ENTER) {
 					try {
-						((Color)finalSetting.get(finalObj)).setChroma(chroma);
-					} catch(IllegalAccessException e) {
+						if(hexVal.get().length() > 8) {
+							hexVal.set(hexVal.get().substring(hexVal.get().length() - 8));
+						}
+						finalSetting.set(HexFormat.fromHexDigits(hexVal.get()));
+						StringBuilder hex = new StringBuilder(Integer.toHexString(finalSetting.get().getRGB()));
+						while(hex.length() < 8) {
+							hex.insert(0, "0");
+						}
+						hexVal.set(hex.toString());
+						type(GLFW.GLFW_KEY_END, GLFW.glfwGetKeyScancode(GLFW.GLFW_KEY_END), 0);
+					} catch(Exception e) {
 						e.printStackTrace();
 					}
-					return superReturn;
 				}
-			};
-			chromaPart.drawBackground = false;
-			StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
-			while(hex.length() < 8) {
-				hex.insert(0, "0");
+				return super.type(code, scanCode, modifiers);
 			}
-			hexVal = hex.toString();
-			Field hexValField = getClass().getField("hexVal");
-			hexValPart = new StringSettingElement(x, y, scale, hexValField, this) {
-				@Override
-				public boolean type(int code, int scanCode, int modifiers) {
-					if(code == GLFW.GLFW_KEY_ENTER) {
-						try {
-							if(hexVal.length() > 8) {
-								hexVal = hexVal.substring(hexVal.length() - 8);
-							}
-							((Color)finalSetting.get(finalObj)).set(HexFormat.fromHexDigits(hexVal));
-							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)finalSetting.get(finalObj)).getRGB()));
-							while(hex.length() < 8) {
-								hex.insert(0, "0");
-							}
-							hexVal = hex.toString();
-							type(GLFW.GLFW_KEY_END, GLFW.glfwGetKeyScancode(GLFW.GLFW_KEY_END), 0);
-						} catch(Exception e) {
-							e.printStackTrace();
-						}
-					}
-					return super.type(code, scanCode, modifiers);
-				}
-				
-				@Override
-				public boolean typeChar(char c, int modifiers) {
-					return switch(c) {
-						case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' -> super.typeChar(c, modifiers);
-						default -> false;
-					};
-				}
-			};
-			hexValPart.drawBackground = false;
-		} catch(NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-		resize(mc.textRenderer.getWidth(SettingHelper.getName(setting)) + 10 + 16, 16);
+			
+			@Override
+			public boolean typeChar(char c, int modifiers) {
+				return switch(c) {
+					case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' -> super.typeChar(c, modifiers);
+					default -> false;
+				};
+			}
+		};
+		hexValPart.drawBackground = false;
+		resize(mc.textRenderer.getWidth(setting.getName()) + 10 + 16, 16);
 	}
 	
 	@Override
 	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
-		try {
-			stack.push();
-			RenderUtil.preRender();
-			
-			ClickGUI ui = PageManager.getPage(ClickGUI.class);
-			int bgC = ui.bgColor.getRGB();
-			RenderUtil.drawRect(stack, x, y, width, height, bgC);
-			
-			int outlineC = 0xffcccccc;
-			RenderUtil.drawHRect(stack, x + width - 20, y + 2, 18, 12, outlineC);
-			
-			boolean hovered = mx >= x + width - 18 && mx < x + width - 2 && my >= y + 4 && my < y + 12;
-			int boxC = RenderUtil.mix((((Color)setting.get(obj)).getRGB() & 0xff000000) + 0xffffff, ((Color)setting.get(obj)).getRGB(), hoverAnimation.get() / 4);
-			RenderUtil.drawRect(stack, x + width - 18, y + 4, 14, 8, boxC);
-			
-			mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ui.textColor.getRGB());
-			
-			RenderUtil.postRender();
-			stack.pop();
-			
-			hoverAnimation.set(hovered);
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		stack.push();
+		RenderUtil.preRender();
+		
+		ClickGUI ui = PageManager.getPage(ClickGUI.class);
+		int bgC = ui.bgColor.get().getRGB();
+		RenderUtil.drawRect(stack, x, y, width, height, bgC);
+		
+		int outlineC = 0xffcccccc;
+		RenderUtil.drawHRect(stack, x + width - 20, y + 2, 18, 12, outlineC);
+		
+		boolean hovered = mx >= x + width - 18 && mx < x + width - 2 && my >= y + 4 && my < y + 12;
+		int boxC = RenderUtil.mix((setting.get().getRGB() & 0xff000000) + 0xffffff, setting.get().getRGB(), hoverAnimation.get() / 4);
+		RenderUtil.drawRect(stack, x + width - 18, y + 4, 14, 8, boxC);
+		
+		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
+		
+		RenderUtil.postRender();
+		stack.pop();
+		
+		hoverAnimation.set(hovered);
 		
 		hoverAnimation.update();
 		selectionAnimation.set(selected);
@@ -137,94 +119,90 @@ public class ColorSettingElement extends SettingElement {
 	public void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
-		try {
-			stack.push();
-			float w = 220;
-			float h = 122;
-			float newX = x + width - w;
-			float newY = y + height;
-			float subPartScroll = 0;
-			if(newY + h > mc.currentScreen.height) {
-				newY = y - h;
-				subPartScroll = -height - h;
-			}
-			
-			RenderUtil.pushScissor(newX - 1 + ((w + 2) * (float)(1 - selectionAnimation.get())), newY - 1, (w + 2) * (float)selectionAnimation.get(), (h + 2) * (float)selectionAnimation.get(), scale);
-			RenderUtil.applyScissor();
-			RenderUtil.preRender();
-			
-			ClickGUI ui = PageManager.getPage(ClickGUI.class);
-			RenderUtil.drawRect(stack, newX, newY, w, h, ui.bgColor.getRGB());
-			RenderUtil.drawHRect(stack, newX - 1, newY - 1, w + 2, h + 2, 0xffcccccc);
-			
-			RenderUtil.drawHRect(stack, newX + 1, newY + 1, 103, 103, 0xffcccccc);
-			RenderUtil.drawSBGradient(stack, newX + 2, newY + 2, 101, 101, ((Color)setting.get(obj)).getHue());
-			
-			RenderUtil.drawHRect(stack, newX + 105, newY + 1, 22, 103, 0xffcccccc);
-			RenderUtil.drawHueGradient(stack, newX + 106, newY + 2, 20, 101);
-			
-			RenderUtil.drawHRect(stack, newX + 129, newY + 1, 22, 103, 0xffcccccc);
-			RenderUtil.drawAlphaGradient(stack, newX + 130, newY + 2, 20, 101);
-			
-			RenderUtil.drawHRect(stack, newX + 1 + (100 * ((Color)setting.get(obj)).getSaturation()), newY + 1 + (100 * (1 - ((Color)setting.get(obj)).getBrightness())), 3, 3, 0xffcccccc);
-			RenderUtil.drawHRect(stack, newX + 105, newY + 1 + (100 * (((Color)setting.get(obj)).getHue())), 22, 3, 0xffcccccc);
-			RenderUtil.drawHRect(stack, newX + 129, newY + 1 + (100 * (1 - ((Color)setting.get(obj)).getAlpha())), 22, 3, 0xffcccccc);
-			
-			chromaPart.render(stack, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
-			if(selectionAnimation.get() > 0.8) {
-				hexValPart.render(stack, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
-			}
-			
-			RenderUtil.popScissor();
-			RenderUtil.postRender();
-			stack.pop();
-			
-			if(selected) {
-				if(dragging) {
-					if(dragStartY >= newY + 2 && dragStartY <= newY + 102) {
-						// SB
-						if(dragStartX >= newX + 2 && dragStartX <= newX + 103) {
-							float newS = (mx - (newX + 1)) / 100f;
-							float newB = 1 - ((my - (newY + 1)) / 100f);
-							newS = Math.min(Math.max(newS, 0), 1);
-							newB = Math.min(Math.max(newB, 0), 1);
-							((Color)setting.get(obj)).setSaturation(newS);
-							((Color)setting.get(obj)).setBrightness(newB);
-							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
-							while(hex.length() < 8) {
-								hex.insert(0, "0");
-							}
-							hexVal = hex.toString();
+		stack.push();
+		float w = 220;
+		float h = 122;
+		float newX = x + width - w;
+		float newY = y + height;
+		float subPartScroll = 0;
+		if(newY + h > mc.currentScreen.height) {
+			newY = y - h;
+			subPartScroll = -height - h;
+		}
+		
+		RenderUtil.pushScissor(newX - 1 + ((w + 2) * (float)(1 - selectionAnimation.get())), newY - 1, (w + 2) * (float)selectionAnimation.get(), (h + 2) * (float)selectionAnimation.get(), (float)scale);
+		RenderUtil.applyScissor();
+		RenderUtil.preRender();
+		
+		ClickGUI ui = PageManager.getPage(ClickGUI.class);
+		RenderUtil.drawRect(stack, newX, newY, w, h, ui.bgColor.get().getRGB());
+		RenderUtil.drawHRect(stack, newX - 1, newY - 1, w + 2, h + 2, 0xffcccccc);
+		
+		RenderUtil.drawHRect(stack, newX + 1, newY + 1, 103, 103, 0xffcccccc);
+		RenderUtil.drawSBGradient(stack, newX + 2, newY + 2, 101, 101, setting.get().getHue());
+		
+		RenderUtil.drawHRect(stack, newX + 105, newY + 1, 22, 103, 0xffcccccc);
+		RenderUtil.drawHueGradient(stack, newX + 106, newY + 2, 20, 101);
+		
+		RenderUtil.drawHRect(stack, newX + 129, newY + 1, 22, 103, 0xffcccccc);
+		RenderUtil.drawAlphaGradient(stack, newX + 130, newY + 2, 20, 101);
+		
+		RenderUtil.drawHRect(stack, newX + 1 + (100 * setting.get().getSaturation()), newY + 1 + (100 * (1 - setting.get().getBrightness())), 3, 3, 0xffcccccc);
+		RenderUtil.drawHRect(stack, newX + 105, newY + 1 + (100 * (setting.get().getHue())), 22, 3, 0xffcccccc);
+		RenderUtil.drawHRect(stack, newX + 129, newY + 1 + (100 * (1 - setting.get().getAlpha())), 22, 3, 0xffcccccc);
+		
+		chromaPart.render(stack, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
+		if(selectionAnimation.get() > 0.8) {
+			hexValPart.render(stack, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
+		}
+		
+		RenderUtil.popScissor();
+		RenderUtil.postRender();
+		stack.pop();
+		
+		if(selected) {
+			if(dragging) {
+				if(dragStartY >= newY + 2 && dragStartY <= newY + 102) {
+					// SB
+					if(dragStartX >= newX + 2 && dragStartX <= newX + 103) {
+						float newS = (mx - (newX + 1)) / 100f;
+						float newB = 1 - ((my - (newY + 1)) / 100f);
+						newS = Math.min(Math.max(newS, 0), 1);
+						newB = Math.min(Math.max(newB, 0), 1);
+						setting.get().setSaturation(newS);
+						setting.get().setBrightness(newB);
+						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+						while(hex.length() < 8) {
+							hex.insert(0, "0");
 						}
-						
-						// Hue
-						if(dragStartX >= newX + 106 && dragStartX <= newX + 126) {
-							float newH = (my - (newY + 1)) / 100f;
-							newH = Math.min(Math.max(newH, 0), 1);
-							((Color)setting.get(obj)).setHue(newH);
-							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
-							while(hex.length() < 8) {
-								hex.insert(0, "0");
-							}
-							hexVal = hex.toString();
+						hexVal.set(hex.toString());
+					}
+					
+					// Hue
+					if(dragStartX >= newX + 106 && dragStartX <= newX + 126) {
+						float newH = (my - (newY + 1)) / 100f;
+						newH = Math.min(Math.max(newH, 0), 1);
+						setting.get().setHue(newH);
+						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+						while(hex.length() < 8) {
+							hex.insert(0, "0");
 						}
-						
-						// Alpha
-						if(dragStartX >= newX + 130 && dragStartX <= newX + 150) {
-							float newA = 1 - ((my - (newY + 1)) / 100f);
-							newA = Math.min(Math.max(newA, 0), 1);
-							((Color)setting.get(obj)).setAlpha(newA);
-							StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
-							while(hex.length() < 8) {
-								hex.insert(0, "0");
-							}
-							hexVal = hex.toString();
+						hexVal.set(hex.toString());
+					}
+					
+					// Alpha
+					if(dragStartX >= newX + 130 && dragStartX <= newX + 150) {
+						float newA = 1 - ((my - (newY + 1)) / 100f);
+						newA = Math.min(Math.max(newA, 0), 1);
+						setting.get().setAlpha(newA);
+						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+						while(hex.length() < 8) {
+							hex.insert(0, "0");
 						}
+						hexVal.set(hex.toString());
 					}
 				}
 			}
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
 		}
 		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 	}
@@ -284,18 +262,13 @@ public class ColorSettingElement extends SettingElement {
 		}
 		if(selected) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && (mx >= x + width - 18 && mx < x + width - 4 && my >= y + 4 && my < y + 12)) {
-				try {
-					SettingHelper.reset(setting, obj);
-					chroma = ((Color)setting.get(obj)).getChroma();
-					chroma = ((Color)setting.get(obj)).getChroma();
-					StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
-					while(hex.length() < 8) {
-						hex.insert(0, "0");
-					}
-					hexVal = hex.toString();
-				} catch(IllegalAccessException e) {
-					throw new RuntimeException(e);
+				setting.reset();
+				chroma.set(setting.get().getChroma());
+				StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+				while(hex.length() < 8) {
+					hex.insert(0, "0");
 				}
+				hexVal.set(hex.toString());
 				return true;
 			}
 			float w = 220;
@@ -339,17 +312,13 @@ public class ColorSettingElement extends SettingElement {
 				selected = true;
 				return true;
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-				try {
-					SettingHelper.reset(setting, obj);
-					chroma = ((Color)setting.get(obj)).getChroma();
-					StringBuilder hex = new StringBuilder(Integer.toHexString(((Color)setting.get(obj)).getRGB()));
-					while(hex.length() < 8) {
-						hex.insert(0, "0");
-					}
-					hexVal = hex.toString();
-				} catch(IllegalAccessException e) {
-					e.printStackTrace();
+				setting.reset();
+				chroma.set(setting.get().getChroma());
+				StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+				while(hex.length() < 8) {
+					hex.insert(0, "0");
 				}
+				hexVal.set(hex.toString());
 				return false;
 			}
 		}

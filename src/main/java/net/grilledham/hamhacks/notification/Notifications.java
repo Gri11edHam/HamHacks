@@ -6,6 +6,7 @@ import net.grilledham.hamhacks.event.events.EventRender;
 import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.Color;
 import net.minecraft.text.Text;
 
@@ -16,33 +17,29 @@ public class Notifications extends Page {
 	
 	private static final List<Notification> notifications = new ArrayList<>();
 	
-	@ColorSetting(name = "hamhacks.page.notifications.accentColor")
-	public Color accentColor = new Color(0xFFAA0000);
+	private final SettingCategory GENERAL_CATEGORY = new SettingCategory("hamhacks.page.notifications.category.general");
 	
-	@ColorSetting(name = "hamhacks.page.notifications.backgroundColor")
-	public Color bgColor = new Color(0xFF000000);
+	public final ColorSetting accentColor = new ColorSetting("hamhacks.page.notifications.accentColor", new Color(0xFFAA0000), () -> true);
 	
-	@ColorSetting(name = "hamhacks.page.notifications.backgroundColorHovered")
-	public Color bgColorHovered = new Color(0xFF222222);
+	public final ColorSetting bgColor = new ColorSetting("hamhacks.page.notifications.backgroundColor", new Color(0xFF000000), () -> true);
 	
-	@ColorSetting(name = "hamhacks.page.notifications.progressColor")
-	public Color progressColor = new Color(0xFFAA0000);
+	public final ColorSetting bgColorHovered = new ColorSetting("hamhacks.page.notifications.backgroundColorHovered", new Color(0xFF222222), () -> true);
 	
-	@ColorSetting(name = "hamhacks.page.notifications.progressColorBackground")
-	public Color progressColorBG = new Color(0xFF220000);
+	public final ColorSetting progressColor = new ColorSetting("hamhacks.page.notifications.progressColor", new Color(0xFFAA0000), () -> true);
 	
-	@NumberSetting(
-			name = "hamhacks.page.notifications.lifeSpan",
-			defaultValue = 5,
-			min = 1,
-			max = 10,
-			forceStep = false,
-			step = 1
-	)
-	public float lifeSpan = 5;
+	public final ColorSetting progressColorBG = new ColorSetting("hamhacks.page.notifications.progressColorBackground", new Color(0xFF220000), () -> true);
+	
+	public final NumberSetting lifeSpan = new NumberSetting("hamhacks.page.notifications.lifeSpan", 5, () -> true, 1, 10, 1, false);
 	
 	public Notifications() {
 		super(Text.translatable("hamhacks.page.notifications"));
+		settingCategories.add(0, GENERAL_CATEGORY);
+		GENERAL_CATEGORY.add(accentColor);
+		GENERAL_CATEGORY.add(bgColor);
+		GENERAL_CATEGORY.add(bgColorHovered);
+		GENERAL_CATEGORY.add(progressColor);
+		GENERAL_CATEGORY.add(progressColorBG);
+		GENERAL_CATEGORY.add(lifeSpan);
 	}
 	
 	@EventListener

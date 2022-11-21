@@ -11,6 +11,7 @@ import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.SelectionSetting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.Color;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -35,41 +36,53 @@ public class Tracers extends Module {
 	
 	private final ArrayList<LivingEntity> entities = new ArrayList<>();
 	
-	@BoolSetting(name = "hamhacks.module.tracers.drawStem", category = "hamhacks.module.tracers.category.options", defaultValue = true)
-	public boolean drawStem = true;
+	private final SettingCategory OPTIONS_CATEGORY = new SettingCategory("hamhacks.module.tracers.category.options");
 	
-	@SelectionSetting(name = "hamhacks.module.tracers.endPosition", category = "hamhacks.module.tracers.category.options", options = {"hamhacks.module.tracers.endPosition.eyes", "hamhacks.module.tracers.endPosition.center", "hamhacks.module.tracers.endPosition.feet"})
-	public int endPos = 1;
+	private final BoolSetting drawStem = new BoolSetting("hamhacks.module.tracers.drawStem", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.tracers.tracePlayers", category = "hamhacks.module.tracers.category.players", defaultValue = true)
-	public boolean tracePlayers = true;
+	private final SelectionSetting endPos = new SelectionSetting("hamhacks.module.tracers.endPosition", 1, () -> true, "hamhacks.module.tracers.endPosition.eyes", "hamhacks.module.tracers.endPosition.center", "hamhacks.module.tracers.endPosition.feet");
 	
-	@ColorSetting(name = "hamhacks.module.tracers.playerColorClose", category = "hamhacks.module.tracers.category.players", dependsOn = "tracePlayers")
-	public Color playerClose = new Color(0xFFFF0000);
+	private final SettingCategory PLAYERS_CATEGORY = new SettingCategory("hamhacks.module.tracers.category.players");
 	
-	@ColorSetting(name = "hamhacks.module.tracers.playerColorFar", category = "hamhacks.module.tracers.category.players", dependsOn = "tracePlayers")
-	public Color playerFar = new Color(0xFF00FF00);
+	private final BoolSetting tracePlayers = new BoolSetting("hamhacks.module.tracers.tracePlayers", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.tracers.traceHostile", category = "hamhacks.module.tracers.category.hostile")
-	public boolean traceHostile = false;
+	private final ColorSetting playerClose = new ColorSetting("hamhacks.module.tracers.playerColorClose", new Color(0xFFFF0000), tracePlayers::get);
 	
-	@ColorSetting(name = "hamhacks.module.tracers.hostileColorClose", category = "hamhacks.module.tracers.category.hostile", dependsOn = "traceHostile")
-	public Color hostileClose = new Color(0xFFFF0000);
+	private final ColorSetting playerFar = new ColorSetting("hamhacks.module.tracers.playerColorFar", new Color(0xFF00FF00), tracePlayers::get);
 	
-	@ColorSetting(name = "hamhacks.module.tracers.hostileColorFar", category = "hamhacks.module.tracers.category.hostile", dependsOn = "traceHostile")
-	public Color hostileFar = new Color(0xFF00FF00);
+	private final SettingCategory HOSTILE_CATEGORY = new SettingCategory("hamhacks.module.tracers.category.hostile");
 	
-	@BoolSetting(name = "hamhacks.module.tracers.tracePassive", category = "hamhacks.module.tracers.category.passive")
-	public boolean tracePassive = false;
+	private final BoolSetting traceHostile = new BoolSetting("hamhacks.module.tracers.traceHostile", false, () -> true);
 	
-	@ColorSetting(name = "hamhacks.module.tracers.passiveColorClose", category = "hamhacks.module.tracers.category.passive", dependsOn = "tracePassive")
-	public Color passiveClose = new Color(0xFFFF0000);
+	private final ColorSetting hostileClose = new ColorSetting("hamhacks.module.tracers.hostileColorClose", new Color(0xFFFF0000), traceHostile::get);
 	
-	@ColorSetting(name = "hamhacks.module.tracers.passiveColorFar", category = "hamhacks.module.tracers.category.passive", dependsOn = "tracePassive")
-	public Color passiveFar = new Color(0xFF00FF00);
+	private final ColorSetting hostileFar = new ColorSetting("hamhacks.module.tracers.hostileColorFar", new Color(0xFF00FF00), traceHostile::get);
+	
+	private final SettingCategory PASSIVE_CATEGORY = new SettingCategory("hamhacks.module.tracers.category.passive");
+	
+	private final BoolSetting tracePassive = new BoolSetting("hamhacks.module.tracers.tracePassive", false, () -> true);
+	
+	private final ColorSetting passiveClose = new ColorSetting("hamhacks.module.tracers.passiveColorClose", new Color(0xFFFF0000), tracePassive::get);
+	
+	private final ColorSetting passiveFar = new ColorSetting("hamhacks.module.tracers.passiveColorFar", new Color(0xFF00FF00), tracePassive::get);
 	
 	public Tracers() {
 		super(Text.translatable("hamhacks.module.tracers"), Category.RENDER, new Keybind(0));
+		settingCategories.add(0, OPTIONS_CATEGORY);
+		OPTIONS_CATEGORY.add(drawStem);
+		OPTIONS_CATEGORY.add(endPos);
+		settingCategories.add(1, PLAYERS_CATEGORY);
+		PLAYERS_CATEGORY.add(tracePlayers);
+		PLAYERS_CATEGORY.add(playerClose);
+		PLAYERS_CATEGORY.add(playerFar);
+		settingCategories.add(2, HOSTILE_CATEGORY);
+		HOSTILE_CATEGORY.add(traceHostile);
+		HOSTILE_CATEGORY.add(hostileClose);
+		HOSTILE_CATEGORY.add(hostileFar);
+		settingCategories.add(3, PASSIVE_CATEGORY);
+		PASSIVE_CATEGORY.add(tracePassive);
+		PASSIVE_CATEGORY.add(passiveClose);
+		PASSIVE_CATEGORY.add(passiveFar);
 	}
 	
 	@EventListener
@@ -120,7 +133,7 @@ public class Tracers extends Module {
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
 				.filter(entity -> entity != player || ModuleManager.getModule(Freecam.class).isEnabled())
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-				.filter(entity -> (entity instanceof PlayerEntity && tracePlayers) || (entity instanceof HostileEntity && traceHostile) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && tracePassive));
+				.filter(entity -> (entity instanceof PlayerEntity && tracePlayers.get()) || (entity instanceof HostileEntity && traceHostile.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && tracePassive.get()));
 		
 		entities.addAll(stream.toList());
 	}
@@ -144,7 +157,7 @@ public class Tracers extends Module {
 			Vec3d endCenter = e.getBoundingBox().getCenter().subtract(interpolationOffset);
 			Vec3d endBottom = e.getBoundingBox().getCenter().subtract(0, e.getEyeHeight(e.getPose()) / 2, 0).subtract(interpolationOffset);
 			
-			Vec3d end = switch(endPos) {
+			Vec3d end = switch(endPos.get()) {
 				case 0 -> endTop;
 				case 2 -> endBottom;
 				default -> endCenter;
@@ -154,14 +167,14 @@ public class Tracers extends Module {
 			int cClose;
 			int cFar;
 			if(e instanceof PlayerEntity) {
-				cClose = playerClose.getRGB();
-				cFar = playerFar.getRGB();
+				cClose = playerClose.get().getRGB();
+				cFar = playerFar.get().getRGB();
 			} else if(e instanceof HostileEntity) {
-				cClose = hostileClose.getRGB();
-				cFar = hostileFar.getRGB();
+				cClose = hostileClose.get().getRGB();
+				cFar = hostileFar.get().getRGB();
 			} else if(e instanceof PassiveEntity || e instanceof WaterCreatureEntity) {
-				cClose = passiveClose.getRGB();
-				cFar = passiveFar.getRGB();
+				cClose = passiveClose.get().getRGB();
+				cFar = passiveFar.get().getRGB();
 			} else {
 				cClose = 0x80ff0000;
 				cFar = 0x8000ff00;
@@ -175,7 +188,7 @@ public class Tracers extends Module {
 			bufferBuilder.vertex(matrix, (float)start.x, (float)start.y, (float)start.z).color(r, g, b, a).next();
 			bufferBuilder.vertex(matrix, (float)end.x, (float)end.y, (float)end.z).color(r, g, b, a).next();
 			
-			if(drawStem) {
+			if(drawStem.get()) {
 				bufferBuilder.vertex(matrix, (float)endTop.x, (float)endTop.y, (float)endTop.z).color(r, g, b, a).next();
 				bufferBuilder.vertex(matrix, (float)endBottom.x, (float)endBottom.y, (float)endBottom.z).color(r, g, b, a).next();
 			}
@@ -227,7 +240,7 @@ public class Tracers extends Module {
 		boolean isAlive = !entity.isRemoved() && entity.isAlive();
 		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled();
 		boolean b = Math.abs(entity.getY() - mc.player.getY()) <= 1e6;
-		boolean shouldRender = (entity instanceof PlayerEntity && tracePlayers) || (entity instanceof HostileEntity && traceHostile) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && tracePassive);
+		boolean shouldRender = (entity instanceof PlayerEntity && tracePlayers.get()) || (entity instanceof HostileEntity && traceHostile.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && tracePassive.get());
 		return isEnabled() && isAlive && player && b && shouldRender;
 	}
 }

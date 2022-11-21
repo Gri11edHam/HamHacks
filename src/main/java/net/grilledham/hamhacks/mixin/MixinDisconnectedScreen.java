@@ -37,7 +37,7 @@ public abstract class MixinDisconnectedScreen extends Screen {
 		}
 		if(enforceSecureChat) {
 			AntiBan.getInstance().hasConnected = true;
-			if(AntiBan.getInstance().joinEnforcedServers) {
+			if(AntiBan.getInstance().joinEnforcedServers.get()) {
 				((IMultiplayerScreen)parent).reconnect();
 				Notifications.notify(AntiBan.getInstance().getName(), "Connecting to unsafe server. To stop automatic connection to unsafe servers, disable Join Enforced Servers.");
 			} else {
@@ -49,7 +49,7 @@ public abstract class MixinDisconnectedScreen extends Screen {
 						}));
 						this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 100 + yOffset, 150, 20, ScreenTexts.PROCEED, (button) -> {
 							if(checkbox != null && checkbox.isChecked()) {
-								AntiBan.getInstance().joinEnforcedServers = true;
+								AntiBan.getInstance().joinEnforcedServers.set(true);
 							}
 							((IMultiplayerScreen)parent).reconnect();
 						}));

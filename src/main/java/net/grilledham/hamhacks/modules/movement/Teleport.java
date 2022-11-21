@@ -15,56 +15,35 @@ import org.lwjgl.glfw.GLFW;
 
 public class Teleport extends Module {
 	
-	@NumberSetting(
-			name = "hamhacks.module.teleport.distance",
-			defaultValue = 3,
-			min = 0,
-			max = 20,
-			step = 1,
-			forceStep = false
-	)
-	public float distance = 3;
+	private final NumberSetting distance = new NumberSetting("hamhacks.module.teleport.distance", 3, () -> true, 0, 20, 1, false);
 	
-	@KeySetting(name = "hamhacks.module.teleport.increaseDistance")
-	public Keybind increaseDistance = new Keybind(GLFW.GLFW_KEY_RIGHT_BRACKET);
+	private final KeySetting increaseDistance = new KeySetting("hamhacks.module.teleport.increaseDistance", new Keybind(GLFW.GLFW_KEY_RIGHT_BRACKET), () -> true);
 	
-	@KeySetting(name = "hamhacks.module.teleport.decreaseDistance")
-	public Keybind decreaseDistance = new Keybind(GLFW.GLFW_KEY_LEFT_BRACKET);
+	private final KeySetting decreaseDistance = new KeySetting("hamhacks.module.teleport.decreaseDistance", new Keybind(GLFW.GLFW_KEY_LEFT_BRACKET), () -> true);
 	
-	@KeySetting(name = "hamhacks.module.teleport.activate")
-	public Keybind activate = new Keybind(GLFW.GLFW_KEY_Z);
+	private final KeySetting activate = new KeySetting("hamhacks.module.teleport.activate", new Keybind(GLFW.GLFW_KEY_Z), () -> true);
 	
 	public Teleport() {
 		super(Text.translatable("hamhacks.module.teleport"), Category.MOVEMENT, new Keybind(0));
+		GENERAL_CATEGORY.add(distance);
+		GENERAL_CATEGORY.add(increaseDistance);
+		GENERAL_CATEGORY.add(decreaseDistance);
+		GENERAL_CATEGORY.add(activate);
 	}
 	
 	@Override
 	public String getHUDText() {
-		return super.getHUDText() + String.format(" \u00a77%.2f", distance);
+		return super.getHUDText() + String.format(" \u00a77%.2f", distance.get());
 	}
 	
 	@EventListener
 	public void onTick(EventTick e) {
 		if(mc.player == null) return;
-		NumberSetting annotation;
-		try {
-			annotation = getClass().getField("distance").getAnnotation(NumberSetting.class);
-		} catch(NoSuchFieldException ex) {
-			throw new RuntimeException(ex);
+		while(increaseDistance.get().wasPressed()) {
+			distance.increment();
 		}
-		while(increaseDistance.wasPressed()) {
-			if(distance >= annotation.max()) {
-				distance = annotation.max();
-				break;
-			}
-			distance++;
-		}
-		while(decreaseDistance.wasPressed()) {
-			if(distance <= annotation.min()) {
-				distance = annotation.min();
-				break;
-			}
-			distance--;
+		while(decreaseDistance.get().wasPressed()) {
+			distance.decrement();
 		}
 		float yaw = mc.player.getYaw();
 		float pitch = mc.player.getPitch();
@@ -73,9 +52,9 @@ public class Teleport extends Module {
 		float h = -MathHelper.cos(-pitch * 0.017453292F);
 		float i = MathHelper.sin(-pitch * 0.017453292F);
 		Vec3 facing = new Vec3(g * h, i, f * h);
-		facing.mul(distance);
+		facing.mul(distance.get());
 		Vec3 pos = new Vec3(mc.player.getPos());
-		while(activate.wasPressed()) {
+		while(activate.get().wasPressed()) {
 			pos.add(facing);
 			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
 			mc.player.setPosition(pos.get());

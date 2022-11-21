@@ -4,15 +4,14 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BlockTypeSelector;
-import net.grilledham.hamhacks.setting.SettingPage;
 import net.minecraft.block.Blocks;
 import net.minecraft.text.Text;
 
 public class XRay extends Module {
 	
-	@SettingPage(name = "hamhacks.module.xray.visibleBlocks")
 	public BlockTypeSelector visibleBlocks = new BlockTypeSelector(
-			() -> { if(isEnabled()) mc.worldRenderer.reload(); },
+			"hamhacks.module.xray.visibleBlocks",
+			() -> true,
 			Blocks.COAL_ORE,
 			Blocks.DEEPSLATE_COAL_ORE,
 			Blocks.COAL_BLOCK,
@@ -51,10 +50,18 @@ public class XRay extends Module {
 			Blocks.NETHER_PORTAL,
 			Blocks.OBSIDIAN,
 			Blocks.CRYING_OBSIDIAN
-	);
+	) {
+		@Override
+		public void onChange() {
+			if(isEnabled()) {
+				mc.worldRenderer.reload();
+			}
+		}
+	};
 	
 	public XRay() {
 		super(Text.translatable("hamhacks.module.xray"), Category.RENDER, new Keybind(0));
+		GENERAL_CATEGORY.add(visibleBlocks);
 	}
 	
 	@Override

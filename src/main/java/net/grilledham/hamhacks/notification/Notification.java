@@ -20,7 +20,7 @@ public class Notification {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
-	private final Animation progressAnimation = AnimationBuilder.create(AnimationType.LINEAR, PageManager.getPage(Notifications.class).lifeSpan).build();
+	private final Animation progressAnimation = AnimationBuilder.create(AnimationType.LINEAR, PageManager.getPage(Notifications.class).lifeSpan.get()).build();
 	
 	private final List<String> titleTexts = new ArrayList<>();
 	private final List<String> infoTexts = new ArrayList<>();
@@ -98,15 +98,15 @@ public class Notification {
 		
 		boolean hovered = mx >= x && mx <= x + WIDTH && my >= y && my <= y + height;
 		
-		int bgColor = RenderUtil.mix(PageManager.getPage(Notifications.class).bgColorHovered.getRGB(), PageManager.getPage(Notifications.class).bgColor.getRGB(), hoverAnimation.get());
+		int bgColor = RenderUtil.mix(PageManager.getPage(Notifications.class).bgColorHovered.get().getRGB(), PageManager.getPage(Notifications.class).bgColor.get().getRGB(), hoverAnimation.get());
 		
 		RenderUtil.preRender();
 		RenderUtil.drawRect(matrices, x, y, WIDTH, height - 2, bgColor);
-		RenderUtil.drawHRect(matrices, x - 1, y - 1, WIDTH + 2, height + 2, PageManager.getPage(Notifications.class).accentColor.getRGB());
+		RenderUtil.drawHRect(matrices, x - 1, y - 1, WIDTH + 2, height + 2, PageManager.getPage(Notifications.class).accentColor.get().getRGB());
 		
 		float progressBarPercentage = (float)progressAnimation.get();
-		RenderUtil.drawRect(matrices, x + WIDTH * progressBarPercentage, y + height - 2, WIDTH * (1 - progressBarPercentage), 2, PageManager.getPage(Notifications.class).progressColorBG.getRGB());
-		RenderUtil.drawRect(matrices, x, y + height - 2, WIDTH * progressBarPercentage, 2, PageManager.getPage(Notifications.class).progressColor.getRGB());
+		RenderUtil.drawRect(matrices, x + WIDTH * progressBarPercentage, y + height - 2, WIDTH * (1 - progressBarPercentage), 2, PageManager.getPage(Notifications.class).progressColorBG.get().getRGB());
+		RenderUtil.drawRect(matrices, x, y + height - 2, WIDTH * progressBarPercentage, 2, PageManager.getPage(Notifications.class).progressColor.get().getRGB());
 		
 		RenderUtil.postRender();
 		
@@ -131,7 +131,7 @@ public class Notification {
 		if(!clicked) {
 			if(hovered) {
 				progressAnimation.setAbsolute(progressAnimation.get());
-				progressAnimation.setDuration(PageManager.getPage(Notifications.class).lifeSpan * (1 - progressAnimation.get()));
+				progressAnimation.setDuration(PageManager.getPage(Notifications.class).lifeSpan.get() * (1 - progressAnimation.get()));
 			} else {
 				progressAnimation.set(1);
 			}

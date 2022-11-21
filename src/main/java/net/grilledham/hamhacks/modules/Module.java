@@ -4,9 +4,13 @@ import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.KeySetting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Module {
 	
@@ -16,14 +20,15 @@ public class Module {
 	
 	protected Category category;
 	
-	@BoolSetting(name = "hamhacks.module.generic.showModule", defaultValue = true)
-	public boolean showModule = true;
+	protected final List<SettingCategory> settingCategories = new ArrayList<>();
 	
-	@KeySetting(name = "hamhacks.module.generic.keybind")
-	public Keybind key;
+	protected final SettingCategory GENERAL_CATEGORY = new SettingCategory("hamhacks.module.generic.category.general");
 	
-	@BoolSetting(name = "hamhacks.module.generic.enabled")
-	public boolean enabled = false;
+	protected final BoolSetting showModule = new BoolSetting("hamhacks.module.generic.showModule", true, () -> true);
+	
+	protected final KeySetting key;
+	
+	public BoolSetting enabled = new BoolSetting("hamhacks.module.generic.enabled", false, () -> true);
 	
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
@@ -36,24 +41,30 @@ public class Module {
 		this.name = name;
 		this.toolTip = Text.translatable(getConfigName() + ".tooltip");
 		this.category = category;
-		this.key = key;
+		this.key = new KeySetting("hamhacks.module.generic.keybind", key, () -> true);
+		
+		settingCategories.add(GENERAL_CATEGORY);
+		
+		GENERAL_CATEGORY.add(showModule, true);
+		GENERAL_CATEGORY.add(this.key, true);
+		GENERAL_CATEGORY.add(enabled, true);
 	}
 	
 	public void checkKeybind() {
-		while(key.wasPressed()) {
+		while(key.get().wasPressed()) {
 			toggle();
 		}
 	}
 	
 	public void toggle() {
 		if(this.forceDisabled == 0) {
-			enabled = !enabled;
+			enabled.toggle();
 		}
 	}
 	
 	public void setEnabled(boolean enabled) {
 		if(this.forceDisabled == 0) {
-			this.enabled = enabled;
+			this.enabled.set(enabled);
 		}
 	}
 	
@@ -93,15 +104,19 @@ public class Module {
 	}
 	
 	public boolean isEnabled() {
-		return this.enabled;
+		return this.enabled.get();
 	}
 	
 	public boolean shouldShowModule() {
-		return showModule;
+		return showModule.get();
 	}
 	
 	public Keybind getKey() {
-		return key;
+		return key.get();
+	}
+	
+	public List<SettingCategory> getSettingCategories() {
+		return settingCategories;
 	}
 	
 	public String getConfigName() {
@@ -109,14 +124,14 @@ public class Module {
 	}
 	
 	public void updateEnabled() {
-		if(lastEnabled != enabled) {
-			if(enabled){
+		if(lastEnabled != enabled.get()) {
+			if(enabled.get()) {
 				onEnable();
 			} else{
 				onDisable();
 			}
 		}
-		lastEnabled = enabled;
+		lastEnabled = enabled.get();
 	}
 	
 	public String getHUDText() {
@@ -130,5 +145,4 @@ public class Module {
 				", config_name=" + getConfigName() +
 				'}';
 	}
-	
 }

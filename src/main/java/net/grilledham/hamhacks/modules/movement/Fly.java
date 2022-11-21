@@ -23,32 +23,15 @@ public class Fly extends Module {
 	
 	private float updates = 0;
 	
-	@SelectionSetting(name = "hamhacks.module.fly.mode", options = {"hamhacks.module.fly.mode.default", "hamhacks.module.fly.mode.vanilla", "hamhacks.module.fly.mode.jetpack"})
-	public int mode = 0;
+	private final SelectionSetting mode = new SelectionSetting("hamhacks.module.fly.mode", 0, () -> true, "hamhacks.module.fly.mode.default", "hamhacks.module.fly.mode.vanilla", "hamhacks.module.fly.mode.jetpack");
 	
-	@NumberSetting(
-			name = "hamhacks.module.fly.speed",
-			defaultValue = 1,
-			min = 0,
-			max = 10,
-			dependsOn = "!mode->2"
-	)
-	public float speed = 1;
+	private final NumberSetting speed = new NumberSetting("hamhacks.module.fly.speed", 1, () -> mode.get() != 2, 0, 10);
 	
-	@BoolSetting(name = "hamhacks.module.fly.smoothMovement", dependsOn = "!mode->2")
-	public boolean smoothMovement = false;
+	private final BoolSetting smoothMovement = new BoolSetting("hamhacks.module.fly.smoothMovement", false, () -> mode.get() != 2);
 	
-	@NumberSetting(
-			name = "hamhacks.module.fly.jetpackSpeed",
-			defaultValue = 0.2f,
-			min = 0.1f,
-			max = 1,
-			dependsOn = "mode->2"
-	)
-	public float jetpackSpeed = 0.2f;
+	private final NumberSetting jetpackSpeed = new NumberSetting("hamhacks.module.fly.jetpackSpeed", 0.2, () -> mode.get() == 2, 0.1, 1);
 	
-	@BoolSetting(name = "hamhacks.module.fly.autoLand", dependsOn = "mode->2")
-	public boolean autoLand = false;
+	private final BoolSetting autoLand = new BoolSetting("hamhacks.module.fly.autoLand", false, () -> mode.get() == 2);
 	
 	private boolean landing = false;
 	
@@ -56,15 +39,16 @@ public class Fly extends Module {
 	
 	public Fly() {
 		super(Text.translatable("hamhacks.module.fly"), Category.MOVEMENT, new Keybind(GLFW.GLFW_KEY_F));
+		GENERAL_CATEGORY.add(mode);
+		GENERAL_CATEGORY.add(speed);
+		GENERAL_CATEGORY.add(smoothMovement);
+		GENERAL_CATEGORY.add(jetpackSpeed);
+		GENERAL_CATEGORY.add(autoLand);
 	}
 	
 	@Override
 	public String getHUDText() {
-		try {
-			return super.getHUDText() + " \u00a77" + Text.translatable(getClass().getField("mode").getAnnotation(SelectionSetting.class).options()[mode]).getString();
-		} catch(NoSuchFieldException e) {
-			return super.getHUDText();
-		}
+		return super.getHUDText() + " \u00a77" + mode.options()[mode.get()];
 	}
 	
 	@Override
@@ -77,12 +61,12 @@ public class Fly extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		if(mode == 0) {
+		if(mode.get() == 0) {
 			if(!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
 		}
-		if(mode == 1) {
+		if(mode.get() == 1) {
 			if(!Lists.newArrayList(mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().offset(0.0D, -0.0001, 0.0D))).isEmpty()) {
 				mc.player.setPosition(mc.player.getPos().add(0, 0.5, 0));
 			}
@@ -92,16 +76,16 @@ public class Fly extends Module {
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
-			switch(mode) {
+			switch(mode.get()) {
 				case 0 -> {
-					if(smoothMovement) {
+					if(smoothMovement.get()) {
 						moveSmooth();
 					} else {
 						move();
 					}
 				}
 				case 1 -> {
-					if(smoothMovement) {
+					if(smoothMovement.get()) {
 						moveSmooth();
 					} else {
 						move();
@@ -137,8 +121,8 @@ public class Fly extends Module {
 					lastTime = System.currentTimeMillis();
 				}
 				case 2 -> {
-					mc.player.addVelocity(0, mc.player.input.jumping ? jetpackSpeed : 0, 0);
-					if(autoLand) {
+					mc.player.addVelocity(0, mc.player.input.jumping ? jetpackSpeed.get() : 0, 0);
+					if(autoLand.get()) {
 						if(mc.world.getBlockState(mc.player.getBlockPos().add(0, 20 * mc.player.getVelocity().getY(), 0)).getMaterial() != Material.AIR) {
 							if(mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 3, 0))).getBlock().canMobSpawnInside()) {
 								landing = true;
@@ -182,15 +166,15 @@ public class Fly extends Module {
 		float dz = (float)(distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90)));
 		dx += (float)(distanceStrafe * Math.cos(Math.toRadians(mc.player.getYaw())));
 		dz += (float)(distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
-		dx *= speed;
-		dy *= speed;
-		dz *= speed;
+		dx *= speed.get();
+		dy *= speed.get();
+		dz *= speed.get();
 		mc.player.setVelocity(new Vec3d(dx, dy, dz));
 	}
 	
-	private float lastDx = 0;
-	private float lastDy = 0;
-	private float lastDz = 0;
+	private double lastDx = 0;
+	private double lastDy = 0;
+	private double lastDz = 0;
 	
 	private void moveSmooth() {
 		mc.player.getAbilities().flying = true;
@@ -215,31 +199,31 @@ public class Fly extends Module {
 		if(mc.player.input.sneaking) {
 			distanceVertical -= 1;
 		}
-		distanceForward *= speed;
-		distanceStrafe *= speed;
-		distanceVertical *= speed;
-		float dx = (float)(distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));
-		float dy = distanceVertical;
-		float dz = (float)(distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90)));
-		dx += (float)(distanceStrafe * Math.cos(Math.toRadians(mc.player.getYaw())));
-		dz += (float)(distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
+		distanceForward *= speed.get();
+		distanceStrafe *= speed.get();
+		distanceVertical *= speed.get();
+		double dx = distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90));
+		double dy = distanceVertical;
+		double dz = distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90));
+		dx += distanceStrafe * Math.cos(Math.toRadians(mc.player.getYaw()));
+		dz += distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw()));
 		dx = lastDx + (dx / 10f);
 		dy = lastDy + (dy / 10f);
 		dz = lastDz + (dz / 10f);
-		if(dx > speed) {
-			dx = speed;
-		} else if(dx < -speed) {
-			dx = -speed;
+		if(dx > speed.get()) {
+			dx = speed.get();
+		} else if(dx < -speed.get()) {
+			dx = -speed.get();
 		}
-		if(dy > speed) {
-			dy = speed;
-		} else if(dy < -speed) {
-			dy = -speed;
+		if(dy > speed.get()) {
+			dy = speed.get();
+		} else if(dy < -speed.get()) {
+			dy = -speed.get();
 		}
-		if(dz > speed) {
-			dz = speed;
-		} else if(dz < -speed) {
-			dz = -speed;
+		if(dz > speed.get()) {
+			dz = speed.get();
+		} else if(dz < -speed.get()) {
+			dz = -speed.get();
 		}
 		if(!mc.player.input.jumping && !mc.player.input.sneaking) {
 			dy = 0;
@@ -267,9 +251,9 @@ public class Fly extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		if(mode == 0) {
+		if(mode.get() == 0) {
 			mc.player.getAbilities().flying = false;
-		} else if(mode == 1) {
+		} else if(mode.get() == 1) {
 			mc.player.getAbilities().flying = false;
 			PositionHack.setOffsetPacket(0, 0, 0);
 		}

@@ -6,7 +6,6 @@ import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.NumberSetting;
-import net.grilledham.hamhacks.setting.SettingHelper;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
@@ -14,9 +13,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 
-import java.lang.reflect.Field;
-
-public class NumberSettingElement extends SettingElement {
+public class NumberSettingElement extends SettingElement<NumberSetting> {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	private final Animation sliderAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
@@ -25,45 +22,38 @@ public class NumberSettingElement extends SettingElement {
 	
 	private final StringSettingElement editor;
 	
-	@StringSetting(name = "")
-	public String strVal;
+	public StringSetting strVal;
 	
-	public NumberSettingElement(float x, float y, float scale, Field setting, Object obj) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(SettingHelper.getName(setting).getString()) + 314, scale, setting, obj);
-		sliderAnimation.setAbsolute(setting.getAnnotation(NumberSetting.class).min());
-		try {
-			NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
-			if(numSetting.forceStep() && numSetting.step() == 1) {
-				strVal = (int)setting.getFloat(obj) + "";
-			} else {
-				strVal = setting.getFloat(obj) + "";
-			}
-			Field strValField = getClass().getField("strVal");
-			editor = new StringSettingElement(x + width - 207, y, scale, strValField, this) {
-				
-				@Override
-				public void updateValue(String value) {
-					super.updateValue(value);
-					try {
-						if(!strVal.equals("")) {
-							NumberSettingElement.this.updateValue(Float.parseFloat(strVal), false);
-						}
-					} catch(Exception ignored) {}
-				}
-				
-				@Override
-				public boolean typeChar(char c, int modifiers) {
-					return switch(c) {
-						case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' -> super.typeChar(c, modifiers);
-						default -> false;
-					};
-				}
-			};
-			editor.drawBackground = false;
-		} catch(IllegalAccessException | NoSuchFieldException e) {
-			throw new RuntimeException(e);
+	public NumberSettingElement(float x, float y, double scale, NumberSetting setting) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 314, scale, setting);
+		sliderAnimation.setAbsolute(setting.min());
+		if(setting.forceStep() && setting.step() == 1) {
+			strVal = new StringSetting("", (int)(double)setting.get() + "", () -> false);
+		} else {
+			strVal = new StringSetting("", setting.get() + "", () -> false);
 		}
-		resize(mc.textRenderer.getWidth(SettingHelper.getName(setting)) + 200 + 8 + editor.getWidth(), 16);
+		editor = new StringSettingElement(x + width - 207, y, scale, strVal) {
+			
+			@Override
+			public void updateValue(String value) {
+				super.updateValue(value);
+				try {
+					if(!strVal.get().equals("")) {
+						NumberSettingElement.this.updateValue(Double.parseDouble(strVal.get()), false);
+					}
+				} catch(Exception ignored) {}
+			}
+			
+			@Override
+			public boolean typeChar(char c, int modifiers) {
+				return switch(c) {
+					case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' -> super.typeChar(c, modifiers);
+					default -> false;
+				};
+			}
+		};
+		editor.drawBackground = false;
+		resize(mc.textRenderer.getWidth(setting.getName()) + 200 + 8 + editor.getWidth(), 16);
 	}
 	
 	@Override
@@ -74,18 +64,18 @@ public class NumberSettingElement extends SettingElement {
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
-		int bgC = ui.bgColor.getRGB();
+		int bgC = ui.bgColor.get().getRGB();
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - 206, y + 2, 204, 12, outlineC);
 		
 		boolean hovered = mx >= x + width - 204 && mx < x + width - 4 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((ui.accentColor.getRGB() & 0xff000000) + 0xffffff, ui.accentColor.getRGB(), hoverAnimation.get() / 4);
-		float sliderPercentage = ((float)sliderAnimation.get() - setting.getAnnotation(NumberSetting.class).min()) / (setting.getAnnotation(NumberSetting.class).max() - setting.getAnnotation(NumberSetting.class).min());
-		RenderUtil.drawRect(stack, x + width - 204, y + 4, (200 * sliderPercentage), 8, boxC);
+		int boxC = RenderUtil.mix((ui.accentColor.get().getRGB() & 0xff000000) + 0xffffff, ui.accentColor.get().getRGB(), hoverAnimation.get() / 4);
+		double sliderPercentage = (sliderAnimation.get() - setting.min()) / (setting.max() - setting.min());
+		RenderUtil.drawRect(stack, x + width - 204, y + 4, (float)(200 * sliderPercentage), 8, boxC);
 		
-		mc.textRenderer.drawWithShadow(stack, SettingHelper.getName(setting), x + 2, y + 4, ui.textColor.getRGB());
+		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -94,7 +84,7 @@ public class NumberSettingElement extends SettingElement {
 		
 		if(dragging) {
 			float newPercentage = (mx - (x + width - 204)) / (float)200;
-			float newVal = (newPercentage * (setting.getAnnotation(NumberSetting.class).max() - setting.getAnnotation(NumberSetting.class).min())) + setting.getAnnotation(NumberSetting.class).min();
+			double newVal = (newPercentage * (setting.max() - setting.min())) + setting.min();
 			try {
 				updateValue(newVal, true);
 			} catch(IllegalAccessException e) {
@@ -105,11 +95,7 @@ public class NumberSettingElement extends SettingElement {
 		hoverAnimation.set(hovered);
 		hoverAnimation.update();
 		
-		try {
-			sliderAnimation.set(setting.getFloat(obj));
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		sliderAnimation.set(setting.get());
 		sliderAnimation.update();
 	}
 	
@@ -169,8 +155,8 @@ public class NumberSettingElement extends SettingElement {
 			
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 				try {
-					SettingHelper.reset(setting, obj);
-					updateValue(setting.getFloat(obj), true);
+					setting.reset();
+					updateValue(setting.get(), true);
 				} catch(IllegalAccessException e) {
 					e.printStackTrace();
 				}
@@ -179,15 +165,15 @@ public class NumberSettingElement extends SettingElement {
 		return super.release(mx, my, scrollX, scrollY, button);
 	}
 	
-	private void updateValue(float newVal, boolean fromSlider) throws IllegalAccessException {
-		float roundedSetting = newVal;
-		NumberSetting numSetting = setting.getAnnotation(NumberSetting.class);
+	private void updateValue(double newVal, boolean fromSlider) throws IllegalAccessException {
+		double roundedSetting = newVal;
+		NumberSetting numSetting = setting;
 		roundedSetting = MathHelper.clamp(roundedSetting, numSetting.min(), numSetting.max());
 		if((numSetting.forceStep() || fromSlider) && numSetting.step() != -1) {
-			float closest = numSetting.min();
-			for(float f = numSetting.min(); f <= numSetting.max(); f += numSetting.step()) {
-				float newDist = Math.abs(f - roundedSetting);
-				float oldDist = Math.abs(closest - roundedSetting);
+			double closest = numSetting.min();
+			for(double f = numSetting.min(); f <= numSetting.max(); f += numSetting.step()) {
+				double newDist = Math.abs(f - roundedSetting);
+				double oldDist = Math.abs(closest - roundedSetting);
 				if(newDist <= oldDist) {
 					closest = f;
 				} else {
@@ -196,12 +182,12 @@ public class NumberSettingElement extends SettingElement {
 			}
 			roundedSetting = closest;
 		}
-		setting.setFloat(obj, roundedSetting);
+		setting.set(roundedSetting);
 		if(fromSlider) {
 			if(numSetting.forceStep() && numSetting.step() == 1) {
-				strVal = (int)roundedSetting + "";
+				strVal.set((int)roundedSetting + "");
 			} else {
-				strVal = roundedSetting + "";
+				strVal.set(roundedSetting + "");
 			}
 		}
 	}

@@ -17,8 +17,7 @@ import java.util.Random;
 
 public class M1337 extends Module {
 	
-	@SelectionSetting(name = "hamhacks.module.1337.mode", options = {"hamhacks.module.1337.mode.basic", "hamhacks.module.1337.mode.advanced"})
-	public int mode = 0;
+	private final SelectionSetting mode = new SelectionSetting("hamhacks.module.1337.mode", 0, () -> true, "hamhacks.module.1337.mode.basic", "hamhacks.module.1337.mode.advanced");
 	
 	private boolean modify = true;
 	
@@ -29,6 +28,8 @@ public class M1337 extends Module {
 	
 	public M1337() {
 		super(Text.translatable("hamhacks.module.1337"), Category.MISC, new Keybind(0));
+		GENERAL_CATEGORY.add(mode);
+		
 		r = new Random();
 		
 		// b451c
@@ -106,9 +107,14 @@ public class M1337 extends Module {
 		advanced.put('z', new String[]{"2", "`/_"});
 	}
 	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + mode.options()[mode.get()];
+	}
+	
 	@EventListener
 	public void onChat(EventChat.EventChatSent e) {
-		if(mc.player == null || e.message.startsWith(PageManager.getPage(Commands.class).prefix.getCombinedString()) || e.message.startsWith(BaritoneAPI.getSettings().prefix.value)) return;
+		if(mc.player == null || e.message.startsWith(PageManager.getPage(Commands.class).prefix.get().getCombinedString()) || e.message.startsWith(BaritoneAPI.getSettings().prefix.value)) return;
 		if(modify) {
 			e.canceled = true;
 			modify = false;
@@ -121,7 +127,7 @@ public class M1337 extends Module {
 	private String f1337(String msg) {
 		StringBuilder newMsg = new StringBuilder();
 		for(int i = 0; i < msg.length(); i++) {
-			String[] leetChars = switch(mode) {
+			String[] leetChars = switch(mode.get()) {
 				case 0 -> basic.getOrDefault(msg.charAt(i), new String[] { String.valueOf(msg.charAt(i)) });
 				case 1 -> advanced.getOrDefault(msg.charAt(i), new String[] { String.valueOf(msg.charAt(i)) });
 				default -> new String[] { String.valueOf(msg.charAt(i)) };

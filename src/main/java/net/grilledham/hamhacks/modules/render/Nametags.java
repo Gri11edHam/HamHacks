@@ -13,6 +13,7 @@ import net.grilledham.hamhacks.modules.misc.NameHider;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.EnchantUtil;
 import net.grilledham.hamhacks.util.ProjectionUtil;
@@ -51,59 +52,53 @@ public class Nametags extends Module {
 	
 	private final Map<LivingEntity, String> names = new HashMap<>();
 	
-	@BoolSetting(name = "hamhacks.module.nametags.self", category = "hamhacks.module.nametags.category.entities", defaultValue = true)
-	public boolean self = true;
+	private final SettingCategory ENTITIES_CATEGORY = new SettingCategory("hamhacks.module.nametags.category.entities");
 	
-	@BoolSetting(name = "hamhacks.module.nametags.hostiles", category = "hamhacks.module.nametags.category.entities", defaultValue = true)
-	public boolean hostiles = true;
+	private final BoolSetting self = new BoolSetting("hamhacks.module.nametags.self", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.nametags.passives", category = "hamhacks.module.nametags.category.entities", defaultValue = true)
-	public boolean passives = true;
+	private final BoolSetting hostiles = new BoolSetting("hamhacks.module.nametags.hostiles", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.nametags.entityItems", category = "hamhacks.module.nametags.category.elements", defaultValue = true)
-	public boolean entityItems = true;
+	private final BoolSetting passives = new BoolSetting("hamhacks.module.nametags.passives", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.nametags.enchants", category = "hamhacks.module.nametags.category.elements", defaultValue = true, dependsOn = "entityItems")
-	public boolean enchants = true;
+	private final SettingCategory ELEMENTS_CATEGORY = new SettingCategory("hamhacks.module.nametags.category.elements");
 	
-	@BoolSetting(name = "hamhacks.module.nametags.gamemode", category = "hamhacks.module.nametags.category.elements", defaultValue = true)
-	public boolean gamemode = true;
+	private final BoolSetting entityItems = new BoolSetting("hamhacks.module.nametags.entityItems", true, () -> true);
 	
-	@BoolSetting(name = "hamhacks.module.nametags.distance", category = "hamhacks.module.nametags.category.elements", defaultValue = true)
-	public boolean distance = true;
+	private final BoolSetting enchants = new BoolSetting("hamhacks.module.nametags.enchants", true, entityItems::get);
 	
-	@BoolSetting(name = "hamhacks.module.nametags.ping", category = "hamhacks.module.nametags.category.elements", defaultValue = true)
-	public boolean ping = true;
+	private final BoolSetting gamemode = new BoolSetting("hamhacks.module.nametags.gamemode", true, () -> true);
 	
-	@NumberSetting(
-			name = "hamhacks.module.nametags.scale", category = "hamhacks.module.nametags.category.appearance",
-			defaultValue = 2,
-			min = 0.25f,
-			max = 4f,
-			step = 0.25f,
-			forceStep = false
-	)
-	public float scale = 2;
+	private final BoolSetting distance = new BoolSetting("hamhacks.module.nametags.distance", true, () -> true);
 	
-	@NumberSetting(
-			name = "hamhacks.module.nametags.itemScale", category = "hamhacks.module.nametags.category.appearance",
-			defaultValue = 2,
-			min = 0.25f,
-			max = 4,
-			step = 0.25f,
-			forceStep = false,
-			dependsOn = "entityItems"
-	)
-	public float itemScale = 2;
+	private final BoolSetting ping = new BoolSetting("hamhacks.module.nametags.ping", true, () -> true);
 	
-	@ColorSetting(name = "hamhacks.module.nametags.outlineColor", category = "hamhacks.module.nametags.category.appearance")
-	public Color outlineColor = new Color(0x80AA0000);
+	private final SettingCategory APPEARANCE_CATEGORY = new SettingCategory("hamhacks.module.nametags.category.appearance");
 	
-	@ColorSetting(name = "hamhacks.module.nametags.fillColor", category = "hamhacks.module.nametags.category.appearance")
-	public Color fillColor = new Color(0x80000000);
+	private final NumberSetting scale = new NumberSetting("hamhacks.module.nametags.scale", 2, () -> true, 0.25, 4, 0.25, false);
+	
+	private final NumberSetting itemScale = new NumberSetting("hamhacks.module.nametags.itemScale", 2,entityItems::get, 0.25, 4, 0.25, false);
+	
+	private final ColorSetting outlineColor = new ColorSetting("hamhacks.module.nametags.outlineColor", new Color(0x80AA0000), () -> true);
+	
+	private final ColorSetting fillColor = new ColorSetting("hamhacks.module.nametags.fillColor", new Color(0x80000000), () -> true);
 	
 	public Nametags() {
 		super(Text.translatable("hamhacks.module.nametags"), Category.RENDER, new Keybind(0));
+		settingCategories.add(0, ENTITIES_CATEGORY);
+		ENTITIES_CATEGORY.add(self);
+		ENTITIES_CATEGORY.add(hostiles);
+		ENTITIES_CATEGORY.add(passives);
+		settingCategories.add(1, ELEMENTS_CATEGORY);
+		ELEMENTS_CATEGORY.add(entityItems);
+		ELEMENTS_CATEGORY.add(enchants);
+		ELEMENTS_CATEGORY.add(gamemode);
+		ELEMENTS_CATEGORY.add(distance);
+		ELEMENTS_CATEGORY.add(ping);
+		settingCategories.add(2, APPEARANCE_CATEGORY);
+		APPEARANCE_CATEGORY.add(scale);
+		APPEARANCE_CATEGORY.add(itemScale);
+		APPEARANCE_CATEGORY.add(outlineColor);
+		APPEARANCE_CATEGORY.add(fillColor);
 	}
 	
 	@EventListener
@@ -148,7 +143,7 @@ public class Nametags extends Module {
 		names.clear();
 		for(LivingEntity entity : entities) {
 			String gmString = "";
-			if(gamemode && entity instanceof PlayerEntity p) {
+			if(gamemode.get() && entity instanceof PlayerEntity p) {
 				PlayerListEntry playerListEntry = mc.getNetworkHandler().getPlayerListEntry(p.getUuid());
 				if(playerListEntry == null) {
 					gmString = "\u00a77BOT";
@@ -197,14 +192,14 @@ public class Nametags extends Module {
 			String health = healthColor + healthPercentage + "% ";
 			
 			String distanceString = "";
-			if(distance) {
+			if(distance.get()) {
 				Vec3d distFrom = ModuleManager.getModule(Freecam.class).isEnabled() ? mc.gameRenderer.getCamera().getPos() : mc.cameraEntity.getPos();
 				float dist = Math.round(distFrom.distanceTo(entity.getPos()) * 10) / 10f;
 				distanceString = "\u00a79" + dist + "m ";
 			}
 			
 			String pingString = "";
-			if(ping && entity instanceof PlayerEntity p) {
+			if(ping.get() && entity instanceof PlayerEntity p) {
 				PlayerListEntry playerListEntry = mc.getNetworkHandler().getPlayerListEntry(p.getUuid());
 				int latency = -1;
 				if(playerListEntry != null) {
@@ -245,7 +240,7 @@ public class Nametags extends Module {
 			
 			Vec3 pos = new Vec3(ex, ey + e.getHeight() + 0.2, ez);
 			
-			if(ProjectionUtil.to2D(pos, scale)) {
+			if(ProjectionUtil.to2D(pos, scale.get())) {
 				TextRenderer textRenderer = mc.textRenderer;
 				
 				String display = names.get(e);
@@ -265,7 +260,7 @@ public class Nametags extends Module {
 				
 				textRenderer.drawWithShadow(matrixStack, display, -xCenter, -height, -1);
 				
-				if(entityItems) {
+				if(entityItems.get()) {
 					float[] itemWidths = new float[6];
 					boolean hasItems = false;
 					int enchantCount = 0;
@@ -274,13 +269,13 @@ public class Nametags extends Module {
 						ItemStack stack = getItem(e, i);
 						
 						if(!stack.isEmpty()) {
-							itemWidths[i] = (16 + (i < 5 ? 2 : 0)) * itemScale;
+							itemWidths[i] = (16 + (i < 5 ? 2 : 0)) * (float)(double)itemScale.get();
 							hasItems = true;
 						} else {
 							itemWidths[i] = 0;
 						}
 						
-						if(enchants && !stack.isEmpty()) {
+						if(enchants.get() && !stack.isEmpty()) {
 							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
 							
 							int size = 0;
@@ -294,7 +289,7 @@ public class Nametags extends Module {
 						}
 					}
 					
-					float itemsHeight = hasItems ? 16 * itemScale : 0;
+					float itemsHeight = hasItems ? 16 * (float)(double)itemScale.get() : 0;
 					float itemsWidth = 0;
 					for(float w : itemWidths) itemsWidth += w;
 					float itemsXCenter = itemsWidth / 2;
@@ -305,9 +300,9 @@ public class Nametags extends Module {
 					for(int i = 0; i < 6; i++) {
 						ItemStack stack = getItem(e, i);
 						
-						RenderUtil.drawItem(matrixStack, stack, x + itemWidths[i] / 2, y, itemScale, true);
+						RenderUtil.drawItem(matrixStack, stack, x + itemWidths[i] / 2, y, (float)(double)itemScale.get(), true);
 						
-						if(enchantCount > 0 && enchants && !stack.isEmpty()) {
+						if(enchantCount > 0 && enchants.get() && !stack.isEmpty()) {
 							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
 							
 							float itemWidth = itemWidths[i];
@@ -350,8 +345,8 @@ public class Nametags extends Module {
 	}
 	
 	private void drawBackground(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float w, float h) {
-		int oc = outlineColor.getRGB();
-		int fc = fillColor.getRGB();
+		int oc = outlineColor.get().getRGB();
+		int fc = fillColor.get().getRGB();
 		
 		RenderUtil.preRender();
 		
@@ -379,9 +374,9 @@ public class Nametags extends Module {
 	
 	public boolean shouldRender(Entity entity) {
 		boolean isAlive = !entity.isRemoved() && entity.isAlive();
-		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || (self && mc.options.getPerspective() != Perspective.FIRST_PERSON);
+		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || (self.get() && mc.options.getPerspective() != Perspective.FIRST_PERSON);
 		boolean b = Math.abs(entity.getY() - mc.player.getY()) <= 1e6;
-		boolean shouldRender = (entity instanceof PlayerEntity) || (entity instanceof HostileEntity && hostiles) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives);
+		boolean shouldRender = (entity instanceof PlayerEntity) || (entity instanceof HostileEntity && hostiles.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives.get());
 		return isEnabled() && isAlive && player && b && shouldRender;
 	}
 }
