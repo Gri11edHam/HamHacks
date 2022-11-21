@@ -8,8 +8,9 @@
 		"GrilledHam"
 	],
 	"contact": {
+		"homepage": "https://github.com/Gri11edHam/HamHacks",
 		"sources": "https://github.com/Gri11edHam/HamHacks",
-		"issues": "https://github.com/TerraformersMC/HamHacks/issues"
+		"issues": "https://github.com/Gri11edHam/HamHacks/issues"
 	},
 	"license": "MIT",
 	"icon": "assets/hamhacks/icon.png",
