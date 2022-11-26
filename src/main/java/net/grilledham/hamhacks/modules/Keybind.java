@@ -22,6 +22,9 @@ public class Keybind {
 	private int wasPressed = 0;
 	
 	public Keybind(int... defaultCode) {
+		if(defaultCode.length == 0) {
+			defaultCode = new int[] {0};
+		}
 		this.codes = defaultCode;
 		this.defaultCodes = defaultCode;
 		EventManager.register(this);
@@ -49,7 +52,11 @@ public class Keybind {
 	 * @param codes The key combination
 	 */
 	public void setKey(int... codes) {
-		this.codes = codes;
+		if(codes.length == 0) {
+			this.codes = new int[] {0};
+		} else {
+			this.codes = codes;
+		}
 	}
 	
 	public void checkKeyState(long handle, int key, int scancode, int action, int modifiers, boolean mouseEvent) {
