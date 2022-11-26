@@ -312,6 +312,24 @@
 	"hamhacks.module.1337.mode.basic": "B451c",
 	"hamhacks.module.1337.mode.advanced": "@|)\\/4|\\|(3|]",
 
+	"hamhacks.module.handRender": "Hand Render",
+	"hamhacks.module.handRender.tooltip": "Customize your hands",
+	"hamhacks.module.handRender.fovMultiplier": "FOV Multiplier",
+	"hamhacks.module.handRender.scale": "Scale",
+
+	"hamhacks.module.overlays": "Overlays",
+	"hamhacks.module.overlays.tooltip": "Modify Minecraft's overlays",
+	"hamhacks.module.overlays.shieldHeight": "Shield Height",
+	"hamhacks.module.overlays.fireHeight": "Fire Height",
+	"hamhacks.module.overlays.transparency": "Transparency",
+
+	"hamhacks.module.bob": "Bob",
+	"hamhacks.module.bob.tooltip": "Modify screen bobbing",
+	"hamhacks.module.bob.modelBobbingOnly": "Model Bobbing Only",
+	"hamhacks.module.bob.modelBobbingOnly.tooltip": "Don't bob the screen when view bobbing is enabled",
+	"hamhacks.module.bob.noHurtCam": "No Hurt Cam",
+	"hamhacks.module.bob.noHurtCam.tooltip": "Disables the animation that happens when you get hurt",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",

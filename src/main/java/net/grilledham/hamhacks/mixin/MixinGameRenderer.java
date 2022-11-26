@@ -9,7 +9,9 @@ import net.grilledham.hamhacks.mixininterface.IGameRenderer;
 import net.grilledham.hamhacks.mixininterface.IVec3d;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.Reach;
+import net.grilledham.hamhacks.modules.render.Bob;
 import net.grilledham.hamhacks.modules.render.Freecam;
+import net.grilledham.hamhacks.modules.render.HandRender;
 import net.grilledham.hamhacks.modules.render.Zoom;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.minecraft.client.MinecraftClient;
@@ -73,16 +75,16 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
 	public void modelBobbingOnly(GameRenderer instance, MatrixStack matrices, float tickDelta) {
-//		if(!ModuleManager.getModule(HUD.class).modelBobbingOnly || !ModuleManager.getModule(HUD.class).isEnabled()) { // TODO: Move to module
+		if(!ModuleManager.getModule(Bob.class).modelBobbingOnly.get() || !ModuleManager.getModule(Bob.class).isEnabled()) {
 			bobView(matrices, tickDelta);
-//		}
+		}
 	}
 	
 	@Inject(method = "bobViewWhenHurt", at = @At("HEAD"), cancellable = true)
 	public void noHurtCam(MatrixStack matrices, float f, CallbackInfo ci) {
-//		if(ModuleManager.getModule(HUD.class).noHurtCam && ModuleManager.getModule(HUD.class).isEnabled()) { // TODO: Move to module
+		if(ModuleManager.getModule(Bob.class).noHurtCam.get() && ModuleManager.getModule(Bob.class).isEnabled()) {
 			ci.cancel();
-//		}
+		}
 	}
 	
 	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 3)
@@ -105,9 +107,22 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
 	public void modifyFov(Camera camera, float tickDelta, boolean changingFov, CallbackInfoReturnable<Double> cir) {
+		double d = cir.getReturnValueD();
+		HandRender handRender = ModuleManager.getModule(HandRender.class);
+		if(!changingFov && handRender.isEnabled()) {
+			d *= handRender.fovMultiplier.get();
+		}
 		if(changingFov || !ModuleManager.getModule(Zoom.class).renderHand.get()) {
-			double d = cir.getReturnValueD();
-			cir.setReturnValue(ModuleManager.getModule(Zoom.class).modifyFov(d));
+			d = ModuleManager.getModule(Zoom.class).modifyFov(d);
+		}
+		cir.setReturnValue(d);
+	}
+	
+	@Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobViewWhenHurt(Lnet/minecraft/client/util/math/MatrixStack;F)V", shift = At.Shift.BEFORE))
+	public void scaleHand(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo ci) {
+		if(ModuleManager.getModule(HandRender.class).isEnabled()) {
+			float scale = (float)(double)ModuleManager.getModule(HandRender.class).scale.get();
+			matrices.scale(scale, scale, scale);
 		}
 	}
 	

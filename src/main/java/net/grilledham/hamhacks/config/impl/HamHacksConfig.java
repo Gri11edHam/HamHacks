@@ -76,6 +76,9 @@ public class HamHacksConfig extends Config {
 		ModuleManager.register(modId, new PacketFly());
 		ModuleManager.register(modId, new XRay());
 		ModuleManager.register(modId, new M1337());
+		ModuleManager.register(modId, new HandRender());
+		ModuleManager.register(modId, new Overlays());
+		ModuleManager.register(modId, new Bob());
 		
 		CommandManager.addCommand(new HelpCommand());
 		CommandManager.addCommand(new ToggleCommand());

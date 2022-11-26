@@ -21,11 +21,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.network.ServerInfo;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -66,42 +62,6 @@ public class HUD extends Module {
 	private final BoolSetting showDirection = new BoolSetting("hamhacks.module.hud.showDirection", true, () -> true);
 	
 	private final BoolSetting directionYawPitch = new BoolSetting("hamhacks.module.hud.directionYawPitch", false, showDirection::get);
-	
-//	@NumberSetting( // TODO: Move to module
-//			name = "hamhacks.module.hud.heldItemScale",
-//			defaultValue = 1,
-//			min = 0.1f,
-//			max = 2, category = "hamhacks.module.hud.category.other"
-//	)
-//	public float heldItemScale = 1;
-	
-//	@NumberSetting( // TODO: Move to module + fireHeight + overlayTransparency
-//			name = "hamhacks.module.hud.shieldHeight",
-//			min = -0.5f,
-//			max = 0.5f, category = "hamhacks.module.hud.category.other"
-//	)
-//	public float shieldHeightModifier = 0;
-//
-//	@NumberSetting(
-//			name = "hamhacks.module.hud.fireHeight",
-//			min = -0.5f,
-//			max = 0.5f, category = "hamhacks.module.hud.category.other"
-//	)
-//	public float fireHeightModifier = 0;
-//
-//	@NumberSetting(
-//			name = "hamhacks.module.hud.overlayTransparency",
-//			defaultValue = 1,
-//			min = 0,
-//			max = 1, category = "hamhacks.module.hud.category.other"
-//	)
-//	public float overlayTransparency = 1;
-	
-//	@BoolSetting(name = "hamhacks.module.hud.modelBobbingOnly", category = "hamhacks.module.hud.category.other") // TODO: Move to module
-//	public boolean modelBobbingOnly = false;
-	
-//	@BoolSetting(name = "hamhacks.module.hud.noHurtCam", category = "hamhacks.module.hud.category.other") // TODO: Move to module
-//	public boolean noHurtCam = false;
 	
 	public HUD() {
 		super(Text.translatable("hamhacks.module.hud"), Category.RENDER, new Keybind(0));
@@ -395,27 +355,5 @@ public class HUD extends Module {
 			animations.add(i, AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build());
 		}
 		return animations.get(i);
-	}
-	
-	public void applyHandTransform(LivingEntity entity, ItemStack stack, ModelTransformation.Mode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-		if(isEnabled()) {
-			if(entity == mc.getCameraEntity() && mc.options.getPerspective().isFirstPerson()) {
-//				matrices.scale(ModuleManager.getModule(HUD.class).heldItemScale, ModuleManager.getModule(HUD.class).heldItemScale, ModuleManager.getModule(HUD.class).heldItemScale);
-//				if(stack.getItem() == Items.SHIELD) {
-//					matrices.translate(0, shieldHeightModifier, 0);
-//				} // TODO: Move to module
-			}
-		}
-	}
-	
-	public void applyFireTransform(MatrixStack matrices) {
-		if(isEnabled()) {
-//			matrices.translate(0, fireHeightModifier, 0); // TODO: Move to module
-		}
-	}
-	
-	public float getOverlayTransparency(float original) {
-//		return isEnabled() ? (overlayTransparency * original) : original; // TODO: Move to module
-		return  original;
 	}
 }
