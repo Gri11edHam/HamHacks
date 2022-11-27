@@ -315,7 +315,7 @@
 	"hamhacks.module.handRender": "Hand Render",
 	"hamhacks.module.handRender.tooltip": "Customize your hands",
 	"hamhacks.module.handRender.fovMultiplier": "FOV Multiplier",
-	"hamhacks.module.handRender.scale": "Scale",
+	"hamhacks.module.handRender.itemScale": "Item Scale",
 
 	"hamhacks.module.overlays": "Overlays",
 	"hamhacks.module.overlays.tooltip": "Modify Minecraft's overlays",

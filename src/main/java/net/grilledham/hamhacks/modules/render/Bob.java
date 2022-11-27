@@ -14,5 +14,7 @@ public class Bob extends Module {
 	
 	public Bob() {
 		super(Text.translatable("hamhacks.module.bob"), Category.RENDER, new Keybind());
+		GENERAL_CATEGORY.add(modelBobbingOnly);
+		GENERAL_CATEGORY.add(noHurtCam);
 	}
 }

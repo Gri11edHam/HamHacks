@@ -118,14 +118,6 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		cir.setReturnValue(d);
 	}
 	
-	@Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobViewWhenHurt(Lnet/minecraft/client/util/math/MatrixStack;F)V", shift = At.Shift.BEFORE))
-	public void scaleHand(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo ci) {
-		if(ModuleManager.getModule(HandRender.class).isEnabled()) {
-			float scale = (float)(double)ModuleManager.getModule(HandRender.class).scale.get();
-			matrices.scale(scale, scale, scale);
-		}
-	}
-	
 	@Redirect(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F"))
 	public float mitigateBob(float delta, float start, float end) {
 		if(ModuleManager.getModule(Zoom.class).isEnabled()) {
