@@ -4,6 +4,7 @@ import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.gui.screen.impl.ClickGUIScreen;
 import net.grilledham.hamhacks.gui.screen.impl.ModuleSettingsScreen;
+import net.grilledham.hamhacks.gui.screen.impl.SettingContainerScreen;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.setting.ColorSetting;
@@ -57,6 +58,6 @@ public class ClickGUI extends Page {
 	}
 	
 	public boolean moveInScreen(Screen currentScreen) {
-		return !typing && (currentScreen instanceof ClickGUIScreen || currentScreen instanceof ModuleSettingsScreen || currentScreen == null);
+		return !typing && (currentScreen instanceof ClickGUIScreen || currentScreen instanceof ModuleSettingsScreen || currentScreen instanceof SettingContainerScreen || currentScreen == null);
 	}
 }

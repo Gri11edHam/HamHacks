@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.gui.screen.impl;
 
 import net.grilledham.hamhacks.gui.element.GuiElement;
-import net.grilledham.hamhacks.gui.element.impl.ScrollableElement;
+import net.grilledham.hamhacks.gui.element.impl.SearchableScrollableElement;
 import net.grilledham.hamhacks.gui.element.impl.SettingElement;
 import net.grilledham.hamhacks.gui.screen.GuiScreen;
 import net.grilledham.hamhacks.page.PageManager;
@@ -21,7 +21,7 @@ public class SettingContainerScreen extends GuiScreen {
 	private final SettingContainer<?, ?> setting;
 	
 	private GuiElement topElement;
-	private ScrollableElement scrollArea;
+	private SearchableScrollableElement scrollArea;
 	
 	public SettingContainerScreen(Screen last, double scale, SettingContainer<?, ?> setting) {
 		super(Text.translatable("hamhacks.menu.clickGui.module.settings"), last, scale);
@@ -61,7 +61,7 @@ public class SettingContainerScreen extends GuiScreen {
 			totalHeight += element.getHeight();
 		}
 		int yAdd = 0;
-		scrollArea = new ScrollableElement(0, 0, 0, (int)(height * (2 / 3f)), scale);
+		scrollArea = new SearchableScrollableElement(0, 0, 0, (int)(height * (2 / 3f)), scale);
 		scrollArea.clearElements();
 		for(GuiElement guiElement : settingElements) {
 			guiElement.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f)) + yAdd));
@@ -81,6 +81,9 @@ public class SettingContainerScreen extends GuiScreen {
 	}
 	
 	public void updatePartVisibility() {
+		if(!scrollArea.shouldUpdateVisibility()) {
+			return;
+		}
 		int totalHeight = 0;
 		float maxWidth = topElement.getPreferredWidth();
 		for(GuiElement element : scrollArea.getElements()) {

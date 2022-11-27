@@ -385,5 +385,7 @@
 	"hamhacks.menu.securedServerWarning": "Secured Server",
 	"hamhacks.menu.securedServerWarning.message": "The server you are trying to connect to enforces a secure connection.\nYou can connect anyways and risk being reported to Mojang or cancel.",
 	"hamhacks.menu.securedServerWarning.checkMessage": "Don't show again",
-	"hamhacks.menu.waitingToConnect": "Waiting to Connect"
+	"hamhacks.menu.waitingToConnect": "Waiting to Connect",
+
+	"hamhacks.element.searchableScrollableElement.search": "Search"
 }
