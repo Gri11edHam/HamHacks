@@ -24,9 +24,7 @@ public class Timer extends Module {
 	
 	@EventListener
 	public void onTick(EventTick e) {
-		if(imc.getRenderTickCounter().getTPS() != speed.get()) {
-			imc.getRenderTickCounter().setTPS((float)(double)speed.get());
-		}
+		imc.getRenderTickCounter().setTPS((float)(double)speed.get());
 	}
 	
 	@Override

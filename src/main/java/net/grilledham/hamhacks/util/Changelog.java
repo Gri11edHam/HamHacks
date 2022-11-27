@@ -22,7 +22,6 @@ public class Changelog {
 				- Rewrote settings (again)
 				- Improved Click GUI performance
 				- Split HUD module into smaller modules
-				- Fixed Timer module // TODO
 				- Bug fixes
 			
 			Update 1.7.2:
