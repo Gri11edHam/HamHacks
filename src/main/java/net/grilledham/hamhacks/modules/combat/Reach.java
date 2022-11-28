@@ -8,9 +8,9 @@ import net.minecraft.text.Text;
 
 public class Reach extends Module {
 	
-	public final NumberSetting entityRange = new NumberSetting("hamhacks.module.reach.entityRange", 3, () -> true, 0, 8);
+	public final NumberSetting entityRange = new NumberSetting("hamhacks.module.reach.entityRange", 3, () -> true, 0, 6);
 	
-	public final NumberSetting blockRange = new NumberSetting("hamhacks.module.reach.blockRange", 4.5, () -> true, 0, 8);
+	public final NumberSetting blockRange = new NumberSetting("hamhacks.module.reach.blockRange", 4.5, () -> true, 0, 6);
 	
 	public Reach() {
 		super(Text.translatable("hamhacks.module.reach"), Category.COMBAT, new Keybind(0));

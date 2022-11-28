@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 public class KillAura extends Module {
 	
-	private final NumberSetting range = new NumberSetting("hamhacks.module.killAura.range", 3, () -> true, 1, 8);
+	private final NumberSetting range = new NumberSetting("hamhacks.module.killAura.range", 3, () -> true, 1, 6);
 	
 	private final BoolSetting targetPlayers = new BoolSetting("hamhacks.module.killAura.targetPlayers", true, () -> true);
 	
