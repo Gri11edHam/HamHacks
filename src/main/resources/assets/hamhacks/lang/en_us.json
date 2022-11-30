@@ -330,6 +330,9 @@
 	"hamhacks.module.bob.noHurtCam": "No Hurt Cam",
 	"hamhacks.module.bob.noHurtCam.tooltip": "Disables the animation that happens when you get hurt",
 
+	"hamhacks.module.infiniteReach": "Infinite Reach",
+	"hamhacks.module.infiniteReach.tooltip": "Allows you to reach as far as you can see",
+
 	"hamhacks.module.generic.enabled": "Enabled",
 	"hamhacks.module.generic.showModule": "HUD Text",
 	"hamhacks.module.generic.keybind": "Keybind",

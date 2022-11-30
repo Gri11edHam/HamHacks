@@ -112,7 +112,7 @@ public class ChatUtil {
 	@EventListener
 	public void onTick(EventTick event) {
 		if(toOpen != null) {
-			if(ticksWaited >= 0) { // increase in case it doesn't open
+			if(ticksWaited >= 0) { // increase in case it doesn't opened
 				MinecraftClient.getInstance().setScreen(toOpen);
 				toOpen = null;
 				ticksWaited = 0;

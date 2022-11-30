@@ -16,6 +16,7 @@ public class Changelog {
 					: Packet Fly
 					: XRay
 					: 1337
+					: Infinite Reach
 				- Improved Boat Fly
 				- Added server joiner (joins when there is an open space)
 				- Added baritone
