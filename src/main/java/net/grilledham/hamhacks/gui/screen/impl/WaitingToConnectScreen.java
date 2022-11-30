@@ -12,8 +12,6 @@ import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-import java.net.UnknownHostException;
-
 public class WaitingToConnectScreen extends GuiScreen {
 	
 	private long lastPingTime = 0;
@@ -86,8 +84,8 @@ public class WaitingToConnectScreen extends GuiScreen {
 		lastPingTime = System.currentTimeMillis();
 		try {
 			pinger.add(serverInfo, () -> {});
-		} catch(UnknownHostException e) {
-			serverInfo.label = Text.literal("Unknown Host");
+		} catch(Exception e) {
+			serverInfo.label = Text.literal(e.toString());
 		}
 	}
 	
