@@ -16,7 +16,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectionSettingElement extends SettingElement<SelectionSetting> {
+public class SelectionSettingElement extends SettingElement<Integer> {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	private final Animation selectionAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
@@ -27,23 +27,30 @@ public class SelectionSettingElement extends SettingElement<SelectionSetting> {
 	
 	private float maxWidth;
 	
+	protected final Get<String[]> options;
+	
 	public SelectionSettingElement(float x, float y, double scale, SelectionSetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()), scale, setting);
+		this(x, y, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, setting::set, setting::reset, setting::options);
+	}
+	
+	public SelectionSettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<Integer> get, Set<Integer> set, Runnable reset, Get<String[]> options) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get()), scale, getName, getTooltip, shouldShow, get, set, reset);
+		this.options = options;
 		maxWidth = 0;
 		GuiElement element;
 		int i = 0;
-		for(String string : (setting.options())) {
+		for(String string : (options.get())) {
 			String s = Text.translatable(string).getString();
 			int finalI = i;
 			elements.add(element = new ButtonElement(s, 0, 0, mc.textRenderer.getWidth(s) + 4, 16, scale, () -> {
-				setting.set(finalI);
+				set.set(finalI);
 			}));
 			if(maxWidth < element.getWidth()) {
 				maxWidth = element.getWidth();
 			}
 			i++;
 		}
-		resize(MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + maxWidth + 6, 16);
+		resize(MinecraftClient.getInstance().textRenderer.getWidth(getName.get()) + maxWidth + 6, 16);
 		int yAdd = 0;
 		for(GuiElement guiElement : elements) {
 			guiElement.moveTo(x + width - maxWidth, y + yAdd);
@@ -98,8 +105,8 @@ public class SelectionSettingElement extends SettingElement<SelectionSetting> {
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - maxWidth, y, maxWidth, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
-		String text = Text.translatable(setting.options()[setting.get()]).getString();
+		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
+		String text = Text.translatable(options.get()[get.get()]).getString();
 		mc.textRenderer.drawWithShadow(stack, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ui.textColor.get().getRGB());
 		
 		RenderUtil.postRender();
@@ -164,7 +171,7 @@ public class SelectionSettingElement extends SettingElement<SelectionSetting> {
 				selected = true;
 				return true;
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-				setting.reset();
+				reset.run();
 				return false;
 			}
 		}

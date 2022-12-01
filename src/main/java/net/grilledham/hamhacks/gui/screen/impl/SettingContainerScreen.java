@@ -88,7 +88,7 @@ public class SettingContainerScreen extends GuiScreen {
 		float maxWidth = topElement.getPreferredWidth();
 		for(GuiElement element : scrollArea.getElements()) {
 			if(element instanceof SettingElement<?>) {
-				boolean shouldShow = ((SettingElement<?>)element).getSetting().shouldShow();
+				boolean shouldShow = ((SettingElement<?>)element).shouldShow();
 				scrollArea.setEnabled(element, shouldShow);
 				if(shouldShow) {
 					totalHeight += element.getHeight();

@@ -8,13 +8,14 @@ import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.StringSetting;
+import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HexFormat;
 
-public class ColorSettingElement extends SettingElement<ColorSetting> {
+public class ColorSettingElement extends SettingElement<Color> {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	private final Animation selectionAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25, true).build();
@@ -33,20 +34,23 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 	private double dragStartY = -1;
 	
 	public ColorSettingElement(float x, float y, double scale, ColorSetting setting) {
-		super(x, y, 16, scale, setting);
-		chroma = new BoolSetting("hamhacks.setting.colorSettingElement.chroma", setting.getDefault().getChroma(), () -> false);
-		chroma.set(setting.get().getChroma());
-		ColorSetting finalSetting = setting;
+		this(x, y, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, setting::set, setting::reset);
+	}
+	
+	public ColorSettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<Color> get, Set<Color> set, Runnable reset) {
+		super(x, y, 16, scale, getName, getTooltip, shouldShow, get, set, reset);
+		chroma = new BoolSetting("hamhacks.setting.colorSettingElement.chroma", false, () -> false);
+		chroma.set(get.get().getChroma());
 		chromaPart = new BoolSettingElement(x, y, scale, chroma) {
 			@Override
 			public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
 				boolean superReturn = super.release(mx, my, scrollX, scrollY, button);
-				finalSetting.set(setting.get());
+				ColorSettingElement.this.get.get().setChroma(get.get());
 				return superReturn;
 			}
 		};
 		chromaPart.drawBackground = false;
-		StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+		StringBuilder hex = new StringBuilder(Integer.toHexString(get.get().getRGB()));
 		while(hex.length() < 8) {
 			hex.insert(0, "0");
 		}
@@ -59,8 +63,8 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 						if(hexVal.get().length() > 8) {
 							hexVal.set(hexVal.get().substring(hexVal.get().length() - 8));
 						}
-						finalSetting.set(HexFormat.fromHexDigits(hexVal.get()));
-						StringBuilder hex = new StringBuilder(Integer.toHexString(finalSetting.get().getRGB()));
+						ColorSettingElement.this.get.get().set(HexFormat.fromHexDigits(hexVal.get()));
+						StringBuilder hex = new StringBuilder(Integer.toHexString(ColorSettingElement.this.get.get().getRGB()));
 						while(hex.length() < 8) {
 							hex.insert(0, "0");
 						}
@@ -82,7 +86,7 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 			}
 		};
 		hexValPart.drawBackground = false;
-		resize(mc.textRenderer.getWidth(setting.getName()) + 10 + 16, 16);
+		resize(mc.textRenderer.getWidth(getName.get()) + 10 + 16, 16);
 	}
 	
 	@Override
@@ -100,10 +104,10 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 		RenderUtil.drawHRect(stack, x + width - 20, y + 2, 18, 12, outlineC);
 		
 		boolean hovered = mx >= x + width - 18 && mx < x + width - 2 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((setting.get().getRGB() & 0xff000000) + 0xffffff, setting.get().getRGB(), hoverAnimation.get() / 4);
+		int boxC = RenderUtil.mix((get.get().getRGB() & 0xff000000) + 0xffffff, get.get().getRGB(), hoverAnimation.get() / 4);
 		RenderUtil.drawRect(stack, x + width - 18, y + 4, 14, 8, boxC);
 		
-		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
+		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -139,7 +143,7 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 		RenderUtil.drawHRect(stack, newX - 1, newY - 1, w + 2, h + 2, 0xffcccccc);
 		
 		RenderUtil.drawHRect(stack, newX + 1, newY + 1, 103, 103, 0xffcccccc);
-		RenderUtil.drawSBGradient(stack, newX + 2, newY + 2, 101, 101, setting.get().getHue());
+		RenderUtil.drawSBGradient(stack, newX + 2, newY + 2, 101, 101, get.get().getHue());
 		
 		RenderUtil.drawHRect(stack, newX + 105, newY + 1, 22, 103, 0xffcccccc);
 		RenderUtil.drawHueGradient(stack, newX + 106, newY + 2, 20, 101);
@@ -147,9 +151,9 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 		RenderUtil.drawHRect(stack, newX + 129, newY + 1, 22, 103, 0xffcccccc);
 		RenderUtil.drawAlphaGradient(stack, newX + 130, newY + 2, 20, 101);
 		
-		RenderUtil.drawHRect(stack, newX + 1 + (100 * setting.get().getSaturation()), newY + 1 + (100 * (1 - setting.get().getBrightness())), 3, 3, 0xffcccccc);
-		RenderUtil.drawHRect(stack, newX + 105, newY + 1 + (100 * (setting.get().getHue())), 22, 3, 0xffcccccc);
-		RenderUtil.drawHRect(stack, newX + 129, newY + 1 + (100 * (1 - setting.get().getAlpha())), 22, 3, 0xffcccccc);
+		RenderUtil.drawHRect(stack, newX + 1 + (100 * get.get().getSaturation()), newY + 1 + (100 * (1 - get.get().getBrightness())), 3, 3, 0xffcccccc);
+		RenderUtil.drawHRect(stack, newX + 105, newY + 1 + (100 * (get.get().getHue())), 22, 3, 0xffcccccc);
+		RenderUtil.drawHRect(stack, newX + 129, newY + 1 + (100 * (1 - get.get().getAlpha())), 22, 3, 0xffcccccc);
 		
 		chromaPart.render(stack, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
 		if(selectionAnimation.get() > 0.8) {
@@ -169,9 +173,9 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 						float newB = 1 - ((my - (newY + 1)) / 100f);
 						newS = Math.min(Math.max(newS, 0), 1);
 						newB = Math.min(Math.max(newB, 0), 1);
-						setting.get().setSaturation(newS);
-						setting.get().setBrightness(newB);
-						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+						get.get().setSaturation(newS);
+						get.get().setBrightness(newB);
+						StringBuilder hex = new StringBuilder(Integer.toHexString(get.get().getRGB()));
 						while(hex.length() < 8) {
 							hex.insert(0, "0");
 						}
@@ -182,8 +186,8 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 					if(dragStartX >= newX + 106 && dragStartX <= newX + 126) {
 						float newH = (my - (newY + 1)) / 100f;
 						newH = Math.min(Math.max(newH, 0), 1);
-						setting.get().setHue(newH);
-						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+						get.get().setHue(newH);
+						StringBuilder hex = new StringBuilder(Integer.toHexString(get.get().getRGB()));
 						while(hex.length() < 8) {
 							hex.insert(0, "0");
 						}
@@ -194,8 +198,8 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 					if(dragStartX >= newX + 130 && dragStartX <= newX + 150) {
 						float newA = 1 - ((my - (newY + 1)) / 100f);
 						newA = Math.min(Math.max(newA, 0), 1);
-						setting.get().setAlpha(newA);
-						StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+						get.get().setAlpha(newA);
+						StringBuilder hex = new StringBuilder(Integer.toHexString(get.get().getRGB()));
 						while(hex.length() < 8) {
 							hex.insert(0, "0");
 						}
@@ -262,9 +266,9 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 		}
 		if(selected) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && (mx >= x + width - 18 && mx < x + width - 4 && my >= y + 4 && my < y + 12)) {
-				setting.reset();
-				chroma.set(setting.get().getChroma());
-				StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+				reset.run();
+				chroma.set(get.get().getChroma());
+				StringBuilder hex = new StringBuilder(Integer.toHexString(get.get().getRGB()));
 				while(hex.length() < 8) {
 					hex.insert(0, "0");
 				}
@@ -312,9 +316,9 @@ public class ColorSettingElement extends SettingElement<ColorSetting> {
 				selected = true;
 				return true;
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-				setting.reset();
-				chroma.set(setting.get().getChroma());
-				StringBuilder hex = new StringBuilder(Integer.toHexString(setting.get().getRGB()));
+				reset.run();
+				chroma.set(get.get().getChroma());
+				StringBuilder hex = new StringBuilder(Integer.toHexString(get.get().getRGB()));
 				while(hex.length() < 8) {
 					hex.insert(0, "0");
 				}

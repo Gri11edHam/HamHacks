@@ -24,11 +24,6 @@ public class SettingContainer<K, V> extends Setting<Map<K, Setting<V>>> {
 	}
 	
 	@Override
-	public Map<K, Setting<V>> get() {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
 	public void set(Map<K, Setting<V>> value) {
 		throw new UnsupportedOperationException();
 	}

@@ -14,14 +14,18 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
 
-public class KeySettingElement extends SettingElement<KeySetting> {
+public class KeySettingElement extends SettingElement<Keybind> {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
 	private boolean listening = false;
 	
 	public KeySettingElement(float x, float y, double scale, KeySetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName() + " [________________]") + 4, scale, setting);
+		this(x, y, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, (a) -> {}, setting::reset);
+	}
+	
+	public KeySettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<Keybind> get, Set<Keybind> set, Runnable reset) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get() + " [________________]") + 4, scale, getName, getTooltip, shouldShow, get, set, reset);
 	}
 	
 	@Override
@@ -36,13 +40,13 @@ public class KeySettingElement extends SettingElement<KeySetting> {
 		bgC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), bgC, hoverAnimation.get());
 		
 		boolean hovered;
-		String text = "[" + (listening ? (setting.get().getName().equals("None") ? "Listening..." : setting.get().getName() + "...") : setting.get().getName()) + "]";
+		String text = "[" + (listening ? (get.get().getName().equals("None") ? "Listening..." : get.get().getName() + "...") : get.get().getName()) + "]";
 		float textWidth = mc.textRenderer.getWidth(text);
 		hovered = mx >= x + width - textWidth - 4 && mx < x + width && my >= y && my < y + height;
 		RenderUtil.drawRect(stack, x, y, width - textWidth - 4, height, ui.bgColor.get().getRGB());
 		RenderUtil.drawRect(stack, x + width - textWidth - 4, y, textWidth + 4, height, bgC);
 		
-		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
+		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
 		mc.textRenderer.drawWithShadow(stack, text, x + width - textWidth - 2, y + 4, ui.textColor.get().getRGB());
 		
 		RenderUtil.postRender();
@@ -58,9 +62,9 @@ public class KeySettingElement extends SettingElement<KeySetting> {
 		float y = this.y + scrollY;
 		if(listening) {
 			int code = button - Keybind.MOUSE_SHIFT;
-			int[] codes = setting.get().getKeyCombo();
+			int[] codes = get.get().getKeyCombo();
 			if(codes.length == 1 && codes[0] == 0) {
-				setting.get().setKey(code);
+				get.get().setKey(code);
 			} else {
 				boolean containsKey = false;
 				for(int i : codes) {
@@ -73,7 +77,7 @@ public class KeySettingElement extends SettingElement<KeySetting> {
 					codes = Arrays.copyOf(codes, codes.length + 1);
 					codes[codes.length - 1] = code;
 				}
-				setting.get().setKey(codes);
+				get.get().setKey(codes);
 			}
 			return true;
 		}
@@ -94,18 +98,18 @@ public class KeySettingElement extends SettingElement<KeySetting> {
 		float y = this.y + scrollY;
 		super.release(mx, my, scrollX, scrollY, button);
 		String text;
-		text = "[" + (listening ? (setting.get().getName().equals("None") ? "Listening..." : setting.get().getName() + "...") : setting.get().getName()) + "]";
+		text = "[" + (listening ? (get.get().getName().equals("None") ? "Listening..." : get.get().getName() + "...") : get.get().getName()) + "]";
 		float textWidth = mc.textRenderer.getWidth(text);
 		if(listening) {
 			return true;
 		} else if(mx >= x + width - textWidth - 4 && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-				setting.get().setKey(0);
+				get.get().setKey(0);
 				listening = true;
 				PageManager.getPage(ClickGUI.class).typing = true;
 				return true;
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-				setting.reset();
+				reset.run();
 			}
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
@@ -118,9 +122,9 @@ public class KeySettingElement extends SettingElement<KeySetting> {
 				listening = false;
 				PageManager.getPage(ClickGUI.class).typing = false;
 			} else {
-				int[] codes = setting.get().getKeyCombo();
+				int[] codes = get.get().getKeyCombo();
 				if(codes.length == 1 && codes[0] == 0) {
-					setting.get().setKey(code);
+					get.get().setKey(code);
 				} else {
 					boolean containsKey = false;
 					for(int i : codes) {
@@ -133,7 +137,7 @@ public class KeySettingElement extends SettingElement<KeySetting> {
 						codes = Arrays.copyOf(codes, codes.length + 1);
 						codes[codes.length - 1] = code;
 					}
-					setting.get().setKey(codes);
+					get.get().setKey(codes);
 				}
 				return true;
 			}

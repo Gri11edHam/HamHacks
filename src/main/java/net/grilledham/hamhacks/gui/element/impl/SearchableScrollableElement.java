@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.gui.element.GuiElement;
-import net.grilledham.hamhacks.setting.Setting;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -34,10 +33,8 @@ public class SearchableScrollableElement extends ScrollableElement {
 		if(!searchArea.get().equals("") && dirty) {
 			dirty = false;
 			for(GuiElement element : getElements()) {
-				if(element != searchAreaElement && element instanceof SettingElement<?>) {
-					Setting<?> setting = ((SettingElement<?>)element).getSetting();
-					boolean enabled = setting.getName().toLowerCase().contains(searchArea.get().toLowerCase())
-							|| setting.getConfigName().toLowerCase().contains(searchArea.get().toLowerCase());
+				if(element != searchAreaElement && element instanceof SettingElement<?> settingElement) {
+					boolean enabled = settingElement.getName().toLowerCase().contains(searchArea.get().toLowerCase());
 					setEnabled(element, enabled);
 				}
 			}

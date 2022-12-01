@@ -4,25 +4,33 @@ import net.grilledham.hamhacks.animation.Animation;
 import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
-import net.grilledham.hamhacks.setting.Setting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.util.math.MatrixStack;
 
-public abstract class SettingElement<T extends Setting<?>> extends GuiElement {
+public abstract class SettingElement<T> extends GuiElement {
 	
 	private final Animation tooltipAnimation = AnimationBuilder.create(AnimationType.LINEAR).build();
 	
 	private boolean hasClicked = false;
 	
-	protected final T setting;
+	protected final Get<String> getName;
+	protected final Get<String> getTooltip;
 	
-	public SettingElement(float x, float y, float width, double scale, T setting) {
+	protected final Get<Boolean> shouldShow;
+	
+	protected final Get<T> get;
+	protected final Set<T> set;
+	
+	protected final Runnable reset;
+	
+	public SettingElement(float x, float y, float width, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<T> get, Set<T> set, Runnable reset) {
 		super(x, y, width, 16, scale);
-		this.setting = setting;
-	}
-	
-	public T getSetting() {
-		return setting;
+		this.getName = getName;
+		this.getTooltip = getTooltip;
+		this.shouldShow = shouldShow;
+		this.get = get;
+		this.set = set;
+		this.reset = reset;
 	}
 	
 	@Override
@@ -32,11 +40,9 @@ public abstract class SettingElement<T extends Setting<?>> extends GuiElement {
 		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
 		
-		if(setting != null) {
-			if(setting.hasTooltip()) {
-				if(tooltipAnimation.get() >= 1 && !hasClicked) {
-					RenderUtil.drawToolTip(stack, setting.getName(), setting.getTooltip(), mx, my, scale);
-				}
+		if(getTooltip.get() != null && !getTooltip.get().equals("")) {
+			if(tooltipAnimation.get() >= 1 && !hasClicked) {
+				RenderUtil.drawToolTip(stack, getName.get(), getTooltip.get(), mx, my, scale);
 			}
 		}
 		
@@ -55,5 +61,23 @@ public abstract class SettingElement<T extends Setting<?>> extends GuiElement {
 			hasClicked = true;
 		}
 		return super.release(mx, my, scrollX, scrollY, button);
+	}
+	
+	public String getName() {
+		return getName.get();
+	}
+	
+	public boolean shouldShow() {
+		return shouldShow.get();
+	}
+	
+	@FunctionalInterface
+	public interface Get<T> {
+		T get();
+	}
+	
+	@FunctionalInterface
+	public interface Set<T> {
+		void set(T value);
 	}
 }

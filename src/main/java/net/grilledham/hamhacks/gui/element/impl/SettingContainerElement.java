@@ -12,14 +12,19 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-public class SettingContainerElement extends SettingElement<SettingContainer<?, ?>> {
+import java.util.Map;
+
+public class SettingContainerElement extends SettingElement<Map<?, ?>> {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	
 	protected boolean drawBackground = true;
 	
+	protected final SettingContainer<?, ?> setting;
+	
 	public SettingContainerElement(float x, float y, double scale, SettingContainer<?, ?> setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 22, scale, setting);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 22, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, null, null, null);
+		this.setting = setting;
 	}
 	
 	@Override
@@ -42,7 +47,7 @@ public class SettingContainerElement extends SettingElement<SettingContainer<?, 
 		int boxC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), ui.bgColor.get().getRGB(), hoverAnimation.get());
 		RenderUtil.drawRect(stack, x + width - 49, y + 1, 48, height - 2, boxC);
 		
-		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
+		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
 		
 		mc.textRenderer.drawWithShadow(stack, "Edit", x + width - (25 + mc.textRenderer.getWidth("Edit") / 2f), y + 4, ui.textColor.get().getRGB());
 		

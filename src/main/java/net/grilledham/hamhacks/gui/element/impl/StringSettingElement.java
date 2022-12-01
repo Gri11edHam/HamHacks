@@ -11,7 +11,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
-public class StringSettingElement extends SettingElement<StringSetting> {
+public class StringSettingElement extends SettingElement<String> {
 	
 	private final Animation cursorAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.5, true).build();
 	private boolean cursorShown = false;
@@ -29,15 +29,21 @@ public class StringSettingElement extends SettingElement<StringSetting> {
 	
 	protected boolean drawBackground = true;
 	
+	protected final Get<String> placeholder;
+	
 	public StringSettingElement(float x, float y, double scale, StringSetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 106, scale, setting);
-		cursorPos = getValue().length();
-		stringScroll = cursorPos;
+		this(x, y, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, setting::set, setting::reset, setting::placeholder);
 	}
 	
-	public StringSettingElement(float x, float y, double scale, String setting) {
-		super(x, y, 106, scale, new StringSetting("", "", () -> false));
-		cursorPos = setting.length();
+	public StringSettingElement(float x, float y, double scale, String value) {
+		this(x, y, scale, new StringSetting("", "", () -> false));
+		set.set(value);
+	}
+	
+	public StringSettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<String> get, Set<String> set, Runnable reset, Get<String> placeholder) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get()) + 106, scale, getName, getTooltip, shouldShow, get, set, reset);
+		this.placeholder = placeholder;
+		cursorPos = get.get().length();
 		stringScroll = cursorPos;
 	}
 	
@@ -64,13 +70,13 @@ public class StringSettingElement extends SettingElement<StringSetting> {
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - 104, y, 104, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
+		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
 		
 		RenderUtil.adjustScissor(x + width - 102, y, 100, height, (float)scale);
 		RenderUtil.applyScissor();
 		
 		if(getValue() == null || getValue().equals("")) {
-			String value = setting.placeholder();
+			String value = placeholder.get();
 			mc.textRenderer.drawWithShadow(stack, value, x + width - mc.textRenderer.getWidth(value) - 2, y + 4, RenderUtil.mix(ui.bgColor.get().getRGB(), ui.textColor.get().getRGB(), 0.75f));
 		} else {
 			mc.textRenderer.drawWithShadow(stack, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ui.textColor.get().getRGB());
@@ -395,10 +401,10 @@ public class StringSettingElement extends SettingElement<StringSetting> {
 	}
 	
 	public void updateValue(String value) {
-		setting.set(value);
+		set.set(value);
 	}
 	
 	public String getValue() {
-		return setting.get();
+		return get.get();
 	}
 }

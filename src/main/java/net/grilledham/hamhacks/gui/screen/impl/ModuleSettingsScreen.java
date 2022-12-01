@@ -99,7 +99,7 @@ public class ModuleSettingsScreen extends GuiScreen {
 				boolean shouldShow = false;
 				for(GuiElement element : ((SettingCategoryElement)categoryElement).getElements()) {
 					if(element instanceof SettingElement<?>) {
-						boolean shouldShowElement = ((SettingElement<?>)element).getSetting().shouldShow();
+						boolean shouldShowElement = ((SettingElement<?>)element).shouldShow();
 						((SettingCategoryElement)categoryElement).setEnabled(element, shouldShowElement);
 						if(shouldShowElement) {
 							shouldShow = true;

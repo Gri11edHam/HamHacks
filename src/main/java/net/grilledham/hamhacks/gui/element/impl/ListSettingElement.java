@@ -16,7 +16,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListSettingElement extends SettingElement<ListSetting> {
+public class ListSettingElement extends SettingElement<List<String>> {
 	
 	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
 	private final Animation selectionAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
@@ -31,7 +31,7 @@ public class ListSettingElement extends SettingElement<ListSetting> {
 	float maxWidth = 0;
 	
 	public ListSettingElement(float x, float y, double scale, ListSetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 18, scale, setting);
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 18, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, setting::set, setting::reset);
 		updateList();
 	}
 	
@@ -40,21 +40,20 @@ public class ListSettingElement extends SettingElement<ListSetting> {
 		removeButtons.clear();
 		maxWidth = 106 + 16;
 		int i = 0;
-		for(String s : setting.get()) {
+		for(String s : get.get()) {
 			int finalI = i;
 			StringSettingElement strSetPart;
-			ListSetting finalSetting = setting;
 			stringParts.add(strSetPart = new StringSettingElement(x, y, scale, s) {
 				@Override
 				public void updateValue(String value) {
 					super.updateValue(value);
-					finalSetting.get().set(finalI, value);
+					ListSettingElement.this.get.get().set(finalI, value);
 				}
 			});
 			strSetPart.drawBackground = false;
 			ButtonElement bPart;
 			removeButtons.add(bPart = new ButtonElement("-", x, y, 16, height, scale, () -> {
-				setting.get().remove(finalI);
+				ListSettingElement.this.get.get().remove(finalI);
 				updateList();
 			}));
 			i++;
@@ -65,7 +64,7 @@ public class ListSettingElement extends SettingElement<ListSetting> {
 			removeButtons.get(i).moveTo(x + width - maxWidth + stringParts.get(i).getWidth(), y + height * (i + 1));
 		}
 		addButton = new ButtonElement("+", x + width - maxWidth, y + height * (i + 1), maxWidth, height, scale, () -> {
-			setting.get().add("");
+			get.get().add("");
 			updateList();
 		});
 	}
@@ -106,7 +105,7 @@ public class ListSettingElement extends SettingElement<ListSetting> {
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - height, y, height, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, setting.getName(), x + 2, y + 4, ui.textColor.get().getRGB());
+		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
 		float dropDownX = x + width - height / 2f - mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterX = dropDownX + mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterY = y + 4 + mc.textRenderer.fontHeight / 2f;
@@ -181,7 +180,7 @@ public class ListSettingElement extends SettingElement<ListSetting> {
 		super.release(mx, my, scrollX, scrollY, button);
 		if(selected) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT && (mx >= x + width - height && mx < x + width && my >= y && my < y + height)) {
-				setting.reset();
+				reset.run();
 				updateList();
 				return true;
 			}
@@ -203,7 +202,7 @@ public class ListSettingElement extends SettingElement<ListSetting> {
 				selected = true;
 				return true;
 			} else if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-				setting.reset();
+				reset.run();
 				updateList();
 				return false;
 			}
