@@ -48,9 +48,6 @@ public class InfiniteReach extends Module {
 		Vec3d vec3d = mc.player.getCameraPosVec(e.tickDelta);
 		double d1 = d;
 		d1 *= d1;
-		if (hitResult != null) {
-			d1 = hitResult.getPos().squaredDistanceTo(vec3d);
-		}
 		
 		Vec3d vec3d2 = mc.player.getRotationVec(1.0F);
 		Vec3d vec3d3 = vec3d.add(vec3d2.x * d, vec3d2.y * d, vec3d2.z * d);
