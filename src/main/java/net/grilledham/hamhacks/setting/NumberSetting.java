@@ -66,7 +66,7 @@ public class NumberSetting extends Setting<Double> {
 	
 	@Override
 	public GuiElement getElement(float x, float y, double scale) {
-		return new NumberSettingElement(x, y, scale, this);
+		return new NumberSettingElement(x, y, scale, this, true);
 	}
 	
 	@Override

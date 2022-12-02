@@ -29,23 +29,26 @@ public class NumberSettingElement extends SettingElement<Double> {
 	protected final Get<Double> step;
 	protected final Get<Boolean> forceStep;
 	
-	public NumberSettingElement(float x, float y, double scale, NumberSetting setting) {
-		this(x, y, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, setting::set, setting::reset, setting::min, setting::max, setting::step, setting::forceStep);
+	protected final boolean hasBounds;
+	
+	public NumberSettingElement(float x, float y, double scale, NumberSetting setting, boolean hasBounds) {
+		this(x, y, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, setting::set, setting::reset, setting::min, setting::max, setting::step, setting::forceStep, hasBounds);
 	}
 	
-	public NumberSettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<Double> get, Set<Double> set, Runnable reset, Get<Double> min, Get<Double> max, Get<Double> step, Get<Boolean> forceStep) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get()) + 314, scale, getName, getTooltip, shouldShow, get, set, reset);
+	public NumberSettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<Double> get, Set<Double> set, Runnable reset, Get<Double> min, Get<Double> max, Get<Double> step, Get<Boolean> forceStep, boolean hasBounds) {
+		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get()) + 110 + (hasBounds ? 104 : 4), scale, getName, getTooltip, shouldShow, get, set, reset);
 		this.min = min;
 		this.max = max;
 		this.step = step;
 		this.forceStep = forceStep;
+		this.hasBounds = hasBounds;
 		sliderAnimation.setAbsolute(min.get());
 		if(forceStep.get() && step.get() == 1) {
 			strVal = new StringSetting("", get.get().intValue() + "", () -> false);
 		} else {
 			strVal = new StringSetting("", get.get() + "", () -> false);
 		}
-		editor = new StringSettingElement(x + width - 207, y, scale, strVal) {
+		editor = new StringSettingElement(x + width - (hasBounds ? 207 : 103), y, scale, strVal) {
 			
 			@Override
 			public void updateValue(String value) {
@@ -66,7 +69,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 			}
 		};
 		editor.drawBackground = false;
-		resize(mc.textRenderer.getWidth(getName.get()) + 200 + 8 + editor.getWidth(), 16);
+		resize(mc.textRenderer.getWidth(getName.get()) + (hasBounds ? 200 + 8 : 4) + editor.getWidth(), 16);
 	}
 	
 	@Override
@@ -76,17 +79,20 @@ public class NumberSettingElement extends SettingElement<Double> {
 		stack.push();
 		RenderUtil.preRender();
 		
+		boolean hovered = false;
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
 		int bgC = ui.bgColor.get().getRGB();
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
-		int outlineC = 0xffcccccc;
-		RenderUtil.drawHRect(stack, x + width - 206, y + 2, 204, 12, outlineC);
-		
-		boolean hovered = mx >= x + width - 204 && mx < x + width - 4 && my >= y + 4 && my < y + 12;
-		int boxC = RenderUtil.mix((ui.accentColor.get().getRGB() & 0xff000000) + 0xffffff, ui.accentColor.get().getRGB(), hoverAnimation.get() / 4);
-		double sliderPercentage = (sliderAnimation.get() - min.get()) / (max.get() - min.get());
-		RenderUtil.drawRect(stack, x + width - 204, y + 4, (float)(200 * sliderPercentage), 8, boxC);
+		if(hasBounds) {
+			int outlineC = 0xffcccccc;
+			RenderUtil.drawHRect(stack, x + width - 206, y + 2, 204, 12, outlineC);
+			
+			hovered = mx >= x + width - 204 && mx < x + width - 4 && my >= y + 4 && my < y + 12;
+			int boxC = RenderUtil.mix((ui.accentColor.get().getRGB() & 0xff000000) + 0xffffff, ui.accentColor.get().getRGB(), hoverAnimation.get() / 4);
+			double sliderPercentage = (sliderAnimation.get() - min.get()) / (max.get() - min.get());
+			RenderUtil.drawRect(stack, x + width - 204, y + 4, (float)(200 * sliderPercentage), 8, boxC);
+		}
 		
 		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
 		
@@ -95,7 +101,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 		
 		editor.render(stack, mx, my, scrollX, scrollY, partialTicks);
 		
-		if(dragging) {
+		if(dragging && hasBounds) {
 			float newPercentage = (mx - (x + width - 204)) / (float)200;
 			double newVal = (newPercentage * (max.get() - min.get())) + min.get();
 			try {
@@ -115,7 +121,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 	@Override
 	public void moveTo(float x, float y) {
 		super.moveTo(x, y);
-		editor.moveTo(x + width - 207 - editor.getWidth(), y);
+		editor.moveTo(x + width - (hasBounds ? 207 : 3) - editor.getWidth(), y);
 	}
 	
 	@Override
@@ -127,7 +133,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 	@Override
 	public void resize(float maxW, float maxH) {
 		super.resize(maxW, maxH);
-		editor.moveTo(x + width - 207 - editor.getWidth(), y);
+		editor.moveTo(x + width - (hasBounds ? 207 : 3) - editor.getWidth(), y);
 	}
 	
 	@Override
@@ -136,6 +142,9 @@ public class NumberSettingElement extends SettingElement<Double> {
 		float y = this.y + scrollY;
 		if(editor.click(mx, my, scrollX, scrollY, button)) {
 			return true;
+		}
+		if(!hasBounds) {
+			return super.click(mx, my, scrollX, scrollY, button);
 		}
 		if(mx >= x && mx < x + width && my >= y && my < y + height) {
 			if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
@@ -156,7 +165,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		super.release(mx, my, scrollX, scrollY, button);
-		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT && dragging) {
+		if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT && dragging && hasBounds) {
 			dragging = false;
 			return false;
 		}
@@ -180,27 +189,34 @@ public class NumberSettingElement extends SettingElement<Double> {
 	
 	private void updateValue(double newVal, boolean fromSlider) throws IllegalAccessException {
 		double roundedSetting = newVal;
-		roundedSetting = MathHelper.clamp(roundedSetting, min.get(), max.get());
-		if((forceStep.get() || fromSlider) && step.get() != -1) {
-			double closest = min.get();
-			for(double f = min.get(); f <= max.get(); f += step.get()) {
-				double newDist = Math.abs(f - roundedSetting);
-				double oldDist = Math.abs(closest - roundedSetting);
-				if(newDist <= oldDist) {
-					closest = f;
+		if(hasBounds) {
+			roundedSetting = MathHelper.clamp(roundedSetting, min.get(), max.get());
+			if((forceStep.get() || fromSlider) && step.get() != -1) {
+				double closest = min.get();
+				for(double f = min.get(); f <= max.get(); f += step.get()) {
+					double newDist = Math.abs(f - roundedSetting);
+					double oldDist = Math.abs(closest - roundedSetting);
+					if(newDist <= oldDist) {
+						closest = f;
+					} else {
+						break;
+					}
+				}
+				roundedSetting = closest;
+			}
+			set.set(roundedSetting);
+			if(fromSlider) {
+				if(forceStep.get() && step.get() == 1) {
+					strVal.set((int)roundedSetting + "");
 				} else {
-					break;
+					strVal.set(roundedSetting + "");
 				}
 			}
-			roundedSetting = closest;
-		}
-		set.set(roundedSetting);
-		if(fromSlider) {
+		} else {
 			if(forceStep.get() && step.get() == 1) {
-				strVal.set((int)roundedSetting + "");
-			} else {
-				strVal.set(roundedSetting + "");
+				roundedSetting = Math.round(roundedSetting);
 			}
+			set.set(roundedSetting);
 		}
 	}
 	

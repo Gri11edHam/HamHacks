@@ -17,6 +17,8 @@ public class Changelog {
 					: XRay
 					: 1337
 					: Infinite Reach
+				- Added page:
+					: Baritone
 				- Improved Boat Fly
 				- Added server joiner (joins when there is an open space)
 				- Added baritone

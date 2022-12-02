@@ -7,8 +7,6 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
-import net.grilledham.hamhacks.setting.Setting;
-import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -55,24 +53,17 @@ public class ClickGUIScreen extends GuiScreen {
 					stack.pop();
 				}
 			};
-			List<GuiElement> settingElements = new ArrayList<>();
-			GuiElement element;
-			SettingCategoryElement categoryElement;
+			List<GuiElement> settingElements = page.getGuiElements(scale);
 			int totalHeight = 0;
-			for(SettingCategory category : page.getSettingCategories()) {
-				categoryElement = new SettingCategoryElement(category, 0, 0, scale);
-				for(Setting<?> setting : category.getSettings()) {
-					categoryElement.addElement(element = setting.getElement(0, 0, scale));
-					settingElements.add(element);
-					if(maxWidth < element.getWidth()) {
-						maxWidth = element.getWidth();
-					}
+			boolean hasCategory = false;
+			for(GuiElement e : settingElements) {
+				totalHeight += e.getHeight();
+				if(maxWidth < e.getWidth()) {
+					maxWidth = e.getWidth();
 				}
-				settingElements.add(categoryElement);
-				if(maxWidth < categoryElement.getWidth()) {
-					maxWidth = categoryElement.getWidth();
+				if(e instanceof SettingCategoryElement) {
+					hasCategory = true;
 				}
-				totalHeight += categoryElement.getHeight();
 			}
 			int yAdd = 0;
 			scrollArea = new ScrollableElement(0, 0, 0, (int)(height * (2 / 3f)), scale);
@@ -81,7 +72,7 @@ public class ClickGUIScreen extends GuiScreen {
 				guiElement.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f)) + yAdd));
 				guiElement.resize(maxWidth, guiElement.getHeight());
 				yAdd += guiElement.getHeight();
-				if(guiElement instanceof SettingCategoryElement) {
+				if(guiElement instanceof SettingCategoryElement || !hasCategory) {
 					scrollArea.addElement(guiElement);
 				}
 			}
@@ -133,6 +124,16 @@ public class ClickGUIScreen extends GuiScreen {
 				}
 				scrollArea.setEnabled(categoryElement, shouldShow);
 				if(shouldShow) {
+					totalHeight += categoryElement.getHeight();
+					if(maxWidth < categoryElement.getWidth()) {
+						maxWidth = categoryElement.getWidth();
+					}
+				}
+			}
+			if(categoryElement instanceof SettingElement<?>) {
+				boolean shouldShowElement = ((SettingElement<?>)categoryElement).shouldShow();
+				scrollArea.setEnabled(categoryElement, shouldShowElement);
+				if(shouldShowElement) {
 					totalHeight += categoryElement.getHeight();
 					if(maxWidth < categoryElement.getWidth()) {
 						maxWidth = categoryElement.getWidth();

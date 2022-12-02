@@ -18,6 +18,7 @@ import net.grilledham.hamhacks.modules.render.*;
 import net.grilledham.hamhacks.modules.world.Timer;
 import net.grilledham.hamhacks.notification.Notifications;
 import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.Baritone;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.page.pages.Commands;
 
@@ -39,9 +40,10 @@ public class HamHacksConfig extends Config {
 	
 	@Override
 	public void init() {
-		PageManager.register(modId, new Notifications());
 		PageManager.register(modId, new ClickGUI());
+		PageManager.register(modId, new Notifications());
 		PageManager.register(modId, new Commands());
+		PageManager.register(modId, new Baritone());
 		
 		ModuleManager.register(modId, new Fly());
 		ModuleManager.register(modId, new Trap());
