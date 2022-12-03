@@ -373,6 +373,8 @@
 	"hamhacks.page.baritone": "Baritone",
 	"hamhacks.page.baritone.tooltip": "google maps for block game",
 
+	"hamhacks.page.profiles": "Profiles",
+
 	"hamhacks.category.movement": "Movement",
 	"hamhacks.category.combat": "Combat",
 	"hamhacks.category.render": "Render",
@@ -392,6 +394,7 @@
 	"hamhacks.menu.securedServerWarning.message": "The server you are trying to connect to enforces a secure connection.\nYou can connect anyways and risk being reported to Mojang or cancel.",
 	"hamhacks.menu.securedServerWarning.checkMessage": "Don't show again",
 	"hamhacks.menu.waitingToConnect": "Waiting to Connect",
+	"hamhacks.menu.addProfile": "Add Profile",
 
 	"hamhacks.element.searchableScrollableElement.search": "Search"
 }

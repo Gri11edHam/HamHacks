@@ -16,6 +16,7 @@ import net.grilledham.hamhacks.config.ConfigManager;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.profile.ProfileManager;
 import net.grilledham.hamhacks.util.*;
 import org.slf4j.Logger;
 
@@ -53,6 +54,7 @@ public class HamHacksClient implements ClientModInitializer {
 		PositionHack.init();
 		ConnectionUtil.init();
 		ChatUtil.init();
+		ProfileManager.init();
 		
 		FabricLoader loader = FabricLoader.getInstance();
 		for(EntrypointContainer<Config> configEntry : loader.getEntrypointContainers("hamhacks", Config.class)) {
@@ -75,7 +77,10 @@ public class HamHacksClient implements ClientModInitializer {
 	}
 	
 	public static void shutdown() {
+		LOGGER.info("Saving configs...");
 		ConfigManager.save();
+		LOGGER.info("Saving profiles...");
+		ProfileManager.save();
 		LOGGER.info("Bye for now :)");
 	}
 }

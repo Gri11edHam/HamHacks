@@ -17,6 +17,11 @@ public class ModuleManager {
 		moduleMap.get(modId).add(m);
 	}
 	
+	public static void unregister(String modId, Module m) {
+		modules.remove(m);
+		moduleMap.get(modId).remove(m);
+	}
+	
 	public static List<Module> getModules() {
 		return modules;
 	}

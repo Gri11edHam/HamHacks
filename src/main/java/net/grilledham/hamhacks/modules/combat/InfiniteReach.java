@@ -15,7 +15,10 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -75,6 +78,10 @@ public class InfiniteReach extends Module {
 		}
 		e.canceled = true;
 		
+		doAttack(hitResult);
+	}
+	
+	public void doAttack(HitResult hitResult) {
 		List<Vec3> initialPath = new PathFinder().findPath(mc.player.getBlockPos(), new BlockPos(hitResult.getPos()), mc.player.world, 4);
 		if(initialPath == null || initialPath.isEmpty()) {
 			return;
@@ -122,58 +129,6 @@ public class InfiniteReach extends Module {
 		for(int i = path.size() - 1; i >= 0; i--) {
 			Vec3 pos = path.get(i);
 			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
-		}
-	}
-	
-	public HitResult getHitResultOrdinal(HitResult result) {
-		if(!enabled.get() || hitResult.getType() != HitResult.Type.ENTITY) return result;
-		return hitResult;
-	}
-	
-	public void preAttack() {
-		if(!enabled.get()) return;
-		if(hitResult.getType() == HitResult.Type.ENTITY) {
-			teleports.clear();
-			EntityHitResult result = (EntityHitResult)hitResult;
-			Vec3d playerPos = mc.player.getPos();
-			double diffX = result.getEntity().getPos().x - playerPos.x;
-			double diffY = result.getEntity().getPos().y - playerPos.y;
-			double diffZ = result.getEntity().getPos().z - playerPos.z;
-			double diffXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
-			float yaw = (float)Math.toDegrees(Math.atan2(diffZ, diffX)) - 90F;
-			float pitch = (float)-Math.toDegrees(Math.atan2(diffY, diffXZ));
-			float f = MathHelper.cos(-yaw * 0.017453292F - 3.1415927F);
-			float g = MathHelper.sin(-yaw * 0.017453292F - 3.1415927F);
-			float h = -MathHelper.cos(-pitch * 0.017453292F);
-			float i = MathHelper.sin(-pitch * 0.017453292F);
-			Vec3 facing = new Vec3(g * h, i, f * h);
-			facing.mul(4);
-			Vec3 pos = new Vec3(mc.player.getPos());
-			Vec3 end = new Vec3(result.getPos());
-			while(pos.dist(end) > 8) {
-				pos.add(facing);
-				final boolean[] collides = {false};
-				mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox(mc.player.getPose())).forEach((a) -> collides[0] = true);
-				teleports.add(0, pos.copy());
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
-			}
-			facing.div(4);
-			while(pos.dist(end) > 3) {
-				pos.add(facing);
-				teleports.add(0, pos.copy());
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
-			}
-//			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(result.getEntity().getX(), result.getEntity().getY(), result.getEntity().getZ(), mc.player.isOnGround()));
-		}
-	}
-	
-	public void postAttack() {
-		if(!enabled.get()) return;
-		if(hitResult.getType() == HitResult.Type.ENTITY) {
-			for(Vec3 pos : teleports) {
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
-			}
-			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround()));
 		}
 	}
 }

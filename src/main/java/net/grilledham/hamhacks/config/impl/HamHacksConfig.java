@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.config.impl;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.command.CommandManager;
 import net.grilledham.hamhacks.command.impl.BaritoneCommand;
@@ -21,21 +20,12 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.Baritone;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.page.pages.Commands;
-
-import java.io.File;
+import net.grilledham.hamhacks.page.pages.Profiles;
 
 public class HamHacksConfig extends Config {
 	
 	public HamHacksConfig() {
-		super(HamHacksClient.MOD_ID, "config.json", 0, ConfigFixer.DEFAULT);
-	}
-	
-	@Override
-	protected void prepareConfigFile() {
-		if (file != null) {
-			return;
-		}
-		file = new File(FabricLoader.getInstance().getGameDir().toFile(), HamHacksClient.MOD_ID + "/" + fileName);
+		super(HamHacksClient.MOD_ID, "../config.json", 0, ConfigFixer.DEFAULT);
 	}
 	
 	@Override
@@ -44,6 +34,7 @@ public class HamHacksConfig extends Config {
 		PageManager.register(modId, new Notifications());
 		PageManager.register(modId, new Commands());
 		PageManager.register(modId, new Baritone());
+		PageManager.register(modId, new Profiles());
 		
 		ModuleManager.register(modId, new Fly());
 		ModuleManager.register(modId, new Trap());

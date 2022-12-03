@@ -4,6 +4,7 @@ public class Changelog {
 	
 	private static final String CHANGELOG = """
 			Update 1.8:
+				- Added setting profiles
 				- Added pages to the Click GUI
 				- Improved notification animation
 				- Allow for easier addon mods

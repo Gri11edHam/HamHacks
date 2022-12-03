@@ -10,6 +10,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.profile.Profile;
 import net.grilledham.hamhacks.setting.Setting;
 import net.grilledham.hamhacks.setting.SettingCategory;
 
@@ -29,6 +30,8 @@ public abstract class Config {
 	private final ConfigFixer fixer;
 	private final ConfigFixer internalFixer;
 	
+	private Profile profile;
+	
 	/**
 	 * Creates a new config that saves and loads your modules
 	 * @param file Path to the file in the .minecraft directory
@@ -42,15 +45,17 @@ public abstract class Config {
 	}
 	
 	protected void prepareConfigFile() {
-		if (file != null) {
-			return;
-		}
-		file = new File(FabricLoader.getInstance().getGameDir().toFile(), HamHacksClient.MOD_ID + "/configs/" + fileName);
+		file = new File(FabricLoader.getInstance().getGameDir().toFile(), HamHacksClient.MOD_ID + "/profiles/" + profile.name() + "/" + modId + "/" + fileName);
 	}
 	
 	public void initializeConfig() {
 		prepareConfigFile();
 		load();
+	}
+	
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+		initializeConfig();
 	}
 	
 	public void load() {
