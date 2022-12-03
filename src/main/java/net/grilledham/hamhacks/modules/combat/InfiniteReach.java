@@ -28,8 +28,6 @@ public class InfiniteReach extends Module {
 	
 	private HitResult hitResult = BlockHitResult.createMissed(null, null, null);
 	
-	private final List<Vec3> teleports = new ArrayList<>();
-	
 	public InfiniteReach() {
 		super(Text.translatable("hamhacks.module.infiniteReach"), Category.COMBAT, new Keybind());
 	}
@@ -87,6 +85,7 @@ public class InfiniteReach extends Module {
 			return;
 		}
 		List<Vec3> path = new ArrayList<>();
+		Vec3 lastTP = null;
 		Vec3 lastVec = null;
 		Vec3 lastDir = null;
 		for(Vec3 vec : initialPath) {
@@ -96,6 +95,7 @@ public class InfiniteReach extends Module {
 			}
 			if(lastVec == null) {
 				lastVec = vec;
+				lastTP = vec;
 				lastDir = new Vec3();
 				continue;
 			}
@@ -115,11 +115,15 @@ public class InfiniteReach extends Module {
 			} else if(dir.getZ() < 0) {
 				dir.setZ(-1);
 			}
-			if(!dir.equals(lastDir) || vec.dist(lastVec) >= 6) {
+			if(!dir.equals(lastDir)) {
+				path.add(lastVec);
+				lastTP = lastVec;
+			} else if(vec.dist(lastTP) >= 6) {
 				path.add(vec);
-				lastVec = vec;
+				lastTP = vec;
 			}
 			lastDir = dir;
+			lastVec = vec;
 		}
 		for(Vec3 pos : path) {
 			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
