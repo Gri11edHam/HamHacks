@@ -31,6 +31,10 @@ import java.util.Map;
 
 public class HUD extends Module {
 	
+	private static List<Module> widthSortedModules;
+	
+	private static final HashMap<String, Integer> cachedWidths = new HashMap<>();
+	
 	private final SettingCategory APPEARANCE_CATEGORY = new SettingCategory("hamhacks.module.hud.category.appearance");
 	
 	private final BoolSetting animate = new BoolSetting("hamhacks.module.hud.animate", true, () -> true);
@@ -217,7 +221,10 @@ public class HUD extends Module {
 			}
 			moduleAnimations.put(m, animation);
 		}
-		for(Module m : ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getHUDText()), MinecraftClient.getInstance().textRenderer.getWidth(a.getHUDText()))).toList()) {
+		if(widthSortedModules == null) {
+			widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getHUDText()), MinecraftClient.getInstance().textRenderer.getWidth(a.getHUDText()))).toList();
+		}
+		for(Module m : widthSortedModules) {
 			animation = moduleAnimations.get(m);
 			j++;
 			if(animation.get() > 0) {
@@ -262,7 +269,9 @@ public class HUD extends Module {
 		
 		matrices.pop();
 		
-		animations.forEach(Animation::update);
+		if(animate.get()) {
+			animations.forEach(Animation::update);
+		}
 	}
 	
 	private float drawLeftAligned(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
@@ -290,11 +299,13 @@ public class HUD extends Module {
 		int barColor = Color.toRGB(finalBarHue, barC[1], barC[2], barC[3]);
 		int bgColor = Color.toRGB(finalBGHue, bgC[1], bgC[2], bgC[3]);
 		int textColor = Color.toRGB(finalTextHue, textC[1], textC[2], textC[3]);
-		float textX = (float)(2 - ((fontRenderer.getWidth(text) + 7) * (1 - animation.get())));
+		int textWidth = cachedWidths.getOrDefault(text, fontRenderer.getWidth(text));
+		cachedWidths.put(text, textWidth);
+		float textX = (float)(2 - ((textWidth + 7) * (1 - animation.get())));
 		float textY = yAdd + 2;
 		RenderUtil.preRender();
-		RenderUtil.drawRect(matrices, textX - 2, textY - 2, fontRenderer.getWidth(text) + 4, fontRenderer.fontHeight + 2, bgColor);
-		RenderUtil.drawRect(matrices, textX + fontRenderer.getWidth(text) + 2,  textY - 2, 3, fontRenderer.fontHeight + 2, barColor);
+		RenderUtil.drawRect(matrices, textX - 2, textY - 2, textWidth + 4, fontRenderer.fontHeight + 2, bgColor);
+		RenderUtil.drawRect(matrices, textX + textWidth + 2,  textY - 2, 3, fontRenderer.fontHeight + 2, barColor);
 		RenderUtil.postRender();
 		fontRenderer.drawWithShadow(matrices, text, textX, textY, textColor);
 		return (float)((fontRenderer.fontHeight + 2) * animation.get());
@@ -325,10 +336,12 @@ public class HUD extends Module {
 		int barColor = Color.toRGB(finalBarHue, barC[1], barC[2], barC[3]);
 		int bgColor = Color.toRGB(finalBGHue, bgC[1], bgC[2], bgC[3]);
 		int textColor = Color.toRGB(finalTextHue, textC[1], textC[2], textC[3]);
-		float textX = MinecraftClient.getInstance().getWindow().getScaledWidth() - fontRenderer.getWidth(text) - 2 + (float)((fontRenderer.getWidth(text) + 7 ) * (1 - animation.get()));
+		int textWidth = cachedWidths.getOrDefault(text, fontRenderer.getWidth(text));
+		cachedWidths.put(text, textWidth);
+		float textX = MinecraftClient.getInstance().getWindow().getScaledWidth() - textWidth - 2 + (float)((textWidth + 7 ) * (1 - animation.get()));
 		float textY = yAdd + 2;
 		RenderUtil.preRender();
-		RenderUtil.drawRect(matrices, textX - 2, textY - 2, fontRenderer.getWidth(text) + 4, fontRenderer.fontHeight + 2, bgColor);
+		RenderUtil.drawRect(matrices, textX - 2, textY - 2, textWidth + 4, fontRenderer.fontHeight + 2, bgColor);
 		RenderUtil.drawRect(matrices, textX - 5, textY - 2, 3, fontRenderer.fontHeight + 2, barColor);
 		RenderUtil.postRender();
 		fontRenderer.drawWithShadow(matrices, text, textX, textY, textColor);
@@ -344,7 +357,9 @@ public class HUD extends Module {
 			finalTextHue = textC[0];
 		}
 		int textColor = Color.toRGB(finalTextHue, textC[1], textC[2], textC[3]);
-		float textX = (float)(2 - ((fontRenderer.getWidth(text) + 7) * (1 - animation.get())));
+		int textWidth = cachedWidths.getOrDefault(text, fontRenderer.getWidth(text));
+		cachedWidths.put(text, textWidth);
+		float textX = (float)(2 - ((textWidth + 7) * (1 - animation.get())));
 		float textY = MinecraftClient.getInstance().getWindow().getScaledHeight() - yAdd - (fontRenderer.fontHeight + 2);
 		fontRenderer.drawWithShadow(matrices, text, textX, textY, textColor);
 		return -(float)((fontRenderer.fontHeight + 2) * animation.get());
@@ -355,5 +370,10 @@ public class HUD extends Module {
 			animations.add(i, AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build());
 		}
 		return animations.get(i);
+	}
+	
+	public void updateLanguage() {
+		widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getHUDText()), MinecraftClient.getInstance().textRenderer.getWidth(a.getHUDText()))).toList();
+		cachedWidths.clear();
 	}
 }

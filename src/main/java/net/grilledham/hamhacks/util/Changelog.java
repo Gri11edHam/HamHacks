@@ -27,6 +27,7 @@ public class Changelog {
 				- Improved Click GUI performance
 				- Split HUD module into smaller modules
 				- Reduced max range values for Killaura and Reach
+				- Improved HUD performance
 				- Bug fixes
 			
 			Update 1.7.2:
