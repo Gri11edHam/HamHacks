@@ -3,6 +3,8 @@ package net.grilledham.hamhacks.modules.render;
 import net.grilledham.hamhacks.animation.Animation;
 import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
+import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
@@ -99,14 +101,14 @@ public class HUD extends Module {
 	public float leftHeight = 0;
 	public float rightHeight = 0;
 	
-	@Override
-	public void onEnable() {
-		// don't register
-	}
+	private int ticks = 0;
 	
-	@Override
-	public void onDisable() {
-		// don't unregister
+	@EventListener
+	public void onTick(EventTick e) {
+		ticks++;
+		if((ticks %= 10) == 0) { // update widths every 0.5 seconds
+			widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getHUDText()), MinecraftClient.getInstance().textRenderer.getWidth(a.getHUDText()))).toList();
+		}
 	}
 	
 	public void render(MatrixStack matrices, float tickDelta, TextRenderer textRenderer) {
