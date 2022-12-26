@@ -4,14 +4,18 @@
 	"package": "net.grilledham.hamhacks.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
+		"MixinBlockEntityRenderDispatcher",
+		"MixinBlockModelRenderer",
 		"MixinCamera",
 		"MixinChatHud",
+		"MixinChunkOcclusionDataBuilder",
 		"MixinClientConnection",
 		"MixinClientPlayerEntity",
 		"MixinClientPlayerInteractionManager",
 		"MixinCommandSuggestor",
 		"MixinDisconnectedScreen",
 		"MixinEntityRenderer",
+		"MixinFluidRenderer",
 		"MixinGameRenderer",
 		"MixinHeldItemRenderer",
 		"MixinInGameHud",
@@ -37,6 +41,9 @@
 		"MixinMatrix4f",
 		"MixinPlayerEntity",
 		"MixinVec3d",
-		"baritone.MixinComeCommand"
+		"baritone.MixinComeCommand",
+		"sodium.MixinBlockOcclusionCache",
+		"sodium.MixinBlockRenderer",
+		"sodium.MixinFluidRenderer"
 	]
 }

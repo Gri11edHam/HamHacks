@@ -4,8 +4,13 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BlockTypeSelector;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
 
 public class XRay extends Module {
 	
@@ -74,5 +79,14 @@ public class XRay extends Module {
 	public void onDisable() {
 		super.onDisable();
 		mc.worldRenderer.reload();
+	}
+	
+	public boolean shouldDrawSide(BlockState selfState, BlockView view, BlockPos pos, Direction facing, boolean returnValue) {
+		if(!returnValue && visibleBlocks.get(selfState.getBlock())) {
+			BlockPos newPos = pos.offset(facing);
+			BlockState newState = view.getBlockState(newPos);
+			return newState.getCullingFace(view, newPos, facing.getOpposite()) != VoxelShapes.fullCube() || newState.getBlock() != selfState.getBlock();
+		}
+		return returnValue;
 	}
 }
