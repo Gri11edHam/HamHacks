@@ -3,6 +3,10 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.8.1:
+				- Improved XRay
+				- Fixed wrong widths in HUD
+			
 			Update 1.8:
 				- Added setting profiles
 				- Added pages to the Click GUI
