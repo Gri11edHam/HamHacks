@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -9,7 +8,7 @@ import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class SettingElement<T> extends GuiElement {
 	
-	private final Animation tooltipAnimation = AnimationBuilder.create(AnimationType.LINEAR).build();
+	private final Animation tooltipAnimation = new Animation(AnimationType.LINEAR);
 	
 	private boolean hasClicked = false;
 	

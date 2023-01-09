@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.modules.Category;
@@ -19,8 +18,8 @@ public class CategoryElement extends GuiElement {
 	public static final int PREFERED_SCROLL_HEIGHT = 16 * 16;
 	private final Category category;
 	
-	private final Animation openCloseAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
-	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation openCloseAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
+	private final Animation hoverAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	
 	private final ScrollableElement scrollArea;
 	

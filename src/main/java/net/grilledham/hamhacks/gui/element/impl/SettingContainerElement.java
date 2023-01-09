@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.screen.impl.SettingContainerScreen;
 import net.grilledham.hamhacks.page.PageManager;
@@ -16,7 +15,7 @@ import java.util.Map;
 
 public class SettingContainerElement extends SettingElement<Map<?, ?>> {
 	
-	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation hoverAnimation = new Animation(AnimationType.EASE, 0.25, true);
 	
 	protected boolean drawBackground = true;
 	

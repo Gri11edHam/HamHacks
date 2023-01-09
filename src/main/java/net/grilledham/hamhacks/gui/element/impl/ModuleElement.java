@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.gui.screen.impl.ModuleSettingsScreen;
@@ -15,10 +14,10 @@ import org.lwjgl.glfw.GLFW;
 
 public class ModuleElement extends GuiElement {
 	
-	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
-	private final Animation enableAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation hoverAnimation = new Animation(AnimationType.EASE, 0.25, true);
+	private final Animation enableAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	
-	private final Animation tooltipAnimation = AnimationBuilder.create(AnimationType.LINEAR).build();
+	private final Animation tooltipAnimation = new Animation(AnimationType.LINEAR);
 	
 	private boolean hasClicked = false;
 	

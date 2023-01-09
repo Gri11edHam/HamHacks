@@ -2,37 +2,46 @@ package net.grilledham.hamhacks.animation;
 
 public class Animation {
 	
-	private final AnimationStage[] stages;
-	private final double[] originalDurations;
+	private boolean complete = false;
 	
-	private final double originalDuration;
+	private double progress = 0;
+	private double prevProgress = 0;
+	private double animationProgress = 0;
+	private double prevAnimationAmount = 0;
+	private double animationAmount = 0;
 	
-	private int currentStage = 0;
+	private long lastTime = System.currentTimeMillis();
 	
-	public Animation(double duration, int stages) {
-		this.originalDuration = duration;
-		this.stages = new AnimationStage[stages];
-		this.originalDurations = new double[stages];
+	private final AnimationType animationType;
+	private double duration;
+	
+	private final boolean allowReverse;
+	
+	public Animation(AnimationType animationType, double duration, boolean allowReverse) {
+		this.animationType = animationType;
+		this.duration = duration;
+		this.allowReverse = allowReverse;
 	}
 	
-	public void setStage(int i, AnimationStage stage, double stageDuration) {
-		stages[i] = stage;
-		originalDurations[i] = stageDuration;
+	public Animation(AnimationType animationType, double duration) {
+		this(animationType, duration, false);
+	}
+	
+	public Animation(AnimationType animationType, boolean allowReverse) {
+		this(animationType, 1, allowReverse);
+	}
+	
+	public Animation(AnimationType animationType) {
+		this(animationType, false);
 	}
 	
 	public void setAbsolute(double progress) {
-		currentStage = (int)((stages.length - 1) * progress);
-		if(currentStage > 0) {
-			for(int i = 0; i < currentStage - 1; i++) {
-				stages[i].setAbsolute(1);
-			}
-		}
-		stages[currentStage].setAbsolute(progress / stages.length);
-		if(currentStage < stages.length - 1) {
-			for(int i = currentStage + 1; i < stages.length; i++) {
-				stages[i].setAbsolute(0);
-			}
-		}
+		this.progress = progress;
+		this.prevProgress = progress;
+		this.animationProgress = 1;
+		this.prevAnimationAmount = progress;
+		this.animationAmount = progress;
+		complete = true;
 	}
 	
 	public void setAbsolute(boolean progress) {
@@ -44,18 +53,8 @@ public class Animation {
 	}
 	
 	public void set(double progress) {
-		int progressStage = (int)((stages.length - 1) * progress);
-		if(progressStage > 0) {
-			for(int i = 0; i < progressStage; i++) {
-				stages[i].set(1);
-			}
-		}
-		stages[progressStage].set(progress / stages.length);
-		if(progressStage < stages.length - 1) {
-			for(int i = progressStage + 1; i < stages.length; i++) {
-				stages[i].set(0);
-			}
-		}
+		this.progress = progress;
+		complete = false;
 	}
 	
 	public void set(boolean progress) {
@@ -66,40 +65,54 @@ public class Animation {
 		}
 	}
 	
-	public int getCurrentStage() {
-		return currentStage;
-	}
-	
-	public double getStage() {
-		return stages[currentStage].get();
+	public double getAbsolute() {
+		return progress;
 	}
 	
 	public double get() {
-		return (currentStage + stages[currentStage].get()) / stages.length;
+		return animationAmount;
+	}
+	
+	public boolean isComplete() {
+		return complete;
 	}
 	
 	public void setDuration(double duration) {
-		double percentageOfOriginal = duration / originalDuration;
-		for(int i = 0; i < stages.length; i++) {
-			stages[i].setDuration(originalDurations[i] * percentageOfOriginal);
-		}
+		this.duration = duration;
 	}
 	
 	public void update() {
-		stages[currentStage].update();
-		// if there is more than one stage, the progress can only be between 1 and 0
-		if(stages[currentStage].get() >= 1 && currentStage < stages.length - 1) {
-			stages[currentStage].setAbsolute(1);
-			currentStage++;
-			double d = stages[currentStage].getAbsolute();
-			stages[currentStage].setAbsolute(0);
-			stages[currentStage].set(d);
-		} else if(stages[currentStage].get() <= 0 && currentStage > 0) {
-			stages[currentStage].setAbsolute(0);
-			currentStage--;
-			double d = stages[currentStage].getAbsolute();
-			stages[currentStage].setAbsolute(1);
-			stages[currentStage].set(d);
+		if(complete) {
+			return;
 		}
+		long lastTime = this.lastTime;
+		long now = System.currentTimeMillis();
+		this.lastTime = now;
+		double progressMultiplier;
+		
+		if(prevProgress != progress) {
+			animationProgress = 0;
+			prevAnimationAmount = animationAmount;
+		}
+		if(animationProgress < 1 && duration != 0) {
+			animationProgress += (now - lastTime) / (duration * 1000);
+		} else {
+			animationProgress = 1;
+		}
+		
+		if(progress > prevAnimationAmount || !allowReverse) {
+			progressMultiplier = animationType.getProgress(animationProgress);
+			complete = animationType.isComplete(animationProgress, 1);
+		} else {
+			progressMultiplier = 1 - animationType.getProgress(1 - animationProgress);
+			complete = animationType.isComplete(1 - animationProgress, 0);
+		}
+		
+		if(complete) {
+			progressMultiplier = 1;
+		}
+		
+		animationAmount = prevAnimationAmount + (progress - prevAnimationAmount) * progressMultiplier;
+		prevProgress = progress;
 	}
 }

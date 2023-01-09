@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -15,7 +14,7 @@ public class ScrollableElement extends GuiElement {
 	
 	private float nextScroll;
 	
-	private final Animation scroll = AnimationBuilder.create(AnimationType.LINEAR, 0.05).build();
+	private final Animation scroll = new Animation(AnimationType.LINEAR, 0.05);
 	
 	private float maxHeight;
 	

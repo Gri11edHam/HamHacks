@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
@@ -13,7 +12,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class StringSettingElement extends SettingElement<String> {
 	
-	private final Animation cursorAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.5, true).build();
+	private final Animation cursorAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.5, true);
 	private boolean cursorShown = false;
 	private int cursorPos;
 	

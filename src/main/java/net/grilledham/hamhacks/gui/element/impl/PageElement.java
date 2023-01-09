@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.gui.screen.impl.ClickGUIScreen;
@@ -16,7 +15,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class PageElement extends GuiElement {
 	
-	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation hoverAnimation = new Animation(AnimationType.EASE, 0.25, true);
 	
 	private final Page page;
 	

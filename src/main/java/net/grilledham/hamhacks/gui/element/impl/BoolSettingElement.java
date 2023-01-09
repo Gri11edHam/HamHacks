@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
@@ -13,8 +12,8 @@ import org.lwjgl.glfw.GLFW;
 
 public class BoolSettingElement extends SettingElement<Boolean> {
 	
-	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
-	private final Animation enableAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation hoverAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
+	private final Animation enableAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	
 	protected boolean drawBackground = true;
 	

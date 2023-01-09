@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.modules.render;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventTick;
@@ -369,7 +368,7 @@ public class HUD extends Module {
 	
 	private Animation getAnimation(int i) {
 		while(animations.size() <= i) {
-			animations.add(i, AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build());
+			animations.add(animations.size(), new Animation(AnimationType.EASE, 0.25));
 		}
 		return animations.get(i);
 	}

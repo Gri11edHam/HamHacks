@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.notification;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -15,12 +14,12 @@ import java.util.List;
 
 public class Notification {
 	
-	private final Animation inOutAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.1, true).then(AnimationType.IN_OUT_QUAD, 0.15, true).build();
-	private final Animation dropAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation inOutAnimation = new Animation(AnimationType.EASE_OUT_BACKWARD, 0.25, true);
+	private final Animation dropAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	
-	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation hoverAnimation = new Animation(AnimationType.EASE, 0.25, true);
 	
-	private final Animation progressAnimation = AnimationBuilder.create(AnimationType.LINEAR, PageManager.getPage(Notifications.class).lifeSpan.get()).build();
+	private final Animation progressAnimation = new Animation(AnimationType.LINEAR, PageManager.getPage(Notifications.class).lifeSpan.get());
 	
 	private final List<String> titleTexts = new ArrayList<>();
 	private final List<String> infoTexts = new ArrayList<>();
@@ -85,13 +84,8 @@ public class Notification {
 	public float render(MatrixStack matrices, double mx, double my, float yAdd, float partialTicks) {
 		matrices.push();
 		
-		double totalWidth = WIDTH + 5 + 10;
-		double inOutAdd;
-		if(inOutAnimation.getCurrentStage() == 0) {
-			inOutAdd = inOutAnimation.getStage() * totalWidth;
-		} else {
-			inOutAdd = totalWidth - (inOutAnimation.getStage() * 10);
-		}
+		double totalWidth = WIDTH + 5;
+		double inOutAdd = inOutAnimation.get() * totalWidth;
 		
 		float x = mc.getWindow().getScaledWidth() - (float)inOutAdd;
 		float y = mc.getWindow().getScaledHeight() - height - 5 - (float)dropAnimation.get();
@@ -138,7 +132,7 @@ public class Notification {
 		}
 		progressAnimation.update();
 		
-		if(progressAnimation.get() >= 1 && dropAnimation.get() <= 0 && (!hovered || clicked)) {
+		if(progressAnimation.isComplete() && dropAnimation.isComplete() && (!hovered || clicked)) {
 			complete = true;
 		}
 		

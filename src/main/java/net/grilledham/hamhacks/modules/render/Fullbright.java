@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.modules.render;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
@@ -16,7 +15,7 @@ public class Fullbright extends Module {
 	
 	private final BoolSetting smoothTransition = new BoolSetting("hamhacks.module.fullBright.smoothTransition", true, () -> true);
 	
-	private final Animation newBrightness = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
+	private final Animation newBrightness = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	
 	public Fullbright() {
 		super(Text.translatable("hamhacks.module.fullBright"), Category.RENDER, new Keybind(0));

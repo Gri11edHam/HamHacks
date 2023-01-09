@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
@@ -17,8 +16,8 @@ import java.util.HexFormat;
 
 public class ColorSettingElement extends SettingElement<Color> {
 	
-	private final Animation hoverAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25).build();
-	private final Animation selectionAnimation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, 0.25, true).build();
+	private final Animation hoverAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
+	private final Animation selectionAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25, true);
 	
 	public BoolSetting chroma;
 	

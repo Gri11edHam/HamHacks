@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.modules.render;
 
 import net.grilledham.hamhacks.animation.Animation;
-import net.grilledham.hamhacks.animation.AnimationBuilder;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventScroll;
@@ -60,7 +59,7 @@ public class Zoom extends Module {
 	private double prevSensitivity = 0;
 	private boolean wasSmoothCameraEnabled = false;
 	
-	private final Animation animation = AnimationBuilder.create(AnimationType.IN_OUT_QUAD, animationSpeed.get(), true).build();
+	private final Animation animation = new Animation(AnimationType.EASE_IN_OUT, animationSpeed.get(), true);
 	
 	public Zoom() {
 		super(Text.translatable("hamhacks.module.zoom"), Category.RENDER, new Keybind(0));
