@@ -44,7 +44,7 @@ public class SettingContainer<K, V> extends Setting<Map<K, Setting<V>>> {
 	public JsonObject save() {
 		JsonObject obj = new JsonObject();
 		for(Setting<V> s : value.values()) {
-			obj.add(s.getName(), s.save());
+			obj.add(s.getConfigName(), s.save());
 		}
 		return obj;
 	}
