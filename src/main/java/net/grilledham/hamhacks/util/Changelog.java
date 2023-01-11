@@ -4,6 +4,7 @@ public class Changelog {
 	
 	private static final String CHANGELOG = """
 			Update 1.8.1:
+				- Rewrote animations
 				- Improved XRay
 				- Fixed wrong widths in HUD
 			
