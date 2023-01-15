@@ -35,7 +35,7 @@ public class InfiniteReach extends Module {
 	@Override
 	public String getHUDText() {
 		String extra = "";
-		if(hitResult.getType() == HitResult.Type.ENTITY) {
+		if(hitResult.getType() == HitResult.Type.ENTITY && hitResult != null && mc.world != null) {
 			extra = "(" + ((EntityHitResult)hitResult).getEntity().getName().getString() + "|" + String.format("%.2f", Math.sqrt(hitResult.squaredDistanceTo(mc.player))) + ")";
 		}
 		return super.getHUDText() + " \u00a77" + hitResult.getType().name() + extra;
