@@ -38,6 +38,7 @@
 	"mixins": [
 		"MixinAbstractBlockState",
 		"MixinBoatEntity",
+		"MixinEntityVelocityUpdateS2CPacket",
 		"MixinMatrix4f",
 		"MixinPlayerEntity",
 		"MixinVec3d",

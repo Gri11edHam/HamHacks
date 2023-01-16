@@ -338,6 +338,13 @@
 	"hamhacks.module.generic.keybind": "Keybind",
 	"hamhacks.module.generic.category.general": "General",
 
+	"hamhacks.module.velocity": "Velocity",
+	"hamhacks.module.velocity.tooltip": "Modifies your knockback/velocity",
+	"hamhacks.module.velocity.horizontal": "Horizontal",
+	"hamhacks.module.velocity.horizontal.tooltip": "Modifies your horizontal velocity",
+	"hamhacks.module.velocity.vertical": "Vertical",
+	"hamhacks.module.velocity.vertical.tooltip": "Modifies your vertical velocity",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
 
