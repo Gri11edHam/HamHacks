@@ -124,7 +124,7 @@ public class Notification {
 		hoverAnimation.update();
 		if(!clicked) {
 			if(hovered) {
-				progressAnimation.setAbsolute(progressAnimation.get());
+				progressAnimation.set(progressAnimation.get());
 				progressAnimation.setDuration(PageManager.getPage(Notifications.class).lifeSpan.get() * (1 - progressAnimation.get()));
 			} else {
 				progressAnimation.set(1);
@@ -132,7 +132,7 @@ public class Notification {
 		}
 		progressAnimation.update();
 		
-		if(progressAnimation.isComplete() && dropAnimation.isComplete() && (!hovered || clicked)) {
+		if(progressAnimation.get() >= 1 && dropAnimation.get() <= 0 && (!hovered || clicked)) {
 			complete = true;
 		}
 		
