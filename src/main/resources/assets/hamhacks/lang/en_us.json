@@ -283,6 +283,7 @@
 	"hamhacks.module.nametags.distance": "Distance",
 	"hamhacks.module.nametags.ping": "Ping",
 	"hamhacks.module.nametags.scale": "Scale",
+	"hamhacks.module.nametags.scaleWithZoom": "Scale with Zoom",
 	"hamhacks.module.nametags.outlineColor": "Outline Color",
 	"hamhacks.module.nametags.fillColor": "Fill Color",
 

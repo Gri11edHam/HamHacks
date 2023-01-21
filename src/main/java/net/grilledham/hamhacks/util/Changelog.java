@@ -9,6 +9,8 @@ public class Changelog {
 					: Velocity
 				- Removed module:
 					: AntiBan (Use NoChatReports instead: https://modrinth.com/mod/no-chat-reports)
+				- Added setting to Nametags module:
+					: Scale with Zoom
 				- Bug fixes
 			
 			Update 1.8.1:

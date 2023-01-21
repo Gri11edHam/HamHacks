@@ -78,6 +78,8 @@ public class Nametags extends Module {
 	
 	private final NumberSetting itemScale = new NumberSetting("hamhacks.module.nametags.itemScale", 2,entityItems::get, 0.25, 4, 0.25, false);
 	
+	private final BoolSetting scaleWithZoom = new BoolSetting("hamhacks.module.nametags.scaleWithZoom", true, () -> true);
+	
 	private final ColorSetting outlineColor = new ColorSetting("hamhacks.module.nametags.outlineColor", new Color(0x80AA0000), () -> true);
 	
 	private final ColorSetting fillColor = new ColorSetting("hamhacks.module.nametags.fillColor", new Color(0x80000000), () -> true);
@@ -97,6 +99,7 @@ public class Nametags extends Module {
 		settingCategories.add(2, APPEARANCE_CATEGORY);
 		APPEARANCE_CATEGORY.add(scale);
 		APPEARANCE_CATEGORY.add(itemScale);
+		APPEARANCE_CATEGORY.add(scaleWithZoom);
 		APPEARANCE_CATEGORY.add(outlineColor);
 		APPEARANCE_CATEGORY.add(fillColor);
 	}
@@ -240,7 +243,7 @@ public class Nametags extends Module {
 			
 			Vec3 pos = new Vec3(ex, ey + e.getHeight() + 0.2, ez);
 			
-			if(ProjectionUtil.to2D(pos, scale.get(), true)) {
+			if(ProjectionUtil.to2D(pos, scale.get() * (scaleWithZoom.get() ? ModuleManager.getModule(Zoom.class).getZoomAmount() : 1), true)) {
 				TextRenderer textRenderer = mc.textRenderer;
 				
 				String display = names.get(e);
