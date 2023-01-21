@@ -8,68 +8,110 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class PathFinder {
 	
 	private final Node[][][] nodes = new Node[200][200][200];
 	private Node start;
+	private Node startNode;
+	private Node endNode;
+	private World world;
+	private float endDist;
 	
-	public List<Vec3> findPath(BlockPos start, BlockPos end, World world) {
-		return findPath(start, end, world, 1);
+	private Consumer<List<Vec3>> whenDone;
+	
+	private long timeout = -1;
+	
+	private long executionTime = 0;
+	
+	public PathFinder path(BlockPos start, BlockPos end, World world) {
+		return path(start, end, world, 1);
 	}
 	
-	public List<Vec3> findPath(BlockPos start, BlockPos end, World world, float endDist) {
-		Node startNode = getStart(start);
-		Node endNode = getNode(end);
-		if(endNode == null) {
-			return new ArrayList<>();
-		}
-		
-		startNode.g = 0;
-		startNode.h = h(startNode, endNode);
-		startNode.f = 0;
-		
-		List<Node> openList = new ArrayList<>();
-		
-		openList.add(startNode);
-		startNode.opened = true;
-		
-		Node node;
-		List<Node> neighbors;
-		while(!openList.isEmpty() && openList.size() < 10000) {
-			node = openList.get(0);
-			openList.remove(node);
-			node.closed = true;
-			
-			if(node.pos.isWithinDistance(endNode.pos, endDist)) {
-				return backtrace(node);
-			}
-			
-			neighbors = getNeighbors(node, world);
-			for(Node neighbor : neighbors) {
-				if(neighbor.closed) {
-					continue;
+	public PathFinder path(BlockPos start, BlockPos end, World world, float endDist) {
+		startNode = getStart(start);
+		endNode = getNode(end);
+		this.world = world;
+		this.endDist = endDist;
+		return this;
+	}
+	
+	public PathFinder setTimeout(long timeout) {
+		this.timeout = timeout;
+		return this;
+	}
+	
+	public PathFinder whenDone(Consumer<List<Vec3>> whenDone) {
+		this.whenDone = whenDone;
+		return this;
+	}
+	
+	public PathFinder begin() {
+		Thread thread = new Thread("PathFinder") {
+			@Override
+			public void run() {
+				long startTime = System.currentTimeMillis();
+				if(endNode == null) {
+					whenDone.accept(new ArrayList<>());
+					return;
 				}
 				
-				float ng = node.g + 1;
+				startNode.g = 0;
+				startNode.h = h(startNode, endNode);
+				startNode.f = 0;
 				
-				if(!neighbor.opened || ng < neighbor.g) {
-					neighbor.g = ng;
-					neighbor.h = h(neighbor, endNode);
-					neighbor.f = neighbor.g + neighbor.h;
-					neighbor.parent = node;
+				List<Node> openList = new ArrayList<>();
+				
+				openList.add(startNode);
+				startNode.opened = true;
+				
+				Node node;
+				List<Node> neighbors;
+				while(!openList.isEmpty() && ((executionTime = System.currentTimeMillis() - startTime) < timeout || timeout <= -1)) {
+					node = openList.get(0);
+					openList.remove(node);
+					node.closed = true;
 					
-					if(!neighbor.opened) {
-						openList.add(neighbor);
-						openList.sort((a, b) -> (int)(a.f - b.f));
-						neighbor.opened = true;
-					} else {
-						openList.sort((a, b) -> (int)(a.f - b.f));
+					if(node.pos.isWithinDistance(endNode.pos, endDist)) {
+						whenDone.accept(backtrace(node));
+						return;
+					}
+					
+					neighbors = getNeighbors(node, world);
+					for(Node neighbor : neighbors) {
+						if(neighbor.closed) {
+							continue;
+						}
+						
+						float ng = node.g + 1;
+						
+						if(!neighbor.opened || ng < neighbor.g) {
+							neighbor.g = ng;
+							neighbor.h = h(neighbor, endNode);
+							neighbor.f = neighbor.g + neighbor.h;
+							neighbor.parent = node;
+							
+							if(!neighbor.opened) {
+								openList.add(neighbor);
+								openList.sort((a, b) -> (int)(a.f - b.f));
+								neighbor.opened = true;
+							} else {
+								openList.sort((a, b) -> (int)(a.f - b.f));
+							}
+						}
 					}
 				}
+				whenDone.accept(new ArrayList<>());
 			}
-		}
-		return new ArrayList<>();
+		};
+		thread.setPriority(3);
+		thread.start();
+		return this;
+	}
+	
+	public long getExecutionTime() {
+		return executionTime;
 	}
 	
 	private List<Vec3> backtrace(Node endNode) {

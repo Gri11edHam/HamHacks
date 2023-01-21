@@ -28,6 +28,8 @@ public class InfiniteReach extends Module {
 	
 	private HitResult hitResult = BlockHitResult.createMissed(null, null, null);
 	
+	private PathFinder pathFinder;
+	
 	public InfiniteReach() {
 		super(Text.translatable("hamhacks.module.infiniteReach"), Category.COMBAT, new Keybind());
 	}
@@ -36,9 +38,12 @@ public class InfiniteReach extends Module {
 	public String getHUDText() {
 		String extra = "";
 		if(hitResult.getType() == HitResult.Type.ENTITY && hitResult != null && mc.world != null) {
-			extra = "(" + ((EntityHitResult)hitResult).getEntity().getName().getString() + "|" + String.format("%.2f", Math.sqrt(hitResult.squaredDistanceTo(mc.player))) + ")";
+			extra = "(" + ((EntityHitResult)hitResult).getEntity().getName().getString() + "|" + String.format("%.2f", Math.sqrt(hitResult.squaredDistanceTo(mc.player))) + ") ";
 		}
-		return super.getHUDText() + " \u00a77" + hitResult.getType().name() + extra;
+		if(pathFinder != null) {
+			extra += String.format("Pathing(%.2f)", pathFinder.getExecutionTime() / 1000D);
+		}
+		return super.getHUDText() + " \u00a77" + hitResult.getType().name() + extra.trim();
 	}
 	
 	@EventListener
@@ -80,59 +85,62 @@ public class InfiniteReach extends Module {
 	}
 	
 	public void doAttack(HitResult hitResult) {
-		List<Vec3> initialPath = new PathFinder().findPath(mc.player.getBlockPos(), new BlockPos(hitResult.getPos()), mc.player.world, 4);
-		if(initialPath == null || initialPath.isEmpty()) {
-			return;
-		}
-		List<Vec3> path = new ArrayList<>();
-		Vec3 lastTP = null;
-		Vec3 lastVec = null;
-		Vec3 lastDir = null;
-		for(Vec3 vec : initialPath) {
-			if(vec.dist(new Vec3(hitResult.getPos())) <= 5) {
-				path.add(vec);
-				break;
+		pathFinder = new PathFinder().path(mc.player.getBlockPos(), new BlockPos(hitResult.getPos()), mc.player.world, 4).setTimeout(5000L).whenDone((initialPath) -> {
+			if(initialPath == null || initialPath.isEmpty()) {
+				pathFinder = null;
+				return;
 			}
-			if(lastVec == null) {
+			List<Vec3> path = new ArrayList<>();
+			Vec3 lastTP = null;
+			Vec3 lastVec = null;
+			Vec3 lastDir = null;
+			for(Vec3 vec : initialPath) {
+				if(vec.dist(new Vec3(hitResult.getPos())) <= 5) {
+					path.add(vec);
+					break;
+				}
+				if(lastVec == null) {
+					lastVec = vec;
+					lastTP = vec;
+					lastDir = new Vec3();
+					continue;
+				}
+				Vec3 dir = lastVec.copy().sub(vec);
+				if(dir.getX() > 0) {
+					dir.setX(1);
+				} else if(dir.getX() < 0) {
+					dir.setX(-1);
+				}
+				if(dir.getY() > 0) {
+					dir.setY(1);
+				} else if(dir.getY() < 0) {
+					dir.setY(-1);
+				}
+				if(dir.getZ() > 0) {
+					dir.setZ(1);
+				} else if(dir.getZ() < 0) {
+					dir.setZ(-1);
+				}
+				if(!dir.equals(lastDir)) {
+					path.add(lastVec);
+					lastTP = lastVec;
+				} else if(vec.dist(lastTP) >= 6) {
+					path.add(vec);
+					lastTP = vec;
+				}
+				lastDir = dir;
 				lastVec = vec;
-				lastTP = vec;
-				lastDir = new Vec3();
-				continue;
 			}
-			Vec3 dir = lastVec.copy().sub(vec);
-			if(dir.getX() > 0) {
-				dir.setX(1);
-			} else if(dir.getX() < 0) {
-				dir.setX(-1);
+			for(Vec3 pos : path) {
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
 			}
-			if(dir.getY() > 0) {
-				dir.setY(1);
-			} else if(dir.getY() < 0) {
-				dir.setY(-1);
+			imc.getInteractionManager().leftClickEntity(((EntityHitResult)hitResult).getEntity());
+			mc.player.swingHand(Hand.MAIN_HAND);
+			for(int i = path.size() - 1; i >= 0; i--) {
+				Vec3 pos = path.get(i);
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
 			}
-			if(dir.getZ() > 0) {
-				dir.setZ(1);
-			} else if(dir.getZ() < 0) {
-				dir.setZ(-1);
-			}
-			if(!dir.equals(lastDir)) {
-				path.add(lastVec);
-				lastTP = lastVec;
-			} else if(vec.dist(lastTP) >= 6) {
-				path.add(vec);
-				lastTP = vec;
-			}
-			lastDir = dir;
-			lastVec = vec;
-		}
-		for(Vec3 pos : path) {
-			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
-		}
-		imc.getInteractionManager().leftClickEntity(((EntityHitResult)hitResult).getEntity());
-		mc.player.swingHand(Hand.MAIN_HAND);
-		for(int i = path.size() - 1; i >= 0; i--) {
-			Vec3 pos = path.get(i);
-			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
-		}
+			pathFinder = null;
+		}).begin();
 	}
 }
