@@ -118,7 +118,7 @@ public class M1337 extends Module {
 		if(modify) {
 			e.canceled = true;
 			modify = false;
-			mc.player.sendChatMessage(f1337(e.message), e.preview);
+			mc.getNetworkHandler().sendChatMessage(f1337(e.message));
 		} else {
 			modify = true;
 		}

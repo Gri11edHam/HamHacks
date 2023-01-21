@@ -24,8 +24,12 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -139,7 +143,7 @@ public class Tracers extends Module {
 	}
 	
 	private void renderTracers(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
@@ -194,12 +198,14 @@ public class Tracers extends Module {
 			}
 		}
 		
-		BufferRenderer.drawWithShader(bufferBuilder.end());
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 	}
 	
 	private void applyCameraOffset(MatrixStack matrixStack) {
 		Vec3d camPos = getCameraPos();
-		matrixStack.multiply(new Quaternion(mc.getBlockEntityRenderDispatcher().camera.getPitch(), (mc.getBlockEntityRenderDispatcher().camera.getYaw()) % 360 + 180, 0, true));
+		Quaternionf q = new Quaternionf();
+		q.rotateXYZ((float)Math.toRadians(mc.getBlockEntityRenderDispatcher().camera.getPitch()), (float)Math.toRadians((mc.getBlockEntityRenderDispatcher().camera.getYaw()) % 360 + 180), 0);
+		matrixStack.peek().getPositionMatrix().rotate(q);
 		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 	}
 	

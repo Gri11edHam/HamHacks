@@ -59,14 +59,13 @@ public class NewVersionScreen extends Screen {
 			protected void renderContents(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 				int i = 0;
 				for(String s : Updater.getChangelog().split("\n")) {
-					client.textRenderer.drawWithShadow(matrices, s.replace("\t", "    ").replace("\r", ""), x + 4, y + 4 + i * (textRenderer.fontHeight + 2), 0xffffffff);
+					client.textRenderer.drawWithShadow(matrices, s.replace("\t", "    ").replace("\r", ""), getX() + 4, getY() + 4 + i * (textRenderer.fontHeight + 2), 0xffffffff);
 					i++;
 				}
 			}
 			
 			@Override
-			public void appendNarrations(NarrationMessageBuilder builder) {
-			
+			protected void appendClickableNarrations(NarrationMessageBuilder builder) {
 			}
 		});
 	}

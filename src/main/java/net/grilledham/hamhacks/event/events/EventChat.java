@@ -27,11 +27,9 @@ public class EventChat extends EventCancelable {
 	public static class EventChatSent extends EventChat {
 		
 		public String message;
-		public Text preview;
 		
-		public EventChatSent(String message, Text preview) {
+		public EventChatSent(String message) {
 			this.message = message;
-			this.preview = preview;
 		}
 	}
 }

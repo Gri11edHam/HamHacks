@@ -8,8 +8,7 @@ import net.grilledham.hamhacks.setting.ListSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
+import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -109,7 +108,9 @@ public class ListSettingElement extends SettingElement<List<String>> {
 		float dropDownCenterX = dropDownX + mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterY = y + 4 + mc.textRenderer.fontHeight / 2f;
 		stack.translate(dropDownCenterX, dropDownCenterY, 0);
-		stack.peek().getPositionMatrix().multiply(new Quaternion(new Vec3f(0, 0, 1), (float)selectionAnimation.get() * -90, true));
+		Quaternionf q = new Quaternionf();
+		q.rotateXYZ(0, 0, (float)Math.toRadians((float)selectionAnimation.get() * -90));
+		stack.peek().getPositionMatrix().rotate(q);
 		stack.translate(-dropDownCenterX, -dropDownCenterY, 0);
 		mc.textRenderer.drawWithShadow(stack, "<", dropDownX, y + 4, ui.textColor.get().getRGB());
 		

@@ -29,7 +29,6 @@ public class ClickGUIScreen extends GuiScreen {
 	@Override
 	protected void init() {
 		super.init();
-		client.keyboard.setRepeatEvents(true);
 		if(page == null) {
 			for(Category category : Category.values()) {
 				elements.add(new CategoryElement(this, category, scale));

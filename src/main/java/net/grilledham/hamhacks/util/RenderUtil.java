@@ -7,7 +7,7 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Matrix4f;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,7 +104,7 @@ public class RenderUtil {
 		buf.vertex(mat, x, y + h, zLevel).color(c).next();
 		buf.vertex(mat, x + w, y + h, zLevel).color(c).next();
 		
-		BufferRenderer.drawWithShader(buf.end());
+		BufferRenderer.drawWithGlobalProgram(buf.end());
 	}
 	
 	public static void drawHRect(MatrixStack stack, float x, float y, float w, float h, int c) {
@@ -120,7 +120,7 @@ public class RenderUtil {
 		buf.vertex(mat, x, y + 1, zLevel).color(c).next();
 		buf.vertex(mat, x + w, y + 1, zLevel).color(c).next();
 		
-		BufferRenderer.drawWithShader(buf.end());
+		BufferRenderer.drawWithGlobalProgram(buf.end());
 		
 		// Left
 		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
@@ -130,7 +130,7 @@ public class RenderUtil {
 		buf.vertex(mat, x, y + h - 1, zLevel).color(c).next();
 		buf.vertex(mat, x + 1, y + h - 1, zLevel).color(c).next();
 		
-		BufferRenderer.drawWithShader(buf.end());
+		BufferRenderer.drawWithGlobalProgram(buf.end());
 		
 		// Bottom
 		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
@@ -140,7 +140,7 @@ public class RenderUtil {
 		buf.vertex(mat, x, y + h, zLevel).color(c).next();
 		buf.vertex(mat, x + w, y + h, zLevel).color(c).next();
 		
-		BufferRenderer.drawWithShader(buf.end());
+		BufferRenderer.drawWithGlobalProgram(buf.end());
 		
 		// Right
 		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
@@ -150,7 +150,7 @@ public class RenderUtil {
 		buf.vertex(mat, x + w - 1, y + h - 1, zLevel).color(c).next();
 		buf.vertex(mat, x + w, y + h - 1, zLevel).color(c).next();
 		
-		BufferRenderer.drawWithShader(buf.end());
+		BufferRenderer.drawWithGlobalProgram(buf.end());
 	}
 	
 	public static void drawSBGradient(MatrixStack stack, float x, float y, float width, float height, float hue) {
@@ -181,7 +181,7 @@ public class RenderUtil {
 		buf.vertex(mat, x, y, zLevel).color(rtl, gtl, btl, atl).next();
 		buf.vertex(mat, x, y + height, zLevel).color(rbl, gbl, bbl, abl).next();
 		buf.vertex(mat, x + width, y + height, zLevel).color(rbr, gbr, bbr, abr).next();
-		BufferRenderer.drawWithShader(buf.end());
+		BufferRenderer.drawWithGlobalProgram(buf.end());
 	}
 	
 	public static void drawHueGradient(MatrixStack stack, float x, float y, float width, float height) {
@@ -217,7 +217,7 @@ public class RenderUtil {
 			endY = y + (height / 6f);
 			startC = endC;
 		}
-		BufferRenderer.drawWithShader(buf.end());
+		BufferRenderer.drawWithGlobalProgram(buf.end());
 	}
 	
 	public static void drawAlphaGradient(MatrixStack stack, float x, float y, float width, float height) {
@@ -238,14 +238,14 @@ public class RenderUtil {
 		buf.vertex(mat, x, y, zLevel).color(sr, sg, sb, sa).next();
 		buf.vertex(mat, x, y + height, zLevel).color(er, eg, eb, ea).next();
 		buf.vertex(mat, x + width, y + height, zLevel).color(er, eg, eb, ea).next();
-		BufferRenderer.drawWithShader(buf.end());
+		BufferRenderer.drawWithGlobalProgram(buf.end());
 	}
 	
 	public static void preRender() {
 		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 	}
 	

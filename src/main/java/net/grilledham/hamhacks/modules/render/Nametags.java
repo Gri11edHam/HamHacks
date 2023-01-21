@@ -37,10 +37,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
@@ -225,7 +225,7 @@ public class Nametags extends Module {
 	}
 	
 	private void render(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
@@ -240,7 +240,7 @@ public class Nametags extends Module {
 			
 			Vec3 pos = new Vec3(ex, ey + e.getHeight() + 0.2, ez);
 			
-			if(ProjectionUtil.to2D(pos, scale.get())) {
+			if(ProjectionUtil.to2D(pos, scale.get(), true)) {
 				TextRenderer textRenderer = mc.textRenderer;
 				
 				String display = names.get(e);
@@ -356,7 +356,7 @@ public class Nametags extends Module {
 		bufferBuilder.vertex(matrix, x, y + h, 0).color(fc).next();
 		bufferBuilder.vertex(matrix, x + w, y + h, 0).color(fc).next();
 		bufferBuilder.vertex(matrix, x + w, y, 0).color(fc).next();
-		BufferRenderer.drawWithShader(bufferBuilder.end());
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		
@@ -367,7 +367,7 @@ public class Nametags extends Module {
 		bufferBuilder.vertex(matrix, x + w, y + h, 0).color(oc).next();
 		bufferBuilder.vertex(matrix, x + w, y, 0).color(oc).next();
 		bufferBuilder.vertex(matrix, x, y, 0).color(oc).next();
-		BufferRenderer.drawWithShader(bufferBuilder.end());
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		RenderUtil.postRender();
 	}

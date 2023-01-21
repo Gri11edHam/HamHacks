@@ -7,7 +7,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.grilledham.hamhacks.command.Command;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
@@ -33,7 +32,7 @@ public class BaritoneCommand extends Command {
 			} catch(Exception e) {
 				baritoneCmd = "help";
 			}
-			MinecraftClient.getInstance().player.sendChatMessage(BaritoneAPI.getSettings().prefix.value + baritoneCmd, Text.empty());
+			MinecraftClient.getInstance().getNetworkHandler().sendChatMessage(BaritoneAPI.getSettings().prefix.value + baritoneCmd);
 			return SINGLE_SUCCESS;
 		}));
 	}

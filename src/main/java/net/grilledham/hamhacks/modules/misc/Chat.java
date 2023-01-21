@@ -112,7 +112,7 @@ public class Chat extends Module {
 	@EventListener
 	public void sendChat(EventChat.EventChatSent e) {
 		String username = (ModuleManager.getModule(NameHider.class).isEnabled() ? ModuleManager.getModule(NameHider.class).fakeName.get() : MinecraftClient.getInstance().getSession().getUsername());
-		sentMessages.add(e.preview == null ? "<" + username + "> " + e.message : e.preview.getString());
+		sentMessages.add("<" + username + "> " + e.message);
 	}
 	
 	@EventListener

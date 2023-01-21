@@ -9,8 +9,7 @@ import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
+import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,7 +98,9 @@ public class SettingCategoryElement extends GuiElement {
 		
 		stack.push();
 		stack.translate(lineX + lineW + arrowWidth / 2 + 4, y + 11, 0);
-		stack.multiply(Quaternion.fromEulerXyzDegrees(new Vec3f(0, 0, (float)(-90 * openCloseAnimation.get()))));
+		Quaternionf q = new Quaternionf();
+		q.rotateXYZ(0, 0, (float)Math.toRadians(-90 * openCloseAnimation.get()));
+		stack.peek().getPositionMatrix().rotate(q);
 		stack.translate(-lineX - lineW - arrowWidth / 2 - 4, -y - 11, 0);
 		mc.textRenderer.drawWithShadow(stack, "<", lineX + lineW + 6, y + 7, ui.textColor.get().getRGB());
 		stack.pop();

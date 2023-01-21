@@ -2,7 +2,6 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.gui.screen.impl.WaitingToConnectScreen;
 import net.grilledham.hamhacks.mixininterface.IMultiplayerScreen;
-import net.grilledham.hamhacks.modules.misc.AntiBan;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
@@ -34,15 +33,8 @@ public abstract class MixinMultiplayerScreen extends Screen implements IMultipla
 	public void init(CallbackInfo ci) {
 		serverTextField = new TextFieldWidget(textRenderer, width - 104, height - 55, 100, 20, Text.empty());
 		addDrawableChild(serverTextField);
-		waitToConnectButton = new ButtonWidget(width - 104, height - 30, 100, 20, Text.literal("Try to Join"), (button) -> client.setScreen(new WaitingToConnectScreen(this, serverTextField.getText())));
+		waitToConnectButton = ButtonWidget.builder(Text.literal("Try to Join"), (button) -> client.setScreen(new WaitingToConnectScreen(this, serverTextField.getText()))).dimensions(width - 104, height - 30, 100, 20).build();
 		addDrawableChild(waitToConnectButton);
-	}
-	
-	@Inject(method = {"connect()V", "directConnect"}, at = @At("HEAD"))
-	public void connect(CallbackInfo ci) {
-		if(AntiBan.getInstance().hasConnected) {
-			AntiBan.getInstance().hasConnected = false;
-		}
 	}
 	
 	@Override

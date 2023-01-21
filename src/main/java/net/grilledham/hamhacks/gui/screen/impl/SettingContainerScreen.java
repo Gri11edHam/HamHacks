@@ -31,7 +31,6 @@ public class SettingContainerScreen extends GuiScreen {
 	@Override
 	protected void init() {
 		super.init();
-		client.keyboard.setRepeatEvents(true);
 		float maxWidth = 0;
 		topElement = new GuiElement(-1, 0, client.textRenderer.getWidth(setting.getName()) + 2 + 2, 16, scale) {
 			@Override

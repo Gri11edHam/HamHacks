@@ -30,7 +30,6 @@ public class ModuleSettingsScreen extends GuiScreen {
 	@Override
 	protected void init() {
 		super.init();
-		client.keyboard.setRepeatEvents(true);
 		float maxWidth = 0;
 		topElement = new GuiElement(-1, 0, client.textRenderer.getWidth(module.getName()) + 2 + 2, 16, scale) {
 			@Override

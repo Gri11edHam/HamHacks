@@ -2,52 +2,52 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.mixininterface.IMatrix4f;
 import net.grilledham.hamhacks.util.math.Vec4;
-import net.minecraft.util.math.Matrix4f;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(Matrix4f.class)
+@Mixin(value = Matrix4f.class, remap = false)
 public class MixinMatrix4f implements IMatrix4f {
 	
-	@Shadow protected float a00;
+	@Shadow float m00;
 	
-	@Shadow protected float a01;
+	@Shadow float m01;
 	
-	@Shadow protected float a02;
+	@Shadow float m02;
 	
-	@Shadow protected float a03;
+	@Shadow float m03;
 	
-	@Shadow protected float a10;
+	@Shadow float m10;
 	
-	@Shadow protected float a11;
+	@Shadow float m11;
 	
-	@Shadow protected float a12;
+	@Shadow float m12;
 	
-	@Shadow protected float a13;
+	@Shadow float m13;
 	
-	@Shadow protected float a20;
+	@Shadow float m20;
 	
-	@Shadow protected float a21;
+	@Shadow float m21;
 	
-	@Shadow protected float a22;
+	@Shadow float m22;
 	
-	@Shadow protected float a23;
+	@Shadow float m23;
 	
-	@Shadow protected float a30;
+	@Shadow float m30;
 	
-	@Shadow protected float a31;
+	@Shadow float m31;
 	
-	@Shadow protected float a32;
+	@Shadow float m32;
 	
-	@Shadow protected float a33;
+	@Shadow float m33;
 	
 	@Override
 	public void multiply(Vec4 in, Vec4 out) {
 		out.set(
-				a00 * in.getX() + a01 * in.getY() + a02 * in.getZ() + a03 * in.getW(),
-				a10 * in.getX() + a11 * in.getY() + a12 * in.getZ() + a13 * in.getW(),
-				a20 * in.getX() + a21 * in.getY() + a22 * in.getZ() + a23 * in.getW(),
-				a30 * in.getX() + a31 * in.getY() + a32 * in.getZ() + a33 * in.getW()
+				m00 * in.getX() + m01 * in.getY() + m02 * in.getZ() + m03 * in.getW(),
+				m10 * in.getX() + m11 * in.getY() + m12 * in.getZ() + m13 * in.getW(),
+				m20 * in.getX() + m21 * in.getY() + m22 * in.getZ() + m23 * in.getW(),
+				m30 * in.getX() + m31 * in.getY() + m32 * in.getZ() + m33 * in.getW()
 		);
 	}
 }

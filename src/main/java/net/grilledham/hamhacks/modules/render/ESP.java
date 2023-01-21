@@ -30,10 +30,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -173,7 +173,7 @@ public class ESP extends Module {
 	}
 	
 	private void render2D(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
@@ -226,7 +226,7 @@ public class ESP extends Module {
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos2.getY(), 0).color(fc).next();
 			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos2.getY(), 0).color(fc).next();
 			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos1.getY(), 0).color(fc).next();
-			BufferRenderer.drawWithShader(bufferBuilder.end());
+			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 			
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			
@@ -237,14 +237,14 @@ public class ESP extends Module {
 			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos2.getY(), 0).color(oc).next();
 			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos1.getY(), 0).color(oc).next();
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos1.getY(), 0).color(oc).next();
-			BufferRenderer.drawWithShader(bufferBuilder.end());
+			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		}
 	}
 	
 	private boolean checkPos(double x, double y, double z, Vec3 min, Vec3 max) {
 		Vec3 pos = new Vec3(x, y, z);
 		
-		if(!ProjectionUtil.to2D(pos, 1)) return true;
+		if(!ProjectionUtil.to2D(pos, 1, false)) return true;
 		
 		if (pos.getX() < min.getX()) min.setX(pos.getX());
 		if (pos.getY() < min.getY()) min.setY(pos.getY());
@@ -257,7 +257,7 @@ public class ESP extends Module {
 	}
 	
 	private void render3D(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
@@ -327,7 +327,7 @@ public class ESP extends Module {
 			bufferBuilder.vertex(matrix, x2, y2, z2).color(fc).next();
 			bufferBuilder.vertex(matrix, x2, y1, z2).color(fc).next();
 			
-			BufferRenderer.drawWithShader(bufferBuilder.end());
+			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 			
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			
@@ -371,13 +371,15 @@ public class ESP extends Module {
 			bufferBuilder.vertex(matrix, x2, y1, z1).color(oc).next();
 			bufferBuilder.vertex(matrix, x2, y2, z1).color(oc).next();
 			
-			BufferRenderer.drawWithShader(bufferBuilder.end());
+			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		}
 	}
 	
 	private void applyCameraOffset(MatrixStack matrixStack) {
 		Vec3d camPos = getCameraPos();
-		matrixStack.multiply(new Quaternion(mc.getBlockEntityRenderDispatcher().camera.getPitch(), (mc.getBlockEntityRenderDispatcher().camera.getYaw()) % 360 + 180, 0, true));
+		Quaternionf q = new Quaternionf();
+		q.rotateXYZ((float)Math.toRadians(mc.getBlockEntityRenderDispatcher().camera.getPitch()), (float)Math.toRadians((mc.getBlockEntityRenderDispatcher().camera.getYaw()) % 360 + 180), 0);
+		matrixStack.peek().getPositionMatrix().rotate(q);
 		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 	}
 	

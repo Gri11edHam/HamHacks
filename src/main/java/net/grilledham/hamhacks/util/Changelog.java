@@ -4,8 +4,11 @@ public class Changelog {
 	
 	private static final String CHANGELOG = """
 			Update 1.9:
+				- Updated to Minecraft 1.19.3
 				- Added module:
 					: Velocity
+				- Removed module:
+					: AntiBan (Use NoChatReports instead: https://modrinth.com/mod/no-chat-reports)
 				- Bug fixes
 			
 			Update 1.8.1:
