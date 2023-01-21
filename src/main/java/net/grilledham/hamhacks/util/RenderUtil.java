@@ -295,7 +295,7 @@ public class RenderUtil {
 		popScissor();
 	}
 	
-	public static void drawItem(MatrixStack matrices, ItemStack itemStack, float x, float y, float scale, boolean overlay) {
+	public static void drawItem(MatrixStack matrices, ItemStack itemStack, float x, float y, float scale, boolean count, boolean damage) {
 		matrices.push();
 		matrices.translate(x + 8, y + 8, zLevel);
 		matrices.scale(16, -16, 16);
@@ -325,12 +325,36 @@ public class RenderUtil {
 		
 		matrices.pop();
 		
-		if(overlay && itemStack.getCount() > 1) {
+		if(damage && itemStack.isDamaged()) {
 			matrices.push();
 			matrices.translate(x + 8, y + 8, zLevel + 100);
+			matrices.scale(scale, scale, 1);
+			RenderSystem.disableBlend();
+			int i = itemStack.getItemBarStep();
+			int j = itemStack.getItemBarColor();
+			renderGuiQuad(matrices.peek().getPositionMatrix(), -6, 5, 13, 2, 0, 0, 0, 255);
+			renderGuiQuad(matrices.peek().getPositionMatrix(), -6, 5, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
+			matrices.pop();
+		}
+		
+		if(count && itemStack.getCount() > 1) {
+			matrices.push();
+			matrices.translate(x + 8, y + 8, zLevel + 200);
 			matrices.scale(scale, scale, 1);
 			mc.textRenderer.drawWithShadow(matrices, itemStack.getCount() + "", 9 - mc.textRenderer.getWidth(itemStack.getCount() + ""), 1, -1);
 			matrices.pop();
 		}
+	}
+	
+	private static void renderGuiQuad(Matrix4f mat, float x, float y, float width, float height, int red, int green, int blue, int alpha) {
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuffer();
+		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		buffer.vertex(mat, x, y, 0.0F).color(red, green, blue, alpha).next();
+		buffer.vertex(mat, x, y + height, 0.0F).color(red, green, blue, alpha).next();
+		buffer.vertex(mat, x + width, y + height, 0.0F).color(red, green, blue, alpha).next();
+		buffer.vertex(mat, x + width, y, 0.0F).color(red, green, blue, alpha).next();
+		BufferRenderer.drawWithGlobalProgram(buffer.end());
 	}
 }

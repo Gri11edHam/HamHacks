@@ -303,7 +303,7 @@ public class Nametags extends Module {
 					for(int i = 0; i < 6; i++) {
 						ItemStack stack = getItem(e, i);
 						
-						RenderUtil.drawItem(matrixStack, stack, x + itemWidths[i] / 2, y, (float)(double)itemScale.get(), true);
+						RenderUtil.drawItem(matrixStack, stack, x + itemWidths[i] / 2, y, (float)(double)itemScale.get(), true, true);
 						
 						if(enchantCount > 0 && enchants.get() && !stack.isEmpty()) {
 							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
