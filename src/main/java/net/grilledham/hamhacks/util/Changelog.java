@@ -3,12 +3,12 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
-			Update 1.9:
+			Update 1.8.2:
 				- Updated to Minecraft 1.19.3
 				- Added module:
 					: Velocity
 				- Removed module:
-					: AntiBan (Use NoChatReports instead: https://modrinth.com/mod/no-chat-reports)
+					: AntiBan (Use NoChatReports instead: https://github.com/Aizistral-Studios/No-Chat-Reports)
 				- Added setting to Nametags module:
 					: Scale with Zoom
 				- Bug fixes
