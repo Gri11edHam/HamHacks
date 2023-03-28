@@ -5,6 +5,7 @@ public class Changelog {
 	private static final String CHANGELOG = """
 			Update 1.8.3:
 				- Updated to Minecraft 1.19.4
+				- Baritone is no longer included (download it separately)
 			
 			Update 1.8.2:
 				- Updated to Minecraft 1.19.3
