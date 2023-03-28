@@ -115,7 +115,7 @@ public class Speed extends Module {
 	private boolean checkBlockAbove(Material material) {
 		for(int xAdd = -1; xAdd < 2; xAdd++) {
 			for(int zAdd = -1; zAdd < 2; zAdd++) {
-				if(mc.world.getBlockState(new BlockPos(mc.player.getPos().add(0.3f * xAdd, 2.01, 0.3f * zAdd))).getMaterial() != material) {
+				if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().add(0.3f * xAdd, 2.01, 0.3f * zAdd))).getMaterial() != material) {
 					return false;
 				}
 			}
@@ -126,7 +126,7 @@ public class Speed extends Module {
 	private boolean checkBlockBelow(Material material) {
 		for(int xAdd = -1; xAdd < 2; xAdd++) {
 			for(int zAdd = -1; zAdd < 2; zAdd++) {
-				if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 0.01, 0.3f * zAdd))).getMaterial() != material) {
+				if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().subtract(0.3f * xAdd, 0.01, 0.3f * zAdd))).getMaterial() != material) {
 					return false;
 				}
 			}

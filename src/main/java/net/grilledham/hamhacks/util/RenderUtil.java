@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import org.joml.Matrix4f;
@@ -242,7 +242,6 @@ public class RenderUtil {
 	}
 	
 	public static void preRender() {
-		RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
@@ -251,7 +250,6 @@ public class RenderUtil {
 	
 	public static void postRender() {
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
 	}
 	
 	public static void drawToolTip(MatrixStack stack, String title, String tooltip, double mx, double my, double scale) {
@@ -312,8 +310,8 @@ public class RenderUtil {
 		}
 		matrices.peek().getNormalMatrix().set(1, 1, 1);
 		
-		mc.getItemRenderer().renderItem(itemStack, ModelTransformation.Mode.GUI, 0xF000F0,
-				OverlayTexture.DEFAULT_UV, matrices, mc.getBufferBuilders().getEntityVertexConsumers(), 0);
+		mc.getItemRenderer().renderItem(itemStack, ModelTransformationMode.GUI, 0xF000F0,
+				OverlayTexture.DEFAULT_UV, matrices, mc.getBufferBuilders().getEntityVertexConsumers(), mc.world, 0);
 		
 		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 		

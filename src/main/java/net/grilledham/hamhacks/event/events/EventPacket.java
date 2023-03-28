@@ -1,9 +1,9 @@
 package net.grilledham.hamhacks.event.events;
 
 import net.grilledham.hamhacks.event.EventCancelable;
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.listener.PacketListener;
+import net.minecraft.network.packet.Packet;
 
 public class EventPacket extends EventCancelable {
 	

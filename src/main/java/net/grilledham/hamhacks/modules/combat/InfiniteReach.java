@@ -63,7 +63,7 @@ public class InfiniteReach extends Module {
 			Vec3d vec3d4 = entityHitResult.getPos();
 			double g = vec3d.squaredDistanceTo(vec3d4);
 			if (g > 100 * 100) {
-				hitResult = BlockHitResult.createMissed(vec3d4, Direction.getFacing(vec3d2.x, vec3d2.y, vec3d2.z), new BlockPos(vec3d4));
+				hitResult = BlockHitResult.createMissed(vec3d4, Direction.getFacing(vec3d2.x, vec3d2.y, vec3d2.z), BlockPos.ofFloored(vec3d4));
 			} else if (g < d1 || hitResult == null) {
 				hitResult = entityHitResult;
 			}
@@ -85,7 +85,7 @@ public class InfiniteReach extends Module {
 	}
 	
 	public void doAttack(HitResult hitResult) {
-		pathFinder = new PathFinder().path(mc.player.getBlockPos(), new BlockPos(hitResult.getPos()), mc.player.world, 4).setTimeout(5000L).whenDone((initialPath) -> {
+		pathFinder = new PathFinder().path(mc.player.getBlockPos(), BlockPos.ofFloored(hitResult.getPos()), mc.player.world, 4).setTimeout(5000L).whenDone((initialPath) -> {
 			if(initialPath == null || initialPath.isEmpty()) {
 				pathFinder = null;
 				return;

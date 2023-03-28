@@ -15,6 +15,7 @@ import net.grilledham.hamhacks.util.PositionHack;
 import net.minecraft.block.Material;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import org.lwjgl.glfw.GLFW;
@@ -98,7 +99,7 @@ public class Fly extends Module {
 						boolean isAboveBlock = false;
 						for(int xAdd = -1; xAdd < 2; xAdd++) {
 							for(int zAdd = -1; zAdd < 2; zAdd++) {
-								if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 0.05f, 0.3f * zAdd))).getMaterial() != Material.AIR) {
+								if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().subtract(0.3f * xAdd, 0.05f, 0.3f * zAdd))).getMaterial() != Material.AIR) {
 									isAboveBlock = true;
 									break;
 								}
@@ -123,7 +124,7 @@ public class Fly extends Module {
 				case 2 -> {
 					mc.player.addVelocity(0, mc.player.input.jumping ? jetpackSpeed.get() : 0, 0);
 					if(autoLand.get()) {
-						if(mc.world.getBlockState(mc.player.getBlockPos().add(0, 20 * mc.player.getVelocity().getY(), 0)).getMaterial() != Material.AIR) {
+						if(mc.world.getBlockState(mc.player.getBlockPos().add(0, MathHelper.floor(20 * mc.player.getVelocity().getY()), 0)).getMaterial() != Material.AIR) {
 							if(mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 3, 0))).getBlock().canMobSpawnInside()) {
 								landing = true;
 								mc.player.addVelocity(0, -mc.player.getVelocity().getY() * 0.1, 0);

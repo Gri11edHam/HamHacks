@@ -4,7 +4,6 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.HUD;
-import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.client.resource.language.LanguageManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SynchronousResourceReloader;
@@ -19,7 +18,7 @@ import java.util.Comparator;
 public abstract class MixinLanguageManager implements SynchronousResourceReloader {
 	
 	@Inject(method = "setLanguage", at = @At("TAIL"))
-	public void setLanguage(LanguageDefinition language, CallbackInfo ci) {
+	public void setLanguage(String languageCode, CallbackInfo ci) {
 		Category.updateLanguage();
 		ModuleManager.getModule(HUD.class).updateLanguage();
 		

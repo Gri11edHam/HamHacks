@@ -20,6 +20,8 @@ public class GuiScreen extends Screen {
 	
 	private boolean dirty = false;
 	
+	private boolean initialized = false;
+	
 	protected GuiScreen(Text title, Screen last, double scale) {
 		super(title);
 		this.last = last;
@@ -32,12 +34,13 @@ public class GuiScreen extends Screen {
 		height = (int)(client.getWindow().getFramebufferHeight() / scale);
 		elements.clear();
 		dirty = false;
+		initialized = true;
 		super.clearAndInit();
 	}
 	
 	@Override
 	public void render(MatrixStack stack, int mx, int my, float tickDelta) {
-		if(dirty) {
+		if(dirty || !initialized) {
 			clearAndInit();
 		}
 		mx = (int)((mx * client.getWindow().getScaleFactor()) / scale);

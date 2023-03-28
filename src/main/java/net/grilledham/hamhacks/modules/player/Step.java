@@ -31,8 +31,8 @@ public class Step extends Module {
 			originalStepHeight = -1;
 			return;
 		}
-		originalStepHeight = mc.player.stepHeight;
-		mc.player.stepHeight = (float)(double)height.get();
+		originalStepHeight = mc.player.getStepHeight();
+		mc.player.setStepHeight((float)(double)height.get());
 	}
 	
 	@EventListener
@@ -42,9 +42,9 @@ public class Step extends Module {
 			return;
 		}
 		if(originalStepHeight == -1) {
-			originalStepHeight = mc.player.stepHeight;
+			originalStepHeight = mc.player.getStepHeight();
 		}
-		mc.player.stepHeight = (float)(double)height.get();
+		mc.player.setStepHeight((float)(double)height.get());
 	}
 	
 	@Override
@@ -54,6 +54,6 @@ public class Step extends Module {
 			originalStepHeight = -1;
 			return;
 		}
-		mc.player.stepHeight = originalStepHeight;
+		mc.player.setStepHeight(originalStepHeight);
 	}
 }

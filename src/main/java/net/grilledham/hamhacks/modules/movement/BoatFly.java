@@ -65,7 +65,7 @@ public class BoatFly extends Module {
 			}
 			if(mc.options.sprintKey.isPressed()) {
 				shouldDismount = true;
-				if(autoBreak.get() && vehicle.getType() == EntityType.BOAT && vehicle.getPrimaryPassenger() == mc.player) {
+				if(autoBreak.get() && vehicle.getType() == EntityType.BOAT && vehicle.getControllingPassenger() == mc.player) {
 					lastBoat = (BoatEntity)vehicle;
 				}
 			}
@@ -85,7 +85,7 @@ public class BoatFly extends Module {
 				boolean isAboveBlock = false;
 				for(int xAdd = -1; xAdd < 2; xAdd++) {
 					for(int zAdd = -1; zAdd < 2; zAdd++) {
-						if(mc.world.getBlockState(new BlockPos(mc.player.getPos().subtract(0.3f * xAdd, 0.05f, 0.3f * zAdd))).getMaterial() != Material.AIR) {
+						if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().subtract(0.3f * xAdd, 0.05f, 0.3f * zAdd))).getMaterial() != Material.AIR) {
 							isAboveBlock = true;
 							break;
 						}

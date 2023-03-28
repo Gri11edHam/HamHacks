@@ -1,13 +1,10 @@
 package net.grilledham.hamhacks.mixin.sodium;
 
 import me.jellysquid.mods.sodium.client.render.chunk.compile.buffers.ChunkModelBuilder;
-import me.jellysquid.mods.sodium.client.render.pipeline.BlockRenderer;
+import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
+import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.XRay;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockRenderView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,9 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinBlockRenderer {
 	
 	@Inject(method = "renderModel", at = @At("HEAD"), cancellable = true)
-	private void renderModel(BlockRenderView world, BlockState state, BlockPos pos, BlockPos origin, BakedModel model, ChunkModelBuilder buffers, boolean cull, long seed, CallbackInfoReturnable<Boolean> cir) {
+	private void renderModel(BlockRenderContext ctx, ChunkModelBuilder buffers, CallbackInfoReturnable<Boolean> cir) {
 		XRay xRay = ModuleManager.getModule(XRay.class);
-		if(xRay.isEnabled() && !xRay.visibleBlocks.get(state.getBlock())) {
+		if(xRay.isEnabled() && !xRay.visibleBlocks.get(ctx.state().getBlock())) {
 			cir.setReturnValue(false);
 		}
 	}

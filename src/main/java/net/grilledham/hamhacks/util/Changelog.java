@@ -3,6 +3,9 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.8.3:
+				- Updated to Minecraft 1.19.4
+			
 			Update 1.8.2:
 				- Updated to Minecraft 1.19.3
 				- Added module:
