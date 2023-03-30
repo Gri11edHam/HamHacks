@@ -60,10 +60,10 @@ public class BoatFly extends Module {
 			if(mc.player.input.jumping) {
 				distanceVertical += 1;
 			}
-			if(mc.options.sneakKey.isPressed()) {
+			if(mc.options.sprintKey.isPressed()) {
 				distanceVertical -= 1;
 			}
-			if(mc.options.sprintKey.isPressed()) {
+			if(mc.options.sneakKey.isPressed()) {
 				shouldDismount = true;
 				if(autoBreak.get() && vehicle.getType() == EntityType.BOAT && vehicle.getControllingPassenger() == mc.player) {
 					lastBoat = (BoatEntity)vehicle;
