@@ -15,7 +15,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Teleport extends Module {
 	
-	private final NumberSetting distance = new NumberSetting("hamhacks.module.teleport.distance", 3, () -> true, 0, 20, 1, false);
+	private final NumberSetting distance = new NumberSetting("hamhacks.module.teleport.distance", 3, () -> true, 0, 100, 1, false);
 	
 	private final KeySetting increaseDistance = new KeySetting("hamhacks.module.teleport.increaseDistance", new Keybind(GLFW.GLFW_KEY_RIGHT_BRACKET), () -> true);
 	
@@ -55,6 +55,9 @@ public class Teleport extends Module {
 		facing.mul(distance.get());
 		Vec3 pos = new Vec3(mc.player.getPos());
 		while(activate.get().wasPressed()) {
+			for(int j = 0; j < 8; j++) {
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), true));
+			}
 			pos.add(facing);
 			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
 			mc.player.setPosition(pos.get());

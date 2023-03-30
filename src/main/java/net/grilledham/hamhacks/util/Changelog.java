@@ -6,6 +6,7 @@ public class Changelog {
 			Update 1.8.3:
 				- Updated to Minecraft 1.19.4
 				- Baritone is no longer included (download it separately)
+				- Increased max teleport distance
 			
 			Update 1.8.2:
 				- Updated to Minecraft 1.19.3
