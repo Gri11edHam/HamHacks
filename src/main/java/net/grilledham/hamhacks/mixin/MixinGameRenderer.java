@@ -79,7 +79,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		}
 	}
 	
-	@Inject(method = "bobViewWhenHurt", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "tiltViewWhenHurt", at = @At("HEAD"), cancellable = true)
 	public void noHurtCam(MatrixStack matrices, float f, CallbackInfo ci) {
 		if(ModuleManager.getModule(Bob.class).noHurtCam.get() && ModuleManager.getModule(Bob.class).isEnabled()) {
 			ci.cancel();
