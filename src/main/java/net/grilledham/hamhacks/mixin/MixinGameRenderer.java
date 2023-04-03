@@ -18,6 +18,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.resource.SynchronousResourceReloader;
@@ -48,10 +49,10 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	private boolean calledFromFreecam = false;
 	
-	@Inject(method = "render", at = @At("TAIL"))
-	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, MatrixStack matrixStack2) {
 		ModuleManager.updateEnabled();
-		EventRender event = new EventRender(new MatrixStack(), tickDelta);
+		EventRender event = new EventRender(matrixStack2, tickDelta);
 		event.call();
 	}
 	
