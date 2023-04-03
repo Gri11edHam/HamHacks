@@ -47,7 +47,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 		PositionHack.preSend();
 	}
 	
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 0))
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V", ordinal = 0))
 	private void preSendMovePacketsVehicle(CallbackInfo ci) {
 		RotationHack.preSend();
 		PositionHack.preSend();
@@ -59,7 +59,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 		PositionHack.postSend();
 	}
 	
-	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 1, shift = At.Shift.AFTER))
+	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V", ordinal = 1, shift = At.Shift.AFTER))
 	private void postSendMovePacketsVehicle(CallbackInfo ci) {
 		RotationHack.postSend();
 		PositionHack.postSend();
