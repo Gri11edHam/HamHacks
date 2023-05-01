@@ -3,6 +3,10 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.8.4:
+				- Fixed compatibility with Sodium 0.4.11
+				- Bug fixes
+			
 			Update 1.8.3:
 				- Updated to Minecraft 1.19.4
 				- Baritone is no longer included (download it separately)
