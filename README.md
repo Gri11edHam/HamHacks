@@ -14,3 +14,11 @@ HamHacks is a Minecraft mod that adds a lot of useful features (that might get y
 
 ## Download
 https://github.com/Gri11edHam/HamHacks/releases/latest
+
+## How to Use
+
+Step 1: Download the mod and put it in your mods folder
+
+Step 2: Launch Minecraft
+
+Step 3: Open a world and press your right shift key
