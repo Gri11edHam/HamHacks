@@ -26,6 +26,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -100,6 +101,24 @@ public class Tracers extends Module {
 		
 		matrixStack.push();
 		matrixStack.loadIdentity();
+		if(mc.options.getBobView().getValue() && !(ModuleManager.getModule(Bob.class).isEnabled() && ModuleManager.getModule(Bob.class).modelBobbingOnly.get())) {
+			PlayerEntity playerEntity = (PlayerEntity)mc.getCameraEntity();
+			float f = playerEntity.horizontalSpeed - playerEntity.prevHorizontalSpeed;
+			float g = -(playerEntity.horizontalSpeed + f * partialTicks);
+			
+			float start = playerEntity.prevStrideDistance;
+			float end = playerEntity.strideDistance;
+			if(ModuleManager.getModule(Zoom.class).isEnabled()) {
+				double divisor = Math.sqrt(ModuleManager.getModule(Zoom.class).getZoomAmount());
+				start = (float)(start / divisor);
+				end = (float)(end / divisor);
+			}
+			
+			float h = MathHelper.lerp(partialTicks, start, end);
+			matrixStack.translate(-MathHelper.sin(g * 3.1415927F) * h * 0.5F, Math.abs(MathHelper.cos(g * 3.1415927F) * h), 0.0F);
+			matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(-MathHelper.sin(g * 3.1415927F) * h * 3.0F));
+			matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-Math.abs(MathHelper.cos(g * 3.1415927F - 0.2F) * h) * 5.0F));
+		}
 		applyCameraOffset(matrixStack);
 		
 		renderTracers(matrixStack, partialTicks);

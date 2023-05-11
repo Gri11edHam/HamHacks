@@ -7,6 +7,7 @@ public class Changelog {
 				- Added Click GUI command
 				- Improved commands
 				- Improved configs
+				- Bug fixes
 			
 			Update 1.8.4:
 				- Fixed compatibility with Sodium 0.4.11
