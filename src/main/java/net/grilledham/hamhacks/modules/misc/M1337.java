@@ -114,7 +114,7 @@ public class M1337 extends Module {
 	
 	@EventListener
 	public void onChat(EventChat.EventChatSent e) {
-		if(mc.player == null || e.message.startsWith(PageManager.getPage(Commands.class).prefix.get().getCombinedString()) || e.message.startsWith(BaritoneAPI.getSettings().prefix.value)) return;
+		if(mc.player == null || e.message.startsWith(PageManager.getPage(Commands.class).getPrefix()) || e.message.startsWith(BaritoneAPI.getSettings().prefix.value)) return;
 		if(modify) {
 			e.canceled = true;
 			modify = false;

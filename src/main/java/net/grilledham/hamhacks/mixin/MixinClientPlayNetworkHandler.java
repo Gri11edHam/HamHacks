@@ -25,7 +25,7 @@ public class MixinClientPlayNetworkHandler {
 			ci.cancel();
 			return;
 		}
-		String prefix = PageManager.getPage(Commands.class).prefix.get().getCombinedString();
+		String prefix = PageManager.getPage(Commands.class).getPrefix();
 		boolean previewIsCommand = message.startsWith(prefix);
 		if(message.startsWith(prefix) || previewIsCommand) {
 			try {

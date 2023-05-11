@@ -377,6 +377,8 @@
 	"hamhacks.page.command": "Commands",
 	"hamhacks.page.command.category.general": "General",
 	"hamhacks.page.command.prefix": "Prefix",
+	"hamhacks.page.command.quickCommand": "Quick Command",
+	"hamhacks.page.command.quickCommand.tooltip": "Opens chat and types the prefix for you",
 
 	"hamhacks.page.baritone": "Baritone",
 	"hamhacks.page.baritone.tooltip": "google maps for block game",
