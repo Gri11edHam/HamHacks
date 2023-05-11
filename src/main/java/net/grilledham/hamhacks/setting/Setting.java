@@ -76,4 +76,9 @@ public abstract class Setting<T> {
 	public abstract void load(JsonElement e);
 	
 	public void onChange() {}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(value);
+	}
 }
