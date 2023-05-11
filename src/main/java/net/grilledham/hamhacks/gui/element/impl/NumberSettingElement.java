@@ -43,9 +43,9 @@ public class NumberSettingElement extends SettingElement<Double> {
 		this.hasBounds = hasBounds;
 		sliderAnimation.setAbsolute(min.get());
 		if(forceStep.get() && step.get() == 1) {
-			strVal = new StringSetting("", get.get().intValue() + "", () -> false);
+			strVal = new StringSetting("", String.valueOf(get.get().intValue()), () -> false);
 		} else {
-			strVal = new StringSetting("", get.get() + "", () -> false);
+			strVal = new StringSetting("", String.valueOf(get.get().floatValue()), () -> false);
 		}
 		editor = new StringSettingElement(x + width - (hasBounds ? 207 : 103), y, scale, strVal) {
 			
@@ -192,7 +192,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 			roundedSetting = MathHelper.clamp(roundedSetting, min.get(), max.get());
 			if((forceStep.get() || fromSlider) && step.get() != -1) {
 				double closest = min.get();
-				for(double f = min.get(); f <= max.get(); f += step.get()) {
+				for(double f = min.get(); (float)f <= max.get(); f += step.get()) {
 					double newDist = Math.abs(f - roundedSetting);
 					double oldDist = Math.abs(closest - roundedSetting);
 					if(newDist <= oldDist) {
@@ -206,9 +206,9 @@ public class NumberSettingElement extends SettingElement<Double> {
 			set.set(roundedSetting);
 			if(fromSlider) {
 				if(forceStep.get() && step.get() == 1) {
-					strVal.set((int)roundedSetting + "");
+					strVal.set(String.valueOf((int)roundedSetting));
 				} else {
-					strVal.set(roundedSetting + "");
+					strVal.set(String.valueOf((float)roundedSetting));
 				}
 			}
 		} else {
