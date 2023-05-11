@@ -3,6 +3,11 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.8.5:
+				- Added Click GUI command
+				- Improved commands
+				- Improved configs
+			
 			Update 1.8.4:
 				- Fixed compatibility with Sodium 0.4.11
 				- Bug fixes

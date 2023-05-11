@@ -29,6 +29,7 @@ public abstract class Config {
 	private final int version;
 	private final ConfigFixer fixer;
 	private final ConfigFixer internalFixer;
+	private final boolean isStatic;
 	
 	private Profile profile;
 	
@@ -37,15 +38,25 @@ public abstract class Config {
 	 * @param file Path to the file in the .minecraft directory
 	 */
 	public Config(String modId, String file, int version, ConfigFixer fixer) {
+		this(modId, file, version, fixer, false);
+	}
+	
+	/**
+	 * Creates a new config that saves and loads your modules
+	 * @param file Path to the file in the .minecraft directory
+	 * @param isStatic <code>true</code> if this config should be the same for every profile. <code>false</code> if this config should be loaded for each profile.
+	 */
+	public Config(String modId, String file, int version, ConfigFixer fixer, boolean isStatic) {
 		this.modId = modId;
 		this.fileName = file;
 		this.version = version;
 		this.fixer = fixer;
+		this.isStatic = isStatic;
 		internalFixer = new HamHacksConfigFixer();
 	}
 	
 	protected void prepareConfigFile() {
-		file = new File(FabricLoader.getInstance().getGameDir().toFile(), HamHacksClient.MOD_ID + "/profiles/" + profile.name() + "/" + modId + "/" + fileName);
+		file = new File(FabricLoader.getInstance().getGameDir().toFile(), HamHacksClient.MOD_ID + (isStatic ? "" : ("/profiles/" + profile.name())) + "/" + modId + "/" + fileName);
 	}
 	
 	public void initializeConfig() {
@@ -63,6 +74,7 @@ public abstract class Config {
 			if (!file.getParentFile().exists() || !file.exists()) {
 				save();
 				load();
+				firstTime();
 				return;
 			}
 			BufferedReader f = new BufferedReader(new FileReader(file));
@@ -89,15 +101,6 @@ public abstract class Config {
 			JsonObject object = new JsonObject();
 			object.addProperty("config_version", HamHacksClient.CONFIG_VERSION);
 			object.addProperty("custom_version", version);
-			JsonObject categories = new JsonObject();
-			for(Category category : Category.values()) {
-				JsonObject cObj = new JsonObject();
-				cObj.addProperty("x", category.getX());
-				cObj.addProperty("y", category.getY());
-				cObj.addProperty("expanded", category.isExpanded());
-				categories.add(category.getTranslationKey().toLowerCase(Locale.ROOT), cObj);
-			}
-			object.add("categories", categories);
 			JsonObject modules = new JsonObject();
 			for(Module m : ModuleManager.getModules(modId)) {
 				JsonObject mod = new JsonObject();
@@ -131,59 +134,65 @@ public abstract class Config {
 		}
 	}
 	
-	private void parseSettings(JsonObject obj) {
+	protected void parseSettings(JsonObject obj) {
 		int configVersion = obj.has("config_version") ? obj.get("config_version").getAsInt() : -1;
 		int customVersion = obj.has("custom_version") ? obj.get("custom_version").getAsInt() : -1;
 		
 		internalFixer.fixConfig(obj, configVersion);
 		fixer.fixConfig(obj, customVersion);
 		
-		JsonObject categories = obj.getAsJsonObject("categories");
-		for(Category category : Category.values()) {
-			JsonObject cObj = categories.getAsJsonObject(category.getTranslationKey().toLowerCase(Locale.ROOT));
-			try {
-				category.setPos(cObj.get("x").getAsFloat(), cObj.get("y").getAsFloat());
-				category.expand(cObj.get("expanded").getAsBoolean());
-			} catch(Exception e) {
-				e.printStackTrace();
+		if(obj.has("categories")) {
+			JsonObject categories = obj.getAsJsonObject("categories");
+			for(Category category : Category.values()) {
+				try {
+					JsonObject cObj = categories.getAsJsonObject(category.getTranslationKey().toLowerCase(Locale.ROOT));
+					category.setPos(cObj.get("x").getAsFloat(), cObj.get("y").getAsFloat());
+					category.expand(cObj.get("expanded").getAsBoolean());
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		JsonObject modules = obj.getAsJsonObject("modules");
-		for(Module m : ModuleManager.getModules(modId)) {
-			try {
-				JsonObject mod = modules.getAsJsonObject(m.getConfigName());
-				if(mod == null) {
-					continue;
-				}
-				JsonObject modSettings = mod.getAsJsonObject("settings");
-				for(SettingCategory c : m.getSettingCategories()) {
-					for(Setting<?> s : c.getSettings()) {
-						if(modSettings.has(s.getConfigName())) {
-							s.load(modSettings.get(s.getConfigName()));
+		if(obj.has("modules")) {
+			JsonObject modules = obj.getAsJsonObject("modules");
+			for(Module m : ModuleManager.getModules(modId)) {
+				try {
+					JsonObject mod = modules.getAsJsonObject(m.getConfigName());
+					if(mod == null) {
+						continue;
+					}
+					JsonObject modSettings = mod.getAsJsonObject("settings");
+					for(SettingCategory c : m.getSettingCategories()) {
+						for(Setting<?> s : c.getSettings()) {
+							if(modSettings.has(s.getConfigName())) {
+								s.load(modSettings.get(s.getConfigName()));
+							}
 						}
 					}
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
-			} catch(Exception e) {
-				e.printStackTrace();
 			}
 		}
-		JsonObject pages = obj.getAsJsonObject("pages");
-		for(Page p : PageManager.getPages(modId)) {
-			try {
-				JsonObject page = pages.getAsJsonObject(p.getConfigName());
-				if(page == null) {
-					continue;
-				}
-				JsonObject pageSettings = page.getAsJsonObject("settings");
-				for(SettingCategory c : p.getSettingCategories()) {
-					for(Setting<?> s : c.getSettings()) {
-						if(pageSettings.has(s.getConfigName())) {
-							s.load(pageSettings.get(s.getConfigName()));
+		if(obj.has("pages")) {
+			JsonObject pages = obj.getAsJsonObject("pages");
+			for(Page p : PageManager.getPages(modId)) {
+				try {
+					JsonObject page = pages.getAsJsonObject(p.getConfigName());
+					if(page == null) {
+						continue;
+					}
+					JsonObject pageSettings = page.getAsJsonObject("settings");
+					for(SettingCategory c : p.getSettingCategories()) {
+						for(Setting<?> s : c.getSettings()) {
+							if(pageSettings.has(s.getConfigName())) {
+								s.load(pageSettings.get(s.getConfigName()));
+							}
 						}
 					}
+				} catch(Exception e) {
+					e.printStackTrace();
 				}
-			} catch(Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}

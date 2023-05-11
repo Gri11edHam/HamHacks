@@ -16,7 +16,6 @@ import net.grilledham.hamhacks.config.ConfigManager;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.profile.ProfileManager;
 import net.grilledham.hamhacks.util.*;
 import org.slf4j.Logger;
 
@@ -25,8 +24,8 @@ import java.util.Comparator;
 @Environment(EnvType.CLIENT)
 public class HamHacksClient implements ClientModInitializer {
 	
-	public static final String MOD_ID = "$MOD_ID";
-	public static final Version VERSION = new Version("$VERSION");
+	public static final String MOD_ID = "hamhacks";
+	public static final Version VERSION = new Version("1.8.5");
 	
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final int CONFIG_VERSION = 5;
@@ -54,9 +53,18 @@ public class HamHacksClient implements ClientModInitializer {
 		PositionHack.init();
 		ConnectionUtil.init();
 		ChatUtil.init();
-		ProfileManager.init();
 		
 		FabricLoader loader = FabricLoader.getInstance();
+		for(EntrypointContainer<Config> configEntry : loader.getEntrypointContainers("hamhacksStatic", Config.class)) {
+			ModMetadata meta = configEntry.getProvider().getMetadata();
+			String modId = meta.getId();
+			try {
+				Config config = configEntry.getEntrypoint();
+				ConfigManager.registerStatic(config);
+			} catch(Throwable t) {
+				LOGGER.error("Failed to load static config from {}", modId, t);
+			}
+		}
 		for(EntrypointContainer<Config> configEntry : loader.getEntrypointContainers("hamhacks", Config.class)) {
 			ModMetadata meta = configEntry.getProvider().getMetadata();
 			String modId = meta.getId();
@@ -79,8 +87,6 @@ public class HamHacksClient implements ClientModInitializer {
 	public static void shutdown() {
 		LOGGER.info("Saving configs...");
 		ConfigManager.save();
-		LOGGER.info("Saving profiles...");
-		ProfileManager.save();
 		LOGGER.info("Bye for now :)");
 	}
 }

@@ -1,6 +1,5 @@
 plugins {
     id 'fabric-loom' version '1.0-SNAPSHOT'
-    id 'net.kyori.blossom' version '1.3.0'
     id 'maven-publish'
 }
 
@@ -27,11 +26,6 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
-}
-
-blossom {
-    replaceToken '$VERSION', project.mod_version
-    replaceToken '$MOD_ID', project.archives_base_name
 }
 
 configurations {
