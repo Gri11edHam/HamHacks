@@ -95,6 +95,8 @@ public class Keybind {
 			if(isPressed) {
 				wasPressed++;
 			}
+		} else if(MinecraftClient.getInstance().currentScreen != null) {
+			isPressed = false;
 		}
 	}
 	
