@@ -3,10 +3,7 @@ package net.grilledham.hamhacks.config.impl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.command.CommandManager;
-import net.grilledham.hamhacks.command.impl.BaritoneCommand;
-import net.grilledham.hamhacks.command.impl.BindCommand;
-import net.grilledham.hamhacks.command.impl.HelpCommand;
-import net.grilledham.hamhacks.command.impl.ToggleCommand;
+import net.grilledham.hamhacks.command.impl.*;
 import net.grilledham.hamhacks.config.Config;
 import net.grilledham.hamhacks.config.ConfigFixer;
 import net.grilledham.hamhacks.modules.ModuleManager;
@@ -83,6 +80,7 @@ public class HamHacksConfig extends Config {
 		CommandManager.addCommand(new HelpCommand());
 		CommandManager.addCommand(new ToggleCommand());
 		CommandManager.addCommand(new BindCommand());
+		CommandManager.addCommand(new ClickGuiCommand());
 		if(FabricLoader.getInstance().isModLoaded("baritone")) {
 			CommandManager.addCommand(new BaritoneCommand());
 		}

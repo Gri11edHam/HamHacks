@@ -34,6 +34,8 @@ public class ClickGUI extends Page {
 	
 	public boolean typing = false;
 	
+	private boolean shouldOpen = false;
+	
 	public ClickGUI() {
 		super(Text.translatable("hamhacks.page.clickGui"));
 		settingCategories.add(0, APPEARANCE_CATEGORY);
@@ -50,11 +52,16 @@ public class ClickGUI extends Page {
 	
 	@EventListener
 	public void tickEvent(EventTick e) {
-		while(openMenu.get().wasPressed()) {
+		while(openMenu.get().wasPressed() || shouldOpen) {
+			shouldOpen = false;
 			if(!(mc.currentScreen instanceof ClickGUIScreen)) {
 				mc.setScreen(new ClickGUIScreen(mc.currentScreen));
 			}
 		}
+	}
+	
+	public void openMenu() {
+		shouldOpen = true;
 	}
 	
 	public boolean moveInScreen(Screen currentScreen) {
