@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Notification {
 	
-	private final Animation inOutAnimation = new Animation(AnimationType.EASE_OUT_BACKWARD, 0.25, true);
+	private final Animation inOutAnimation = new Animation(AnimationType.EASE_OUT_BOUNCE, 0.25, true);
 	private final Animation dropAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	
 	private final Animation hoverAnimation = new Animation(AnimationType.EASE, 0.25, true);
