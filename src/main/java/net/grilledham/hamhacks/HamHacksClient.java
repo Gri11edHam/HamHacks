@@ -47,7 +47,7 @@ public class HamHacksClient implements ClientModInitializer {
 			return;
 		}
 		initialized = true;
-		LOGGER.info("Initializing HamHacks v" + VERSION.getVersion(0, true));
+		LOGGER.info("Initializing HamHacks v{}", VERSION.getVersion(0, true));
 		Updater.init();
 		RotationHack.init();
 		PositionHack.init();

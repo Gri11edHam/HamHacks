@@ -1,6 +1,8 @@
 package net.grilledham.hamhacks.util;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.loader.api.FabricLoader;
 import net.grilledham.hamhacks.HamHacksClient;
@@ -12,10 +14,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 public class Updater {
 	
 	private Updater(){}
+	
+	private static final Pattern ASSET_NAME_PATTERN = Pattern.compile("^hamhacks-[\\d.]+(-(beta|dev)\\.\\d+)?\\.jar$");
 	
 	private static Version latestVersion;
 	private static String changelog = "";
@@ -33,11 +38,19 @@ public class Updater {
 			is.close();
 			latestVersion = new Version(obj.get("tag_name").getAsString().replace("v", ""));
 			changelog = obj.get("body").getAsString();
-			downloadURL = obj.get("assets").getAsJsonArray().get(0).getAsJsonObject().get("browser_download_url").getAsString();
+			JsonArray assets = obj.get("assets").getAsJsonArray();
+			downloadURL = null;
+			for(JsonElement e : assets) {
+				JsonObject asset = e.getAsJsonObject();
+				if(asset.get("name").getAsString().matches(ASSET_NAME_PATTERN.pattern())) {
+					downloadURL = asset.get("browser_download_url").getAsString();
+					break;
+				}
+			}
 			if(Updater.newVersionAvailable()) {
-				HamHacksClient.LOGGER.info("New version available! (" + Updater.getLatest().getVersion(0, true) + ")");
+				HamHacksClient.LOGGER.info("New version available! ({})", Updater.getLatest().getVersion(0, true));
 			} else {
-				HamHacksClient.LOGGER.info("Up to date! (" + latestVersion.getVersion(0, true) + ")");
+				HamHacksClient.LOGGER.info("Up to date! ({} >= {})", HamHacksClient.VERSION.getVersion(0, true), latestVersion.getVersion(0, true));
 			}
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -63,6 +76,10 @@ public class Updater {
 	}
 	
 	public static void update() {
+		if(downloadURL == null) {
+			HamHacksClient.LOGGER.error("Error updating hamhacks", new IllegalStateException("downloadURL cannot be null"));
+			return;
+		}
 		try {
 			File newVersion = new File(MinecraftClient.getInstance().runDirectory, "/mods/hamhacks-" + latestVersion.getVersion(0, true) + ".jar");
 			int i = 1;
@@ -86,7 +103,7 @@ public class Updater {
 						HamHacksClient.LOGGER.info("Deleting old mod file via deleter.bat");
 						File deleter = new File(FabricLoader.getInstance().getGameDir().toFile(), HamHacksClient.MOD_ID + "/deleter.bat");
 						
-						String deleterProgram = "" +
+						String deleterProgram =
 								"@echo off\n" +
 								":TestFile\n" +
 								"REN \"" + modFile.getAbsolutePath() + "\" \"" + modFile.getName() + "\"\n" +
