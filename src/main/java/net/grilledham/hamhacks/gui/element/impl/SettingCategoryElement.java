@@ -8,6 +8,7 @@ import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Quaternionf;
 
@@ -78,13 +79,14 @@ public class SettingCategoryElement extends GuiElement {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float offX, float offY, float tickDelta) {
+	public void render(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + offX;
 		float y = this.y + offY;
 		stack.push();
 		
 		RenderUtil.adjustScissor(x, y, width, (float)(collapsedHeight + elementsHeight * openCloseAnimation.get()), (float)scale);
-		RenderUtil.applyScissor();
+		RenderUtil.applyScissor(ctx);
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
@@ -102,20 +104,20 @@ public class SettingCategoryElement extends GuiElement {
 		q.rotateXYZ(0, 0, (float)Math.toRadians(-90 * openCloseAnimation.get()));
 		stack.peek().getPositionMatrix().rotate(q);
 		stack.translate(-lineX - lineW - arrowWidth / 2 - 4, -y - 11, 0);
-		mc.textRenderer.drawWithShadow(stack, "<", lineX + lineW + 6, y + 7, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, "<", lineX + lineW + 6, y + 7, ui.textColor.get().getRGB(), true);
 		stack.pop();
 		
-		mc.textRenderer.drawWithShadow(stack, category.getName(), x + 3, y + 7, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, category.getName(), x + 3, y + 7, ui.textColor.get().getRGB(), true);
 		
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
 			if(isElementEnabled.get(element)) {
-				element.render(stack, mx, my, offX, offY + collapsedHeight + trueHeight, tickDelta);
+				element.render(ctx, mx, my, offX, offY + collapsedHeight + trueHeight, tickDelta);
 				trueHeight += element.getHeight();
 			}
 		}
 		
-		RenderUtil.popScissor();
+		RenderUtil.popScissor(ctx);
 		RenderUtil.postRender();
 		
 		stack.pop();
@@ -130,24 +132,25 @@ public class SettingCategoryElement extends GuiElement {
 	}
 	
 	@Override
-	public void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		
 		stack.push();
 		
 		RenderUtil.pushScissor(x, y, width, height, (float)scale);
-		RenderUtil.applyScissor();
+		RenderUtil.applyScissor(ctx);
 		
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
 			if(isElementEnabled.get(element)) {
-				element.renderTop(stack, mx, my, scrollX, scrollY + collapsedHeight + trueHeight, partialTicks);
+				element.renderTop(ctx, mx, my, scrollX, scrollY + collapsedHeight + trueHeight, partialTicks);
 				trueHeight += element.getHeight();
 			}
 		}
 		
-		RenderUtil.popScissor();
+		RenderUtil.popScissor(ctx);
 		
 		stack.pop();
 	}

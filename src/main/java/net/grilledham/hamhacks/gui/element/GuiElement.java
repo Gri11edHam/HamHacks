@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.gui.element;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 public abstract class GuiElement {
 	
@@ -42,9 +42,9 @@ public abstract class GuiElement {
 		this.height = height;
 	}
 	
-	public abstract void render(MatrixStack stack, int mx, int my, float offX, float offY, float tickDelta);
+	public abstract void render(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta);
 	
-	public void renderTop(MatrixStack stack, int mx, int my, float offX, float offY, float tickDelta) {}
+	public void renderTop(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {}
 	
 	public boolean click(double mx, double my, float offX, float offY, int button) {
 		return false;

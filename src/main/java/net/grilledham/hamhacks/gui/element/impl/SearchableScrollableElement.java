@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.gui.element.impl;
 
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.setting.StringSetting;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class SearchableScrollableElement extends ScrollableElement {
@@ -29,7 +30,8 @@ public class SearchableScrollableElement extends ScrollableElement {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		if(!searchArea.get().equals("") && dirty) {
 			dirty = false;
 			for(GuiElement element : getElements()) {
@@ -39,7 +41,7 @@ public class SearchableScrollableElement extends ScrollableElement {
 				}
 			}
 		}
-		super.render(stack, mx, my, scrollX, scrollY, partialTicks);
+		super.render(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	public boolean shouldUpdateVisibility() {

@@ -7,6 +7,7 @@ import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
@@ -47,7 +48,8 @@ public class StringSettingElement extends SettingElement<String> {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		selectionStart = Math.min(Math.max(selectionStart, -1), getValue().length());
@@ -69,16 +71,16 @@ public class StringSettingElement extends SettingElement<String> {
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - 104, y, 104, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.adjustScissor(x + width - 102, y, 100, height, (float)scale);
-		RenderUtil.applyScissor();
+		RenderUtil.applyScissor(ctx);
 		
 		if(getValue() == null || getValue().equals("")) {
 			String value = placeholder.get();
-			mc.textRenderer.drawWithShadow(stack, value, x + width - mc.textRenderer.getWidth(value) - 2, y + 4, RenderUtil.mix(ui.bgColor.get().getRGB(), ui.textColor.get().getRGB(), 0.75f));
+			RenderUtil.drawString(ctx, value, x + width - mc.textRenderer.getWidth(value) - 2, y + 4, RenderUtil.mix(ui.bgColor.get().getRGB(), ui.textColor.get().getRGB(), 0.75f), true);
 		} else {
-			mc.textRenderer.drawWithShadow(stack, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ui.textColor.get().getRGB());
+			RenderUtil.drawString(ctx, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ui.textColor.get().getRGB(), true);
 		}
 		
 		RenderUtil.preRender();
@@ -88,7 +90,7 @@ public class StringSettingElement extends SettingElement<String> {
 			RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(getSelectionStart())) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, mc.textRenderer.getWidth(getValue().substring(getSelectionStart(), getSelectionEnd())), mc.textRenderer.fontHeight + 1, selectionColor);
 		}
 		
-		RenderUtil.popScissor();
+		RenderUtil.popScissor(ctx);
 		
 		int cursorColor = RenderUtil.mix(ui.textColor.get().getRGB(), ui.textColor.get().getRGB() & 0xffffff, cursorAnimation.get());
 		RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, 1, mc.textRenderer.fontHeight + 1, cursorColor);

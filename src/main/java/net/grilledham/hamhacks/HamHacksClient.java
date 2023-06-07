@@ -25,7 +25,7 @@ import java.util.Comparator;
 public class HamHacksClient implements ClientModInitializer {
 	
 	public static final String MOD_ID = "hamhacks";
-	public static final Version VERSION = new Version("1.8.5");
+	public static final Version VERSION = FabricLoader.getInstance().getModContainer(MOD_ID).map(modContainer -> new Version(modContainer.getMetadata().getVersion().getFriendlyString())).orElseGet(() -> new Version("0-dev"));
 	
 	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	public static final int CONFIG_VERSION = 5;

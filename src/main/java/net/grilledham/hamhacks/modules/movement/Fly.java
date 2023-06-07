@@ -12,7 +12,8 @@ import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.setting.SelectionSetting;
 import net.grilledham.hamhacks.util.PositionHack;
-import net.minecraft.block.Material;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -99,7 +100,7 @@ public class Fly extends Module {
 						boolean isAboveBlock = false;
 						for(int xAdd = -1; xAdd < 2; xAdd++) {
 							for(int zAdd = -1; zAdd < 2; zAdd++) {
-								if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().subtract(0.3f * xAdd, 0.05f, 0.3f * zAdd))).getMaterial() != Material.AIR) {
+								if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().subtract(0.3f * xAdd, 0.05f, 0.3f * zAdd))).getBlock() != Blocks.AIR) {
 									isAboveBlock = true;
 									break;
 								}
@@ -124,11 +125,13 @@ public class Fly extends Module {
 				case 2 -> {
 					mc.player.addVelocity(0, mc.player.input.jumping ? jetpackSpeed.get() : 0, 0);
 					if(autoLand.get()) {
-						if(mc.world.getBlockState(mc.player.getBlockPos().add(0, MathHelper.floor(20 * mc.player.getVelocity().getY()), 0)).getMaterial() != Material.AIR) {
-							if(mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 3, 0))).getBlock().canMobSpawnInside()) {
+						if(mc.world.getBlockState(mc.player.getBlockPos().add(0, MathHelper.floor(20 * mc.player.getVelocity().getY()), 0)).getBlock() != Blocks.AIR) {
+							BlockState state1 = mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 3, 0)));
+							BlockState state2 = mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 1, 0)));
+							if(state1.getBlock().canMobSpawnInside(state1)) {
 								landing = true;
 								mc.player.addVelocity(0, -mc.player.getVelocity().getY() * 0.1, 0);
-							} else if(landing && !mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 1, 0))).getBlock().canMobSpawnInside()) {
+							} else if(landing && !state2.getBlock().canMobSpawnInside(state2)) {
 								landing = false;
 								mc.player.addVelocity(0, -mc.player.getVelocity().getY() * 1.2, 0);
 							}

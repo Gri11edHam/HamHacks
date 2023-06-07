@@ -8,7 +8,8 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.setting.SettingCategory;
-import net.minecraft.block.Material;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -83,15 +84,15 @@ public class Speed extends Module {
 			dz += (float) (distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
 			dx *= speed.get() / 10f;
 			dz *= speed.get() / 10f;
-			if(checkBlockBelow(Material.AIR)) {
+			if(checkBlockBelow(Blocks.AIR)) {
 				dx *= inAirMult.get();
 				dz *= inAirMult.get();
 			}
-			if(checkBlockBelow(Material.ICE) || checkBlockBelow(Material.DENSE_ICE)) {
+			if(checkBlockBelow(Blocks.ICE) || checkBlockBelow(Blocks.PACKED_ICE)) {
 				dx *= onIceMult.get();
 				dz *= onIceMult.get();
 			}
-			if(!(checkBlockAbove(Material.AIR) || checkBlockAbove(Material.WATER) || checkBlockAbove(Material.BUBBLE_COLUMN))) {
+			if(!(checkBlockAbove(Blocks.AIR) || checkBlockAbove(Blocks.WATER) || checkBlockAbove(Blocks.BUBBLE_COLUMN))) {
 				dx *= inTunnelMult.get();
 				dz *= inTunnelMult.get();
 			}
@@ -112,10 +113,10 @@ public class Speed extends Module {
 		}
 	}
 	
-	private boolean checkBlockAbove(Material material) {
+	private boolean checkBlockAbove(Block block) {
 		for(int xAdd = -1; xAdd < 2; xAdd++) {
 			for(int zAdd = -1; zAdd < 2; zAdd++) {
-				if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().add(0.3f * xAdd, 2.01, 0.3f * zAdd))).getMaterial() != material) {
+				if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().add(0.3f * xAdd, 2.01, 0.3f * zAdd))).getBlock() != block) {
 					return false;
 				}
 			}
@@ -123,10 +124,10 @@ public class Speed extends Module {
 		return true;
 	}
 	
-	private boolean checkBlockBelow(Material material) {
+	private boolean checkBlockBelow(Block block) {
 		for(int xAdd = -1; xAdd < 2; xAdd++) {
 			for(int zAdd = -1; zAdd < 2; zAdd++) {
-				if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().subtract(0.3f * xAdd, 0.01, 0.3f * zAdd))).getMaterial() != material) {
+				if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().subtract(0.3f * xAdd, 0.01, 0.3f * zAdd))).getBlock() != block) {
 					return false;
 				}
 			}

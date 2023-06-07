@@ -5,9 +5,9 @@ import net.grilledham.hamhacks.gui.screen.impl.ChangelogScreen;
 import net.grilledham.hamhacks.gui.screen.impl.NewVersionScreen;
 import net.grilledham.hamhacks.util.Updater;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,11 +33,11 @@ public class MixinTitleScreen extends Screen {
 	}
 	
 	@Inject(method = "render", at = @At("TAIL"))
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		changelogButton.render(matrices, mouseX, mouseY, 0, 0, delta);
+	public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+		changelogButton.render(context, mouseX, mouseY, 0, 0, delta);
 		if(Updater.newVersionAvailable()) {
 			updateButton.setText("Update (" + Updater.getLatest().getVersion(0, true) + ")");
-			updateButton.render(matrices, mouseX, mouseY, 0, 0, delta);
+			updateButton.render(context, mouseX, mouseY, 0, 0, delta);
 		}
 	}
 	

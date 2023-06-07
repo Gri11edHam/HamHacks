@@ -7,6 +7,7 @@ import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.ListSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
@@ -86,7 +87,8 @@ public class ListSettingElement extends SettingElement<List<String>> {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
@@ -103,7 +105,7 @@ public class ListSettingElement extends SettingElement<List<String>> {
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - height, y, height, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
 		float dropDownX = x + width - height / 2f - mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterX = dropDownX + mc.textRenderer.getWidth("<") / 2f;
 		float dropDownCenterY = y + 4 + mc.textRenderer.fontHeight / 2f;
@@ -112,7 +114,7 @@ public class ListSettingElement extends SettingElement<List<String>> {
 		q.rotateXYZ(0, 0, (float)Math.toRadians((float)selectionAnimation.get() * -90));
 		stack.peek().getPositionMatrix().rotate(q);
 		stack.translate(-dropDownCenterX, -dropDownCenterY, 0);
-		mc.textRenderer.drawWithShadow(stack, "<", dropDownX, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, "<", dropDownX, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -125,33 +127,34 @@ public class ListSettingElement extends SettingElement<List<String>> {
 	}
 	
 	@Override
-	public void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * (float)selectionAnimation.get(), (float)scale);
-		RenderUtil.applyScissor();
+		RenderUtil.applyScissor(ctx);
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
 		RenderUtil.drawRect(stack, x + width - maxWidth, y + height, maxWidth, height * (stringParts.size() + 1), ui.bgColor.get().getRGB());
 		
-		addButton.render(stack, mx, my, scrollX, scrollY, partialTicks);
+		addButton.render(ctx, mx, my, scrollX, scrollY, partialTicks);
 		
 		for(int i = 0; i < removeButtons.size(); i++) {
-			removeButtons.get(i).render(stack, mx, my, scrollX, scrollY, partialTicks);
+			removeButtons.get(i).render(ctx, mx, my, scrollX, scrollY, partialTicks);
 		}
 		
 		for(int i = 0; i < removeButtons.size(); i++) {
 			if(((stringParts.size() + 1)) * selectionAnimation.get() > i) {
-				stringParts.get(i).render(stack, mx, my, scrollX, scrollY, partialTicks);
+				stringParts.get(i).render(ctx, mx, my, scrollX, scrollY, partialTicks);
 			}
 		}
 		
 		RenderUtil.postRender();
-		RenderUtil.popScissor();
+		RenderUtil.popScissor(ctx);
 		stack.pop();
-		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
+		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override

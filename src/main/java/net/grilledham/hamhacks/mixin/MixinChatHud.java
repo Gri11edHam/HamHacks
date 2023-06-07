@@ -1,14 +1,12 @@
 package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.event.events.EventChat;
-import net.grilledham.hamhacks.mixininterface.IChat;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.Chat;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.hud.MessageIndicator;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -25,10 +23,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(ChatHud.class)
-public abstract class MixinChatHud extends DrawableHelper implements IChat {
+public abstract class MixinChatHud {
 	
 	@Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
-	@Shadow @Final private List<ChatHudLine> messages;
 	
 	@Shadow protected abstract void addMessage(Text message, @Nullable MessageSignatureData signature, int ticks, @Nullable MessageIndicator indicator, boolean refresh);
 	
@@ -58,8 +55,8 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 		return index;
 	}
 	
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V", ordinal = 0))
-	public void modifyBGColor(MatrixStack matrixStack, int x1, int y1, int x2, int y2, int color) {
+	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V", ordinal = 0))
+	public void modifyBGColor(DrawContext instance, int x1, int y1, int x2, int y2, int color) {
 		if(ModuleManager.getModule(Chat.class).isEnabled() && ModuleManager.getModule(Chat.class).highlightUsername.get()) {
 			ChatHudLine.Visible line = visibleMessages.get(lineIndex);
 			if(ModuleManager.getModule(Chat.class).shouldColorLine(line)) {
@@ -70,7 +67,7 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 				color = newAlpha + newRGB;
 			}
 		}
-		fill(matrixStack, x1, y1, x2, y2, color);
+		instance.fill(x1, y1, x2, y2, color);
 	}
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHudLine$Visible;indicator()Lnet/minecraft/client/gui/hud/MessageIndicator;"))
@@ -79,8 +76,8 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 		return indicator;
 	}
 	
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;fill(Lnet/minecraft/client/util/math/MatrixStack;IIIII)V", ordinal = 1))
-	public void removeIndicator(MatrixStack matrixStack, int x1, int y1, int x2, int y2, int c) {
+	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;fill(IIIII)V", ordinal = 1))
+	public void removeIndicator(DrawContext instance, int x1, int y1, int x2, int y2, int c) {
 		if(indicator == null) {
 			return;
 		}
@@ -102,7 +99,7 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 				return;
 			}
 		}
-		fill(matrixStack, x1, y1, x2, y2, c);
+		instance.fill(x1, y1, x2, y2, c);
 	}
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/MessageIndicator;icon()Lnet/minecraft/client/gui/hud/MessageIndicator$Icon;", ordinal = 0))
@@ -166,15 +163,5 @@ public abstract class MixinChatHud extends DrawableHelper implements IChat {
 				}
 			}
 		}
-	}
-	
-	@Override
-	public List<ChatHudLine> getMessages() {
-		return messages;
-	}
-	
-	@Override
-	public List<ChatHudLine.Visible> getVisibleMessages() {
-		return visibleMessages;
 	}
 }

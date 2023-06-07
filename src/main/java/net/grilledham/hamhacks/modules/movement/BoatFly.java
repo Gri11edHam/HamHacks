@@ -7,7 +7,7 @@ import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.util.math.Vec3;
-import net.minecraft.block.Material;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.BoatEntity;
@@ -85,7 +85,7 @@ public class BoatFly extends Module {
 				boolean isAboveBlock = false;
 				for(int xAdd = -1; xAdd < 2; xAdd++) {
 					for(int zAdd = -1; zAdd < 2; zAdd++) {
-						if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().subtract(0.3f * xAdd, 0.05f, 0.3f * zAdd))).getMaterial() != Material.AIR) {
+						if(mc.world.getBlockState(BlockPos.ofFloored(mc.player.getPos().subtract(0.3f * xAdd, 0.05f, 0.3f * zAdd))).getBlock() != Blocks.AIR) {
 							isAboveBlock = true;
 							break;
 						}

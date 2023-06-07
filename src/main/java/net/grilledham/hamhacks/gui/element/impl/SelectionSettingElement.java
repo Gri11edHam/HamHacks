@@ -8,6 +8,7 @@ import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.SelectionSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
@@ -87,7 +88,8 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
@@ -104,9 +106,9 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 		int outlineC = 0xffcccccc;
 		RenderUtil.drawHRect(stack, x + width - maxWidth, y, maxWidth, height, outlineC);
 		
-		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
 		String text = Text.translatable(options.get()[get.get()]).getString();
-		mc.textRenderer.drawWithShadow(stack, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -119,22 +121,23 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 	}
 	
 	@Override
-	public void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
 		RenderUtil.pushScissor(x, y, width, (height * elements.size()) * (float)selectionAnimation.get(), (float)scale);
-		RenderUtil.applyScissor();
+		RenderUtil.applyScissor(ctx);
 		
 		for(GuiElement element : elements) {
-			element.render(stack, mx, my, scrollX, scrollY, partialTicks);
+			element.render(ctx, mx, my, scrollX, scrollY, partialTicks);
 		}
 		
 		RenderUtil.postRender();
-		RenderUtil.popScissor();
+		RenderUtil.popScissor(ctx);
 		stack.pop();
-		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
+		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override

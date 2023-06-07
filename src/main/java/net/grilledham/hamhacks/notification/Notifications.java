@@ -49,7 +49,7 @@ public class Notifications extends Page {
 		double mx = mc.mouse.getX() * (double)mc.getWindow().getScaledWidth() / (double)mc.getWindow().getWidth();
 		double my = mc.mouse.getY() * (double)mc.getWindow().getScaledHeight() / (double)mc.getWindow().getHeight();
 		for(Notification n : notifications) {
-			yAdd += n.render(e.matrices, mx, my, yAdd, e.tickDelta) + 10;
+			yAdd += n.render(e.context, mx, my, yAdd, e.tickDelta) + 10;
 			if(n.isComplete()) {
 				completed.add(n);
 			}

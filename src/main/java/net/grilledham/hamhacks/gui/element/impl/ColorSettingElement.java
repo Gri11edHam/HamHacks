@@ -9,6 +9,7 @@ import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
@@ -89,7 +90,8 @@ public class ColorSettingElement extends SettingElement<Color> {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
@@ -106,7 +108,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 		int boxC = RenderUtil.mix((get.get().getRGB() & 0xff000000) + 0xffffff, get.get().getRGB(), hoverAnimation.get() / 4);
 		RenderUtil.drawRect(stack, x + width - 18, y + 4, 14, 8, boxC);
 		
-		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -119,7 +121,8 @@ public class ColorSettingElement extends SettingElement<Color> {
 	}
 	
 	@Override
-	public void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
@@ -134,7 +137,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 		}
 		
 		RenderUtil.pushScissor(newX - 1 + ((w + 2) * (float)(1 - selectionAnimation.get())), newY - 1, (w + 2) * (float)selectionAnimation.get(), (h + 2) * (float)selectionAnimation.get(), (float)scale);
-		RenderUtil.applyScissor();
+		RenderUtil.applyScissor(ctx);
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
@@ -154,12 +157,12 @@ public class ColorSettingElement extends SettingElement<Color> {
 		RenderUtil.drawHRect(stack, newX + 105, newY + 1 + (100 * (get.get().getHue())), 22, 3, 0xffcccccc);
 		RenderUtil.drawHRect(stack, newX + 129, newY + 1 + (100 * (1 - get.get().getAlpha())), 22, 3, 0xffcccccc);
 		
-		chromaPart.render(stack, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
+		chromaPart.render(ctx, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
 		if(selectionAnimation.get() > 0.8) {
-			hexValPart.render(stack, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
+			hexValPart.render(ctx, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
 		}
 		
-		RenderUtil.popScissor();
+		RenderUtil.popScissor(ctx);
 		RenderUtil.postRender();
 		stack.pop();
 		
@@ -207,7 +210,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 				}
 			}
 		}
-		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
+		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override

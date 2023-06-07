@@ -2,10 +2,11 @@ package net.grilledham.hamhacks.gui.screen.impl;
 
 import net.grilledham.hamhacks.gui.element.impl.ButtonElement;
 import net.grilledham.hamhacks.util.Changelog;
+import net.grilledham.hamhacks.util.RenderUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ScrollableWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 public class FullChangelogScreen extends Screen {
@@ -49,10 +50,10 @@ public class FullChangelogScreen extends Screen {
 			}
 			
 			@Override
-			protected void renderContents(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+			protected void renderContents(DrawContext ctx, int mouseX, int mouseY, float delta) {
 				int i = 0;
 				for(String s : Changelog.getChangelog().split("\n")) {
-					client.textRenderer.drawWithShadow(matrices, s.replace("\t", "    ").replace("\r", ""), getX() + 4, getY() + 4 + i * (textRenderer.fontHeight + 2), 0xffffffff);
+					RenderUtil.drawString(ctx, s.replace("\t", "    ").replace("\r", ""), getX() + 4, getY() + 4 + i * (textRenderer.fontHeight + 2), 0xffffffff, true);
 					i++;
 				}
 			}
@@ -64,12 +65,12 @@ public class FullChangelogScreen extends Screen {
 	}
 	
 	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		renderBackground(matrices);
+	public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
+		renderBackground(ctx);
 		
-		super.render(matrices, mouseX, mouseY, delta);
+		super.render(ctx, mouseX, mouseY, delta);
 		
-		backButton.render(matrices, mouseX, mouseY, 0, 0, delta);
+		backButton.render(ctx, mouseX, mouseY, 0, 0, delta);
 	}
 	
 	@Override

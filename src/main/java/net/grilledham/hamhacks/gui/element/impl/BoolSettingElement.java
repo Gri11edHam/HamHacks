@@ -7,6 +7,7 @@ import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
@@ -27,7 +28,8 @@ public class BoolSettingElement extends SettingElement<Boolean> {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
@@ -46,7 +48,7 @@ public class BoolSettingElement extends SettingElement<Boolean> {
 		int boxC = RenderUtil.mix((ui.accentColor.get().getRGB() & 0xff000000) + 0xffffff, (ui.accentColor.get().getRGB() & 0xff000000) + RenderUtil.mix(0x00a400, 0xa40000, enableAnimation.get()), hoverAnimation.get() / 4);
 		RenderUtil.drawRect(stack, x + width - 12, y + 4, 8, 8, boxC);
 		
-		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();

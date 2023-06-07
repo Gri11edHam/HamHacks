@@ -3,9 +3,8 @@ package net.grilledham.hamhacks.mixin;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.HUD;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,23 +12,23 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
-public abstract class MixinInGameHud extends DrawableHelper {
+public abstract class MixinInGameHud {
 	
 	@Shadow public abstract TextRenderer getTextRenderer();
 	
 	@Inject(method = "render", at = @At("TAIL"))
-	public void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
-		ModuleManager.getModule(HUD.class).render(matrices, tickDelta, getTextRenderer());
+	public void render(DrawContext context, float tickDelta, CallbackInfo ci) {
+		ModuleManager.getModule(HUD.class).render(context, tickDelta, getTextRenderer());
 	}
 	
 	@Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V", shift = At.Shift.BEFORE, remap = false))
-	public void preRenderStatusEffectOverlay(MatrixStack matrices, CallbackInfo ci) {
-		matrices.push();
-		matrices.translate(0, ModuleManager.getModule(HUD.class).rightHeight, 0);
+	public void preRenderStatusEffectOverlay(DrawContext context, CallbackInfo ci) {
+		context.getMatrices().push();
+		context.getMatrices().translate(0, ModuleManager.getModule(HUD.class).rightHeight, 0);
 	}
 	
 	@Inject(method = "renderStatusEffectOverlay", at = @At("TAIL"))
-	public void postRenderStatusEffectOverlay(MatrixStack matrices, CallbackInfo ci) {
-		matrices.pop();
+	public void postRenderStatusEffectOverlay(DrawContext context, CallbackInfo ci) {
+		context.getMatrices().pop();
 	}
 }

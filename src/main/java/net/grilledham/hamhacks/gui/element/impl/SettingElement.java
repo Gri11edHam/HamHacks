@@ -4,7 +4,7 @@ import net.grilledham.hamhacks.animation.Animation;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 public abstract class SettingElement<T> extends GuiElement {
 	
@@ -33,15 +33,15 @@ public abstract class SettingElement<T> extends GuiElement {
 	}
 	
 	@Override
-	public void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
-		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
+		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
 		
 		if(getTooltip.get() != null && !getTooltip.get().equals("")) {
 			if(tooltipAnimation.get() >= 1 && !hasClicked) {
-				RenderUtil.drawToolTip(stack, getName.get(), getTooltip.get(), mx, my, scale);
+				RenderUtil.drawToolTip(ctx, getName.get(), getTooltip.get(), mx, my, scale);
 			}
 		}
 		

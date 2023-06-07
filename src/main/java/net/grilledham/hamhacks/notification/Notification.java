@@ -6,6 +6,7 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
@@ -81,7 +82,8 @@ public class Notification {
 		this(title, info, null);
 	}
 	
-	public float render(MatrixStack matrices, double mx, double my, float yAdd, float partialTicks) {
+	public float render(DrawContext context, double mx, double my, float yAdd, float partialTicks) {
+		MatrixStack matrices = context.getMatrices();
 		matrices.push();
 		
 		double totalWidth = WIDTH + 5;
@@ -106,11 +108,11 @@ public class Notification {
 		
 		int i = 0;
 		for(String s : titleTexts) {
-			textRenderer.drawWithShadow(matrices, s, x + 5, y + 5 + (textRenderer.fontHeight + 2) * i, -1);
+			RenderUtil.drawString(context, s, x + 5, y + 5 + (textRenderer.fontHeight + 2) * i, -1, true);
 			i++;
 		}
 		for(String s : infoTexts) {
-			textRenderer.drawWithShadow(matrices, s, x + 5, y + 5 + 5 + (textRenderer.fontHeight + 2) * i, -1);
+			RenderUtil.drawString(context, s, x + 5, y + 5 + 5 + (textRenderer.fontHeight + 2) * i, -1, true);
 			i++;
 		}
 		

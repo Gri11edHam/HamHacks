@@ -9,6 +9,7 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
@@ -33,7 +34,8 @@ public class PageElement extends GuiElement {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float offX, float offY, float tickDelta) {
+	public void render(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + offX;
 		float y = this.y + offY;
 		stack.push();
@@ -62,7 +64,7 @@ public class PageElement extends GuiElement {
 		}
 		
 		String name = page == null ? Text.translatable("hamhacks.page.null").getString() : page.getName();
-		mc.textRenderer.drawWithShadow(stack, name, x + width / 2f - mc.textRenderer.getWidth(name) / 2f, y + height / 2f - mc.textRenderer.fontHeight / 2f, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, name, x + width / 2f - mc.textRenderer.getWidth(name) / 2f, y + height / 2f - mc.textRenderer.fontHeight / 2f, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();

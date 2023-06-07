@@ -4,6 +4,7 @@ import net.grilledham.hamhacks.animation.Animation;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.ArrayList;
@@ -60,7 +61,8 @@ public class ScrollableElement extends GuiElement {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		
@@ -69,19 +71,19 @@ public class ScrollableElement extends GuiElement {
 		stack.push();
 		
 		RenderUtil.adjustScissor(x, y, width, height, (float)scale);
-		RenderUtil.applyScissor();
+		RenderUtil.applyScissor(ctx);
 		
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
 			if(isElementEnabled.get(element)) {
 				if(element.getX() + element.getWidth() >= x - 2 + scrollX && element.getY() + element.getHeight() + trueHeight >= y - 2 + scrollY + scroll.get() && element.getX() - element.getWidth() <= x + width + 2 + scrollX && element.getY() - element.getHeight() + trueHeight <= y + height + 2 + scrollY + scroll.get()) {
-					element.render(stack, hovered || element == selected ? mx : -1, hovered || element == selected ? my : -1, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
+					element.render(ctx, hovered || element == selected ? mx : -1, hovered || element == selected ? my : -1, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
 				}
 				trueHeight += element.getHeight();
 			}
 		}
 		
-		RenderUtil.popScissor();
+		RenderUtil.popScissor(ctx);
 		
 		stack.pop();
 		
@@ -98,7 +100,8 @@ public class ScrollableElement extends GuiElement {
 	}
 	
 	@Override
-	public void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		
@@ -107,17 +110,17 @@ public class ScrollableElement extends GuiElement {
 		stack.push();
 		
 		RenderUtil.pushScissor(x, y, width, height, (float)scale);
-		RenderUtil.applyScissor();
+		RenderUtil.applyScissor(ctx);
 		
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
 			if(isElementEnabled.get(element)) {
-				element.renderTop(stack, hovered || element == selected ? mx : -1, hovered || element == selected ? my : -1, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
+				element.renderTop(ctx, hovered || element == selected ? mx : -1, hovered || element == selected ? my : -1, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
 				trueHeight += element.getHeight();
 			}
 		}
 		
-		RenderUtil.popScissor();
+		RenderUtil.popScissor(ctx);
 		
 		stack.pop();
 	}

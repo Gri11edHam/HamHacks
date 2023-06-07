@@ -1,9 +1,10 @@
 package net.grilledham.hamhacks.gui.screen.impl;
 
 import net.grilledham.hamhacks.gui.element.impl.ButtonElement;
+import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 public class UpdateScreen extends Screen {
@@ -27,18 +28,18 @@ public class UpdateScreen extends Screen {
 	}
 	
 	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		renderBackground(matrices);
+	public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
+		renderBackground(ctx);
 		
-		super.render(matrices, mouseX, mouseY, delta);
+		super.render(ctx, mouseX, mouseY, delta);
 		
 		String s = "Would you like to close Minecraft now or continue playing?";
-		client.textRenderer.drawWithShadow(matrices, s, width / 2f - client.textRenderer.getWidth(s) / 2f, height / 2f - 30 - client.textRenderer.fontHeight / 2f, -1);
+		RenderUtil.drawString(ctx, s, width / 2f - client.textRenderer.getWidth(s) / 2f, height / 2f - 30 - client.textRenderer.fontHeight / 2f, -1, true);
 		String s2 = "(The mod won't be fully updated until you restart your game)";
-		client.textRenderer.drawWithShadow(matrices, s2, width / 2f - client.textRenderer.getWidth(s2) / 2f, height / 2f - 20 - client.textRenderer.fontHeight / 2f, -1);
+		RenderUtil.drawString(ctx, s2, width / 2f - client.textRenderer.getWidth(s2) / 2f, height / 2f - 20 - client.textRenderer.fontHeight / 2f, -1, true);
 		
-		continueButton.render(matrices, mouseX, mouseY, 0, 0, delta);
-		exitButton.render(matrices, mouseX, mouseY, 0, 0, delta);
+		continueButton.render(ctx, mouseX, mouseY, 0, 0, delta);
+		exitButton.render(ctx, mouseX, mouseY, 0, 0, delta);
 	}
 	
 	@Override

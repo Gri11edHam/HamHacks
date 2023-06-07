@@ -2,11 +2,14 @@ package net.grilledham.hamhacks.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -48,22 +51,22 @@ public class RenderUtil {
 		scissorStack.add(0, new Float[] {x + SCISSOR_TRANSLATION_X, y + SCISSOR_TRANSLATION_Y, width, height, scale});
 	}
 	
-	public static void popScissor() {
+	public static void popScissor(DrawContext ctx) {
 		scissorStack.remove(0);
 		RenderSystem.disableScissor();
 		if(!scissorStack.isEmpty()) {
-			applyScissor();
+			applyScissor(ctx);
 		}
 	}
 	
-	public static void applyScissor() {
+	public static void applyScissor(DrawContext ctx) {
 		float scaleFactor = scissorStack.get(0)[4];
 		int x = (int)Math.floor(scissorStack.get(0)[0] * scaleFactor);
 		int y = (int)Math.floor(scissorStack.get(0)[1] * scaleFactor);
 		int w = (int)Math.ceil(scissorStack.get(0)[2] * scaleFactor);
 		int h = (int)Math.ceil(scissorStack.get(0)[3] * scaleFactor);
 		if(!(w < 0 || h < 0)) {
-			RenderSystem.enableScissor(x, mc.getWindow().getHeight() - y - h, w, h);
+			ctx.enableScissor(x, mc.getWindow().getHeight() - y - h, w, h);
 		}
 	}
 	
@@ -252,7 +255,8 @@ public class RenderUtil {
 		RenderSystem.disableBlend();
 	}
 	
-	public static void drawToolTip(MatrixStack stack, String title, String tooltip, double mx, double my, double scale) {
+	public static void drawToolTip(DrawContext ctx, String title, String tooltip, double mx, double my, double scale) {
+		MatrixStack stack = ctx.getMatrices();
 		String[] lines = tooltip.split("\n");
 		
 		float w = mc.textRenderer.getWidth(Arrays.stream(lines).sorted(Comparator.comparingInt(s -> mc.textRenderer.getWidth((String)s)).reversed()).toList().get(0)) + 8;
@@ -271,7 +275,7 @@ public class RenderUtil {
 		}
 		
 		pushScissor(x, y, w, h, (float)scale);
-		applyScissor();
+		applyScissor(ctx);
 		
 		preRender();
 		
@@ -282,18 +286,27 @@ public class RenderUtil {
 		
 		float yAdd = 0;
 		if(!title.equals("")) {
-			mc.textRenderer.drawWithShadow(stack, title, x + 4, y + 4 + yAdd, 0xffffff20);
+			drawString(ctx, title, x + 4, y + 4 + yAdd, 0xffffff20, true);
 			yAdd += mc.textRenderer.fontHeight + 2;
 		}
 		for(String s : lines) {
-			mc.textRenderer.drawWithShadow(stack, s, x + 4, y + 4 + yAdd, -1);
+			drawString(ctx, s, x + 4, y + 4 + yAdd, -1, true);
 			yAdd += mc.textRenderer.fontHeight + 2;
 		}
 		
-		popScissor();
+		popScissor(ctx);
 	}
 	
-	public static void drawItem(MatrixStack matrices, ItemStack itemStack, float x, float y, float scale, boolean count, boolean damage) {
+	public static void drawString(DrawContext ctx, String s, float x, float y, int color, boolean shadow) {
+		mc.textRenderer.draw(s, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 100);
+	}
+	
+	public static void drawString(DrawContext ctx, Text t, float x, float y, int color, boolean shadow) {
+		mc.textRenderer.draw(t, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 100);
+	}
+	
+	public static void drawItem(DrawContext ctx, ItemStack itemStack, float x, float y, float scale, boolean count, boolean damage) {
+		MatrixStack matrices = ctx.getMatrices();
 		matrices.push();
 		matrices.translate(x + 8, y + 8, zLevel);
 		matrices.scale(16, -16, 16);
@@ -339,7 +352,7 @@ public class RenderUtil {
 			matrices.push();
 			matrices.translate(x + 8, y + 8, zLevel + 200);
 			matrices.scale(scale, scale, 1);
-			mc.textRenderer.drawWithShadow(matrices, itemStack.getCount() + "", 9 - mc.textRenderer.getWidth(itemStack.getCount() + ""), 1, -1);
+			drawString(ctx, String.valueOf(itemStack.getCount()), 9 - mc.textRenderer.getWidth(String.valueOf(itemStack.getCount())), 1, -1, true);
 			matrices.pop();
 		}
 	}

@@ -26,6 +26,10 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    maven {
+        name = "terraformersmc"
+        url = "https://maven.terraformersmc.com/releases/"
+    }
 }
 
 configurations {
@@ -40,7 +44,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     
     modCompileOnly("maven.modrinth:sodium:${project.sodium_version}") { transitive = false }
-    modCompileOnly("baritone:fabric:${project.minecraft_version}-SNAPSHOT") { transitive = false }
+    modCompileOnly("baritone:fabric:${project.baritone_version}-SNAPSHOT") { transitive = false }
+    modCompileOnly("com.terraformersmc:modmenu:${project.mod_menu_version}") { transitive = false }
 
     // Fabric API. This is technically optional, but you probably want it anyway.
 //    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

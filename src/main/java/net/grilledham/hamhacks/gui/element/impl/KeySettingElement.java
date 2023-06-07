@@ -8,6 +8,7 @@ import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.KeySetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
 
@@ -28,7 +29,8 @@ public class KeySettingElement extends SettingElement<Keybind> {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
@@ -45,8 +47,8 @@ public class KeySettingElement extends SettingElement<Keybind> {
 		RenderUtil.drawRect(stack, x, y, width - textWidth - 4, height, ui.bgColor.get().getRGB());
 		RenderUtil.drawRect(stack, x + width - textWidth - 4, y, textWidth + 4, height, bgC);
 		
-		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
-		mc.textRenderer.drawWithShadow(stack, text, x + width - textWidth - 2, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
+		RenderUtil.drawString(ctx, text, x + width - textWidth - 2, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();

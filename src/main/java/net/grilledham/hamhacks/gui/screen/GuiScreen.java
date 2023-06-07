@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.gui.screen;
 
 import net.grilledham.hamhacks.gui.element.GuiElement;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -39,22 +40,23 @@ public class GuiScreen extends Screen {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float tickDelta) {
+	public void render(DrawContext ctx, int mx, int my, float tickDelta) {
 		if(dirty || !initialized) {
 			clearAndInit();
 		}
+		MatrixStack stack = ctx.getMatrices();
 		mx = (int)((mx * client.getWindow().getScaleFactor()) / scale);
 		my = (int)((my * client.getWindow().getScaleFactor()) / scale);
 		stack.push();
 		float scaleFactor = (float)(scale / client.getWindow().getScaleFactor());
 		stack.scale(scaleFactor, scaleFactor, scaleFactor);
 		
-		super.render(stack, mx, my, tickDelta);
+		super.render(ctx, mx, my, tickDelta);
 		for(GuiElement element : elements) {
-			element.render(stack, mx, my, 0, 0, tickDelta);
+			element.render(ctx, mx, my, 0, 0, tickDelta);
 		}
 		for(GuiElement element : elements) {
-			element.renderTop(stack, mx, my, 0, 0, tickDelta);
+			element.renderTop(ctx, mx, my, 0, 0, tickDelta);
 		}
 		stack.pop();
 	}

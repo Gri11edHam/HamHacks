@@ -8,6 +8,7 @@ import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -37,7 +38,8 @@ public class ClickGUIScreen extends GuiScreen {
 			float maxWidth = 0;
 			topElement = new GuiElement(-1, 0, client.textRenderer.getWidth(page.getName()) + 2 + 2, 16, scale) {
 				@Override
-				public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+				public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+					MatrixStack stack = ctx.getMatrices();
 					float x = this.x + scrollX;
 					float y = this.y + scrollY;
 					stack.push();
@@ -46,7 +48,7 @@ public class ClickGUIScreen extends GuiScreen {
 					int bgC = PageManager.getPage(ClickGUI.class).accentColor.get().getRGB();
 					RenderUtil.drawRect(stack, x, y, width, height, bgC);
 					
-					mc.textRenderer.drawWithShadow(stack, page.getName(), x + width / 2f - mc.textRenderer.getWidth(page.getName()) / 2f, y + 4, PageManager.getPage(ClickGUI.class).textColor.get().getRGB());
+					RenderUtil.drawString(ctx, page.getName(), x + width / 2f - mc.textRenderer.getWidth(page.getName()) / 2f, y + 4, PageManager.getPage(ClickGUI.class).textColor.get().getRGB(), true);
 					
 					RenderUtil.postRender();
 					stack.pop();
@@ -147,11 +149,11 @@ public class ClickGUIScreen extends GuiScreen {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float tickDelta) {
+	public void render(DrawContext ctx, int mx, int my, float tickDelta) {
 		if(page != null) {
 			updatePartVisibility();
 		}
-		super.render(stack, mx, my, tickDelta);
+		super.render(ctx, mx, my, tickDelta);
 	}
 	
 	public void setPage(Page page) {

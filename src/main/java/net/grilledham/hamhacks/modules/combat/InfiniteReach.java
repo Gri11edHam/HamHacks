@@ -85,7 +85,7 @@ public class InfiniteReach extends Module {
 	}
 	
 	public void doAttack(HitResult hitResult) {
-		pathFinder = new PathFinder().path(mc.player.getBlockPos(), BlockPos.ofFloored(hitResult.getPos()), mc.player.world, 4).setTimeout(5000L).whenDone((initialPath) -> {
+		pathFinder = new PathFinder().path(mc.player.getBlockPos(), BlockPos.ofFloored(hitResult.getPos()), mc.player.clientWorld, 4).setTimeout(5000L).whenDone((initialPath) -> {
 			if(initialPath == null || initialPath.isEmpty()) {
 				pathFinder = null;
 				return;

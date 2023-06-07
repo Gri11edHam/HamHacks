@@ -9,6 +9,7 @@ import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
@@ -41,7 +42,8 @@ public class CategoryElement extends GuiElement {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
@@ -49,7 +51,7 @@ public class CategoryElement extends GuiElement {
 		float scissorHeight = height + scrollArea.getHeight() * (float)(1 - openCloseAnimation.get());
 		
 		RenderUtil.pushScissor(x, y, width, scissorHeight, (float)scale);
-		RenderUtil.applyScissor();
+		RenderUtil.applyScissor(ctx);
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
@@ -57,11 +59,11 @@ public class CategoryElement extends GuiElement {
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
-		mc.textRenderer.drawWithShadow(stack, category.getName(), x + 3, y + 5, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, category.getName(), x + 3, y + 5, ui.textColor.get().getRGB(), true);
 		
-		scrollArea.render(stack, mx, my, scrollX, scrollY, partialTicks);
+		scrollArea.render(ctx, mx, my, scrollX, scrollY, partialTicks);
 		
-		RenderUtil.popScissor();
+		RenderUtil.popScissor(ctx);
 		RenderUtil.postRender();
 		
 		stack.pop();
@@ -84,8 +86,8 @@ public class CategoryElement extends GuiElement {
 	}
 	
 	@Override
-	public void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
-		scrollArea.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
+	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		scrollArea.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override

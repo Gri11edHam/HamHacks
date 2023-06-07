@@ -4,6 +4,8 @@ import net.grilledham.hamhacks.gui.element.impl.ButtonElement;
 import net.grilledham.hamhacks.gui.screen.GuiScreen;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
+import net.grilledham.hamhacks.util.RenderUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConnectScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.MultiplayerServerListPinger;
@@ -33,10 +35,11 @@ public class WaitingToConnectScreen extends GuiScreen {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float tickDelta) {
-		renderBackground(stack);
+	public void render(DrawContext ctx, int mx, int my, float tickDelta) {
+		MatrixStack stack = ctx.getMatrices();
+		renderBackground(ctx);
 		
-		super.render(stack, mx, my, tickDelta);
+		super.render(ctx, mx, my, tickDelta);
 		
 		if(System.currentTimeMillis() - lastPingTime > 1000) {
 			pingServer();
@@ -46,19 +49,19 @@ public class WaitingToConnectScreen extends GuiScreen {
 		float scaleFactor = (float)(scale / client.getWindow().getScaleFactor());
 		stack.scale(scaleFactor, scaleFactor, scaleFactor);
 		if(serverInfo.label != null) {
-			textRenderer.drawWithShadow(stack, serverInfo.label, width / 2f - textRenderer.getWidth(serverInfo.label) / 2f, height / 2f - 30, -1);
+			RenderUtil.drawString(ctx, serverInfo.label, width / 2f - textRenderer.getWidth(serverInfo.label) / 2f, height / 2f - 30, -1, true);
 		} else {
-			textRenderer.drawWithShadow(stack, "...", width / 2f - textRenderer.getWidth("...") / 2f, height / 2f - 30, -1);
+			RenderUtil.drawString(ctx, "...", width / 2f - textRenderer.getWidth("...") / 2f, height / 2f - 30, -1, true);
 		}
 		if(serverInfo.playerCountLabel != null) {
-			textRenderer.drawWithShadow(stack, serverInfo.playerCountLabel, width / 2f - textRenderer.getWidth(serverInfo.playerCountLabel) / 2f, height / 2f - 20, -1);
+			RenderUtil.drawString(ctx, serverInfo.playerCountLabel, width / 2f - textRenderer.getWidth(serverInfo.playerCountLabel) / 2f, height / 2f - 20, -1, true);
 		} else {
-			textRenderer.drawWithShadow(stack, ".../...", width / 2f - textRenderer.getWidth(".../...") / 2f, height / 2f - 20, -1);
+			RenderUtil.drawString(ctx, ".../...", width / 2f - textRenderer.getWidth(".../...") / 2f, height / 2f - 20, -1, true);
 		}
 		if(serverInfo.version != null) {
-			textRenderer.drawWithShadow(stack, serverInfo.version, width / 2f - textRenderer.getWidth(serverInfo.version) / 2f, height / 2f - 10, -1);
+			RenderUtil.drawString(ctx, serverInfo.version, width / 2f - textRenderer.getWidth(serverInfo.version) / 2f, height / 2f - 10, -1, true);
 		} else {
-			textRenderer.drawWithShadow(stack, "x.x.x", width / 2f - textRenderer.getWidth("x.x.x") / 2f, height / 2f - 10, -1);
+			RenderUtil.drawString(ctx, "x.x.x", width / 2f - textRenderer.getWidth("x.x.x") / 2f, height / 2f - 10, -1, true);
 		}
 		stack.pop();
 	}
@@ -75,7 +78,7 @@ public class WaitingToConnectScreen extends GuiScreen {
 			int maxPlayers = Integer.parseInt(splitCount[1]);
 			if(onlinePlayers < maxPlayers) {
 				serverInfo = new ServerInfo(serverInfo.name, serverInfo.address, serverInfo.isLocal());
-				ConnectScreen.connect(this, client, ServerAddress.parse(serverInfo.address), serverInfo);
+				ConnectScreen.connect(this, client, ServerAddress.parse(serverInfo.address), serverInfo, false);
 			}
 		} catch(Exception ignored) {}
 	}

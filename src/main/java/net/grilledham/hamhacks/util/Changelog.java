@@ -3,6 +3,10 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.9:
+				- Updated to Minecraft 1.20
+				- Added Mod Menu integration
+			
 			Update 1.8.5:
 				- Added Click GUI command
 				- Improved commands

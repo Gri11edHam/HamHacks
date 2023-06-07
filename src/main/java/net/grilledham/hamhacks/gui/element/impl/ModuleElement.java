@@ -8,6 +8,7 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
@@ -32,7 +33,8 @@ public class ModuleElement extends GuiElement {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
@@ -47,7 +49,7 @@ public class ModuleElement extends GuiElement {
 		RenderUtil.drawRect(stack, (float)(x + width * enableAnimation.get()), y, (float)(width * (1 - enableAnimation.get())), height, bgC);
 		RenderUtil.drawRect(stack, x, y, (float)(width * enableAnimation.get()), height, bgCEnabled);
 		
-		mc.textRenderer.drawWithShadow(stack, module.getName(), x + 3, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, module.getName(), x + 3, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -66,11 +68,11 @@ public class ModuleElement extends GuiElement {
 	}
 	
 	@Override
-	public void renderTop(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
-		super.renderTop(stack, mx, my, scrollX, scrollY, partialTicks);
+	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 		if(module.hasToolTip()) {
 			if(tooltipAnimation.get() >= 1 && !hasClicked) {
-				RenderUtil.drawToolTip(stack, module.getName(), module.getToolTip(), mx, my, scale);
+				RenderUtil.drawToolTip(ctx, module.getName(), module.getToolTip(), mx, my, scale);
 			}
 		}
 	}

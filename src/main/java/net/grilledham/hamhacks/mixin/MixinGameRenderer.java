@@ -15,6 +15,7 @@ import net.grilledham.hamhacks.modules.render.HandRender;
 import net.grilledham.hamhacks.modules.render.Zoom;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
@@ -50,17 +51,17 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	private boolean calledFromFreecam = false;
 	
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, MatrixStack matrixStack2) {
+	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
 		ModuleManager.updateEnabled();
-		EventRender event = new EventRender(matrixStack2, tickDelta);
+		EventRender event = new EventRender(drawContext, tickDelta);
 		event.call();
 	}
 	
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "net.minecraft.client.gui.hud.InGameHud.render(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
-	public void render2DEvent(InGameHud instance, MatrixStack matrices, float tickDelta) {
-		EventRender2D event = new EventRender2D(matrices, tickDelta);
+	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;render(Lnet/minecraft/client/gui/DrawContext;F)V"))
+	public void render2DEvent(InGameHud instance, DrawContext context, float tickDelta) {
+		EventRender2D event = new EventRender2D(context, tickDelta);
 		event.call();
-		instance.render(matrices, tickDelta);
+		instance.render(context, tickDelta);
 	}
 	
 	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=hand"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)

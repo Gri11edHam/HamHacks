@@ -20,6 +20,7 @@ import net.grilledham.hamhacks.util.math.DirectionHelper;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.util.math.MatrixStack;
@@ -110,10 +111,12 @@ public class HUD extends Module {
 		}
 	}
 	
-	public void render(MatrixStack matrices, float tickDelta, TextRenderer textRenderer) {
+	public void render(DrawContext context, float tickDelta, TextRenderer textRenderer) {
 		if(MinecraftClient.getInstance().options.debugEnabled) {
 			return;
 		}
+		
+		MatrixStack matrices = context.getMatrices();
 		
 		matrices.push();
 		
@@ -143,7 +146,7 @@ public class HUD extends Module {
 			matrices.translate(textX, textY, 0);
 			matrices.scale(2, 2, 1);
 			matrices.translate(-textX, -textY, 0);
-			textRenderer.drawWithShadow(matrices, text, textX - (int)(textRenderer.getWidth(text) * (1 - animation.get())), textY, textColor);
+			RenderUtil.drawString(context, text, textX - (int)(textRenderer.getWidth(text) * (1 - animation.get())), textY, textColor, true);
 			matrices.pop();
 			yAdd += ((textRenderer.fontHeight * 2) + 4) * animation.get();
 			i++;
@@ -157,7 +160,7 @@ public class HUD extends Module {
 		if(animation.get() > 0) {
 			String fps = MinecraftClient.getInstance().fpsDebugString;
 			fps = fps.split(" ")[0] + " " + fps.split(" ")[1];
-			yAdd += drawLeftAligned(matrices, textRenderer, fps, i, yAdd, animation);
+			yAdd += drawLeftAligned(context, textRenderer, fps, i, yAdd, animation);
 			i++;
 		}
 		animation = getAnimation(j++);
@@ -180,7 +183,7 @@ public class HUD extends Module {
 					}
 				}
 			}
-			yAdd += drawLeftAligned(matrices, textRenderer, ping, i, yAdd, animation);
+			yAdd += drawLeftAligned(context, textRenderer, ping, i, yAdd, animation);
 			i++;
 		}
 		animation = getAnimation(j++);
@@ -191,7 +194,7 @@ public class HUD extends Module {
 		}
 		if(animation.get() > 0) {
 			String tps = String.format("%.2f tps", ConnectionUtil.getTPS());
-			yAdd += drawLeftAligned(matrices, textRenderer, tps, i, yAdd, animation);
+			yAdd += drawLeftAligned(context, textRenderer, tps, i, yAdd, animation);
 			i++;
 		}
 		animation = getAnimation(j++);
@@ -204,7 +207,7 @@ public class HUD extends Module {
 			float timeSinceLastTick = ConnectionUtil.getTimeSinceLastTick() / 1000f;
 			if(timeSinceLastTick >= 2) {
 				String timeSinceLastTickString = String.format("Seconds Since Last Tick: %.2f", timeSinceLastTick);
-				yAdd += drawLeftAligned(matrices, textRenderer, timeSinceLastTickString, i, yAdd, animation);
+				yAdd += drawLeftAligned(context, textRenderer, timeSinceLastTickString, i, yAdd, animation);
 				i++;
 			}
 		}
@@ -229,7 +232,7 @@ public class HUD extends Module {
 			animation = moduleAnimations.get(m);
 			j++;
 			if(animation.get() > 0) {
-				yAdd += drawRightAligned(matrices, textRenderer, m.getHUDText(), i, yAdd, animation);
+				yAdd += drawRightAligned(context, textRenderer, m.getHUDText(), i, yAdd, animation);
 				i++;
 			}
 		}
@@ -264,7 +267,7 @@ public class HUD extends Module {
 				}
 			}
 			coords = coords.trim();
-			yAdd += drawCoords(matrices, textRenderer, coords, i, yAdd, animation);
+			yAdd += drawCoords(context, textRenderer, coords, i, yAdd, animation);
 			i++;
 		}
 		
@@ -275,7 +278,8 @@ public class HUD extends Module {
 		}
 	}
 	
-	private float drawLeftAligned(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
+	private float drawLeftAligned(DrawContext context, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
+		MatrixStack matrices = context.getMatrices();
 		float[] barC = accentColor.get().getHSB();
 		float[] bgC = bgColor.get().getHSB();
 		float[] textC = textColor.get().getHSB();
@@ -308,11 +312,12 @@ public class HUD extends Module {
 		RenderUtil.drawRect(matrices, textX - 2, textY - 2, textWidth + 4, fontRenderer.fontHeight + 2, bgColor);
 		RenderUtil.drawRect(matrices, textX + textWidth + 2,  textY - 2, 3, fontRenderer.fontHeight + 2, barColor);
 		RenderUtil.postRender();
-		fontRenderer.drawWithShadow(matrices, text, textX, textY, textColor);
+		RenderUtil.drawString(context, text, textX, textY, textColor, true);
 		return (float)((fontRenderer.fontHeight + 2) * animation.get());
 	}
 	
-	private float drawRightAligned(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
+	private float drawRightAligned(DrawContext context, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
+		MatrixStack matrices = context.getMatrices();
 		float[] barC = accentColor.get().getHSB();
 		float[] bgC = bgColor.get().getHSB();
 		float[] textC = textColor.get().getHSB();
@@ -345,11 +350,11 @@ public class HUD extends Module {
 		RenderUtil.drawRect(matrices, textX - 2, textY - 2, textWidth + 4, fontRenderer.fontHeight + 2, bgColor);
 		RenderUtil.drawRect(matrices, textX - 5, textY - 2, 3, fontRenderer.fontHeight + 2, barColor);
 		RenderUtil.postRender();
-		fontRenderer.drawWithShadow(matrices, text, textX, textY, textColor);
+		RenderUtil.drawString(context, text, textX, textY, textColor, true);
 		return (float)((fontRenderer.fontHeight + 2) * animation.get());
 	}
 	
-	private float drawCoords(MatrixStack matrices, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
+	private float drawCoords(DrawContext context, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
 		float[] textC = textColor.get().getHSB();
 		float finalTextHue;
 		if(textColor.get().getChroma()) {
@@ -362,7 +367,7 @@ public class HUD extends Module {
 		cachedWidths.put(text, textWidth);
 		float textX = (float)(2 - ((textWidth + 7) * (1 - animation.get())));
 		float textY = MinecraftClient.getInstance().getWindow().getScaledHeight() - yAdd - (fontRenderer.fontHeight + 2);
-		fontRenderer.drawWithShadow(matrices, text, textX, textY, textColor);
+		RenderUtil.drawString(context, text, textX, textY, textColor, true);
 		return -(float)((fontRenderer.fontHeight + 2) * animation.get());
 	}
 	

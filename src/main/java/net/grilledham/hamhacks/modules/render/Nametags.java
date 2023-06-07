@@ -20,6 +20,7 @@ import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.*;
@@ -114,7 +115,7 @@ public class Nametags extends Module {
 		matrixStack.loadIdentity();
 		matrixStack.scale((float)(1 / mc.getWindow().getScaleFactor()), (float)(1 / mc.getWindow().getScaleFactor()), 1);
 		
-		render(matrixStack, partialTicks);
+		render(e.context, partialTicks);
 		
 		matrixStack.pop();
 	}
@@ -227,7 +228,8 @@ public class Nametags extends Module {
 		}
 	}
 	
-	private void render(MatrixStack matrixStack, double partialTicks) {
+	private void render(DrawContext ctx, double partialTicks) {
+		MatrixStack matrixStack = ctx.getMatrices();
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
@@ -261,7 +263,7 @@ public class Nametags extends Module {
 				
 				drawBackground(bufferBuilder, matrix, -xCenter - 2, -height - 2, width + 3, height + 3);
 				
-				textRenderer.drawWithShadow(matrixStack, display, -xCenter, -height, -1);
+				RenderUtil.drawString(ctx, display, -xCenter, -height, -1, true);
 				
 				if(entityItems.get()) {
 					float[] itemWidths = new float[6];
@@ -303,7 +305,7 @@ public class Nametags extends Module {
 					for(int i = 0; i < 6; i++) {
 						ItemStack stack = getItem(e, i);
 						
-						RenderUtil.drawItem(matrixStack, stack, x + itemWidths[i] / 2, y, (float)(double)itemScale.get(), true, true);
+						RenderUtil.drawItem(ctx, stack, x + itemWidths[i] / 2, y, (float)(double)itemScale.get(), true, true);
 						
 						if(enchantCount > 0 && enchants.get() && !stack.isEmpty()) {
 							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
@@ -319,7 +321,7 @@ public class Nametags extends Module {
 								enchantX = x + (itemWidth / 2) - (textRenderer.getWidth(enchantName) / 2f) + 8;
 								
 								matrixStack.translate(0, 0, 300);
-								textRenderer.drawWithShadow(matrixStack, enchantName, enchantX, y + enchantY, -1);
+								RenderUtil.drawString(ctx, enchantName, enchantX, y + enchantY, -1, true);
 								matrixStack.translate(0, 0, -300);
 								
 								enchantY += textRenderer.fontHeight;

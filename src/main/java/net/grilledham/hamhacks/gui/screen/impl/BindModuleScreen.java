@@ -7,7 +7,8 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.util.ChatUtil;
-import net.minecraft.client.util.math.MatrixStack;
+import net.grilledham.hamhacks.util.RenderUtil;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -29,11 +30,11 @@ public class BindModuleScreen extends GuiScreen {
 	}
 	
 	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		renderBackground(matrices);
-		super.render(matrices, mouseX, mouseY, delta);
+	public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
+		renderBackground(ctx);
+		super.render(ctx, mouseX, mouseY, delta);
 		String text = module.getKey().getName().equals("None") ? "Listening..." : module.getKey().getName() + "...";
-		textRenderer.drawWithShadow(matrices, text, width / 2f - textRenderer.getWidth(text) / 2f, height / 2f - textRenderer.fontHeight / 2f, -1);
+		RenderUtil.drawString(ctx, text, width / 2f - textRenderer.getWidth(text) / 2f, height / 2f - textRenderer.fontHeight / 2f, -1, true);
 	}
 	
 	@Override

@@ -8,6 +8,7 @@ import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
@@ -72,7 +73,8 @@ public class NumberSettingElement extends SettingElement<Double> {
 	}
 	
 	@Override
-	public void render(MatrixStack stack, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
@@ -93,12 +95,12 @@ public class NumberSettingElement extends SettingElement<Double> {
 			RenderUtil.drawRect(stack, x + width - 204, y + 4, (float)(200 * sliderPercentage), 8, boxC);
 		}
 		
-		mc.textRenderer.drawWithShadow(stack, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB());
+		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();
 		
-		editor.render(stack, mx, my, scrollX, scrollY, partialTicks);
+		editor.render(ctx, mx, my, scrollX, scrollY, partialTicks);
 		
 		if(dragging && hasBounds) {
 			float newPercentage = (mx - (x + width - 204)) / (float)200;
