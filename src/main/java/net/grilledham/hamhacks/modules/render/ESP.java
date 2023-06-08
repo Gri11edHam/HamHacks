@@ -167,7 +167,8 @@ public class ESP extends Module {
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
 				.filter(entity -> entity != player || ModuleManager.getModule(Freecam.class).isEnabled() || self.get())
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-				.filter(entity -> (entity instanceof PlayerEntity && players.get()) || (entity instanceof HostileEntity && hostiles.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives.get()));
+				.filter(entity -> (entity instanceof PlayerEntity && players.get()) || (entity instanceof HostileEntity && hostiles.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives.get()))
+				.sorted((a, b) -> Double.compare(b.squaredDistanceTo(mc.getCameraEntity().getEyePos()), a.squaredDistanceTo(mc.getCameraEntity().getEyePos())));
 		
 		entities.addAll(stream.toList());
 	}
@@ -178,6 +179,8 @@ public class ESP extends Module {
 		
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		
+		matrixStack.push();
+		matrixStack.translate(0, 0, -entities.size());
 		for(LivingEntity e : entities) {
 			if(!shouldRender(e)) continue;
 			
@@ -238,7 +241,9 @@ public class ESP extends Module {
 			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos1.getY(), 0).color(oc).next();
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos1.getY(), 0).color(oc).next();
 			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+			matrixStack.translate(0, 0, 1);
 		}
+		matrixStack.pop();
 	}
 	
 	private boolean checkPos(double x, double y, double z, Vec3 min, Vec3 max) {

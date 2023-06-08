@@ -236,6 +236,7 @@ public class Nametags extends Module {
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		
 		matrixStack.push();
+		matrixStack.translate(0, 0, -entities.size());
 		for(LivingEntity e : entities) {
 			if(!shouldRender(e)) continue;
 			
