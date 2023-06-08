@@ -126,6 +126,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
+		stack.translate(0, 0, 200);
 		float w = 220;
 		float h = 122;
 		float newX = x + width - w;

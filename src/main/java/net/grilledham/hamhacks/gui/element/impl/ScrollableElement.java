@@ -107,6 +107,7 @@ public class ScrollableElement extends GuiElement {
 		boolean hovered = mx >= x && my >= y && mx <= x + width && my <= y + height;
 		
 		stack.push();
+		stack.translate(0, 0, 200);
 		
 		RenderUtil.pushScissor(x, y, width, height, (float)scale);
 		

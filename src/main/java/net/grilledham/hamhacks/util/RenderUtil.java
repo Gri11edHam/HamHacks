@@ -257,6 +257,8 @@ public class RenderUtil {
 	
 	public static void drawToolTip(DrawContext ctx, String title, String tooltip, double mx, double my, double scale) {
 		MatrixStack stack = ctx.getMatrices();
+		stack.push();
+		stack.translate(0, 0, 200);
 		String[] lines = tooltip.split("\n");
 		
 		float w = mc.textRenderer.getWidth(Arrays.stream(lines).sorted(Comparator.comparingInt(s -> mc.textRenderer.getWidth((String)s)).reversed()).toList().get(0)) + 8;
@@ -294,6 +296,7 @@ public class RenderUtil {
 		}
 		
 		popScissor();
+		stack.pop();
 	}
 	
 	public static void drawString(DrawContext ctx, String s, float x, float y, int color, boolean shadow) {

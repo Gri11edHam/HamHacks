@@ -137,6 +137,7 @@ public class SettingCategoryElement extends GuiElement {
 		float y = this.y + scrollY;
 		
 		stack.push();
+		stack.translate(0, 0, 200);
 		
 		RenderUtil.pushScissor(x, y, width, height, (float)scale);
 		

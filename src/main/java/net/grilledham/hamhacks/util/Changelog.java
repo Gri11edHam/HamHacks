@@ -8,6 +8,7 @@ public class Changelog {
 				- Added Mod Menu integration
 				- Added module:
 					: TitleBar
+				- Improved text rendering
 			
 			Update 1.8.5:
 				- Added Click GUI command
