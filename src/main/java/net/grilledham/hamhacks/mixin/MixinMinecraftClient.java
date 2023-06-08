@@ -6,20 +6,28 @@ import net.grilledham.hamhacks.gui.screen.impl.NewVersionScreen;
 import net.grilledham.hamhacks.mixininterface.IClientPlayerInteractionManager;
 import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.mixininterface.IRenderTickCounter;
+import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.misc.TitleBar;
 import net.grilledham.hamhacks.notification.Notifications;
 import net.grilledham.hamhacks.util.MouseUtil;
 import net.grilledham.hamhacks.util.Updater;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
 import net.minecraft.client.WindowEventHandler;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.Session;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceReload;
+import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.util.ModStatus;
 import net.minecraft.util.Unit;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +38,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -48,6 +57,19 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	@Shadow public abstract Session getSession();
 	
 	@Shadow @Nullable public Screen currentScreen;
+	
+	@Shadow
+	public static ModStatus getModStatus() {
+		return null;
+	}
+	
+	@Shadow public abstract @Nullable ClientPlayNetworkHandler getNetworkHandler();
+	
+	@Shadow private @Nullable IntegratedServer server;
+	
+	@Shadow public abstract boolean isConnectedToRealms();
+	
+	@Shadow public abstract ServerInfo getCurrentServerEntry();
 	
 	public MixinMinecraftClient(String string) {
 		super(string);
@@ -77,6 +99,27 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 			}
 		});
 		return toReturn;
+	}
+	
+	@Inject(method = "getWindowTitle", at = @At("HEAD"), cancellable = true)
+	public void modifyWindowTitle(CallbackInfoReturnable<String> cir) {
+		TitleBar titleBar = ModuleManager.getModule(TitleBar.class);
+		if(titleBar != null && titleBar.isEnabled() && !titleBar.title.get().equals("")) {
+			StringBuilder stringBuilder = new StringBuilder();
+			ClientPlayNetworkHandler clientPlayNetworkHandler = getNetworkHandler();
+			if (clientPlayNetworkHandler != null && clientPlayNetworkHandler.getConnection().isOpen()) {
+				if (server != null && !server.isRemote()) {
+					stringBuilder.append(I18n.translate("title.singleplayer"));
+				} else if (isConnectedToRealms()) {
+					stringBuilder.append(I18n.translate("title.multiplayer.realms"));
+				} else if (this.server == null && (getCurrentServerEntry() == null || !getCurrentServerEntry().isLocal())) {
+					stringBuilder.append(I18n.translate("title.multiplayer.other"));
+				} else {
+					stringBuilder.append(I18n.translate("title.multiplayer.lan"));
+				}
+			}
+			cir.setReturnValue(titleBar.titleProvider.getTitle(getModStatus().isModded(), HamHacksClient.VERSION.getVersion(0, true), SharedConstants.getGameVersion().getName(), stringBuilder.toString(), ModuleManager.getModules().stream().filter(Module::isEnabled).toList().size(), ModuleManager.getModules().size()));
+		}
 	}
 	
 	@Inject(method = "<init>", at = @At("TAIL"))

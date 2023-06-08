@@ -43,11 +43,7 @@ public class ModuleManager {
 	}
 	
 	public static <T extends Module> T getModule(Class<T> clazz) {
-		T m = clazz.cast(modules.stream().filter(module -> module.getClass() == clazz).findFirst().orElse(null));
-		if(m == null) {
-			throw new IllegalArgumentException("Module of class " + clazz.getName() + " is not registered:\n" + Arrays.toString(modules.toArray()));
-		}
-		return m;
+		return clazz.cast(modules.stream().filter(module -> module.getClass() == clazz).findFirst().orElse(null));
 	}
 	
 	public static void updateKeybinds() {

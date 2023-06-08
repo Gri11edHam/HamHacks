@@ -346,6 +346,17 @@
 	"hamhacks.module.velocity.vertical": "Vertical",
 	"hamhacks.module.velocity.vertical.tooltip": "Modifies your vertical velocity",
 
+	"hamhacks.module.titleBar": "Title Bar",
+	"hamhacks.module.titleBar.tooltip": "Allows you to modify the game's title bar",
+	"hamhacks.module.titleBar.title": "Title",
+	"hamhacks.module.titleBar.title.tooltip": "The window title.\nPlaceholders:\n{modded} - \"*\" if the game is modded\n{ver} - HamHacks version\n{mcVer} - Minecraft version\n{server} - The server/world you are playing on\n{enabledM} - The number of enabled modules\n{totalM} - The total number of modules",
+	"hamhacks.module.titleBar.icon": "Icon",
+	"hamhacks.module.titleBar.icon.default": "Default",
+	"hamhacks.module.titleBar.icon.old": "Old",
+	"hamhacks.module.titleBar.icon.hamhacks": "HamHacks",
+	"hamhacks.module.titleBar.icon.custom": "Custom",
+	"hamhacks.module.titleBar.iconPath": "Custom Icon Path",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
 

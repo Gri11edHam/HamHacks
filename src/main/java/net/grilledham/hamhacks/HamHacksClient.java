@@ -17,6 +17,7 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.util.*;
+import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 
 import java.util.Comparator;
@@ -82,6 +83,8 @@ public class HamHacksClient implements ClientModInitializer {
 		
 		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 		CommandManager.sortCommands(Comparator.comparing(Command::getName));
+		
+		MinecraftClient.getInstance().updateWindowTitle();
 	}
 	
 	public static void shutdown() {

@@ -6,6 +6,8 @@ public class Changelog {
 			Update 1.9:
 				- Updated to Minecraft 1.20
 				- Added Mod Menu integration
+				- Added module:
+					: TitleBar
 			
 			Update 1.8.5:
 				- Added Click GUI command

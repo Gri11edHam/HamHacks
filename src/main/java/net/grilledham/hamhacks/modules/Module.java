@@ -31,7 +31,12 @@ public class Module {
 	
 	protected final KeySetting key;
 	
-	public BoolSetting enabled = new BoolSetting("hamhacks.module.generic.enabled", false, () -> true);
+	public BoolSetting enabled = new BoolSetting("hamhacks.module.generic.enabled", false, () -> true) {
+		@Override
+		public void onChange() {
+			mc.updateWindowTitle();
+		}
+	};
 	
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected IMinecraftClient imc = (IMinecraftClient)mc;
