@@ -12,7 +12,7 @@
 		"sources": "https://github.com/Gri11edHam/HamHacks",
 		"issues": "https://github.com/Gri11edHam/HamHacks/issues"
 	},
-	"license": "MIT",
+	"license": "GPL-3.0",
 	"icon": "assets/hamhacks/icon.png",
 	"environment": "client",
 	"entrypoints": {
