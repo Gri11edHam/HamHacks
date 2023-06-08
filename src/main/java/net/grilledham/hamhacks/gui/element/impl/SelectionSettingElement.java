@@ -126,7 +126,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
-		stack.translate(0, 0, 200);
+		stack.translate(0, 0, 1);
 		RenderUtil.preRender();
 		RenderUtil.pushScissor(x, y, width, (height * elements.size()) * (float)selectionAnimation.get(), (float)scale);
 		

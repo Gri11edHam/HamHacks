@@ -132,7 +132,7 @@ public class ListSettingElement extends SettingElement<List<String>> {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
-		stack.translate(0, 0, 200);
+		stack.translate(0, 0, 1);
 		RenderUtil.preRender();
 		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * (float)selectionAnimation.get(), (float)scale);
 		
