@@ -51,7 +51,6 @@ public class CategoryElement extends GuiElement {
 		float scissorHeight = height + scrollArea.getHeight() * (float)(1 - openCloseAnimation.get());
 		
 		RenderUtil.pushScissor(x, y, width, scissorHeight, (float)scale);
-		RenderUtil.applyScissor(ctx);
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
@@ -63,7 +62,7 @@ public class CategoryElement extends GuiElement {
 		
 		scrollArea.render(ctx, mx, my, scrollX, scrollY, partialTicks);
 		
-		RenderUtil.popScissor(ctx);
+		RenderUtil.popScissor();
 		RenderUtil.postRender();
 		
 		stack.pop();

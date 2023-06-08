@@ -44,6 +44,9 @@ public class GuiScreen extends Screen {
 		if(dirty || !initialized) {
 			clearAndInit();
 		}
+		if(last != null) {
+			super.renderBackground(ctx);
+		}
 		MatrixStack stack = ctx.getMatrices();
 		mx = (int)((mx * client.getWindow().getScaleFactor()) / scale);
 		my = (int)((my * client.getWindow().getScaleFactor()) / scale);

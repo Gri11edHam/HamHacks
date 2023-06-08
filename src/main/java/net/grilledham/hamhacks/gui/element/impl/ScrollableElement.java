@@ -71,7 +71,6 @@ public class ScrollableElement extends GuiElement {
 		stack.push();
 		
 		RenderUtil.adjustScissor(x, y, width, height, (float)scale);
-		RenderUtil.applyScissor(ctx);
 		
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
@@ -83,7 +82,7 @@ public class ScrollableElement extends GuiElement {
 			}
 		}
 		
-		RenderUtil.popScissor(ctx);
+		RenderUtil.popScissor();
 		
 		stack.pop();
 		
@@ -110,7 +109,6 @@ public class ScrollableElement extends GuiElement {
 		stack.push();
 		
 		RenderUtil.pushScissor(x, y, width, height, (float)scale);
-		RenderUtil.applyScissor(ctx);
 		
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
@@ -120,7 +118,7 @@ public class ScrollableElement extends GuiElement {
 			}
 		}
 		
-		RenderUtil.popScissor(ctx);
+		RenderUtil.popScissor();
 		
 		stack.pop();
 	}

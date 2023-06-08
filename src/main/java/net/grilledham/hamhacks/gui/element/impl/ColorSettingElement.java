@@ -137,7 +137,6 @@ public class ColorSettingElement extends SettingElement<Color> {
 		}
 		
 		RenderUtil.pushScissor(newX - 1 + ((w + 2) * (float)(1 - selectionAnimation.get())), newY - 1, (w + 2) * (float)selectionAnimation.get(), (h + 2) * (float)selectionAnimation.get(), (float)scale);
-		RenderUtil.applyScissor(ctx);
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
@@ -162,7 +161,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 			hexValPart.render(ctx, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
 		}
 		
-		RenderUtil.popScissor(ctx);
+		RenderUtil.popScissor();
 		RenderUtil.postRender();
 		stack.pop();
 		

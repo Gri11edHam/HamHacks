@@ -134,7 +134,6 @@ public class ListSettingElement extends SettingElement<List<String>> {
 		stack.push();
 		RenderUtil.preRender();
 		RenderUtil.pushScissor(x + width - maxWidth, y + height, maxWidth, (height * (stringParts.size() + 1)) * (float)selectionAnimation.get(), (float)scale);
-		RenderUtil.applyScissor(ctx);
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
 		RenderUtil.drawRect(stack, x + width - maxWidth, y + height, maxWidth, height * (stringParts.size() + 1), ui.bgColor.get().getRGB());
@@ -152,7 +151,7 @@ public class ListSettingElement extends SettingElement<List<String>> {
 		}
 		
 		RenderUtil.postRender();
-		RenderUtil.popScissor(ctx);
+		RenderUtil.popScissor();
 		stack.pop();
 		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}

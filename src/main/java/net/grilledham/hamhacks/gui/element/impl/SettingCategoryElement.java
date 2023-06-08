@@ -86,7 +86,6 @@ public class SettingCategoryElement extends GuiElement {
 		stack.push();
 		
 		RenderUtil.adjustScissor(x, y, width, (float)(collapsedHeight + elementsHeight * openCloseAnimation.get()), (float)scale);
-		RenderUtil.applyScissor(ctx);
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
@@ -117,7 +116,7 @@ public class SettingCategoryElement extends GuiElement {
 			}
 		}
 		
-		RenderUtil.popScissor(ctx);
+		RenderUtil.popScissor();
 		RenderUtil.postRender();
 		
 		stack.pop();
@@ -140,7 +139,6 @@ public class SettingCategoryElement extends GuiElement {
 		stack.push();
 		
 		RenderUtil.pushScissor(x, y, width, height, (float)scale);
-		RenderUtil.applyScissor(ctx);
 		
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
@@ -150,7 +148,7 @@ public class SettingCategoryElement extends GuiElement {
 			}
 		}
 		
-		RenderUtil.popScissor(ctx);
+		RenderUtil.popScissor();
 		
 		stack.pop();
 	}

@@ -37,6 +37,7 @@ public class RenderUtil {
 	
 	public static void pushScissor(float x, float y, float width, float height, float scale) {
 		scissorStack.add(0, new Float[] {x + SCISSOR_TRANSLATION_X, y + SCISSOR_TRANSLATION_Y, width, height, scale});
+		applyScissor();
 	}
 	
 	public static void adjustScissor(float x, float y, float width, float height, float scale) {
@@ -49,25 +50,24 @@ public class RenderUtil {
 			height = y1 - y;
 		}
 		scissorStack.add(0, new Float[] {x + SCISSOR_TRANSLATION_X, y + SCISSOR_TRANSLATION_Y, width, height, scale});
+		applyScissor();
 	}
 	
-	public static void popScissor(DrawContext ctx) {
+	public static void popScissor() {
 		scissorStack.remove(0);
 		RenderSystem.disableScissor();
 		if(!scissorStack.isEmpty()) {
-			applyScissor(ctx);
+			applyScissor();
 		}
 	}
 	
-	public static void applyScissor(DrawContext ctx) {
+	private static void applyScissor() {
 		float scaleFactor = scissorStack.get(0)[4];
 		int x = (int)Math.floor(scissorStack.get(0)[0] * scaleFactor);
 		int y = (int)Math.floor(scissorStack.get(0)[1] * scaleFactor);
 		int w = (int)Math.ceil(scissorStack.get(0)[2] * scaleFactor);
 		int h = (int)Math.ceil(scissorStack.get(0)[3] * scaleFactor);
-		if(!(w < 0 || h < 0)) {
-			ctx.enableScissor(x, mc.getWindow().getHeight() - y - h, w, h);
-		}
+		RenderSystem.enableScissor(x, mc.getWindow().getHeight() - y - h, w, h);
 	}
 	
 	public static int mix(int c1, int c2, double by) {
@@ -275,7 +275,6 @@ public class RenderUtil {
 		}
 		
 		pushScissor(x, y, w, h, (float)scale);
-		applyScissor(ctx);
 		
 		preRender();
 		
@@ -294,15 +293,17 @@ public class RenderUtil {
 			yAdd += mc.textRenderer.fontHeight + 2;
 		}
 		
-		popScissor(ctx);
+		popScissor();
 	}
 	
 	public static void drawString(DrawContext ctx, String s, float x, float y, int color, boolean shadow) {
-		mc.textRenderer.draw(s, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 100);
+		mc.textRenderer.draw(s, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
+		ctx.draw();
 	}
 	
 	public static void drawString(DrawContext ctx, Text t, float x, float y, int color, boolean shadow) {
-		mc.textRenderer.draw(t, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 100);
+		mc.textRenderer.draw(t, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
+		ctx.draw();
 	}
 	
 	public static void drawItem(DrawContext ctx, ItemStack itemStack, float x, float y, float scale, boolean count, boolean damage) {

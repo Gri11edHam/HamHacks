@@ -128,14 +128,13 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 		stack.push();
 		RenderUtil.preRender();
 		RenderUtil.pushScissor(x, y, width, (height * elements.size()) * (float)selectionAnimation.get(), (float)scale);
-		RenderUtil.applyScissor(ctx);
 		
 		for(GuiElement element : elements) {
 			element.render(ctx, mx, my, scrollX, scrollY, partialTicks);
 		}
 		
 		RenderUtil.postRender();
-		RenderUtil.popScissor(ctx);
+		RenderUtil.popScissor();
 		stack.pop();
 		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}

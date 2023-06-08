@@ -74,7 +74,6 @@ public class StringSettingElement extends SettingElement<String> {
 		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.adjustScissor(x + width - 102, y, 100, height, (float)scale);
-		RenderUtil.applyScissor(ctx);
 		
 		if(getValue() == null || getValue().equals("")) {
 			String value = placeholder.get();
@@ -90,7 +89,7 @@ public class StringSettingElement extends SettingElement<String> {
 			RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(getSelectionStart())) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, mc.textRenderer.getWidth(getValue().substring(getSelectionStart(), getSelectionEnd())), mc.textRenderer.fontHeight + 1, selectionColor);
 		}
 		
-		RenderUtil.popScissor(ctx);
+		RenderUtil.popScissor();
 		
 		int cursorColor = RenderUtil.mix(ui.textColor.get().getRGB(), ui.textColor.get().getRGB() & 0xffffff, cursorAnimation.get());
 		RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, 1, mc.textRenderer.fontHeight + 1, cursorColor);
