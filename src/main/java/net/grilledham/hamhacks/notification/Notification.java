@@ -85,6 +85,7 @@ public class Notification {
 	public float render(DrawContext context, double mx, double my, float yAdd, float partialTicks) {
 		MatrixStack matrices = context.getMatrices();
 		matrices.push();
+		matrices.translate(0, 0, 1);
 		
 		double totalWidth = WIDTH + 5;
 		double inOutAdd = inOutAnimation.get() * totalWidth;
