@@ -140,7 +140,7 @@ public class Nametags extends Module {
 						return LivingEntity.class;
 					}
 				}, new Box(mc.player.getBlockPos().add(-256, -256, -256), mc.player.getBlockPos().add(256, 256, 256)), Objects::nonNull).stream()
-				.filter(this::shouldRender);
+				.filter(this::shouldRender).sorted((a, b) -> Double.compare(b.squaredDistanceTo(mc.getCameraEntity().getEyePos()), a.squaredDistanceTo(mc.getCameraEntity().getEyePos())));
 		
 		entities.addAll(stream.toList());
 		
@@ -235,6 +235,7 @@ public class Nametags extends Module {
 		
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		
+		matrixStack.push();
 		for(LivingEntity e : entities) {
 			if(!shouldRender(e)) continue;
 			
@@ -333,7 +334,9 @@ public class Nametags extends Module {
 				
 				matrixStack.pop();
 			}
+			matrixStack.translate(0, 0, 1);
 		}
+		matrixStack.pop();
 	}
 	
 	private ItemStack getItem(LivingEntity entity, int index) {
