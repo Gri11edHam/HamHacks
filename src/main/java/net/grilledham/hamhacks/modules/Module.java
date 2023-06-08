@@ -34,6 +34,11 @@ public class Module {
 	public BoolSetting enabled = new BoolSetting("hamhacks.module.generic.enabled", false, () -> true) {
 		@Override
 		public void onChange() {
+			if(get()) {
+				onEnable();
+			} else{
+				onDisable();
+			}
 			mc.updateWindowTitle();
 		}
 	};
@@ -43,7 +48,6 @@ public class Module {
 	
 	private int forceDisabled = 0;
 	protected boolean wasEnabled;
-	protected boolean lastEnabled;
 	
 	public Module(Text name, Category category, Keybind key) {
 		this.name = name;
@@ -129,17 +133,6 @@ public class Module {
 	
 	public String getConfigName() {
 		return ((TranslatableTextContent)name.getContent()).getKey();
-	}
-	
-	public void updateEnabled() {
-		if(lastEnabled != enabled.get()) {
-			if(enabled.get()) {
-				onEnable();
-			} else{
-				onDisable();
-			}
-		}
-		lastEnabled = enabled.get();
 	}
 	
 	public String getHUDText() {

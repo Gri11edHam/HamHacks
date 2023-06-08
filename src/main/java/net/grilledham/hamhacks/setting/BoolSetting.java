@@ -12,7 +12,7 @@ public class BoolSetting extends Setting<Boolean> {
 	}
 	
 	public void toggle() {
-		this.value = !this.value;
+		set(!value);
 	}
 	
 	@Override

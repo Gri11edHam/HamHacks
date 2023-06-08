@@ -52,7 +52,6 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
 	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
-		ModuleManager.updateEnabled();
 		EventRender event = new EventRender(drawContext, tickDelta);
 		event.call();
 	}

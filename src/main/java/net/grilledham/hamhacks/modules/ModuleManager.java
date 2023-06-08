@@ -50,10 +50,6 @@ public class ModuleManager {
 		modules.forEach(Module::checkKeybind);
 	}
 	
-	public static void updateEnabled() {
-		modules.forEach(Module::updateEnabled);
-	}
-	
 	public static void sortModules(Comparator<Module> comparator) {
 		modules.sort(comparator);
 	}
