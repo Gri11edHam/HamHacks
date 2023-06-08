@@ -9,6 +9,10 @@ public class Changelog {
 				- Added module:
 					: TitleBar
 				- Improved text rendering
+				- Improved modules:
+					: Nametags
+					: ESP
+				- Bug fixes
 			
 			Update 1.8.5:
 				- Added Click GUI command
