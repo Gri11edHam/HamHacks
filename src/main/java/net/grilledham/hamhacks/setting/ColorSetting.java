@@ -73,7 +73,6 @@ public class ColorSetting extends Setting<Color> {
 	@Override
 	public void load(JsonElement e) {
 		JsonObject obj = e.getAsJsonObject();
-		value.set(obj.get("hue").getAsFloat(), obj.get("saturation").getAsFloat(), obj.get("brightness").getAsFloat(), obj.get("alpha").getAsFloat());
-		value.setChroma(obj.get("chroma").getAsBoolean());
+		set(obj.get("hue").getAsFloat(), obj.get("saturation").getAsFloat(), obj.get("brightness").getAsFloat(), obj.get("alpha").getAsFloat(), obj.get("chroma").getAsBoolean());
 	}
 }

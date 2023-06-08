@@ -35,6 +35,6 @@ public class StringSetting extends Setting<String> {
 	
 	@Override
 	public void load(JsonElement e) {
-		value = e.getAsString();
+		set(e.getAsString());
 	}
 }

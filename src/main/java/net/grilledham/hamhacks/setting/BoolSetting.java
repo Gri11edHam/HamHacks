@@ -27,6 +27,6 @@ public class BoolSetting extends Setting<Boolean> {
 	
 	@Override
 	public void load(JsonElement e) {
-		value = e.getAsBoolean();
+		set(e.getAsBoolean());
 	}
 }

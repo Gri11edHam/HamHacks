@@ -46,6 +46,6 @@ public class SelectionSetting extends Setting<Integer> {
 	
 	@Override
 	public void load(JsonElement e) {
-		value = e.getAsInt();
+		set(e.getAsInt());
 	}
 }

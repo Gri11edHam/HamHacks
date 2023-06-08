@@ -76,6 +76,6 @@ public class NumberSetting extends Setting<Double> {
 	
 	@Override
 	public void load(JsonElement e) {
-		value = e.getAsDouble();
+		set(e.getAsDouble());
 	}
 }

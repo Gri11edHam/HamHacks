@@ -48,6 +48,6 @@ public class KeySetting extends Setting<Keybind> {
 		for(int i = 0; i < arr.size(); i++) {
 			codes[i] = arr.get(i).getAsInt();
 		}
-		value.setKey(codes);
+		set(codes);
 	}
 }
