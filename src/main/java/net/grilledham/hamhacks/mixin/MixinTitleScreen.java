@@ -4,6 +4,8 @@ import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.gui.element.impl.ButtonElement;
 import net.grilledham.hamhacks.gui.screen.impl.ChangelogScreen;
 import net.grilledham.hamhacks.gui.screen.impl.NewVersionScreen;
+import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.util.Updater;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -38,7 +40,10 @@ public class MixinTitleScreen extends Screen {
 	
 	@Inject(method = "render", at = @At("TAIL"))
 	public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		changelogButton.render(context, mouseX, mouseY, 0, 0, delta);
+		int showChangelogButton = PageManager.getPage(ClickGUI.class).showChangelogButton.get();
+		if(showChangelogButton == 0 || (showChangelogButton == 1 && HamHacksClient.updated)) {
+			changelogButton.render(context, mouseX, mouseY, 0, 0, delta);
+		}
 		if(Updater.newVersionAvailable() && !HamHacksClient.seenVersion.isNewerThan(HamHacksClient.VERSION)) {
 			updateButton.setText("Update (" + Updater.getLatest().getVersion(0, true) + ")");
 			updateButton.render(context, mouseX, mouseY, 0, 0, delta);
@@ -48,7 +53,8 @@ public class MixinTitleScreen extends Screen {
 	
 	@Inject(method = "mouseClicked", at = @At("TAIL"), cancellable = true)
 	public void clicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-		if(changelogButton.click(mouseX, mouseY, 0, 0, button)) {
+		int showChangelogButton = PageManager.getPage(ClickGUI.class).showChangelogButton.get();
+		if((showChangelogButton == 0 || (showChangelogButton == 1 && HamHacksClient.updated)) && changelogButton.click(mouseX, mouseY, 0, 0, button)) {
 			cir.setReturnValue(true);
 		}
 		if(Updater.newVersionAvailable() && !HamHacksClient.seenVersion.isNewerThan(HamHacksClient.VERSION)) {
@@ -63,7 +69,8 @@ public class MixinTitleScreen extends Screen {
 	
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		if(changelogButton.release(mouseX, mouseY, 0, 0, button)) {
+		int showChangelogButton = PageManager.getPage(ClickGUI.class).showChangelogButton.get();
+		if((showChangelogButton == 0 || (showChangelogButton == 1 && HamHacksClient.updated)) && changelogButton.release(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
 		if(Updater.newVersionAvailable() && !HamHacksClient.seenVersion.isNewerThan(HamHacksClient.VERSION)) {

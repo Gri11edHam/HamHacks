@@ -7,10 +7,7 @@ import net.grilledham.hamhacks.gui.screen.impl.ModuleSettingsScreen;
 import net.grilledham.hamhacks.gui.screen.impl.SettingContainerScreen;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.page.Page;
-import net.grilledham.hamhacks.setting.ColorSetting;
-import net.grilledham.hamhacks.setting.KeySetting;
-import net.grilledham.hamhacks.setting.NumberSetting;
-import net.grilledham.hamhacks.setting.SettingCategory;
+import net.grilledham.hamhacks.setting.*;
 import net.grilledham.hamhacks.util.Color;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -32,6 +29,7 @@ public class ClickGUI extends Page {
 	private final SettingCategory OPTIONS_CATEGORY = new SettingCategory("hamhacks.page.clickGui.category.options");
 	
 	public final KeySetting openMenu = new KeySetting("hamhacks.page.clickGui.openMenu", new Keybind(GLFW.GLFW_KEY_RIGHT_SHIFT), () -> true);
+	public final SelectionSetting showChangelogButton = new SelectionSetting("hamhacks.page.clickGui.showChangelogButton", 1, () -> true, "hamhacks.page.clickGui.showChangelogButton.always", "hamhacks.page.clickGui.showChangelogButton.afterUpdate", "hamhacks.page.clickGui.showChangelogButton.never");
 	
 	public boolean typing = false;
 	
@@ -50,6 +48,7 @@ public class ClickGUI extends Page {
 		APPEARANCE_CATEGORY.add(categoriesWidth);
 		settingCategories.add(1, OPTIONS_CATEGORY);
 		OPTIONS_CATEGORY.add(openMenu);
+		OPTIONS_CATEGORY.add(showChangelogButton);
 	}
 	
 	@EventListener

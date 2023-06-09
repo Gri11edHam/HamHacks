@@ -385,6 +385,10 @@
 	"hamhacks.page.clickGui.scale": "Scale",
 	"hamhacks.page.clickGui.categoriesWidth": "Categories Width",
 	"hamhacks.page.clickGui.openMenu": "Open Menu",
+	"hamhacks.page.clickGui.showChangelogButton": "Show Changelog Button",
+	"hamhacks.page.clickGui.showChangelogButton.always": "Always",
+	"hamhacks.page.clickGui.showChangelogButton.afterUpdate": "After Update",
+	"hamhacks.page.clickGui.showChangelogButton.never": "Never",
 
 	"hamhacks.page.command": "Commands",
 	"hamhacks.page.command.category.general": "General",

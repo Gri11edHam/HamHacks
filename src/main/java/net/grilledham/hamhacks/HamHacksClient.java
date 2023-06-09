@@ -34,9 +34,10 @@ public class HamHacksClient implements ClientModInitializer {
 	public static final Logger LOGGER = LogUtils.getLogger();
 	
 	public static boolean firstTime = false;
+	public static Version seenVersion = VERSION;
+	public static boolean updated = false;
 	
 	public static boolean initialized = false;
-	public static Version seenVersion = VERSION;
 	
 	@Override
 	public void onInitializeClient() {

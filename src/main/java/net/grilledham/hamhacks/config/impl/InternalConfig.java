@@ -40,6 +40,7 @@ public class InternalConfig extends Config {
 			JsonObject object = new JsonObject();
 			object.addProperty("config_version", HamHacksClient.CONFIG_VERSION);
 			object.addProperty("seen_version", HamHacksClient.seenVersion.getVersion(0, true));
+			object.addProperty("last_launched", HamHacksClient.VERSION.getVersion(0, true));
 			JsonObject categories = new JsonObject();
 			for(Category category : Category.values()) {
 				JsonObject cObj = new JsonObject();
@@ -61,6 +62,13 @@ public class InternalConfig extends Config {
 		super.parseSettings(obj);
 		if(obj.has("seen_version")) {
 			HamHacksClient.seenVersion = new Version(obj.get("seen_version").getAsString());
+		}
+		if(obj.has("last_launched")) {
+			if(HamHacksClient.VERSION.isNewerThan(obj.get("last_launched").getAsString())) {
+				HamHacksClient.updated = true;
+			}
+		} else {
+			HamHacksClient.updated = true;
 		}
 	}
 }
