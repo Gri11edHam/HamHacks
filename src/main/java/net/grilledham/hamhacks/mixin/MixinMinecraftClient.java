@@ -9,6 +9,7 @@ import net.grilledham.hamhacks.mixininterface.IRenderTickCounter;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.TitleBar;
+import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.notification.Notifications;
 import net.grilledham.hamhacks.util.MouseUtil;
 import net.grilledham.hamhacks.util.Updater;
@@ -40,6 +41,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -120,6 +122,13 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 			}
 			cir.setReturnValue(titleBar.titleProvider.getTitle(getModStatus().isModded(), HamHacksClient.VERSION.getVersion(0, true), SharedConstants.getGameVersion().getName(), stringBuilder.toString(), ModuleManager.getModules().stream().filter(Module::isEnabled).toList().size(), ModuleManager.getModules().size()));
 		}
+	}
+	
+	@Inject(method = "reloadResources()Ljava/util/concurrent/CompletableFuture;", at = @At("TAIL"))
+	public void onResourceReload(CallbackInfoReturnable<CompletableFuture<Void>> cir) {
+		ModuleManager.getModule(HUD.class).reloadResources();
+		
+		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 	}
 	
 	@Inject(method = "<init>", at = @At("TAIL"))

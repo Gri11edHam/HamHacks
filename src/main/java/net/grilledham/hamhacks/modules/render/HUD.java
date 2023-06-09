@@ -378,7 +378,7 @@ public class HUD extends Module {
 		return animations.get(i);
 	}
 	
-	public void updateLanguage() {
+	public void reloadResources() {
 		widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getHUDText()), MinecraftClient.getInstance().textRenderer.getWidth(a.getHUDText()))).toList();
 		cachedWidths.clear();
 	}
