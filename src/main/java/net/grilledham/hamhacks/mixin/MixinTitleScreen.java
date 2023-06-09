@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.mixin;
 
+import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.gui.element.impl.ButtonElement;
 import net.grilledham.hamhacks.gui.screen.impl.ChangelogScreen;
 import net.grilledham.hamhacks.gui.screen.impl.NewVersionScreen;
@@ -27,6 +28,9 @@ public class MixinTitleScreen extends Screen {
 		TitleScreen $this = (TitleScreen)(Object)this;
 		MinecraftClient.getInstance().setScreen(new NewVersionScreen($this));
 	});
+	private final ButtonElement dontUpdateButton = new ButtonElement("X", 104, 24, 20, 20, (float)MinecraftClient.getInstance().getWindow().getScaleFactor(), () -> {
+		HamHacksClient.seenVersion = Updater.getLatest();
+	});
 	
 	private MixinTitleScreen() {
 		super(Text.translatable(""));
@@ -35,9 +39,10 @@ public class MixinTitleScreen extends Screen {
 	@Inject(method = "render", at = @At("TAIL"))
 	public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		changelogButton.render(context, mouseX, mouseY, 0, 0, delta);
-		if(Updater.newVersionAvailable()) {
+		if(Updater.newVersionAvailable() && !HamHacksClient.seenVersion.isNewerThan(HamHacksClient.VERSION)) {
 			updateButton.setText("Update (" + Updater.getLatest().getVersion(0, true) + ")");
 			updateButton.render(context, mouseX, mouseY, 0, 0, delta);
+			dontUpdateButton.render(context, mouseX, mouseY, 0, 0, delta);
 		}
 	}
 	
@@ -46,8 +51,13 @@ public class MixinTitleScreen extends Screen {
 		if(changelogButton.click(mouseX, mouseY, 0, 0, button)) {
 			cir.setReturnValue(true);
 		}
-		if(Updater.newVersionAvailable() && updateButton.click(mouseX, mouseY, 0, 0, button)) {
-			cir.setReturnValue(true);
+		if(Updater.newVersionAvailable() && !HamHacksClient.seenVersion.isNewerThan(HamHacksClient.VERSION)) {
+			if(updateButton.click(mouseX, mouseY, 0, 0, button)) {
+				cir.setReturnValue(true);
+			}
+			if(dontUpdateButton.click(mouseX, mouseY, 0, 0, button)) {
+				cir.setReturnValue(true);
+			}
 		}
 	}
 	
@@ -56,8 +66,13 @@ public class MixinTitleScreen extends Screen {
 		if(changelogButton.release(mouseX, mouseY, 0, 0, button)) {
 			return true;
 		}
-		if(Updater.newVersionAvailable() && updateButton.release(mouseX, mouseY, 0, 0, button)) {
-			return true;
+		if(Updater.newVersionAvailable() && !HamHacksClient.seenVersion.isNewerThan(HamHacksClient.VERSION)) {
+			if(updateButton.release(mouseX, mouseY, 0, 0, button)) {
+				return true;
+			}
+			if(dontUpdateButton.release(mouseX, mouseY, 0, 0, button)) {
+				return true;
+			}
 		}
 		return super.mouseReleased(mouseX, mouseY, button);
 	}

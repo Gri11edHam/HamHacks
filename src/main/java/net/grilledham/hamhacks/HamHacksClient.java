@@ -36,6 +36,7 @@ public class HamHacksClient implements ClientModInitializer {
 	public static boolean firstTime = false;
 	
 	public static boolean initialized = false;
+	public static Version seenVersion = VERSION;
 	
 	@Override
 	public void onInitializeClient() {

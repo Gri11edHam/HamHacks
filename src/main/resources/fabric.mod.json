@@ -26,7 +26,7 @@
 			"net.grilledham.hamhacks.config.impl.HamHacksConfig"
 		],
 		"hamhacksStatic": [
-			"net.grilledham.hamhacks.config.impl.CategoryConfig",
+			"net.grilledham.hamhacks.config.impl.InternalConfig",
 			"net.grilledham.hamhacks.profile.ProfileManager"
 		],
 		"modmenu": [
