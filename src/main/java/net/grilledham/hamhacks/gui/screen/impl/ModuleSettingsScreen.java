@@ -34,7 +34,7 @@ public class ModuleSettingsScreen extends GuiScreen {
 		float maxWidth = 0;
 		topElement = new GuiElement(-1, 0, client.textRenderer.getWidth(module.getName()) + 2 + 2, 16, scale) {
 			@Override
-			public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+			public void draw(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 				MatrixStack stack = ctx.getMatrices();
 				float x = this.x + scrollX;
 				float y = this.y + scrollY;

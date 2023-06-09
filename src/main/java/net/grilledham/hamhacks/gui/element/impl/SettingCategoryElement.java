@@ -79,7 +79,7 @@ public class SettingCategoryElement extends GuiElement {
 	}
 	
 	@Override
-	public void render(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {
+	public void draw(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + offX;
 		float y = this.y + offY;
@@ -131,7 +131,7 @@ public class SettingCategoryElement extends GuiElement {
 	}
 	
 	@Override
-	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void drawTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;

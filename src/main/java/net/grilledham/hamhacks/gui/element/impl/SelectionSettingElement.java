@@ -88,7 +88,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 	}
 	
 	@Override
-	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void draw(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
@@ -121,7 +121,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 	}
 	
 	@Override
-	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void drawTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
@@ -137,7 +137,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 		RenderUtil.postRender();
 		RenderUtil.popScissor();
 		stack.pop();
-		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
+		super.drawTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override

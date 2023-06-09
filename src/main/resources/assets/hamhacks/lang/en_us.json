@@ -383,6 +383,7 @@
 	"hamhacks.page.clickGui.enabledColorHovered": "Enabled Color (Hovered)",
 	"hamhacks.page.clickGui.textColor": "Text Color",
 	"hamhacks.page.clickGui.scale": "Scale",
+	"hamhacks.page.clickGui.categoriesWidth": "Categories Width",
 	"hamhacks.page.clickGui.openMenu": "Open Menu",
 
 	"hamhacks.page.command": "Commands",

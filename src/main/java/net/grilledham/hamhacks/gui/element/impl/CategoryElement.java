@@ -21,6 +21,7 @@ public class CategoryElement extends GuiElement {
 	
 	private final Animation openCloseAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	private final Animation hoverAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
+	private final Animation overflowAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	
 	private final ScrollableElement scrollArea;
 	
@@ -29,7 +30,7 @@ public class CategoryElement extends GuiElement {
 	private double lastMouseY = 0;
 	
 	public CategoryElement(Screen parent, Category category, double scale) {
-		super(category.getX(), category.getY(), category.getWidth(), category.getHeight(), scale);
+		super(category.getX(), category.getY(), PageManager.getPage(ClickGUI.class).categoriesWidth.get().floatValue(), category.getHeight(), scale);
 		this.category = category;
 		openCloseAnimation.setAbsolute(1);
 		int i = 0;
@@ -42,13 +43,13 @@ public class CategoryElement extends GuiElement {
 	}
 	
 	@Override
-	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void draw(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
 		
-		float scissorHeight = height + scrollArea.getHeight() * (float)(1 - openCloseAnimation.get());
+		float scissorHeight = height + scrollArea.getHeight() * (float)(1 - openCloseAnimation.get()) + 1;
 		
 		RenderUtil.pushScissor(x, y, width, scissorHeight, (float)scale);
 		RenderUtil.preRender();
@@ -58,7 +59,9 @@ public class CategoryElement extends GuiElement {
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
 		RenderUtil.drawRect(stack, x, y, width, height, bgC);
 		
+		RenderUtil.pushScissor(x + 2, y + 4, width - 4, 11, (float)scale);
 		RenderUtil.drawString(ctx, category.getName(), x + 3, y + 5, ui.textColor.get().getRGB(), true);
+		RenderUtil.popScissor();
 		
 		scrollArea.render(ctx, mx, my, scrollX, scrollY, partialTicks);
 		
@@ -85,7 +88,35 @@ public class CategoryElement extends GuiElement {
 	}
 	
 	@Override
-	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void drawTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		if(hoverAnimation.get() == 1) {
+			MatrixStack stack = ctx.getMatrices();
+			float x = this.x + scrollX;
+			float y = this.y + scrollY;
+			stack.push();
+			
+			RenderUtil.pushScissor(x + width, y, Math.max(mc.textRenderer.getWidth(category.getName()) - width + 6, 0), height + 1, (float)scale);
+			RenderUtil.preRender();
+			
+			ClickGUI ui = PageManager.getPage(ClickGUI.class);
+			int bgC = ui.accentColor.get().getRGB() & 0xffffff;
+			int transparency = (int)(overflowAnimation.get() * 0xff) << 24;
+			bgC += transparency;
+			RenderUtil.drawRect(stack, x, y, mc.textRenderer.getWidth(category.getName()) + 6, height, bgC);
+			
+			RenderUtil.pushScissor(x + width - 2, y + 4, Math.max(mc.textRenderer.getWidth(category.getName()) - width + 6, 0), 11, (float)scale);
+			RenderUtil.drawString(ctx, category.getName(), x + 3, y + 5, ui.textColor.get().getRGB(), true);
+			RenderUtil.popScissor();
+			
+			RenderUtil.popScissor();
+			RenderUtil.postRender();
+			
+			stack.pop();
+		}
+		
+		overflowAnimation.set(hoverAnimation.get() == 1);
+		overflowAnimation.update();
+		
 		scrollArea.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}
 	

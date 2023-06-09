@@ -1,7 +1,9 @@
 package net.grilledham.hamhacks.gui.element;
 
+import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class GuiElement {
 	
@@ -16,6 +18,12 @@ public abstract class GuiElement {
 	protected final float preferredHeight;
 	
 	protected final double scale;
+	
+	private float tooltipTicks = 0;
+	protected boolean showTooltip = false;
+	
+	private String tooltipTitle = "";
+	private String tooltip = "";
 	
 	public GuiElement(float x, float y, float width, float height, double scale) {
 		this.x = x;
@@ -42,9 +50,42 @@ public abstract class GuiElement {
 		this.height = height;
 	}
 	
-	public abstract void render(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta);
+	public void render(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {
+		draw(ctx, mx, my, offX, offY, tickDelta);
+		if(mx >= x + offX && my >= y + offY && mx < x + offX + width && my < y + offY + height) {
+			tooltipTicks += tickDelta;
+		} else {
+			tooltipTicks -= tickDelta * 4;
+			if(tooltipTicks < 0) {
+				tooltipTicks = 0;
+			}
+		}
+		showTooltip = tooltipTicks >= 20;
+		if(showTooltip) {
+			tooltipTicks = 20;
+		}
+	}
 	
-	public void renderTop(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {}
+	protected abstract void draw(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta);
+	
+	public void renderTop(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {
+		MatrixStack stack = ctx.getMatrices();
+		stack.push();
+		stack.translate(0, 0, 1);
+		drawTop(ctx, mx, my, offX, offY, tickDelta);
+		if(showTooltip && !tooltipTitle.equals("") && !tooltip.equals("")) {
+			stack.translate(0, 0, 1);
+			RenderUtil.drawToolTip(ctx, tooltipTitle, tooltip, mx, my, scale);
+		}
+		stack.pop();
+	}
+	
+	protected void drawTop(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {}
+	
+	protected void setTooltip(String title, String tooltip) {
+		this.tooltipTitle = title;
+		this.tooltip = tooltip;
+	}
 	
 	public boolean click(double mx, double my, float offX, float offY, int button) {
 		return false;

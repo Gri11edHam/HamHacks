@@ -27,6 +27,7 @@ public class ClickGUI extends Page {
 	public final ColorSetting enabledColorHovered = new ColorSetting("hamhacks.page.clickGui.enabledColorHovered", new Color(0xFFAA5555), () -> true);
 	public final ColorSetting textColor = new ColorSetting("hamhacks.page.clickGui.textColor", Color.getWhite(), () -> true);
 	public final NumberSetting scale = new NumberSetting("hamhacks.page.clickGui.scale", 2, () -> true, 1, 5, 1);
+	public final NumberSetting categoriesWidth = new NumberSetting("hamhacks.page.clickGui.categoriesWidth", 70, () -> true, 20, 200, 1, true);
 	
 	private final SettingCategory OPTIONS_CATEGORY = new SettingCategory("hamhacks.page.clickGui.category.options");
 	
@@ -46,6 +47,7 @@ public class ClickGUI extends Page {
 		APPEARANCE_CATEGORY.add(enabledColorHovered);
 		APPEARANCE_CATEGORY.add(textColor);
 		APPEARANCE_CATEGORY.add(scale);
+		APPEARANCE_CATEGORY.add(categoriesWidth);
 		settingCategories.add(1, OPTIONS_CATEGORY);
 		OPTIONS_CATEGORY.add(openMenu);
 	}

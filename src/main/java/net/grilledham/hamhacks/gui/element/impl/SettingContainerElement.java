@@ -28,7 +28,7 @@ public class SettingContainerElement extends SettingElement<Map<?, ?>> {
 	}
 	
 	@Override
-	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void draw(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;

@@ -12,6 +12,7 @@ public class Changelog {
 				- Improved modules:
 					: Nametags
 					: ESP
+				- Tweaked UI
 				- Bug fixes
 			
 			Update 1.8.5:

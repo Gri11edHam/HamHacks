@@ -1,11 +1,10 @@
 package net.grilledham.hamhacks.modules;
 
+import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
-
-import java.util.List;
 
 public enum Category {
 	MOVEMENT(Text.translatable("hamhacks.category.movement")),
@@ -30,37 +29,19 @@ public enum Category {
 			return;
 		}
 		hasInitialized = true;
-		int x = 1;
-		int y = 3;
-		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+		int x = 4;
+		int y = 24;
+		int categoryWidth = PageManager.getPage(ClickGUI.class).categoriesWidth.get().intValue();
 		for(Category category : Category.values()) {
-			List<Module> categoryModules = ModuleManager.getModules(category);
-			int categoryWidth = textRenderer.getWidth(category.getName());
-			for(Module module : categoryModules) {
-				categoryWidth = Math.max(textRenderer.getWidth(module.getName()), categoryWidth);
-			}
-			categoryWidth += 2;
 			category.setPos(x, y);
-			category.setDimensions(categoryWidth + 4, 17);
+			category.width = categoryWidth;
+			category.height = (float)17;
 			if(x + categoryWidth + 2 > MinecraftClient.getInstance().getWindow().getScaledWidth()) {
-				x = 1;
-				y += 19;
+				x = 4;
+				y += 20;
 			} else {
 				x += categoryWidth + 6;
 			}
-		}
-	}
-	
-	public static void updateLanguage() {
-		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-		for(Category category : Category.values()) {
-			List<Module> categoryModules = ModuleManager.getModules(category);
-			int categoryWidth = textRenderer.getWidth(category.getName());
-			for(Module module : categoryModules) {
-				categoryWidth = Math.max(textRenderer.getWidth(module.getName()), categoryWidth);
-			}
-			categoryWidth += 2;
-			category.setDimensions(categoryWidth + 4, 17);
 		}
 	}
 	
@@ -77,11 +58,6 @@ public enum Category {
 	public void setPos(float x, float y) {
 		this.x = x;
 		this.y = y;
-	}
-	
-	public void setDimensions(float width, float height) {
-		this.width = width;
-		this.height = height;
 	}
 	
 	public void expand(boolean expanded) {

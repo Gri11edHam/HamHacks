@@ -17,8 +17,7 @@ public class ModuleElement extends GuiElement {
 	
 	private final Animation hoverAnimation = new Animation(AnimationType.EASE, 0.25, true);
 	private final Animation enableAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
-	
-	private final Animation tooltipAnimation = new Animation(AnimationType.LINEAR);
+	private final Animation overflowAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	
 	private boolean hasClicked = false;
 	
@@ -33,12 +32,13 @@ public class ModuleElement extends GuiElement {
 	}
 	
 	@Override
-	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void draw(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
+		RenderUtil.pushScissor(x, y, width, height + 1, (float)scale);
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
 		int bgC = ui.bgColor.get().getRGB();
@@ -46,11 +46,15 @@ public class ModuleElement extends GuiElement {
 		bgC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), bgC, hoverAnimation.get());
 		int bgCEnabled = ui.enabledColor.get().getRGB();
 		bgCEnabled = RenderUtil.mix(ui.enabledColorHovered.get().getRGB(), bgCEnabled, hoverAnimation.get());
-		RenderUtil.drawRect(stack, (float)(x + width * enableAnimation.get()), y, (float)(width * (1 - enableAnimation.get())), height, bgC);
-		RenderUtil.drawRect(stack, x, y, (float)(width * enableAnimation.get()), height, bgCEnabled);
+		float drawWidth = showTooltip ? Math.max(mc.textRenderer.getWidth(module.getName()) + 6, width) : width;
+		RenderUtil.drawRect(stack, (float)(x + drawWidth * enableAnimation.get()), y, (float)(drawWidth * (1 - enableAnimation.get())), height, bgC);
+		RenderUtil.drawRect(stack, x, y, (float)(drawWidth * enableAnimation.get()), height, bgCEnabled);
 		
+		RenderUtil.pushScissor(x + 2, y + 3, width - 4, 11, (float)scale);
 		RenderUtil.drawString(ctx, module.getName(), x + 3, y + 4, ui.textColor.get().getRGB(), true);
+		RenderUtil.popScissor();
 		
+		RenderUtil.popScissor();
 		RenderUtil.postRender();
 		stack.pop();
 		
@@ -60,21 +64,54 @@ public class ModuleElement extends GuiElement {
 		enableAnimation.set(module.isEnabled());
 		enableAnimation.update();
 		
-		tooltipAnimation.set(hovered);
-		tooltipAnimation.update();
-		if(tooltipAnimation.get() < 1) {
+		if(module.hasToolTip()) {
+			if(hasClicked) {
+				setTooltip("", "");
+			} else {
+				setTooltip(module.getName(), module.getToolTip());
+			}
+		}
+		
+		if(!showTooltip) {
 			hasClicked = false;
 		}
 	}
 	
 	@Override
-	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
-		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
-		if(module.hasToolTip()) {
-			if(tooltipAnimation.get() >= 1 && !hasClicked) {
-				RenderUtil.drawToolTip(ctx, module.getName(), module.getToolTip(), mx, my, scale);
-			}
+	public void drawTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+		super.drawTop(ctx, mx, my, scrollX, scrollY, partialTicks);
+		
+		if(hoverAnimation.get() == 1) {
+			MatrixStack stack = ctx.getMatrices();
+			float x = this.x + scrollX;
+			float y = this.y + scrollY;
+			stack.push();
+			RenderUtil.preRender();
+			float drawWidth = Math.max(mc.textRenderer.getWidth(module.getName()) + 6, width);
+			RenderUtil.pushScissor(x + width, y, drawWidth - width, height + 1, (float)scale);
+			
+			ClickGUI ui = PageManager.getPage(ClickGUI.class);
+			int bgC = ui.bgColor.get().getRGB();
+			bgC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), bgC, hoverAnimation.get());
+			int bgCEnabled = ui.enabledColor.get().getRGB();
+			bgCEnabled = RenderUtil.mix(ui.enabledColorHovered.get().getRGB(), bgCEnabled, hoverAnimation.get());
+			int transparency = (int)(overflowAnimation.get() * 0xff) << 24;
+			bgC = bgC & 0xffffff + transparency;
+			bgCEnabled = bgCEnabled & 0xffffff + transparency;
+			RenderUtil.drawRect(stack, (float)(x + drawWidth * enableAnimation.get()), y, (float)(drawWidth * (1 - enableAnimation.get())), height, bgC);
+			RenderUtil.drawRect(stack, x, y, (float)(drawWidth * enableAnimation.get()), height, bgCEnabled);
+			
+			RenderUtil.pushScissor(x + width - 2, y + 3, width - 4, 11, (float)scale);
+			RenderUtil.drawString(ctx, module.getName(), x + 3, y + 4, ui.textColor.get().getRGB(), true);
+			RenderUtil.popScissor();
+			
+			RenderUtil.popScissor();
+			RenderUtil.postRender();
+			stack.pop();
 		}
+		
+		overflowAnimation.set(hoverAnimation.get() == 1);
+		overflowAnimation.update();
 	}
 	
 	@Override

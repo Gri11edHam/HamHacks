@@ -90,7 +90,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 	}
 	
 	@Override
-	public void render(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void draw(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
@@ -121,7 +121,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 	}
 	
 	@Override
-	public void renderTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
+	public void drawTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
@@ -210,7 +210,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 				}
 			}
 		}
-		super.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
+		super.drawTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override

@@ -34,7 +34,7 @@ public class PageElement extends GuiElement {
 	}
 	
 	@Override
-	public void render(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {
+	public void draw(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + offX;
 		float y = this.y + offY;
