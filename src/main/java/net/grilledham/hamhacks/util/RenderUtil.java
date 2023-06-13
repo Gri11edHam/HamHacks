@@ -276,7 +276,7 @@ public class RenderUtil {
 			x -= w - (shift ? 4 : 8);
 		}
 		
-		pushScissor(x, y, w, h, (float)scale);
+		pushScissor(x, y, (float)(w * scale), (float)(h * scale), (float)scale);
 		
 		preRender();
 		

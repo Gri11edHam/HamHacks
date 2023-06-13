@@ -82,7 +82,7 @@ public abstract class GuiElement {
 	
 	protected void drawTop(DrawContext ctx, int mx, int my, float offX, float offY, float tickDelta) {}
 	
-	protected void setTooltip(String title, String tooltip) {
+	public void setTooltip(String title, String tooltip) {
 		this.tooltipTitle = title;
 		this.tooltip = tooltip;
 	}
