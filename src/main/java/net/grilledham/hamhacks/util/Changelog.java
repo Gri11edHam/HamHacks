@@ -3,6 +3,11 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.9.1:
+				- Added tool tip to "Ignore Update" button
+				- Fixed Update button position
+				- Fixed OpenGL error spam
+			
 			Update 1.9:
 				- Updated to Minecraft 1.20
 				- Added Mod Menu integration
