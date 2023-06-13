@@ -65,8 +65,8 @@ public class RenderUtil {
 		float scaleFactor = scissorStack.get(0)[4];
 		int x = (int)Math.floor(scissorStack.get(0)[0] * scaleFactor);
 		int y = (int)Math.floor(scissorStack.get(0)[1] * scaleFactor);
-		int w = (int)Math.ceil(scissorStack.get(0)[2] * scaleFactor);
-		int h = (int)Math.ceil(scissorStack.get(0)[3] * scaleFactor);
+		int w = Math.max((int)Math.ceil(scissorStack.get(0)[2] * scaleFactor), 0);
+		int h = Math.max((int)Math.ceil(scissorStack.get(0)[3] * scaleFactor), 0);
 		RenderSystem.enableScissor(x, mc.getWindow().getHeight() - y - h, w, h);
 	}
 	
