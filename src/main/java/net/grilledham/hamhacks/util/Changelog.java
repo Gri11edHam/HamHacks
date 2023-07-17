@@ -3,6 +3,9 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.9.2:
+				- Fixed startup crash
+			
 			Update 1.9.1:
 				- Added tool tip to "Ignore Update" button
 				- Fixed Update button position
