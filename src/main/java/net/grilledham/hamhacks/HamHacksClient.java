@@ -16,6 +16,7 @@ import net.grilledham.hamhacks.config.ConfigManager;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.profile.ProfileManager;
 import net.grilledham.hamhacks.util.*;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
@@ -56,6 +57,7 @@ public class HamHacksClient implements ClientModInitializer {
 		PositionHack.init();
 		ConnectionUtil.init();
 		ChatUtil.init();
+		ProfileManager.initialize();
 		
 		FabricLoader loader = FabricLoader.getInstance();
 		for(EntrypointContainer<Config> configEntry : loader.getEntrypointContainers("hamhacksStatic", Config.class)) {

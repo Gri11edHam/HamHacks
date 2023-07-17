@@ -18,6 +18,11 @@ public class ProfileManager extends Config {
 	
 	private static Profile selectedProfile;
 	
+	public static void initialize() {
+		profiles.add(new Profile("Default"));
+		selectProfile(0);
+	}
+	
 	public ProfileManager() {
 		super(HamHacksClient.MOD_ID, "../profiles.json", -1, ConfigFixer.DEFAULT, true);
 	}
@@ -96,6 +101,7 @@ public class ProfileManager extends Config {
 	}
 	
 	protected void parseSettings(JsonObject obj) {
+		ProfileManager.profiles.clear();
 		if(obj.has("profiles")) {
 			JsonArray profiles = obj.getAsJsonArray("profiles");
 			for(JsonElement e : profiles) {
