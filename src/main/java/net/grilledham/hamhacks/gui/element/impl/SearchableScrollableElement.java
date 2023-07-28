@@ -39,7 +39,7 @@ public class SearchableScrollableElement extends ScrollableElement {
 				}
 			}
 		}
-		super.render(ctx, mx, my, scrollX, scrollY, partialTicks);
+		super.draw(ctx, mx, my, scrollX, scrollY, partialTicks);
 	}
 	
 	public boolean shouldUpdateVisibility() {
