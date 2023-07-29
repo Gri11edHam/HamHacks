@@ -6,8 +6,8 @@
   <a href="https://github.com/Gri11edHam/HamHacks/releases">
       <img alt="Total Downloads" src="https://img.shields.io/github/downloads/Gri11edHam/HamHacks/total">
   </a>
-  <a href="https://github.com/Gri11edHam/HamHacks/">
-      <img alt="Lines of Code" src="https://img.shields.io/tokei/lines/github/Gri11edHam/HamHacks">
+  <a href="https://github.com/Gri11edHam/HamHacks/actions">
+      <img alt="Lines of Code" src="https://img.shields.io/github/actions/workflow/status/Gri11edHam/HamHacks/build.yml">
   </a>
 </p>
 HamHacks is a Minecraft mod that adds a lot of useful features (that might get you banned).
