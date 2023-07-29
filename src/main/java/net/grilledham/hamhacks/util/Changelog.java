@@ -3,6 +3,11 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.9.3:
+				- Added modules:
+					: Block Outline
+				- Added chroma speed
+			
 			Update 1.9.2:
 				- Fixed startup crash
 			

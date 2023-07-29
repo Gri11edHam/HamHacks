@@ -31,6 +31,8 @@ public class NumberSettingElement extends SettingElement<Double> {
 	
 	protected final boolean hasBounds;
 	
+	public boolean drawBackground = true;
+	
 	public NumberSettingElement(float x, float y, double scale, NumberSetting setting, boolean hasBounds) {
 		this(x, y, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, setting::set, setting::reset, setting::min, setting::max, setting::step, setting::forceStep, hasBounds);
 	}
@@ -82,8 +84,10 @@ public class NumberSettingElement extends SettingElement<Double> {
 		
 		boolean hovered = false;
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
-		int bgC = ui.bgColor.get().getRGB();
-		RenderUtil.drawRect(stack, x, y, width, height, bgC);
+		if(drawBackground) {
+			int bgC = ui.bgColor.get().getRGB();
+			RenderUtil.drawRect(stack, x, y, width, height, bgC);
+		}
 		
 		if(hasBounds) {
 			int outlineC = 0xffcccccc;
@@ -188,7 +192,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 		return super.release(mx, my, scrollX, scrollY, button);
 	}
 	
-	private void updateValue(double newVal, boolean fromSlider) throws IllegalAccessException {
+	protected void updateValue(double newVal, boolean fromSlider) throws IllegalAccessException {
 		double roundedSetting = newVal;
 		if(hasBounds) {
 			roundedSetting = MathHelper.clamp(roundedSetting, min.get(), max.get());

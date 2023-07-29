@@ -6,6 +6,7 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.ColorSetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -21,10 +22,11 @@ public class ColorSettingElement extends SettingElement<Color> {
 	private final Animation selectionAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25, true);
 	
 	public BoolSetting chroma;
-	
+	public NumberSetting chromaSpeed;
 	public StringSetting hexVal;
 	
 	private final BoolSettingElement chromaPart;
+	private final NumberSettingElement chromaSpeedPart;
 	private final StringSettingElement hexValPart;
 	
 	private boolean selected = false;
@@ -50,6 +52,16 @@ public class ColorSettingElement extends SettingElement<Color> {
 			}
 		};
 		chromaPart.drawBackground = false;
+		chromaSpeed = new NumberSetting("hamhacks.setting.colorSettingElement.chromaSpeed", 1, () -> false, 0.01, 50, 1, false);
+		chromaSpeed.set((double)get.get().getChromaSpeed());
+		chromaSpeedPart = new NumberSettingElement(x, y, scale, chromaSpeed, false) {
+			@Override
+			protected void updateValue(double newVal, boolean fromSlider) throws IllegalAccessException {
+				super.updateValue(newVal, fromSlider);
+				ColorSettingElement.this.get.get().setChromaSpeed(get.get().floatValue());
+			}
+		};
+		chromaSpeedPart.drawBackground = false;
 		StringBuilder hex = new StringBuilder(Integer.toHexString(get.get().getRGB()));
 		while(hex.length() < 8) {
 			hex.insert(0, "0");
@@ -128,7 +140,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 		stack.push();
 		stack.translate(0, 0, 1);
 		float w = 220;
-		float h = 122;
+		float h = 140;
 		float newX = x + width - w;
 		float newY = y + height;
 		float subPartScroll = 0;
@@ -158,6 +170,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 		RenderUtil.drawHRect(stack, newX + 129, newY + 1 + (100 * (1 - get.get().getAlpha())), 22, 3, 0xffcccccc);
 		
 		chromaPart.render(ctx, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
+		chromaSpeedPart.render(ctx, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
 		if(selectionAnimation.get() > 0.8) {
 			hexValPart.render(ctx, mx, my, scrollX, scrollY + subPartScroll, partialTicks);
 		}
@@ -217,13 +230,15 @@ public class ColorSettingElement extends SettingElement<Color> {
 	public void moveTo(float x, float y) {
 		super.moveTo(x, y);
 		chromaPart.moveTo(x + width - 220 , y + height + 122 - chromaPart.getHeight() - 1);
-		hexValPart.moveTo(x + width - hexValPart.getWidth() - 1, y + height + 122 - hexValPart.getHeight() - 1);
+		chromaSpeedPart.moveTo(x + width - chromaSpeedPart.getWidth() + 2, y + height + 122 - chromaSpeedPart.getHeight() - 1);
+		hexValPart.moveTo(x + width - hexValPart.getWidth() - 1, y + height + 140 - hexValPart.getHeight() - 1);
 	}
 	
 	@Override
 	public void moveBy(float x, float y) {
 		super.moveBy(x, y);
 		chromaPart.moveBy(x, y);
+		chromaSpeedPart.moveBy(x, y);
 		hexValPart.moveBy(x, y);
 	}
 	
@@ -231,7 +246,8 @@ public class ColorSettingElement extends SettingElement<Color> {
 	public void resize(float maxW, float maxH) {
 		super.resize(maxW, maxH);
 		chromaPart.moveTo(x + width - 220 , y + height + 122 - chromaPart.getHeight() - 1);
-		hexValPart.moveTo(x + width - hexValPart.getWidth() - 1, y + height + 122 - hexValPart.getHeight() - 1);
+		chromaSpeedPart.moveTo(x + width - chromaSpeedPart.getWidth() + 2, y + height + 122 - chromaSpeedPart.getHeight() - 1);
+		hexValPart.moveTo(x + width - hexValPart.getWidth() - 1, y + height + 140 - hexValPart.getHeight() - 1);
 	}
 	
 	@Override
@@ -246,6 +262,9 @@ public class ColorSettingElement extends SettingElement<Color> {
 			subPartScroll = -height - h;
 		}
 		if(chromaPart.click(mx, my, scrollX, scrollY + subPartScroll, button)) {
+			return true;
+		}
+		if(chromaSpeedPart.click(mx, my, scrollX, scrollY + subPartScroll, button)) {
 			return true;
 		}
 		if(hexValPart.click(mx, my, scrollX, scrollY + subPartScroll, button)) {
@@ -305,6 +324,9 @@ public class ColorSettingElement extends SettingElement<Color> {
 			if(chromaPart.release(mx, my, scrollX, scrollY + subPartScroll, button)) {
 				return true;
 			}
+			if(chromaSpeedPart.release(mx, my, scrollX, scrollY + subPartScroll, button)) {
+				return true;
+			}
 			if(hexValPart.release(mx, my, scrollX, scrollY + subPartScroll, button)) {
 				return true;
 			}
@@ -335,6 +357,9 @@ public class ColorSettingElement extends SettingElement<Color> {
 	public boolean type(int code, int scanCode, int modifiers) {
 		if(selected) {
 			boolean stringPartSelected = hexValPart.type(0, 0, 0);
+			if(chromaSpeedPart.type(code, scanCode, modifiers)) {
+				return true;
+			}
 			if(hexValPart.type(code, scanCode, modifiers)) {
 				return true;
 			}
@@ -350,6 +375,9 @@ public class ColorSettingElement extends SettingElement<Color> {
 	@Override
 	public boolean typeChar(char c, int modifiers) {
 		if(selected) {
+			if(chromaSpeedPart.typeChar(c, modifiers)) {
+				return true;
+			}
 			if(hexValPart.typeChar(c, modifiers)) {
 				return true;
 			}

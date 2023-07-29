@@ -55,6 +55,7 @@ public class Color {
 	
 	private final float[] defaults;
 	private final boolean defaultChroma;
+	private final float defaultChromaSpeed;
 	
 	private float hue;
 	private float saturation;
@@ -62,40 +63,48 @@ public class Color {
 	private float alpha;
 	
 	private boolean chroma;
+	private float chromaSpeed;
 	
 	public Color(int c) {
-		this(c, false);
+		this(c, false, 1);
 	}
 	
-	public Color(int c, boolean chroma) {
-		this(toHSB(c), chroma);
+	public Color(int c, boolean chroma, float chromaSpeed) {
+		this(toHSB(c), chroma, chromaSpeed);
 	}
 	
 	public Color(float[] hsb) {
-		this(hsb, false);
+		this(hsb, false, 1);
 	}
 	
-	public Color(float[] hsb, boolean chroma) {
-		this(hsb[0], hsb[1], hsb[2], hsb[3], chroma);
+	public Color(float[] hsb, boolean chroma, float chromaSpeed) {
+		this(hsb[0], hsb[1], hsb[2], hsb[3], chroma, chromaSpeed);
 	}
 	
 	public Color(float h, float s, float b, float a) {
-		this(h, s, b, a, false);
+		this(h, s, b, a, false, 1);
 	}
 	
 	public Color(float h, float s, float b, float a, boolean chroma) {
+		this(h, s, b, a, chroma, 1);
+	}
+	
+	public Color(float h, float s, float b, float a, boolean chroma, float chromaSpeed) {
 		this.hue = h;
 		this.saturation = s;
 		this.brightness = b;
 		this.alpha = a;
 		this.chroma = chroma;
+		this.chromaSpeed = chromaSpeed;
 		defaults = new float[] {h, s, b, a};
 		defaultChroma = chroma;
+		defaultChromaSpeed = chromaSpeed;
 	}
 	
 	public void reset() {
 		set(defaults);
 		setChroma(defaultChroma);
+		setChromaSpeed(defaultChromaSpeed);
 	}
 	
 	public float[] getHSB() {
@@ -108,7 +117,7 @@ public class Color {
 	
 	public float getHue() {
 		if(chroma) {
-			return toHSB(ChromaUtil.getColor())[0];
+			return toHSB(ChromaUtil.getColor(chromaSpeed))[0];
 		}
 		return hue;
 	}
@@ -127,6 +136,10 @@ public class Color {
 	
 	public boolean getChroma() {
 		return chroma;
+	}
+	
+	public float getChromaSpeed() {
+		return chromaSpeed;
 	}
 	
 	public int getRGB() {
@@ -198,6 +211,10 @@ public class Color {
 	
 	public void setChroma(boolean chroma) {
 		this.chroma = chroma;
+	}
+	
+	public void setChromaSpeed(float chromaSpeed) {
+		this.chromaSpeed = chromaSpeed;
 	}
 	
 	public static int toRGB(float h, float s, float b, float a) {

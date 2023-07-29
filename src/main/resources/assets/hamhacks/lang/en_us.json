@@ -367,6 +367,7 @@
 	"hamhacks.module.blockOutline.overlayColor": "Overlay Color",
 
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
+	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
 
 	"hamhacks.page.null": "Modules",
