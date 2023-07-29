@@ -285,19 +285,22 @@ public class HUD extends Module {
 		float[] textC = textColor.get().getHSB();
 		float finalBarHue;
 		if(accentColor.get().getChroma()) {
-			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
+			finalBarHue = (barC[0] - (i * 0.025f));
+			if(finalBarHue < 0) finalBarHue += 1;
 		} else {
 			finalBarHue = barC[0];
 		}
 		float finalBGHue;
 		if(bgColor.get().getChroma()) {
-			finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
+			finalBGHue = (bgC[0] - (i * 0.025f));
+			if(finalBGHue < 0) finalBGHue += 1;
 		} else {
 			finalBGHue = bgC[0];
 		}
 		float finalTextHue;
 		if(textColor.get().getChroma()) {
-			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
+			finalTextHue = (textC[0] - (i * 0.025f));
+			if(finalTextHue < 0) finalTextHue += 1;
 		} else {
 			finalTextHue = textC[0];
 		}
@@ -323,19 +326,22 @@ public class HUD extends Module {
 		float[] textC = textColor.get().getHSB();
 		float finalBarHue;
 		if(accentColor.get().getChroma()) {
-			finalBarHue = (barC[0] - (i * 0.025f)) % 1f;
+			finalBarHue = (barC[0] - (i * 0.025f));
+			if(finalBarHue < 0) finalBarHue += 1;
 		} else {
 			finalBarHue = barC[0];
 		}
 		float finalBGHue;
 		if(bgColor.get().getChroma()) {
-			finalBGHue = (bgC[0] - (i * 0.025f)) % 1f;
+			finalBGHue = (bgC[0] - (i * 0.025f));
+			if(finalBGHue < 0) finalBGHue += 1;
 		} else {
 			finalBGHue = bgC[0];
 		}
 		float finalTextHue;
 		if(textColor.get().getChroma()) {
-			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
+			finalTextHue = (textC[0] - (i * 0.025f));
+			if(finalTextHue < 0) finalTextHue += 1;
 		} else {
 			finalTextHue = textC[0];
 		}
@@ -358,7 +364,8 @@ public class HUD extends Module {
 		float[] textC = textColor.get().getHSB();
 		float finalTextHue;
 		if(textColor.get().getChroma()) {
-			finalTextHue = (textC[0] - (i * 0.025f)) % 1f;
+			finalTextHue = (textC[0] - (i * 0.025f));
+			if(finalTextHue < 0) finalTextHue += 1;
 		} else {
 			finalTextHue = textC[0];
 		}
