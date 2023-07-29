@@ -357,6 +357,15 @@
 	"hamhacks.module.titleBar.icon.custom": "Custom",
 	"hamhacks.module.titleBar.iconPath": "Custom Icon Path",
 
+	"hamhacks.module.blockOutline": "Block Outline",
+	"hamhacks.module.blockOutline.tooltip": "Allows you to change the outline of a selected block.",
+	"hamhacks.module.blockOutline.disableDepthTest": "Disable Depth Test",
+	"hamhacks.module.blockOutline.outlineEnabled": "Outline",
+	"hamhacks.module.blockOutline.outlineColor": "Outline Color",
+	"hamhacks.module.blockOutline.lineWidth": "Line Width",
+	"hamhacks.module.blockOutline.overlayEnabled": "Overlay",
+	"hamhacks.module.blockOutline.overlayColor": "Overlay Color",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
 

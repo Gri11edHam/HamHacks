@@ -32,7 +32,8 @@
     "MixinTelemetryManager",
     "MixinTextVisitFactory",
     "MixinTitleScreen",
-    "MixinWindow"
+    "MixinWindow",
+    "MixinWorldRenderer"
   ],
   "mixins": [
     "MixinAbstractBlockState",

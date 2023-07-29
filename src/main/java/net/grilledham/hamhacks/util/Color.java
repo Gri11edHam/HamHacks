@@ -133,6 +133,18 @@ public class Color {
 		return toRGB(getHue(), getSaturation(), getBrightness(), getAlpha());
 	}
 	
+	public int getR() {
+		return getRGB() >> 16 & 0xFF;
+	}
+	
+	public int getG() {
+		return getRGB() >> 8 & 0xFF;
+	}
+	
+	public int getB() {
+		return getRGB() & 0xFF;
+	}
+	
 	public void set(float[] vals) {
 		set(vals[0], vals[1], vals[2], vals[3]);
 	}
