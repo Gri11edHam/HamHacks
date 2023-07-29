@@ -2,10 +2,14 @@ package net.grilledham.hamhacks.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.mixininterface.IWindow;
+import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.misc.BorderlessFullscreen;
 import net.grilledham.hamhacks.modules.misc.TitleBar;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.MacWindowUtil;
+import net.minecraft.client.util.Monitor;
+import net.minecraft.client.util.MonitorTracker;
 import net.minecraft.client.util.Window;
 import net.minecraft.resource.InputSupplier;
 import org.lwjgl.glfw.GLFW;
@@ -15,6 +19,10 @@ import org.lwjgl.system.MemoryUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,12 +31,87 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(Window.class)
-public class MixinWindow implements IWindow {
+public abstract class MixinWindow implements IWindow {
 	
 	@Shadow @Final private long handle;
+	@Shadow private int x;
+	@Shadow private int y;
+	@Shadow private int width;
+	@Shadow private int height;
+	@Shadow private int windowedX;
+	@Shadow private int windowedY;
+	@Shadow private int windowedHeight;
+	@Shadow private int windowedWidth;
+	@Shadow @Final private MonitorTracker monitorTracker;
+	@Shadow private boolean fullscreen;
+	
+	@Shadow private boolean videoModeDirty;
+	
+	@Shadow public abstract void applyVideoMode();
+	
+	@Unique private int oldWindowedX = 0;
+	@Unique private int oldWindowedY = 0;
+	@Unique private int oldWindowedWidth = 0;
+	@Unique private int oldWindowedHeight = 0;
+	@Unique private boolean wasEnabled = false;
+	
+	@Inject(method = "updateWindowRegion", at = @At("HEAD"), cancellable = true)
+	private void preUpdate(CallbackInfo ci) {
+		if(ModuleManager.getModule(BorderlessFullscreen.class) == null) return;
+		boolean fullscreen = GLFW.glfwGetWindowMonitor(this.handle) != 0;
+		if(ModuleManager.getModule(BorderlessFullscreen.class).isEnabled() && this.fullscreen) {
+			if(!fullscreen && !wasEnabled) {
+				windowedX = x;
+				windowedY = y;
+				windowedHeight = height;
+				windowedWidth = width;
+			}
+			
+			GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_DECORATED, GLFW.GLFW_FALSE);
+			Monitor monitor = monitorTracker.getMonitor((Window)(Object)this);
+			if(monitor != null) {
+				x = monitor.getViewportX();
+				y = monitor.getViewportY();
+				width = monitor.getCurrentVideoMode().getWidth();
+				height = monitor.getCurrentVideoMode().getHeight();
+				
+				GLFW.glfwSetWindowMonitor(handle, 0, x, y, width, height, GLFW.GLFW_DONT_CARE);
+				
+				wasEnabled = true;
+				ci.cancel();
+			} else {
+				GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_DECORATED, GLFW.GLFW_TRUE);
+			}
+		} else {
+			GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_DECORATED, GLFW.GLFW_TRUE);
+		}
+		
+		oldWindowedX = windowedX;
+		oldWindowedY = windowedY;
+		oldWindowedWidth = windowedWidth;
+		oldWindowedHeight = windowedHeight;
+	}
+	
+	@Inject(method = "updateWindowRegion", at = @At("RETURN"))
+	private void postUpdate(CallbackInfo ci) {
+		if(wasEnabled) {
+			wasEnabled = false;
+			
+			windowedX = oldWindowedX;
+			windowedY = oldWindowedY;
+			windowedWidth = oldWindowedWidth;
+			windowedHeight = oldWindowedHeight;
+		}
+	}
 	
 	@Override
-	public void setIcon(TitleBar.IconProvider provider) throws IOException {
+	public void hamhacks$updateVideoMode() {
+		videoModeDirty = true;
+		applyVideoMode();
+	}
+	
+	@Override
+	public void hamhacks$setIcon(TitleBar.IconProvider provider) throws IOException {
 		RenderSystem.assertInInitPhase();
 		if (MinecraftClient.IS_SYSTEM_MAC) {
 			MacWindowUtil.setApplicationIconImage(provider.getMacIcon());

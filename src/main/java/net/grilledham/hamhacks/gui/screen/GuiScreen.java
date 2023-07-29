@@ -88,7 +88,7 @@ public class GuiScreen extends Screen {
 	public boolean mouseReleased(double mx, double my, int button) {
 		mx = (mx * client.getWindow().getScaleFactor()) / scale;
 		my = (my * client.getWindow().getScaleFactor()) / scale;
-		for(GuiElement element : elements) {
+		for(GuiElement element : elements.stream().toList()) {
 			if(selected != null) {
 				if(element == selected) {
 					if(!selected.release(mx, my, 0, 0, button)) {

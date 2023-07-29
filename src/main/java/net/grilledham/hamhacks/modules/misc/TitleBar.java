@@ -86,7 +86,7 @@ public class TitleBar extends Module {
 				mc.getWindow().setIcon(mc.getDefaultResourcePack(), SharedConstants.getGameVersion().isStable() ? Icons.RELEASE : Icons.SNAPSHOT);
 			} else {
 				try {
-					((IWindow)(Object)mc.getWindow()).setIcon(iconProvider);
+					((IWindow)(Object)mc.getWindow()).hamhacks$setIcon(iconProvider);
 				} catch(Exception e) {
 					mc.getWindow().setIcon(mc.getDefaultResourcePack(), SharedConstants.getGameVersion().isStable() ? Icons.RELEASE : Icons.SNAPSHOT);
 				}

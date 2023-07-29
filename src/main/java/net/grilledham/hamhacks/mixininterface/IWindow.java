@@ -6,5 +6,6 @@ import java.io.IOException;
 
 public interface IWindow {
 	
-	void setIcon(TitleBar.IconProvider provider) throws IOException;
+	void hamhacks$updateVideoMode();
+	void hamhacks$setIcon(TitleBar.IconProvider provider) throws IOException;
 }

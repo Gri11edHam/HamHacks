@@ -6,7 +6,9 @@ public class Changelog {
 			Update 1.9.3:
 				- Added modules:
 					: Block Outline
+					: Borderless Fullscreen
 				- Added chroma speed
+				- Fixed HUD chroma animation
 			
 			Update 1.9.2:
 				- Fixed startup crash

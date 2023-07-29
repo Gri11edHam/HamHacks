@@ -366,6 +366,9 @@
 	"hamhacks.module.blockOutline.overlayEnabled": "Overlay",
 	"hamhacks.module.blockOutline.overlayColor": "Overlay Color",
 
+	"hamhacks.module.borderlessFullscreen": "Borderless Fullscreen",
+	"hamhacks.module.borderlessFullscreen.tooltip": "Removes the border from fullscreen mode\nso you can switch windows without the game disappearing.",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
