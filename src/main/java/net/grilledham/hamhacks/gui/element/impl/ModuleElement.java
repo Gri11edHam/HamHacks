@@ -81,34 +81,29 @@ public class ModuleElement extends GuiElement {
 	public void drawTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 		super.drawTop(ctx, mx, my, scrollX, scrollY, partialTicks);
 		
-		if(hoverAnimation.get() == 1) {
-			MatrixStack stack = ctx.getMatrices();
-			float x = this.x + scrollX;
-			float y = this.y + scrollY;
-			stack.push();
-			RenderUtil.preRender();
-			float drawWidth = Math.max(mc.textRenderer.getWidth(module.getName()) + 6, width);
-			RenderUtil.pushScissor(x + width, y, drawWidth - width, height + 1, (float)scale);
-			
-			ClickGUI ui = PageManager.getPage(ClickGUI.class);
-			int bgC = ui.bgColor.get().getRGB();
-			bgC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), bgC, hoverAnimation.get());
-			int bgCEnabled = ui.enabledColor.get().getRGB();
-			bgCEnabled = RenderUtil.mix(ui.enabledColorHovered.get().getRGB(), bgCEnabled, hoverAnimation.get());
-			int transparency = (int)(overflowAnimation.get() * 0xff) << 24;
-			bgC = bgC & 0xffffff + transparency;
-			bgCEnabled = bgCEnabled & 0xffffff + transparency;
-			RenderUtil.drawRect(stack, (float)(x + drawWidth * enableAnimation.get()), y, (float)(drawWidth * (1 - enableAnimation.get())), height, bgC);
-			RenderUtil.drawRect(stack, x, y, (float)(drawWidth * enableAnimation.get()), height, bgCEnabled);
-			
-			RenderUtil.pushScissor(x + width - 2, y + 3, width - 4, 11, (float)scale);
-			RenderUtil.drawString(ctx, module.getName(), x + 3, y + 4, ui.textColor.get().getRGB(), true);
-			RenderUtil.popScissor();
-			
-			RenderUtil.popScissor();
-			RenderUtil.postRender();
-			stack.pop();
-		}
+		MatrixStack stack = ctx.getMatrices();
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
+		stack.push();
+		RenderUtil.preRender();
+		float drawWidth = Math.max(mc.textRenderer.getWidth(module.getName()) + 6, width) * (float)overflowAnimation.get();
+		RenderUtil.pushScissor(x + width, y, drawWidth - width, height + 1, (float)scale);
+		
+		ClickGUI ui = PageManager.getPage(ClickGUI.class);
+		int bgC = ui.bgColor.get().getRGB();
+		bgC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), bgC, hoverAnimation.get());
+		int bgCEnabled = ui.enabledColor.get().getRGB();
+		bgCEnabled = RenderUtil.mix(ui.enabledColorHovered.get().getRGB(), bgCEnabled, hoverAnimation.get());
+		RenderUtil.drawRect(stack, (float)(x + drawWidth * enableAnimation.get()), y, (float)(drawWidth * (1 - enableAnimation.get())), height, bgC);
+		RenderUtil.drawRect(stack, x, y, (float)(drawWidth * enableAnimation.get()), height, bgCEnabled);
+		
+		RenderUtil.pushScissor(x + width - 2, y + 3, drawWidth - width + 2, 11, (float)scale);
+		RenderUtil.drawString(ctx, module.getName(), x + 3, y + 4, ui.textColor.get().getRGB(), true);
+		RenderUtil.popScissor();
+		
+		RenderUtil.popScissor();
+		RenderUtil.postRender();
+		stack.pop();
 		
 		overflowAnimation.set(hoverAnimation.get() == 1);
 		overflowAnimation.update();

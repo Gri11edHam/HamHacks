@@ -89,30 +89,26 @@ public class CategoryElement extends GuiElement {
 	
 	@Override
 	public void drawTop(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
-		if(hoverAnimation.get() == 1) {
-			MatrixStack stack = ctx.getMatrices();
-			float x = this.x + scrollX;
-			float y = this.y + scrollY;
-			stack.push();
-			
-			RenderUtil.pushScissor(x + width, y, Math.max(mc.textRenderer.getWidth(category.getName()) - width + 6, 0), height + 1, (float)scale);
-			RenderUtil.preRender();
-			
-			ClickGUI ui = PageManager.getPage(ClickGUI.class);
-			int bgC = ui.accentColor.get().getRGB() & 0xffffff;
-			int transparency = (int)(overflowAnimation.get() * 0xff) << 24;
-			bgC += transparency;
-			RenderUtil.drawRect(stack, x, y, mc.textRenderer.getWidth(category.getName()) + 6, height, bgC);
-			
-			RenderUtil.pushScissor(x + width - 2, y + 4, Math.max(mc.textRenderer.getWidth(category.getName()) - width + 6, 0), 11, (float)scale);
-			RenderUtil.drawString(ctx, category.getName(), x + 3, y + 5, ui.textColor.get().getRGB(), true);
-			RenderUtil.popScissor();
-			
-			RenderUtil.popScissor();
-			RenderUtil.postRender();
-			
-			stack.pop();
-		}
+		MatrixStack stack = ctx.getMatrices();
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
+		stack.push();
+		
+		RenderUtil.pushScissor(x + width, y, Math.max(mc.textRenderer.getWidth(category.getName()) - width + 6, 0) * (float)overflowAnimation.get(), height + 1, (float)scale);
+		RenderUtil.preRender();
+		
+		ClickGUI ui = PageManager.getPage(ClickGUI.class);
+		int bgC = ui.accentColor.get().getRGB();
+		RenderUtil.drawRect(stack, x, y, mc.textRenderer.getWidth(category.getName()) + 6, height, bgC);
+		
+		RenderUtil.pushScissor(x + width - 2, y + 4, Math.max(mc.textRenderer.getWidth(category.getName()) - width + 6 + 2, 0) * (float)overflowAnimation.get(), 11, (float)scale);
+		RenderUtil.drawString(ctx, category.getName(), x + 3, y + 5, ui.textColor.get().getRGB(), true);
+		RenderUtil.popScissor();
+		
+		RenderUtil.popScissor();
+		RenderUtil.postRender();
+		
+		stack.pop();
 		
 		overflowAnimation.set(hoverAnimation.get() == 1);
 		overflowAnimation.update();
