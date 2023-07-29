@@ -20,7 +20,7 @@ public class ClickGUI extends Page {
 	public final ColorSetting accentColor = new ColorSetting("hamhacks.page.clickGui.accentColor", Color.getDarkRed(), () -> true);
 	public final ColorSetting bgColor = new ColorSetting("hamhacks.page.clickGui.backgroundColor", new Color(0xFF222222), () -> true);
 	public final ColorSetting bgColorHovered = new ColorSetting("hamhacks.page.clickGui.backgroundColorHovered", new Color(0xFF555555), () -> true);
-	public final ColorSetting enabledColor = new ColorSetting("hamhacks.page.clickGui.enabledColor", new Color(0xFF880000), () -> true);
+	public final ColorSetting enabledColor = new ColorSetting("hamhacks.page.clickGui.enabledColor", new Color(0xFF660000), () -> true);
 	public final ColorSetting enabledColorHovered = new ColorSetting("hamhacks.page.clickGui.enabledColorHovered", new Color(0xFFAA5555), () -> true);
 	public final ColorSetting textColor = new ColorSetting("hamhacks.page.clickGui.textColor", Color.getWhite(), () -> true);
 	public final NumberSetting scale = new NumberSetting("hamhacks.page.clickGui.scale", 2, () -> true, 1, 5, 1);
