@@ -38,7 +38,7 @@ public class ModuleElement extends GuiElement {
 		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
-		RenderUtil.pushScissor(x, y, width, height + 1, (float)scale);
+		RenderUtil.adjustScissor(x, y, width, height + 1, (float)scale);
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
 		int bgC = ui.bgColor.get().getRGB();
@@ -50,7 +50,7 @@ public class ModuleElement extends GuiElement {
 		RenderUtil.drawRect(stack, (float)(x + drawWidth * enableAnimation.get()), y, (float)(drawWidth * (1 - enableAnimation.get())), height, bgC);
 		RenderUtil.drawRect(stack, x, y, (float)(drawWidth * enableAnimation.get()), height, bgCEnabled);
 		
-		RenderUtil.pushScissor(x + 2, y + 3, width - 4, 11, (float)scale);
+		RenderUtil.adjustScissor(x + 2, y + 3, width - 4, 11, (float)scale);
 		RenderUtil.drawString(ctx, module.getName(), x + 3, y + 4, ui.textColor.get().getRGB(), true);
 		RenderUtil.popScissor();
 		

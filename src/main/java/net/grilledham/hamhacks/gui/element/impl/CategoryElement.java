@@ -32,7 +32,7 @@ public class CategoryElement extends GuiElement {
 	public CategoryElement(Screen parent, Category category, double scale) {
 		super(category.getX(), category.getY(), PageManager.getPage(ClickGUI.class).categoriesWidth.get().floatValue(), category.getHeight(), scale);
 		this.category = category;
-		openCloseAnimation.setAbsolute(1);
+		openCloseAnimation.setAbsolute(0);
 		int i = 0;
 		scrollArea = new ScrollableElement(x + 1, y + height, width - 2, PREFERED_SCROLL_HEIGHT, scale);
 		for(Module m : ModuleManager.getModules(category)) {
@@ -49,7 +49,7 @@ public class CategoryElement extends GuiElement {
 		float y = this.y + scrollY;
 		stack.push();
 		
-		float scissorHeight = height + scrollArea.getHeight() * (float)(1 - openCloseAnimation.get()) + 1;
+		float scissorHeight = height + scrollArea.getHeight() * (float)openCloseAnimation.get();
 		
 		RenderUtil.pushScissor(x, y, width, scissorHeight, (float)scale);
 		RenderUtil.preRender();
@@ -63,7 +63,7 @@ public class CategoryElement extends GuiElement {
 		RenderUtil.drawString(ctx, category.getName(), x + 3, y + 5, ui.textColor.get().getRGB(), true);
 		RenderUtil.popScissor();
 		
-		scrollArea.render(ctx, mx, my, scrollX, scrollY, partialTicks);
+		scrollArea.render(ctx, category.isExpanded() ? mx : -1, my, scrollX, scrollY, partialTicks);
 		
 		RenderUtil.popScissor();
 		RenderUtil.postRender();
@@ -113,7 +113,7 @@ public class CategoryElement extends GuiElement {
 		overflowAnimation.set(hoverAnimation.get() == 1);
 		overflowAnimation.update();
 		
-		scrollArea.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
+		scrollArea.renderTop(ctx, category.isExpanded() ? mx : -1, my, scrollX, scrollY, partialTicks);
 	}
 	
 	@Override
@@ -129,7 +129,7 @@ public class CategoryElement extends GuiElement {
 			
 			}
 		}
-		if(openCloseAnimation.get() <= 0.5) {
+		if(category.isExpanded()) {
 			scrollArea.click(mx, my, scrollX, scrollY, button);
 		}
 		return super.click(mx, my, scrollX, scrollY, button);
@@ -151,7 +151,7 @@ public class CategoryElement extends GuiElement {
 			}
 		}
 		if(!wasDragging) {
-			if(openCloseAnimation.get() <= 0.5) {
+			if(category.isExpanded()) {
 				scrollArea.release(mx, my, scrollX, scrollY, button);
 			}
 		}
@@ -170,7 +170,7 @@ public class CategoryElement extends GuiElement {
 			}
 			return true;
 		}
-		if(openCloseAnimation.get() <= 0.5) {
+		if(category.isExpanded()) {
 			if(scrollArea.drag(mx, my, scrollX, scrollY, button, dx, dy)) {
 				return true;
 			}

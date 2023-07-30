@@ -12,6 +12,7 @@ public class Changelog {
 				- Changed module screen open animation
 				- Tweaked default ClickGUI colors
 				- Fixed HUD chroma animation
+				- Fixed category animation
 			
 			Update 1.9.2:
 				- Fixed startup crash
