@@ -77,9 +77,10 @@ public class ClickGUIScreen extends GuiScreen {
 					scrollArea.addElement(guiElement);
 				}
 			}
-			scrollArea.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))));
+			float currentHeight = scrollArea.getHeight();
+			scrollArea.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), currentHeight / 2f + height / 2f)));
 			scrollArea.resize(maxWidth, 0);
-			topElement.moveTo(width / 2f - maxWidth / 2 - 1, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topElement.getHeight());
+			topElement.moveTo(width / 2f - maxWidth / 2 - 1, (int)(height - Math.min(height * (5 / 6f), currentHeight / 2f + height / 2f)) - topElement.getHeight());
 			topElement.resize(maxWidth + 2, topElement.getHeight());
 			elements.add(topElement);
 			elements.add(scrollArea);
@@ -109,7 +110,6 @@ public class ClickGUIScreen extends GuiScreen {
 		if(topElement == null || scrollArea == null) {
 			return;
 		}
-		int totalHeight = 0;
 		float maxWidth = topElement.getPreferredWidth();
 		for(GuiElement categoryElement : scrollArea.getElements()) {
 			if(categoryElement instanceof SettingCategoryElement) {
@@ -125,7 +125,6 @@ public class ClickGUIScreen extends GuiScreen {
 				}
 				scrollArea.setEnabled(categoryElement, shouldShow);
 				if(shouldShow) {
-					totalHeight += categoryElement.getHeight();
 					if(maxWidth < categoryElement.getWidth()) {
 						maxWidth = categoryElement.getWidth();
 					}
@@ -135,16 +134,16 @@ public class ClickGUIScreen extends GuiScreen {
 				boolean shouldShowElement = ((SettingElement<?>)categoryElement).shouldShow();
 				scrollArea.setEnabled(categoryElement, shouldShowElement);
 				if(shouldShowElement) {
-					totalHeight += categoryElement.getHeight();
 					if(maxWidth < categoryElement.getWidth()) {
 						maxWidth = categoryElement.getWidth();
 					}
 				}
 			}
 		}
-		scrollArea.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))));
+		float currentHeight = scrollArea.getHeight();
+		scrollArea.moveTo(width / 2f - maxWidth / 2, (int)(height - Math.min(height * (5 / 6f), currentHeight / 2f + height / 2f)));
 		scrollArea.resize(maxWidth, 0);
-		topElement.moveTo(width / 2f - maxWidth / 2 - 1, (int)(height - Math.min(height * (5 / 6f), totalHeight + height * (5 / 6f))) - topElement.getHeight());
+		topElement.moveTo(width / 2f - maxWidth / 2 - 1, (int)(height - Math.min(height * (5 / 6f), currentHeight / 2f + height / 2f)) - topElement.getHeight());
 		topElement.resize(maxWidth + 2, topElement.getHeight());
 	}
 	
@@ -162,7 +161,7 @@ public class ClickGUIScreen extends GuiScreen {
 			markDirty();
 		}
 	}
-
+	
 	@Override
 	public boolean shouldPause() {
 		return false;

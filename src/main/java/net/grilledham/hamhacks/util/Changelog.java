@@ -9,6 +9,7 @@ public class Changelog {
 					: Borderless Fullscreen
 				- Added chroma speed
 				- Changed overflow animation
+				- Changed module screen open animation
 				- Tweaked default ClickGUI colors
 				- Fixed HUD chroma animation
 			
