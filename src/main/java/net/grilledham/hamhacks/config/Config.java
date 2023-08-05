@@ -86,8 +86,7 @@ public abstract class Config {
 				parseSettings(JsonParser.parseString(builder.trim()).getAsJsonObject());
 			f.close();
 		} catch (Exception ex) {
-			System.out.printf("Could not load config file! (\"%s\")%n", file.getName());
-			ex.printStackTrace();
+			HamHacksClient.LOGGER.error("Could not load config file! (\"{}\")", file.getName(), ex);
 		}
 	}
 	
@@ -129,8 +128,7 @@ public abstract class Config {
 			object.add("pages", pages);
 			writeToFile(file, object);
 		} catch (Exception ex) {
-			System.out.printf("Could not save config file! (\"%s\")%n", file.getName());
-			ex.printStackTrace();
+			HamHacksClient.LOGGER.error("Could not save config file! (\"{}\")", file.getName(), ex);
 		}
 	}
 	
@@ -149,7 +147,7 @@ public abstract class Config {
 					category.setPos(cObj.get("x").getAsFloat(), cObj.get("y").getAsFloat());
 					category.expand(cObj.get("expanded").getAsBoolean());
 				} catch(Exception e) {
-					e.printStackTrace();
+					HamHacksClient.LOGGER.error("Parsing settings", e);
 				}
 			}
 		}
@@ -170,7 +168,7 @@ public abstract class Config {
 						}
 					}
 				} catch(Exception e) {
-					e.printStackTrace();
+					HamHacksClient.LOGGER.error("Parsing settings", e);
 				}
 			}
 		}
@@ -191,7 +189,7 @@ public abstract class Config {
 						}
 					}
 				} catch(Exception e) {
-					e.printStackTrace();
+					HamHacksClient.LOGGER.error("Parsing settings", e);
 				}
 			}
 		}
@@ -213,7 +211,7 @@ public abstract class Config {
 			bufferedWriter.close();
 			writer.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			HamHacksClient.LOGGER.error("Parsing settings", e);
 		}
 	}
 	

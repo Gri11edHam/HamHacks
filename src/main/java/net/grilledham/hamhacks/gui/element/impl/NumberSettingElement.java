@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
+import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.animation.Animation;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
@@ -112,7 +113,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 			try {
 				updateValue(newVal, true);
 			} catch(IllegalAccessException e) {
-				e.printStackTrace();
+				HamHacksClient.LOGGER.error("", e);
 			}
 		}
 		
@@ -185,7 +186,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 					reset.run();
 					updateValue(get.get(), true);
 				} catch(IllegalAccessException e) {
-					e.printStackTrace();
+					HamHacksClient.LOGGER.error("", e);
 				}
 			}
 		}

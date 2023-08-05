@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.event;
 
 import com.google.common.collect.Lists;
+import net.grilledham.hamhacks.HamHacksClient;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -56,7 +57,7 @@ public class EventManager {
 //							System.out.println("Calling " + o.getClass().getSimpleName() + "." + m.getName() + "(" + e.getClass().getSimpleName() + ")");
 							m.invoke(o, e);
 						} catch(IllegalAccessException | InvocationTargetException ex) {
-							ex.printStackTrace();
+							HamHacksClient.LOGGER.error("Calling event", ex);
 						}
 					}
 				}

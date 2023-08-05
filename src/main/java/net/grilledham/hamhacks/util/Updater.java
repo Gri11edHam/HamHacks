@@ -53,7 +53,7 @@ public class Updater {
 				HamHacksClient.LOGGER.info("Up to date! ({} >= {})", HamHacksClient.VERSION.getVersion(0, true), latestVersion.getVersion(0, true));
 			}
 		} catch(IOException e) {
-			e.printStackTrace();
+			HamHacksClient.LOGGER.error("Checking for updates", e);
 		}
 	}
 	
@@ -119,15 +119,15 @@ public class Updater {
 							FileHelper.writeFile(deleterProgram, deleter);
 							Runtime.getRuntime().exec("cmd /c start deleter.bat", null, deleter.getParentFile());
 						} catch(IOException e) {
-							e.printStackTrace();
+							HamHacksClient.LOGGER.error("Starting deleter.bat", e);
 						}
 					}));
 				}
 			} catch(URISyntaxException e) {
-				e.printStackTrace();
+				HamHacksClient.LOGGER.error("Removing old version", e);
 			}
 		} catch(IOException e) {
-			e.printStackTrace();
+			HamHacksClient.LOGGER.error("Writing new version", e);
 		}
 	}
 }

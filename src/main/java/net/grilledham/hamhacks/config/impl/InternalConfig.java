@@ -52,8 +52,7 @@ public class InternalConfig extends Config {
 			object.add("categories", categories);
 			writeToFile(file, object);
 		} catch (Exception ex) {
-			System.out.printf("Could not save config file! (\"%s\")%n", file.getName());
-			ex.printStackTrace();
+			HamHacksClient.LOGGER.error("Could not save config file! (\"{}\")", file.getName(), ex);
 		}
 	}
 	

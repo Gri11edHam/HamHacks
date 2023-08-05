@@ -92,7 +92,7 @@ public class TitleBar extends Module {
 				}
 			}
 		} catch(IOException e) {
-			e.printStackTrace();
+			HamHacksClient.LOGGER.error("Setting window icon", e);
 		}
 	}
 	
@@ -113,7 +113,7 @@ public class TitleBar extends Module {
 		try {
 			mc.getWindow().setIcon(mc.getDefaultResourcePack(), SharedConstants.getGameVersion().isStable() ? Icons.RELEASE : Icons.SNAPSHOT);
 		} catch(IOException e) {
-			e.printStackTrace();
+			HamHacksClient.LOGGER.error("Setting window icon", e);
 		}
 	}
 	

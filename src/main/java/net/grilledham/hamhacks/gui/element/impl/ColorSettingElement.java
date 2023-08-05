@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.gui.element.impl;
 
+import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.animation.Animation;
 import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.page.PageManager;
@@ -83,7 +84,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 						hexVal.set(hex.toString());
 						type(GLFW.GLFW_KEY_END, GLFW.glfwGetKeyScancode(GLFW.GLFW_KEY_END), 0);
 					} catch(Exception e) {
-						e.printStackTrace();
+						HamHacksClient.LOGGER.error("", e);
 					}
 				}
 				return super.type(code, scanCode, modifiers);

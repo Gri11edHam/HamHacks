@@ -95,8 +95,7 @@ public class ProfileManager extends Config {
 			object.add("profiles", profiles);
 			writeToFile(file, object);
 		} catch(Exception ex) {
-			System.out.printf("Could not save config file! (\"%s\")%n", file.getName());
-			ex.printStackTrace();
+			HamHacksClient.LOGGER.error("Could not save config file! (\"{}\")", file.getName(), ex);
 		}
 	}
 	

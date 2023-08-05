@@ -1,5 +1,7 @@
 package net.grilledham.hamhacks.util;
 
+import net.grilledham.hamhacks.HamHacksClient;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -224,7 +226,7 @@ public class Version {
 				try {
 					return Integer.parseInt(version.split("-")[1].toLowerCase().split("\\.")[1]);
 				} catch(NumberFormatException e) {
-					e.printStackTrace();
+					HamHacksClient.LOGGER.error("Parsing version", e);
 					return 0;
 				}
 			}
