@@ -43,7 +43,12 @@ public class ModuleManager {
 	}
 	
 	public static <T extends Module> T getModule(Class<T> clazz) {
-		return clazz.cast(modules.stream().filter(module -> module.getClass() == clazz).findFirst().orElse(null));
+		try {
+			return clazz.cast(modules.stream().filter(module -> module.getClass() == clazz).findFirst().orElse(null));
+		} catch(ConcurrentModificationException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public static void updateKeybinds() {
