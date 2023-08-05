@@ -37,6 +37,7 @@
   ],
   "mixins": [
     "MixinAbstractBlockState",
+    "MixinBlock",
     "MixinBoatEntity",
     "MixinEntityVelocityUpdateS2CPacket",
     "MixinMatrix4f",
@@ -44,8 +45,10 @@
     "MixinVec3d",
     "MixinYggdrasilUserApiService",
     "baritone.MixinComeCommand",
+    "continuity.MixinBaseProcessingPredicate",
+    "continuity.MixinCullingCache",
     "sodium.MixinBlockOcclusionCache",
     "sodium.MixinBlockRenderer",
     "sodium.MixinFluidRenderer"
-	]
+  ]
 }

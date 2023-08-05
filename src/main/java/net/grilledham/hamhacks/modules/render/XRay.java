@@ -89,4 +89,11 @@ public class XRay extends Module {
 		}
 		return returnValue;
 	}
+	
+	public boolean shouldCullSide(BlockState selfState, BlockView view, BlockPos pos, Direction facing, boolean returnValue) {
+		if(visibleBlocks.get(selfState.getBlock())) {
+			return returnValue;
+		}
+		return true;
+	}
 }

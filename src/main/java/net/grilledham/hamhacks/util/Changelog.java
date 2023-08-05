@@ -4,6 +4,7 @@ public class Changelog {
 	
 	private static final String CHANGELOG = """
 			Update 1.9.4:
+				- Improved module XRay
 				- Fixed compatibility with Sodium 0.5
 			
 			Update 1.9.3:
