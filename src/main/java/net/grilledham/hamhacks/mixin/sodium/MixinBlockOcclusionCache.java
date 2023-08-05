@@ -1,6 +1,6 @@
 package net.grilledham.hamhacks.mixin.sodium;
 
-import me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache;
+import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.XRay;
 import net.minecraft.block.BlockState;

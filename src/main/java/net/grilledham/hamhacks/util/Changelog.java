@@ -3,6 +3,9 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.9.4:
+				- Fixed compatibility with Sodium 0.5
+			
 			Update 1.9.3:
 				- Added modules:
 					: Block Outline
