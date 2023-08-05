@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IChat {
 	
-	List<ChatHudLine> getMessages();
+	List<ChatHudLine> hamHacks$getMessages();
 	
-	List<ChatHudLine.Visible> getVisibleMessages();
+	List<ChatHudLine.Visible> hamHacks$getVisibleMessages();
 }

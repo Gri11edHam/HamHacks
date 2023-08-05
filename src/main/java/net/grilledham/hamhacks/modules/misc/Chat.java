@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Chat extends Module {
 	
@@ -106,7 +108,9 @@ public class Chat extends Module {
 			return true;
 		});
 		String username = (ModuleManager.getModule(NameHider.class).isEnabled() ? ModuleManager.getModule(NameHider.class).fakeName.get() : MinecraftClient.getInstance().getSession().getUsername());
-		return sb.toString().contains(username) && !sentMessages.contains(sb.toString());
+		Matcher m = Pattern.compile("^(.*)( \\([0-9]+\\))$").matcher(sb.toString());
+		String s = m.matches() ? m.group(1) : sb.toString();
+		return sb.toString().contains(username) && !sentMessages.contains(s);
 	}
 	
 	@EventListener
@@ -117,7 +121,14 @@ public class Chat extends Module {
 	
 	@EventListener
 	public void receiveChat(EventChat.EventChatReceived e) {
-		if(pingOnMention.get() && e.message.contains(mc.player.getName()) && (sentMessages == null || !sentMessages.contains(e.message.getString()))) {
+		Matcher matcher = Pattern.compile("^(.*)( \\([0-9]+\\))$").matcher(e.message.getString());
+		String msg = matcher.matches() ? matcher.group(1) : e.message.getString();
+		if(pingOnMention.get() && msg.contains(MinecraftClient.getInstance().getSession().getUsername())
+				&& (sentMessages == null || !sentMessages.contains(
+						ModuleManager.getModule(NameHider.class).isEnabled()
+								? msg.replaceFirst(MinecraftClient.getInstance().getSession().getUsername(), ModuleManager.getModule(NameHider.class).fakeName.get())
+								: msg
+		))) {
 			mc.getSoundManager().play(new PositionedSoundInstance(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP.getId(), SoundCategory.VOICE, 1, 1, new Random() {
 				@Override
 				public Random split() {
@@ -212,7 +223,7 @@ public class Chat extends Module {
 	
 	private void removeLastMessage(String msg) {
 		ChatHud chat = mc.inGameHud.getChatHud();
-		List<ChatHudLine> messages = ((IChat)chat).getMessages();
+		List<ChatHudLine> messages = ((IChat)chat).hamHacks$getMessages();
 		int index = -1;
 		MutableText originalMessage = null;
 		for(ChatHudLine message : messages) {
@@ -226,13 +237,13 @@ public class Chat extends Module {
 			}
 		}
 		if(index >= 0) {
-			((IChat)chat).getMessages().remove(index);
+			((IChat)chat).hamHacks$getMessages().remove(index);
 			
 			List<OrderedText> list = ChatMessages.breakRenderedChatMessageLines(originalMessage, MathHelper.floor((double)mc.inGameHud.getChatHud().getWidth() / mc.inGameHud.getChatHud().getChatScale()), mc.textRenderer);
 			int lines = list.size();
 			
 			for (int i = 0; i < lines; i++) {
-				((IChat)chat).getVisibleMessages().remove(index);
+				((IChat)chat).hamHacks$getVisibleMessages().remove(index);
 			}
 		}
 	}

@@ -6,6 +6,7 @@ public class Changelog {
 			Update 1.9.4:
 				- Improved module XRay
 				- Fixed compatibility with Sodium 0.5
+				- Bug fixes
 			
 			Update 1.9.3:
 				- Added modules:

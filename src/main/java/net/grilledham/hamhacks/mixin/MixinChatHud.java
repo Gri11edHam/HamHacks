@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.event.events.EventChat;
+import net.grilledham.hamhacks.mixininterface.IChat;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.Chat;
 import net.minecraft.client.gui.DrawContext;
@@ -23,12 +24,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(ChatHud.class)
-public abstract class MixinChatHud {
+public class MixinChatHud implements IChat {
 	
 	@Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
 	
-	@Shadow protected abstract void addMessage(Text message, @Nullable MessageSignatureData signature, int ticks, @Nullable MessageIndicator indicator, boolean refresh);
+	@Shadow protected void addMessage(Text message, @Nullable MessageSignatureData signature, int ticks, @Nullable MessageIndicator indicator, boolean refresh) {
 	
+	}
+	
+	@Shadow @Final private List<ChatHudLine> messages;
 	private int lineIndex;
 	private MessageIndicator indicator;
 	
@@ -163,5 +167,15 @@ public abstract class MixinChatHud {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public List<ChatHudLine> hamHacks$getMessages() {
+		return messages;
+	}
+	
+	@Override
+	public List<ChatHudLine.Visible> hamHacks$getVisibleMessages() {
+		return visibleMessages;
 	}
 }
