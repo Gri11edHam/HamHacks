@@ -47,6 +47,7 @@
     "baritone.MixinComeCommand",
     "continuity.MixinBaseProcessingPredicate",
     "continuity.MixinCullingCache",
+    "moreculling.MixinCullingUtils",
     "sodium.MixinBlockOcclusionCache",
     "sodium.MixinBlockRenderer",
     "sodium.MixinFluidRenderer"

@@ -47,6 +47,7 @@ dependencies {
     modCompileOnly("maven.modrinth:continuity:${project.continuity_version}") { transitive = false }
     modCompileOnly("baritone:fabric:${project.baritone_version}-SNAPSHOT") { transitive = false }
     modCompileOnly("com.terraformersmc:modmenu:${project.mod_menu_version}") { transitive = false }
+    modCompileOnly("maven.modrinth:moreculling:${project.more_culling_version}") { transitive = false }
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modCompileOnly("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
