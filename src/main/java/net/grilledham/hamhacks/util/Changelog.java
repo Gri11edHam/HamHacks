@@ -3,6 +3,9 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.9.5:
+				- Fixed XRay module when More Culling is installed
+			
 			Update 1.9.4:
 				- Improved module XRay
 				- Fixed compatibility with Sodium 0.5
