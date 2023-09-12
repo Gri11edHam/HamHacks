@@ -5,6 +5,7 @@ public class Changelog {
 	private static final String CHANGELOG = """
 			Update 1.9.5:
 				- Fixed XRay module when More Culling is installed
+				- Improved Auto Land option for Jetpack mode in the Fly module
 			
 			Update 1.9.4:
 				- Improved module XRay

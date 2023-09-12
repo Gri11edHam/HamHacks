@@ -16,9 +16,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import org.lwjgl.glfw.GLFW;
 
 public class Fly extends Module {
@@ -125,15 +123,18 @@ public class Fly extends Module {
 				case 2 -> {
 					mc.player.addVelocity(0, mc.player.input.jumping ? jetpackSpeed.get() : 0, 0);
 					if(autoLand.get()) {
-						if(mc.world.getBlockState(mc.player.getBlockPos().add(0, MathHelper.floor(20 * mc.player.getVelocity().getY()), 0)).getBlock() != Blocks.AIR) {
-							BlockState state1 = mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 3, 0)));
-							BlockState state2 = mc.world.getBlockState(mc.player.getBlockPos().subtract(new Vec3i(0, 1, 0)));
-							if(state1.getBlock().canMobSpawnInside(state1)) {
-								landing = true;
-								mc.player.addVelocity(0, -mc.player.getVelocity().getY() * 0.1, 0);
-							} else if(landing && !state2.getBlock().canMobSpawnInside(state2)) {
-								landing = false;
-								mc.player.addVelocity(0, -mc.player.getVelocity().getY() * 1.2, 0);
+						BlockPos pos = mc.player.getBlockPos().down();
+						for(; !mc.world.isOutOfHeightLimit(pos); pos = pos.down()) {
+							BlockState state = mc.world.getBlockState(pos);
+							if(!state.getCollisionShape(mc.world, pos).isEmpty()) {
+								break;
+							}
+						}
+						if(!mc.world.isOutOfHeightLimit(pos)) {
+							double d0 = mc.player.getPos().add(0, mc.player.getVelocity().getY() * 4, 0).getY() - pos.getY();
+							double d1 = mc.player.getPos().getY() - pos.getY();
+							if(d0 < 0 && d1 > 1.5) {
+								mc.player.addVelocity(0, -mc.player.getVelocity().getY() + 0.2, 0);
 							}
 						}
 					}
