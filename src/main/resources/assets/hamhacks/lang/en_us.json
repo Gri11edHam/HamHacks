@@ -369,6 +369,9 @@
 	"hamhacks.module.borderlessFullscreen": "Borderless Fullscreen",
 	"hamhacks.module.borderlessFullscreen.tooltip": "Removes the border from fullscreen mode\nso you can switch windows without the game disappearing.",
 
+	"hamhacks.module.forcefield": "Forcefield",
+	"hamhacks.module.forcefield.tooltip": "Hits every hostile mob within a three block\nradius so you don't die",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",

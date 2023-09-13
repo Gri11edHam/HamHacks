@@ -76,6 +76,7 @@ public class HamHacksConfig extends Config {
 		ModuleManager.register(modId, new TitleBar());
 		ModuleManager.register(modId, new BlockOutline());
 		ModuleManager.register(modId, new BorderlessFullscreen());
+		ModuleManager.register(modId, new Forcefield());
 		
 		CommandManager.addCommand(new HelpCommand());
 		CommandManager.addCommand(new ToggleCommand());
