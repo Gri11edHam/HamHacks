@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.event;
 
 import com.google.common.collect.Lists;
 import net.grilledham.hamhacks.HamHacksClient;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,6 +12,9 @@ import java.util.HashMap;
 public class EventManager {
 	
 	private static final HashMap<Class<? extends Event>, HashMap<Object, ArrayList<Method>>> listeners = new HashMap<>();
+	private static boolean calling = false;
+	private static final ArrayList<Triple<Object, Method, Class<? extends Event>>> toAdd = new ArrayList<>();
+	private static final ArrayList<Triple<Object, Method, Class<? extends Event>>> toRemove = new ArrayList<>();
 	
 	private EventManager() {}
 	
@@ -21,6 +25,10 @@ public class EventManager {
 	}
 	
 	public static void register(Object o, Method m, Class<? extends Event> c) {
+		if(calling) {
+			toAdd.add(Triple.of(o, m, c));
+			return;
+		}
 		if(listeners.containsKey(c)) {
 			if(listeners.get(c).containsKey(o)) {
 				listeners.get(c).get(o).add(m);
@@ -41,6 +49,10 @@ public class EventManager {
 	}
 	
 	public static void unRegister(Object o, Method m, Class<? extends Event> c) {
+		if(calling) {
+			toRemove.add(Triple.of(o, m, c));
+			return;
+		}
 		if(listeners.containsKey(c)) {
 			if(listeners.get(c).containsKey(o)) {
 				listeners.get(c).get(o).remove(m);
@@ -50,9 +62,11 @@ public class EventManager {
 	
 	public static void call(Event e) {
 		if(listeners.containsKey(e.getClass())) {
-			if(!listeners.get(e.getClass()).isEmpty()) {
-				for(Object o : listeners.get(e.getClass()).keySet()) {
-					for(Method m : listeners.get(e.getClass()).get(o)) {
+			final HashMap<Object, ArrayList<Method>> l = EventManager.listeners.get(e.getClass());
+			if(!l.isEmpty()) {
+				calling = true;
+				for(Object o : l.keySet()) {
+					for(Method m : l.get(o)) {
 						try {
 //							System.out.println("Calling " + o.getClass().getSimpleName() + "." + m.getName() + "(" + e.getClass().getSimpleName() + ")");
 							m.invoke(o, e);
@@ -61,8 +75,17 @@ public class EventManager {
 						}
 					}
 				}
+				calling = false;
+				updateListeners();
 			}
 		}
+	}
+	
+	private static void updateListeners() {
+		toAdd.forEach(t -> register(t.getLeft(), t.getMiddle(), t.getRight()));
+		toRemove.forEach(t -> unRegister(t.getLeft(), t.getMiddle(), t.getRight()));
+		toAdd.clear();
+		toRemove.clear();
 	}
 	
 	private static ArrayList<Method> getEventMethods(Object o) {
