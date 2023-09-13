@@ -372,6 +372,10 @@
 	"hamhacks.module.forcefield": "Forcefield",
 	"hamhacks.module.forcefield.tooltip": "Hits every hostile mob within a three block\nradius so you don't die",
 
+	"hamhacks.module.longJump": "Long Jump",
+	"hamhacks.module.longJump.tooltip": "Makes you jump further",
+	"hamhacks.module.longJump.speed": "Speed",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
