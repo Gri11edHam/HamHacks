@@ -6,7 +6,8 @@ public class Changelog {
 			Update 1.9.5:
 				- Added modules:
 					: Forcefield
-					: LongJump
+					: Long Jump
+					: Air Jump
 				- Fixed XRay module when More Culling is installed
 				- Improved Auto Land option for Jetpack mode in the Fly module
 				- Fixed a crash when enabling some modules

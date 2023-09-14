@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.modules.movement;
 
 import net.grilledham.hamhacks.event.EventListener;
-import net.grilledham.hamhacks.event.events.EventMotion;
+import net.grilledham.hamhacks.event.events.EventJump;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
@@ -20,9 +20,9 @@ public class LongJump extends Module {
 	}
 	
 	@EventListener
-	public void onJump(EventMotion e) {
-		if(mc.player != null && e.type == EventMotion.Type.PRE) {
-			if(mc.options.jumpKey.isPressed() && mc.player.isOnGround()) {
+	public void onJump(EventJump e) {
+		if(mc.player != null) {
+			if(mc.player.isOnGround()) {
 				mc.player.addVelocity(Vec3d.fromPolar(0, mc.player.getYaw()).multiply(speed.get() / 2));
 			}
 		}

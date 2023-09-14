@@ -376,6 +376,9 @@
 	"hamhacks.module.longJump.tooltip": "Makes you jump further",
 	"hamhacks.module.longJump.speed": "Speed",
 
+	"hamhacks.module.airJump": "Air Jump",
+	"hamhacks.module.airJump.tooltip": "Lets you jump in the air",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
