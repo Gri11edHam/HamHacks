@@ -382,6 +382,9 @@
 	"hamhacks.module.criticals": "Criticals",
 	"hamhacks.module.criticals.tooltip": "Makes every one of your attacks a critical hit",
 
+	"hamhacks.module.wTap": "W-Tap",
+	"hamhacks.module.wTap.tooltip": "Makes your attacks do extra knockback",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",

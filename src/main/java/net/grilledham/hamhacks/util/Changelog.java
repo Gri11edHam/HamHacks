@@ -9,6 +9,7 @@ public class Changelog {
 					: Long Jump
 					: Air Jump
 					: Criticals
+					: W-Tap
 				- Fixed XRay module when More Culling is installed
 				- Improved Auto Land option for Jetpack mode in the Fly module
 				- Fixed a crash when enabling some modules

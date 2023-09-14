@@ -80,6 +80,7 @@ public class HamHacksConfig extends Config {
 		ModuleManager.register(modId, new LongJump());
 		ModuleManager.register(modId, new AirJump());
 		ModuleManager.register(modId, new Criticals());
+		ModuleManager.register(modId, new WTap());
 		
 		CommandManager.addCommand(new HelpCommand());
 		CommandManager.addCommand(new ToggleCommand());
