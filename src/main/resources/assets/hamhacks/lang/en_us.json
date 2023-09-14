@@ -385,6 +385,12 @@
 	"hamhacks.module.wTap": "W-Tap",
 	"hamhacks.module.wTap.tooltip": "Makes your attacks do extra knockback",
 
+	"hamhacks.module.bowAimbot": "Bow Aimbot",
+	"hamhacks.module.bowAimbot.tooltip": "Aims your bow for you",
+	"hamhacks.module.bowAimbot.targetPlayers": "Target Players",
+	"hamhacks.module.bowAimbot.targetPassive": "Target Passive Mobs",
+	"hamhacks.module.bowAimbot.targetHostile": "Target Hostile Mobs",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",

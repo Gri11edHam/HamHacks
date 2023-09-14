@@ -10,6 +10,7 @@ public class Changelog {
 					: Air Jump
 					: Criticals
 					: W-Tap
+					: Bow Aimbot
 				- Fixed XRay module when More Culling is installed
 				- Improved Auto Land option for Jetpack mode in the Fly module
 				- Fixed a crash when enabling some modules

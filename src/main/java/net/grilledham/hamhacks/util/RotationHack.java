@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.event.EventManager;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
 public class RotationHack {
@@ -34,7 +35,7 @@ public class RotationHack {
 		realYaw = player.getYaw();
 		realPitch = player.getPitch();
 		player.setYaw(serverYaw);
-		player.setYaw(serverPitch);
+		player.setPitch(serverPitch);
 	}
 	
 	public static void postSend() {
@@ -53,6 +54,13 @@ public class RotationHack {
 	@EventListener
 	public void tickEvent(EventTick e) {
 		useFakeTicks--;
+	}
+	
+	public static void facePacket(Vec2f vec) {
+		useFake = true;
+		useFakeTicks = 10;
+		serverYaw = vec.x;
+		serverPitch = vec.y;
 	}
 	
 	public static void faceVectorPacket(Vec3d vec) {
