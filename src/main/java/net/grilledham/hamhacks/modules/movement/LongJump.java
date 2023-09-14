@@ -19,6 +19,11 @@ public class LongJump extends Module {
 		GENERAL_CATEGORY.add(speed);
 	}
 	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + "\u00a77" + String.format("%.2f", speed.get());
+	}
+	
 	@EventListener
 	public void onJump(EventJump e) {
 		if(mc.player != null) {

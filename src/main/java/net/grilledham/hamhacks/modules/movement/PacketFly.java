@@ -19,6 +19,11 @@ public class PacketFly extends Module {
 		GENERAL_CATEGORY.add(timerMultiplier);
 	}
 	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + "\u00a77" + String.format("%.2f", timerMultiplier.get());
+	}
+	
 	@EventListener
 	public void onTick(EventTick e) {
 		if(mc.player == null) {

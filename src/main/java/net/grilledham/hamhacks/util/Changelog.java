@@ -11,6 +11,7 @@ public class Changelog {
 					: Criticals
 					: W-Tap
 					: Bow Aimbot
+				- Added more HUD info to some modules
 				- Fixed XRay module when More Culling is installed
 				- Improved Auto Land option for Jetpack mode in the Fly module
 				- Fixed a crash when enabling some modules

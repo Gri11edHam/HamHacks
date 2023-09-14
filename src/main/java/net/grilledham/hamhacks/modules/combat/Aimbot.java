@@ -47,6 +47,7 @@ public class Aimbot extends Module {
 	
 	private final BoolSetting targetBlocks = new BoolSetting("hamhacks.module.aimbot.targetBlocks", false, () -> true);
 	
+	private Entity entity = null;
 	private Entity entityToAim = null;
 	private HitResult blockToAim = null;
 	
@@ -64,13 +65,28 @@ public class Aimbot extends Module {
 		TARGETING_CATEGORY.add(targetBlocks);
 	}
 	
+	@Override
+	public String getHUDText() {
+		String extra;
+		if(entity != null) {
+			extra = entity.getName().getString();
+		} else if(blockToAim != null) {
+			extra = blockToAim.getType().name();
+		} else {
+			extra = "None";
+		}
+		return super.getHUDText() + "\u00a77" + extra;
+	}
+	
 	@EventListener
 	public void onTick(EventTick e) {
+		entity = null;
 		if(mc.world == null) {
 			return;
 		}
 		if(keepAiming.get()) {
 			if(entityToAim != null && !MouseUtil.mouseMoved()) {
+				entity = entityToAim;
 				entityToAim.getPos().floorAlongAxes(EnumSet.allOf(Direction.Axis.class)).add(0.5, 0.5, 0.5);
 				float[] rotation = getRotationsNeeded(entityToAim, null, fov.get(), fov.get(), speed.get(), speed.get());
 				
@@ -85,6 +101,7 @@ public class Aimbot extends Module {
 			Entity entity = getClosestEntityToCrosshair(Lists.newCopyOnWriteArrayList(mc.world.getEntities()).stream().filter(ent -> ent.getPos().distanceTo(mc.player.getPos()) < 6 && ent != mc.player/* && ent instanceof PlayerEntity*/).collect(Collectors.toList()));
 			if(entity != null && targetEntities.get()) {
 				if((entity instanceof PlayerEntity && targetPlayers.get()) || (entity instanceof PassiveEntity && targetPassive.get()) || (entity instanceof HostileEntity && targetHostile.get())) {
+					this.entity = entity;
 					float[] rotation = getRotationsNeeded(entity, null, fov.get(), fov.get(), speed.get(), speed.get());
 					
 					mc.player.setPitch(rotation[1]);

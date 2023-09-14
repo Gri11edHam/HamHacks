@@ -14,15 +14,25 @@ import net.minecraft.text.Text;
 
 public class AutoTotem extends Module {
 	
+	private int totemsLeft = 0;
+	
 	public AutoTotem() {
 		super(Text.translatable("hamhacks.module.autoTotem"), Category.PLAYER, new Keybind(0));
+	}
+	
+	@Override
+	public String getHUDText() {
+		return super.getHUDText() + " \u00a77" + totemsLeft;
 	}
 	
 	@EventListener
 	public void onTick(EventTick e) {
 		if(mc.world == null || mc.player == null) {
+			totemsLeft = 0;
 			return;
 		}
+		
+		totemsLeft = mc.player.getInventory().count(Items.TOTEM_OF_UNDYING);
 		
 		ItemStack offhand = mc.player.getOffHandStack();
 		if(offhand.getItem() != Items.TOTEM_OF_UNDYING) {
