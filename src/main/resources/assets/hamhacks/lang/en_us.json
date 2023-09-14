@@ -379,6 +379,9 @@
 	"hamhacks.module.airJump": "Air Jump",
 	"hamhacks.module.airJump.tooltip": "Lets you jump in the air",
 
+	"hamhacks.module.criticals": "Criticals",
+	"hamhacks.module.criticals.tooltip": "Makes every one of your attacks a critical hit",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
