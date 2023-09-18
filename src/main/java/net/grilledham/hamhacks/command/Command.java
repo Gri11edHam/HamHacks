@@ -74,7 +74,7 @@ public abstract class Command {
 		dispatcher.register(builder);
 	}
 	
-	public abstract void build(LiteralArgumentBuilder<CommandSource> builder); // TODO: Suggestions in commands (idk how to do this yet/kinda confusing)
+	public abstract void build(LiteralArgumentBuilder<CommandSource> builder);
 	
 	public void sendMsg(Text message) {
 		MutableText prefix = (MutableText)Text.of("[" + title + "]");

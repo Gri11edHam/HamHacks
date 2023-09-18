@@ -27,14 +27,17 @@ public class ToggleCommand extends Command {
 				info(Text.of("Toggled " + module.getName() + " " + (module.isEnabled() ? "\u00a7aOn" : "\u00a7cOff")));
 			}
 			return SINGLE_SUCCESS;
-		})/*.suggests((ctx, b) -> {
-			List<Suggestion> suggestions = new ArrayList<>();
+		}).suggests((ctx, b) -> {
+			String moduleName;
+			String remaining;
 			for(Module module : ModuleManager.getModules()) {
-				suggestions.add(new Suggestion(StringRange.at(ctx.getRange().getEnd() + 1), "\"" + module.getName() + "\""));
+				moduleName = module.getName().toLowerCase();
+				remaining = b.getRemainingLowerCase();
+				if(moduleName.startsWith(remaining) || ("\"" + moduleName + "\"").startsWith(remaining)) {
+					b.suggest(moduleName.contains(" ") ? ("\"" + module.getName() + "\"") : module.getName());
+				}
 			}
-			CompletableFuture<Suggestions> toReturn = new CompletableFuture<>();
-			toReturn.complete(new Suggestions(StringRange.at(ctx.getRange().getEnd() + 1), suggestions));
-			return toReturn;
-		})*/);
+			return b.buildFuture();
+		}));
 	}
 }

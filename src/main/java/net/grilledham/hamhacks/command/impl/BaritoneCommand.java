@@ -5,7 +5,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.grilledham.hamhacks.command.Command;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
@@ -25,15 +24,20 @@ public class BaritoneCommand extends Command {
 	
 	@Override
 	public void build(LiteralArgumentBuilder<CommandSource> builder) {
-		builder.then(argument("command", StringArgumentType.greedyString()).executes((cmd) -> {
+		builder.then(argument("command", StringArgumentType.word()).executes((cmd) -> {
 			String baritoneCmd;
 			try {
 				baritoneCmd = cmd.getArgument("command", String.class);
 			} catch(Exception e) {
 				baritoneCmd = "help";
 			}
-			MinecraftClient.getInstance().getNetworkHandler().sendChatMessage(BaritoneAPI.getSettings().prefix.value + baritoneCmd);
+			BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute(baritoneCmd);
 			return SINGLE_SUCCESS;
+		}).suggests((ctx, b) -> {
+			for(String s : BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().tabComplete(b.getRemaining()).toList()) { // doesn't quite work
+				b.suggest(s);
+			}
+			return b.buildFuture();
 		}));
 	}
 }
