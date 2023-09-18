@@ -15,6 +15,9 @@ HamHacks is a Minecraft mod that adds a lot of useful features (that might get y
 ## Download
 https://github.com/Gri11edHam/HamHacks/releases/latest
 
+## Download Beta Bulids
+https://github.com/Gri11edHam/HamHacks/actions
+
 ## How to Use
 
 Step 1: Download and install fabric for the latest version of Minecraft (Download fabric <a href="https://fabricmc.net/use/installer/">here</a>)
