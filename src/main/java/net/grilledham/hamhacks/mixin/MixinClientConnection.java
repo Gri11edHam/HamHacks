@@ -26,8 +26,17 @@ public abstract class MixinClientConnection extends SimpleChannelInboundHandler<
 	}
 	
 	@Inject(method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V", at = @At("HEAD"), cancellable = true)
-	public void send(Packet<?> packet, PacketCallbacks callback, CallbackInfo ci) {
-		EventPacket.EventPacketSent event = new EventPacket.EventPacketSent(packet, callback);
+	public void preSend(Packet<?> packet, PacketCallbacks callback, CallbackInfo ci) {
+		EventPacket.EventPacketSent event = new EventPacket.EventPacketSent(EventPacket.EventPacketSent.Type.PRE, packet, callback);
+		event.call();
+		if(event.canceled) {
+			ci.cancel();
+		}
+	}
+	
+	@Inject(method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V", at = @At("TAIL"), cancellable = true)
+	public void postSend(Packet<?> packet, PacketCallbacks callback, CallbackInfo ci) {
+		EventPacket.EventPacketSent event = new EventPacket.EventPacketSent(EventPacket.EventPacketSent.Type.POST, packet, callback);
 		event.call();
 		if(event.canceled) {
 			ci.cancel();

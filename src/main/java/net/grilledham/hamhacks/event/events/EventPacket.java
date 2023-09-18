@@ -27,9 +27,17 @@ public class EventPacket extends EventCancelable {
 		
 		public PacketCallbacks callback;
 		
-		public EventPacketSent(Packet<?> packet, PacketCallbacks callback) {
+		public Type type;
+		
+		public EventPacketSent(Type type, Packet<?> packet, PacketCallbacks callback) {
 			super(packet);
+			this.type = type;
 			this.callback = callback;
+		}
+		
+		public enum Type {
+			PRE,
+			POST
 		}
 	}
 }

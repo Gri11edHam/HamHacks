@@ -17,7 +17,7 @@ public class WTap extends Module {
 	
 	@EventListener
 	public void sendPacket(EventPacket.EventPacketSent e) {
-		if(e.packet instanceof PlayerInteractEntityC2SPacket) {
+		if(e.packet instanceof PlayerInteractEntityC2SPacket && e.type == EventPacket.EventPacketSent.Type.PRE) {
 			mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.STOP_SPRINTING));
 			mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_SPRINTING));
 		}
