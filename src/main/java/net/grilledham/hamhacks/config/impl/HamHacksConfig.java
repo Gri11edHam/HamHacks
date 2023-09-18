@@ -87,6 +87,7 @@ public class HamHacksConfig extends Config {
 		CommandManager.addCommand(new ToggleCommand());
 		CommandManager.addCommand(new BindCommand());
 		CommandManager.addCommand(new ClickGuiCommand());
+		CommandManager.addCommand(new GamemodeCommand());
 		if(FabricLoader.getInstance().isModLoaded("baritone")) {
 			CommandManager.addCommand(new BaritoneCommand());
 		}
