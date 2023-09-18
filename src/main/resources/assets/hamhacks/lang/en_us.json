@@ -149,7 +149,7 @@
 	"hamhacks.module.tracers.passiveColorClose": "Passive Mob Color (Close)",
 	"hamhacks.module.tracers.passiveColorFar": "Passive Mob Color (Far)",
 
-	"hamhacks.module.instantKillBow": "Instant Kill Bow",
+	"hamhacks.module.instantKillBow": "Bow Bomb",
 	"hamhacks.module.instantKillBow.tooltip": "Makes your arrows fly at light speed\n\u00a7cWARNING: Uses a lot of saturation/hunger",
 	"hamhacks.module.instantKillBow.iterations": "Iterations",
 	"hamhacks.module.instantKillBow.iterations.tooltip": "How many times should the module update\nyour position (might cause kicks from some servers)",
