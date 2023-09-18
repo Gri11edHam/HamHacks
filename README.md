@@ -17,7 +17,9 @@ https://github.com/Gri11edHam/HamHacks/releases/latest
 
 ## How to Use
 
-Step 1: Download the mod and put it in your mods folder
+Step 1: Download and install fabric for the latest version of Minecraft (Download fabric <a href="https://fabricmc.net/use/installer/">here</a>)
+
+Step 2: Download the latest version of <a href="https://github.com/Gri11edHam/HamHacks/releases/latest">HamHacks</a> and put it in your mods folder
 
 Step 2: Launch Minecraft
 
