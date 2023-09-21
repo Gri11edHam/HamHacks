@@ -75,7 +75,7 @@ public class ScrollableElement extends GuiElement {
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
 			if(isElementEnabled.get(element)) {
-				if(element.getX() + element.getWidth() >= x - 2 + scrollX && element.getY() + element.getHeight() + trueHeight >= y - 2 + scrollY + scroll.get() && element.getX() - element.getWidth() <= x + width + 2 + scrollX && element.getY() - element.getHeight() + trueHeight <= y + height + 2 + scrollY + scroll.get()) {
+				if(element.getX() + element.getWidth() >= x - 2 - scrollX && element.getY() + element.getHeight() + trueHeight >= y - 2 - scrollY + scroll.get() && element.getX() - element.getWidth() <= x + width + 2 - scrollX && element.getY() - element.getHeight() + trueHeight <= y - scrollY + height + 2 + scroll.get()) {
 					element.render(ctx, hovered || element == selected ? mx : -1, hovered || element == selected ? my : -1, scrollX, scrollY - (float)scroll.get() + trueHeight, partialTicks);
 				}
 				trueHeight += element.getHeight();
@@ -150,6 +150,8 @@ public class ScrollableElement extends GuiElement {
 	
 	@Override
 	public boolean click(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		boolean hovered = mx >= x && my >= y && mx <= x + width && my <= y + height;
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
@@ -175,6 +177,8 @@ public class ScrollableElement extends GuiElement {
 	
 	@Override
 	public boolean release(double mx, double my, float scrollX, float scrollY, int button) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		boolean hovered = mx >= x && my >= y && mx <= x + width && my <= y + height;
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
@@ -203,6 +207,8 @@ public class ScrollableElement extends GuiElement {
 	
 	@Override
 	public boolean drag(double mx, double my, float scrollX, float scrollY, int button, double dx, double dy) {
+		float x = this.x + scrollX;
+		float y = this.y + scrollY;
 		boolean hovered = mx >= x && my >= y && mx <= x + width && my <= y + height;
 		float trueHeight = 0;
 		for(GuiElement element : subElements) {
@@ -264,20 +270,26 @@ public class ScrollableElement extends GuiElement {
 	public boolean scroll(double mx, double my, float scrollX, float scrollY, double delta) {
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
-		if(mx >= x && mx < x + width && my >= y && my < y + height) {
-			float trueHeight = 0;
-			for(GuiElement element : subElements) {
-				if(isElementEnabled.get(element)) {
+		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + height;
+		float trueHeight = 0;
+		for(GuiElement element : subElements) {
+			if(isElementEnabled.get(element)) {
+				if(selected != null && element == selected) {
 					if(element.scroll(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, delta)) {
 						return true;
 					}
-					trueHeight += element.getHeight();
 				}
+				if(hovered) {
+					if(element.scroll(mx, my, scrollX, scrollY - (float)scroll.get() + trueHeight, delta)) {
+						return true;
+					}
+				}
+				trueHeight += element.getHeight();
 			}
-			if(height >= maxHeight) {
-				nextScroll -= delta * 10;
-				return true;
-			}
+		}
+		if(height >= maxHeight) {
+			nextScroll -= delta * 10;
+			return true;
 		}
 		return super.scroll(mx, my, scrollX, scrollY, delta);
 	}
