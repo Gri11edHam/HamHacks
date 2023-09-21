@@ -4,6 +4,7 @@ public class Changelog {
 	
 	private static final String CHANGELOG = """
 			Update 1.9.5:
+				- Added custom fonts
 				- Added modules:
 					: Forcefield
 					: Long Jump
@@ -18,6 +19,7 @@ public class Changelog {
 				- Improved Auto Land option for Jetpack mode in the Fly module
 				- Fixed XRay module when More Culling is installed
 				- Fixed a crash when enabling some modules
+				- Bug fixes
 			
 			Update 1.9.4:
 				- Improved module XRay
