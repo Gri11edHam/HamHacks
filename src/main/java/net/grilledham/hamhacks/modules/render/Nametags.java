@@ -252,10 +252,10 @@ public class Nametags extends Module {
 				
 				String display = names.get(e);
 				
-				float width = textRenderer.getWidth(display);
+				float width = RenderUtil.getStringWidth(display);
 				
 				float xCenter = width / 2;
-				float height = textRenderer.fontHeight;
+				float height = RenderUtil.getFontHeight();
 				
 				matrixStack.push();
 				matrixStack.translate(pos.getX(), pos.getY(), 0);
@@ -288,7 +288,7 @@ public class Nametags extends Module {
 							int size = 0;
 							for(Enchantment enchantment : enchantments.keySet()) {
 								String enchantName = EnchantUtil.getShortName(enchantment) + " " + enchantments.get(enchantment);
-								itemWidths[i] = Math.max(itemWidths[i], textRenderer.getWidth(enchantName + " "));
+								itemWidths[i] = Math.max(itemWidths[i], RenderUtil.getStringWidth(enchantName + " "));
 								size++;
 							}
 							
@@ -313,20 +313,20 @@ public class Nametags extends Module {
 							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
 							
 							float itemWidth = itemWidths[i];
-							float enchantY =  -itemsHeight / 2 - (enchantments.size() * textRenderer.fontHeight) + 12;
+							float enchantY =  -itemsHeight / 2 - (enchantments.size() * RenderUtil.getFontHeight()) + 12;
 							float enchantX;
 							
 							for(Enchantment enchantment : enchantments.keySet()) {
 								String enchantColor = enchantment.isCursed() ? "\u00a7c" : "\u00a7f";
 								String enchantName = enchantColor + EnchantUtil.getShortName(enchantment) + " " + enchantments.get(enchantment);
 								
-								enchantX = x + (itemWidth / 2) - (textRenderer.getWidth(enchantName) / 2f) + 8;
+								enchantX = x + (itemWidth / 2) - (RenderUtil.getStringWidth(enchantName) / 2f) + 8;
 								
 								matrixStack.translate(0, 0, 300);
 								RenderUtil.drawString(ctx, enchantName, enchantX, y + enchantY, -1, true);
 								matrixStack.translate(0, 0, -300);
 								
-								enchantY += textRenderer.fontHeight;
+								enchantY += RenderUtil.getFontHeight();
 							}
 						}
 						x += itemWidths[i];

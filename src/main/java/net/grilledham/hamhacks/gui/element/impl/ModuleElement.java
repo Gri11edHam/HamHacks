@@ -46,7 +46,7 @@ public class ModuleElement extends GuiElement {
 		bgC = RenderUtil.mix(ui.bgColorHovered.get().getRGB(), bgC, hoverAnimation.get());
 		int bgCEnabled = ui.enabledColor.get().getRGB();
 		bgCEnabled = RenderUtil.mix(ui.enabledColorHovered.get().getRGB(), bgCEnabled, hoverAnimation.get());
-		float drawWidth = showTooltip ? Math.max(mc.textRenderer.getWidth(module.getName()) + 6, width) : width;
+		float drawWidth = showTooltip ? Math.max(RenderUtil.getStringWidth(module.getName()) + 6, width) : width;
 		RenderUtil.drawRect(stack, (float)(x + drawWidth * enableAnimation.get()), y, (float)(drawWidth * (1 - enableAnimation.get())), height, bgC);
 		RenderUtil.drawRect(stack, x, y, (float)(drawWidth * enableAnimation.get()), height, bgCEnabled);
 		
@@ -86,7 +86,7 @@ public class ModuleElement extends GuiElement {
 		float y = this.y + scrollY;
 		stack.push();
 		RenderUtil.preRender();
-		float drawWidth = Math.max(mc.textRenderer.getWidth(module.getName()) + 6, width) * (float)overflowAnimation.get();
+		float drawWidth = Math.max(RenderUtil.getStringWidth(module.getName()) + 6, width) * (float)overflowAnimation.get();
 		RenderUtil.pushScissor(x + width, y, drawWidth - width, height + 1, (float)scale);
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);

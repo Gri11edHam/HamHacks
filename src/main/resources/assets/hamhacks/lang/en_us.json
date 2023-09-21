@@ -419,6 +419,7 @@
 	"hamhacks.page.clickGui.textColor": "Text Color",
 	"hamhacks.page.clickGui.scale": "Scale",
 	"hamhacks.page.clickGui.categoriesWidth": "Categories Width",
+	"hamhacks.page.clickGui.font": "Font",
 	"hamhacks.page.clickGui.openMenu": "Open Menu",
 	"hamhacks.page.clickGui.showChangelogButton": "Show Changelog Button",
 	"hamhacks.page.clickGui.showChangelogButton.always": "Always",

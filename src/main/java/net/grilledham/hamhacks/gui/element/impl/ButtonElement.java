@@ -46,7 +46,7 @@ public class ButtonElement extends GuiElement {
 		}
 		RenderUtil.drawHRect(stack, x, y, width, height, 0xffcccccc);
 		
-		RenderUtil.drawString(ctx, text, x + width / 2f - mc.textRenderer.getWidth(text) / 2f, y + height / 2f - mc.textRenderer.fontHeight / 2f, ui.textColor.get().getRGB(), true);
+		RenderUtil.drawString(ctx, text, x + width / 2f - RenderUtil.getStringWidth(text) / 2f, y + height / 2f - RenderUtil.getFontHeight() / 2f, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();

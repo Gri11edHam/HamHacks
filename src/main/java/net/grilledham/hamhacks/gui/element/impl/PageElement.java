@@ -8,7 +8,6 @@ import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -26,7 +25,7 @@ public class PageElement extends GuiElement {
 	private final ClickGUIScreen parent;
 	
 	public PageElement(ClickGUIScreen parent, float x, float y, double scale, Page page, boolean left, boolean right) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(page == null ? Text.translatable("hamhacks.page.null").getString() : page.getName()) + 8 + (left ? 2 : 0) + (right ? 2 : 0), 20, scale);
+		super(x, y, RenderUtil.getStringWidth(page == null ? Text.translatable("hamhacks.page.null").getString() : page.getName()) + 8 + (left ? 2 : 0) + (right ? 2 : 0), 20, scale);
 		this.parent = parent;
 		this.page = page;
 		this.left = left;
@@ -64,7 +63,7 @@ public class PageElement extends GuiElement {
 		}
 		
 		String name = page == null ? Text.translatable("hamhacks.page.null").getString() : page.getName();
-		RenderUtil.drawString(ctx, name, x + width / 2f - mc.textRenderer.getWidth(name) / 2f, y + height / 2f - mc.textRenderer.fontHeight / 2f, ui.textColor.get().getRGB(), true);
+		RenderUtil.drawString(ctx, name, x + width / 2f - RenderUtil.getStringWidth(name) / 2f, y + height / 2f - RenderUtil.getFontHeight() / 2f, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();

@@ -13,9 +13,12 @@ import net.grilledham.hamhacks.command.Command;
 import net.grilledham.hamhacks.command.CommandManager;
 import net.grilledham.hamhacks.config.Config;
 import net.grilledham.hamhacks.config.ConfigManager;
+import net.grilledham.hamhacks.font.FontManager;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.profile.ProfileManager;
 import net.grilledham.hamhacks.util.*;
 import net.minecraft.client.MinecraftClient;
@@ -82,8 +85,10 @@ public class HamHacksClient implements ClientModInitializer {
 		}
 		
 		ConfigManager.init(); // registers modules/pages/etc
+		FontManager.init();
 		Category.init(); // set initial category positions
 		ConfigManager.initialLoad(); // load configs
+		RenderUtil.updateFont(PageManager.getPage(ClickGUI.class).font.get());
 		
 		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 		CommandManager.sortCommands(Comparator.comparing(Command::getName));

@@ -6,9 +6,12 @@ import net.grilledham.hamhacks.gui.screen.impl.ClickGUIScreen;
 import net.grilledham.hamhacks.gui.screen.impl.ModuleSettingsScreen;
 import net.grilledham.hamhacks.gui.screen.impl.SettingContainerScreen;
 import net.grilledham.hamhacks.modules.Keybind;
+import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.setting.*;
 import net.grilledham.hamhacks.util.Color;
+import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
@@ -25,6 +28,14 @@ public class ClickGUI extends Page {
 	public final ColorSetting textColor = new ColorSetting("hamhacks.page.clickGui.textColor", Color.getWhite(), () -> true);
 	public final NumberSetting scale = new NumberSetting("hamhacks.page.clickGui.scale", 2, () -> true, 1, 5, 1);
 	public final NumberSetting categoriesWidth = new NumberSetting("hamhacks.page.clickGui.categoriesWidth", 70, () -> true, 20, 200, 1, true);
+	public final SelectionSetting font = new SelectionSetting("hamhacks.page.clickGui.font", 1, () -> true) {
+		@Override
+		public void onChange() {
+			super.onChange();
+			RenderUtil.updateFont(value);
+			ModuleManager.getModule(HUD.class).reloadResources();
+		}
+	};
 	
 	private final SettingCategory OPTIONS_CATEGORY = new SettingCategory("hamhacks.page.clickGui.category.options");
 	
@@ -46,6 +57,7 @@ public class ClickGUI extends Page {
 		APPEARANCE_CATEGORY.add(textColor);
 		APPEARANCE_CATEGORY.add(scale);
 		APPEARANCE_CATEGORY.add(categoriesWidth);
+		APPEARANCE_CATEGORY.add(font);
 		settingCategories.add(1, OPTIONS_CATEGORY);
 		OPTIONS_CATEGORY.add(openMenu);
 		OPTIONS_CATEGORY.add(showChangelogButton);

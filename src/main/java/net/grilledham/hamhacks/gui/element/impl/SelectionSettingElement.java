@@ -7,7 +7,6 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.SelectionSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -34,7 +33,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 	}
 	
 	public SelectionSettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<Integer> get, Set<Integer> set, Runnable reset, Get<String[]> options) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get()), scale, getName, getTooltip, shouldShow, get, set, reset);
+		super(x, y, RenderUtil.getStringWidth(getName.get()), scale, getName, getTooltip, shouldShow, get, set, reset);
 		this.options = options;
 		maxWidth = 0;
 		GuiElement element;
@@ -42,7 +41,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 		for(String string : (options.get())) {
 			String s = Text.translatable(string).getString();
 			int finalI = i;
-			elements.add(element = new ButtonElement(s, 0, 0, mc.textRenderer.getWidth(s) + 4, 16, scale, () -> {
+			elements.add(element = new ButtonElement(s, 0, 0, RenderUtil.getStringWidth(s) + 4, 16, scale, () -> {
 				set.set(finalI);
 			}));
 			if(maxWidth < element.getWidth()) {
@@ -50,7 +49,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 			}
 			i++;
 		}
-		resize(MinecraftClient.getInstance().textRenderer.getWidth(getName.get()) + maxWidth + 6, 16);
+		resize(RenderUtil.getStringWidth(getName.get()) + maxWidth + 6, 16);
 		int yAdd = 0;
 		for(GuiElement guiElement : elements) {
 			guiElement.moveTo(x + width - maxWidth, y + yAdd);
@@ -108,7 +107,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 		
 		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
 		String text = Text.translatable(options.get()[get.get()]).getString();
-		RenderUtil.drawString(ctx, text, x + width - mc.textRenderer.getWidth(text) - 2, y + 4, ui.textColor.get().getRGB(), true);
+		RenderUtil.drawString(ctx, text, x + width - RenderUtil.getStringWidth(text) - 2, y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();

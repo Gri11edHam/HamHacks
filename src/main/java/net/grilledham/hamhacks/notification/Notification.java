@@ -40,12 +40,12 @@ public class Notification {
 	public Notification(String title, String info, Runnable clickEvent) {
 		this.clickEvent = clickEvent;
 		int i = 1;
-		float titleH = textRenderer.fontHeight;
-		float infoH = textRenderer.fontHeight;
-		if(textRenderer.getWidth(title) > WIDTH - 10) {
+		float titleH = RenderUtil.getFontHeight();
+		float infoH = RenderUtil.getFontHeight();
+		if(RenderUtil.getStringWidth(title) > WIDTH - 10) {
 			StringBuilder line = new StringBuilder();
 			for(String s : title.split("\\s")) {
-				if(textRenderer.getWidth((line + " " + s).trim()) > WIDTH - 10) {
+				if(RenderUtil.getStringWidth((line + " " + s).trim()) > WIDTH - 10) {
 					titleTexts.add(line.toString().trim());
 					line = new StringBuilder();
 					i++;
@@ -53,15 +53,15 @@ public class Notification {
 				line.append(" ").append(s);
 			}
 			titleTexts.add(line.toString().trim());
-			titleH = (textRenderer.fontHeight + 2) * i;
+			titleH = (RenderUtil.getFontHeight() + 2) * i;
 		} else {
 			titleTexts.add(title);
 		}
 		i = 1;
-		if(textRenderer.getWidth(info) > WIDTH - 10) {
+		if(RenderUtil.getStringWidth(info) > WIDTH - 10) {
 			StringBuilder line = new StringBuilder();
 			for(String s : info.split("\\s")) {
-				if(textRenderer.getWidth((line + " " + s).trim()) > WIDTH - 10) {
+				if(RenderUtil.getStringWidth((line + " " + s).trim()) > WIDTH - 10) {
 					infoTexts.add(line.toString().trim());
 					line = new StringBuilder();
 					i++;
@@ -69,7 +69,7 @@ public class Notification {
 				line.append(" ").append(s);
 			}
 			infoTexts.add(line.toString().trim());
-			infoH = (textRenderer.fontHeight + 2) * i;
+			infoH = (RenderUtil.getFontHeight() + 2) * i;
 		} else {
 			infoTexts.add(info);
 		}
@@ -109,11 +109,11 @@ public class Notification {
 		
 		int i = 0;
 		for(String s : titleTexts) {
-			RenderUtil.drawString(context, s, x + 5, y + 5 + (textRenderer.fontHeight + 2) * i, -1, true);
+			RenderUtil.drawString(context, s, x + 5, y + 5 + (RenderUtil.getFontHeight() + 2) * i, -1, true);
 			i++;
 		}
 		for(String s : infoTexts) {
-			RenderUtil.drawString(context, s, x + 5, y + 5 + 5 + (textRenderer.fontHeight + 2) * i, -1, true);
+			RenderUtil.drawString(context, s, x + 5, y + 5 + 5 + (RenderUtil.getFontHeight() + 2) * i, -1, true);
 			i++;
 		}
 		

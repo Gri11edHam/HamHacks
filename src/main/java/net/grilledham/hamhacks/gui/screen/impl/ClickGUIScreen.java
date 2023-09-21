@@ -36,7 +36,7 @@ public class ClickGUIScreen extends GuiScreen {
 			}
 		} else {
 			float maxWidth = 0;
-			topElement = new GuiElement(-1, 0, client.textRenderer.getWidth(page.getName()) + 2 + 2, 16, scale) {
+			topElement = new GuiElement(-1, 0, RenderUtil.getStringWidth(page.getName()) + 2 + 2, 16, scale) {
 				@Override
 				public void draw(DrawContext ctx, int mx, int my, float scrollX, float scrollY, float partialTicks) {
 					MatrixStack stack = ctx.getMatrices();
@@ -48,7 +48,7 @@ public class ClickGUIScreen extends GuiScreen {
 					int bgC = PageManager.getPage(ClickGUI.class).accentColor.get().getRGB();
 					RenderUtil.drawRect(stack, x, y, width, height, bgC);
 					
-					RenderUtil.drawString(ctx, page.getName(), x + width / 2f - mc.textRenderer.getWidth(page.getName()) / 2f, y + 4, PageManager.getPage(ClickGUI.class).textColor.get().getRGB(), true);
+					RenderUtil.drawString(ctx, page.getName(), x + width / 2f - RenderUtil.getStringWidth(page.getName()) / 2f, y + 4, PageManager.getPage(ClickGUI.class).textColor.get().getRGB(), true);
 					
 					RenderUtil.postRender();
 					stack.pop();

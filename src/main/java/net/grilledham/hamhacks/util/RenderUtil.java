@@ -1,6 +1,12 @@
 package net.grilledham.hamhacks.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.grilledham.hamhacks.font.CustomTextRenderer;
+import net.grilledham.hamhacks.font.FontFamily;
+import net.grilledham.hamhacks.font.FontInfo;
+import net.grilledham.hamhacks.font.FontManager;
+import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -27,6 +33,8 @@ public class RenderUtil {
 	private static float SCISSOR_TRANSLATION_Y = 0;
 	
 	private static int zLevel = 0;
+	
+	public static CustomTextRenderer customTextRenderer;
 	
 	private RenderUtil() {}
 	
@@ -261,8 +269,8 @@ public class RenderUtil {
 		stack.translate(0, 0, 200);
 		String[] lines = tooltip.split("\n");
 		
-		float w = mc.textRenderer.getWidth(Arrays.stream(lines).sorted(Comparator.comparingInt(s -> mc.textRenderer.getWidth((String)s)).reversed()).toList().get(0)) + 8;
-		float h = (lines.length + (!title.equals("") ? 1 : 0)) * (mc.textRenderer.fontHeight + 2) + 8;
+		float w = RenderUtil.getStringWidth(Arrays.stream(lines).sorted(Comparator.comparingDouble(s -> RenderUtil.getStringWidth((String)s)).reversed()).toList().get(0)) + 8;
+		float h = (lines.length + (!title.equals("") ? 1 : 0)) * (RenderUtil.getFontHeight() + 2) + 8;
 		float x = (float)(mx - 4);
 		float y = (float)(my - 2 - h);
 		
@@ -288,11 +296,11 @@ public class RenderUtil {
 		float yAdd = 0;
 		if(!title.equals("")) {
 			drawString(ctx, title, x + 4, y + 4 + yAdd, 0xffffff20, true);
-			yAdd += mc.textRenderer.fontHeight + 2;
+			yAdd += RenderUtil.getFontHeight() + 2;
 		}
 		for(String s : lines) {
 			drawString(ctx, s, x + 4, y + 4 + yAdd, -1, true);
-			yAdd += mc.textRenderer.fontHeight + 2;
+			yAdd += RenderUtil.getFontHeight() + 2;
 		}
 		
 		popScissor();
@@ -300,13 +308,31 @@ public class RenderUtil {
 	}
 	
 	public static void drawString(DrawContext ctx, String s, float x, float y, int color, boolean shadow) {
-		mc.textRenderer.draw(s, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
-		ctx.draw();
+		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null) {
+			customTextRenderer.render(ctx, s, x, y, color, shadow);
+		} else {
+			mc.textRenderer.draw(s, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
+			ctx.draw();
+		}
 	}
 	
 	public static void drawString(DrawContext ctx, Text t, float x, float y, int color, boolean shadow) {
-		mc.textRenderer.draw(t, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
-		ctx.draw();
+		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null) {
+			customTextRenderer.render(ctx, t, x, y, color, shadow);
+		} else {
+			mc.textRenderer.draw(t, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
+			ctx.draw();
+		}
+	}
+	
+	public static float getFontHeight() {
+		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null) return customTextRenderer.getHeight();
+		return mc.textRenderer.fontHeight;
+	}
+	
+	public static float getStringWidth(String s) {
+		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null) return customTextRenderer.getWidth(s);
+		return mc.textRenderer.getWidth(s);
 	}
 	
 	public static void drawItem(DrawContext ctx, ItemStack itemStack, float x, float y, float scale, boolean count, boolean damage) {
@@ -356,7 +382,7 @@ public class RenderUtil {
 			matrices.push();
 			matrices.translate(x + 8, y + 8, zLevel + 200);
 			matrices.scale(scale, scale, 1);
-			drawString(ctx, String.valueOf(itemStack.getCount()), 9 - mc.textRenderer.getWidth(String.valueOf(itemStack.getCount())), 1, -1, true);
+			drawString(ctx, String.valueOf(itemStack.getCount()), 9 - RenderUtil.getStringWidth(String.valueOf(itemStack.getCount())), 1, -1, true);
 			matrices.pop();
 		}
 	}
@@ -371,5 +397,15 @@ public class RenderUtil {
 		buffer.vertex(mat, x + width, y + height, 0.0F).color(red, green, blue, alpha).next();
 		buffer.vertex(mat, x + width, y, 0.0F).color(red, green, blue, alpha).next();
 		BufferRenderer.drawWithGlobalProgram(buffer.end());
+	}
+	
+	public static void updateFont(int option) {
+		if(option == 0) return;
+		FontFamily family = FontManager.FONT_FAMILIES.get(option - 1);
+		if(family.get(FontInfo.Type.Regular) == null) {
+			PageManager.getPage(ClickGUI.class).font.set(0);
+			return;
+		}
+		customTextRenderer = new CustomTextRenderer(family, 9);
 	}
 }

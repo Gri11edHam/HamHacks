@@ -7,7 +7,6 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.KeySetting;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
@@ -25,7 +24,7 @@ public class KeySettingElement extends SettingElement<Keybind> {
 	}
 	
 	public KeySettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<Keybind> get, Set<Keybind> set, Runnable reset) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get() + " [________________]") + 4, scale, getName, getTooltip, shouldShow, get, set, reset);
+		super(x, y, RenderUtil.getStringWidth(getName.get() + " [________________]") + 4, scale, getName, getTooltip, shouldShow, get, set, reset);
 	}
 	
 	@Override
@@ -42,7 +41,7 @@ public class KeySettingElement extends SettingElement<Keybind> {
 		
 		boolean hovered;
 		String text = "[" + (listening ? (get.get().getName().equals("None") ? "Listening..." : get.get().getName() + "...") : get.get().getName()) + "]";
-		float textWidth = mc.textRenderer.getWidth(text);
+		float textWidth = RenderUtil.getStringWidth(text);
 		hovered = mx >= x + width - textWidth - 4 && mx < x + width && my >= y && my < y + height;
 		RenderUtil.drawRect(stack, x, y, width - textWidth - 4, height, ui.bgColor.get().getRGB());
 		RenderUtil.drawRect(stack, x + width - textWidth - 4, y, textWidth + 4, height, bgC);
@@ -100,7 +99,7 @@ public class KeySettingElement extends SettingElement<Keybind> {
 		super.release(mx, my, scrollX, scrollY, button);
 		String text;
 		text = "[" + (listening ? (get.get().getName().equals("None") ? "Listening..." : get.get().getName() + "...") : get.get().getName()) + "]";
-		float textWidth = mc.textRenderer.getWidth(text);
+		float textWidth = RenderUtil.getStringWidth(text);
 		if(listening) {
 			return true;
 		} else if(mx >= x + width - textWidth - 4 && mx < x + width && my >= y && my < y + height) {

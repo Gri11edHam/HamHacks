@@ -2,13 +2,14 @@ package net.grilledham.hamhacks.setting;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.gui.element.impl.SelectionSettingElement;
 import net.minecraft.text.Text;
 
 public class SelectionSetting extends Setting<Integer> {
 	
-	private final Text[] options;
+	private Text[] options;
 	
 	public SelectionSetting(String name, int defaultValue, ShouldShow shouldShow, String... options) {
 		super(name, defaultValue, shouldShow);
@@ -26,10 +27,19 @@ public class SelectionSetting extends Setting<Integer> {
 		return options;
 	}
 	
+	public void setOptions(String... options) {
+		this.options = new Text[options.length];
+		for(int i = 0; i < options.length; i++) {
+			this.options[i] = Text.translatable(options[i]);
+		}
+	}
+	
 	@Override
 	public void set(Integer value) {
 		if(value > options.length || value < 0) {
-			throw new IllegalArgumentException("Out of bounds: " + value + " | 0-" + options.length);
+			HamHacksClient.LOGGER.warn("Out of bounds: " + value + " | 0-" + options.length);
+			if(value > options.length) value = options.length;
+			else value = 0;
 		}
 		super.set(value);
 	}

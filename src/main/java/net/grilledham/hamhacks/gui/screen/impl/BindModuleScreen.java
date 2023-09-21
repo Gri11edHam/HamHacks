@@ -34,7 +34,7 @@ public class BindModuleScreen extends GuiScreen {
 		renderBackground(ctx);
 		super.render(ctx, mouseX, mouseY, delta);
 		String text = module.getKey().getName().equals("None") ? "Listening..." : module.getKey().getName() + "...";
-		RenderUtil.drawString(ctx, text, width / 2f - textRenderer.getWidth(text) / 2f, height / 2f - textRenderer.fontHeight / 2f, -1, true);
+		RenderUtil.drawString(ctx, text, width / 2f - RenderUtil.getStringWidth(text) / 2f, height / 2f - RenderUtil.getFontHeight() / 2f, -1, true);
 	}
 	
 	@Override

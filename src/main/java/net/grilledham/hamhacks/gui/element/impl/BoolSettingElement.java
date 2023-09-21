@@ -6,7 +6,6 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
@@ -23,7 +22,7 @@ public class BoolSettingElement extends SettingElement<Boolean> {
 	}
 	
 	public BoolSettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<Boolean> get, Set<Boolean> set, Runnable reset) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get()) + 22, scale, getName, getTooltip, shouldShow, get, set, reset);
+		super(x, y, RenderUtil.getStringWidth(getName.get()) + 22, scale, getName, getTooltip, shouldShow, get, set, reset);
 		enableAnimation.setAbsolute(get.get());
 	}
 	

@@ -6,7 +6,6 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
@@ -41,7 +40,7 @@ public class StringSettingElement extends SettingElement<String> {
 	}
 	
 	public StringSettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<String> get, Set<String> set, Runnable reset, Get<String> placeholder) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get()) + 106, scale, getName, getTooltip, shouldShow, get, set, reset);
+		super(x, y, RenderUtil.getStringWidth(getName.get()) + 106, scale, getName, getTooltip, shouldShow, get, set, reset);
 		this.placeholder = placeholder;
 		cursorPos = get.get().length();
 		stringScroll = cursorPos;
@@ -77,22 +76,22 @@ public class StringSettingElement extends SettingElement<String> {
 		
 		if(getValue() == null || getValue().equals("")) {
 			String value = placeholder.get();
-			RenderUtil.drawString(ctx, value, x + width - mc.textRenderer.getWidth(value) - 2, y + 4, RenderUtil.mix(ui.bgColor.get().getRGB(), ui.textColor.get().getRGB(), 0.75f), true);
+			RenderUtil.drawString(ctx, value, x + width - RenderUtil.getStringWidth(value) - 2, y + 4, RenderUtil.mix(ui.bgColor.get().getRGB(), ui.textColor.get().getRGB(), 0.75f), true);
 		} else {
-			RenderUtil.drawString(ctx, getValue(), x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 4, ui.textColor.get().getRGB(), true);
+			RenderUtil.drawString(ctx, getValue(), x + width - RenderUtil.getStringWidth(getValue()) - 2 + RenderUtil.getStringWidth(getValue().substring(stringScroll)), y + 4, ui.textColor.get().getRGB(), true);
 		}
 		
 		RenderUtil.preRender();
 		
 		if(selectionStart > -1) {
 			int selectionColor = 0x804040c0;
-			RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(getSelectionStart())) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, mc.textRenderer.getWidth(getValue().substring(getSelectionStart(), getSelectionEnd())), mc.textRenderer.fontHeight + 1, selectionColor);
+			RenderUtil.drawRect(stack, x + width - RenderUtil.getStringWidth(getValue().substring(getSelectionStart())) - 3 + RenderUtil.getStringWidth(getValue().substring(stringScroll)), y + 3, RenderUtil.getStringWidth(getValue().substring(getSelectionStart(), getSelectionEnd())), RenderUtil.getFontHeight() + 1, selectionColor);
 		}
 		
 		RenderUtil.popScissor();
 		
 		int cursorColor = RenderUtil.mix(ui.textColor.get().getRGB(), ui.textColor.get().getRGB() & 0xffffff, cursorAnimation.get());
-		RenderUtil.drawRect(stack, x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll)), y + 3, 1, mc.textRenderer.fontHeight + 1, cursorColor);
+		RenderUtil.drawRect(stack, x + width - RenderUtil.getStringWidth(getValue().substring(cursorPos)) - 3 + RenderUtil.getStringWidth(getValue().substring(stringScroll)), y + 3, 1, RenderUtil.getFontHeight() + 1, cursorColor);
 		
 		RenderUtil.postRender();
 		stack.pop();
@@ -100,8 +99,8 @@ public class StringSettingElement extends SettingElement<String> {
 		if(dragging && selected) {
 			if(dragStartX != mx) {
 				String currentInput = getValue();
-				float stringX = x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll));
-				cursorPos = Math.min(Math.max(Math.round((mx - stringX) / (MinecraftClient.getInstance().textRenderer.getWidth(currentInput) / (float)currentInput.length())), 0), currentInput.length());
+				float stringX = x + width - RenderUtil.getStringWidth(getValue()) - 2 + RenderUtil.getStringWidth(getValue().substring(stringScroll));
+				cursorPos = Math.min(Math.max(Math.round((mx - stringX) / (RenderUtil.getStringWidth(currentInput) / (float)currentInput.length())), 0), currentInput.length());
 				if(mx < x + width - 102) {
 					stringScroll -= partialTicks;
 				} else if(mx > x + width - 2) {
@@ -109,7 +108,7 @@ public class StringSettingElement extends SettingElement<String> {
 				}
 				stringScroll = Math.min(Math.max(stringScroll, 0), currentInput.length());
 				
-				int start = Math.min(Math.max(Math.round((dragStartX - stringX) / (MinecraftClient.getInstance().textRenderer.getWidth(currentInput) / (float)currentInput.length())), 0), currentInput.length());
+				int start = Math.min(Math.max(Math.round((dragStartX - stringX) / (RenderUtil.getStringWidth(currentInput) / (float)currentInput.length())), 0), currentInput.length());
 				if(cursorPos < start) {
 					selectionEnd = start;
 					selectionStart = cursorPos;
@@ -160,8 +159,8 @@ public class StringSettingElement extends SettingElement<String> {
 		}
 		if(mx >= x + width - 104 && mx < x + width && my >= y && my < y + height) {
 			String currentInput = getValue();
-			float stringX = x + width - mc.textRenderer.getWidth(getValue()) - 2 + mc.textRenderer.getWidth(getValue().substring(stringScroll));
-			cursorPos = (int)Math.min(Math.max(Math.round((mx - stringX) / (MinecraftClient.getInstance().textRenderer.getWidth(currentInput) / (float)currentInput.length())), 0), currentInput.length());
+			float stringX = x + width - RenderUtil.getStringWidth(getValue()) - 2 + RenderUtil.getStringWidth(getValue().substring(stringScroll));
+			cursorPos = (int)Math.min(Math.max(Math.round((mx - stringX) / (RenderUtil.getStringWidth(currentInput) / (float)currentInput.length())), 0), currentInput.length());
 			if(mx < x + width - 102) {
 				stringScroll--;
 			} else if(mx > x + width - 2) {
@@ -350,16 +349,16 @@ public class StringSettingElement extends SettingElement<String> {
 			selectionStart = Math.min(Math.max(selectionStart, -1), getValue().length());
 			selectionEnd = Math.min(Math.max(selectionEnd, -1), getValue().length());
 			stringScroll = Math.min(Math.max(stringScroll, 0), getValue().length());
-			float cursorX = x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll));
+			float cursorX = x + width - RenderUtil.getStringWidth(getValue().substring(cursorPos)) - 3 + RenderUtil.getStringWidth(getValue().substring(stringScroll));
 			while(cursorX < x + width - 102) {
 				stringScroll--;
 				stringScroll = Math.min(Math.max(stringScroll, 0), getValue().length());
-				cursorX = x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll));
+				cursorX = x + width - RenderUtil.getStringWidth(getValue().substring(cursorPos)) - 3 + RenderUtil.getStringWidth(getValue().substring(stringScroll));
 			}
 			while(cursorX > x + width - 2) {
 				stringScroll++;
 				stringScroll = Math.min(Math.max(stringScroll, 0), getValue().length());
-				cursorX = x + width - mc.textRenderer.getWidth(getValue().substring(cursorPos)) - 3 + mc.textRenderer.getWidth(getValue().substring(stringScroll));
+				cursorX = x + width - RenderUtil.getStringWidth(getValue().substring(cursorPos)) - 3 + RenderUtil.getStringWidth(getValue().substring(stringScroll));
 			}
 			stringScroll = Math.min(Math.max(stringScroll, 0), getValue().length());
 			cursorShown = true;

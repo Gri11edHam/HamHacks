@@ -51,17 +51,17 @@ public class WaitingToConnectScreen extends GuiScreen {
 		if(serverInfo.label != null) {
 			RenderUtil.drawString(ctx, serverInfo.label, width / 2f - textRenderer.getWidth(serverInfo.label) / 2f, height / 2f - 30, -1, true);
 		} else {
-			RenderUtil.drawString(ctx, "...", width / 2f - textRenderer.getWidth("...") / 2f, height / 2f - 30, -1, true);
+			RenderUtil.drawString(ctx, "...", width / 2f - RenderUtil.getStringWidth("...") / 2f, height / 2f - 30, -1, true);
 		}
 		if(serverInfo.playerCountLabel != null) {
 			RenderUtil.drawString(ctx, serverInfo.playerCountLabel, width / 2f - textRenderer.getWidth(serverInfo.playerCountLabel) / 2f, height / 2f - 20, -1, true);
 		} else {
-			RenderUtil.drawString(ctx, ".../...", width / 2f - textRenderer.getWidth(".../...") / 2f, height / 2f - 20, -1, true);
+			RenderUtil.drawString(ctx, ".../...", width / 2f - RenderUtil.getStringWidth(".../...") / 2f, height / 2f - 20, -1, true);
 		}
 		if(serverInfo.version != null) {
 			RenderUtil.drawString(ctx, serverInfo.version, width / 2f - textRenderer.getWidth(serverInfo.version) / 2f, height / 2f - 10, -1, true);
 		} else {
-			RenderUtil.drawString(ctx, "x.x.x", width / 2f - textRenderer.getWidth("x.x.x") / 2f, height / 2f - 10, -1, true);
+			RenderUtil.drawString(ctx, "x.x.x", width / 2f - RenderUtil.getStringWidth("x.x.x") / 2f, height / 2f - 10, -1, true);
 		}
 		stack.pop();
 	}

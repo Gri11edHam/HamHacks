@@ -33,17 +33,17 @@ public class NewVersionScreen extends Screen {
 			MinecraftClient.getInstance().setScreen(new UpdateScreen(last));
 		});
 		cancelButton = new ButtonElement("Cancel", width / 2f - 101, height - 30, 100, 20, (float)client.getWindow().getScaleFactor(), this::close);
-		int changelogHeight = (textRenderer.fontHeight + 2) * Updater.getChangelog().split("\n").length;
+		float changelogHeight = (RenderUtil.getFontHeight() + 2) * Updater.getChangelog().split("\n").length;
 		float clw = 0;
 		for(String s : Updater.getChangelog().split("\n")) {
-			clw = Math.max(clw, client.textRenderer.getWidth(s.replace("\t", "    ").replace("\r", "")));
+			clw = Math.max(clw, RenderUtil.getStringWidth(s.replace("\t", "    ").replace("\r", "")));
 		}
-		int finalChangelogHeight = Math.min(changelogHeight + 8, height - 38);
+		float finalChangelogHeight = Math.min(changelogHeight + 8, height - 38);
 		boolean overflows = changelogHeight + 8 > height - 38;
-		addDrawableChild(changelog = new ScrollableWidget((int)(width / 2f - clw / 2f) - 4, 4, (int)(clw + 8), finalChangelogHeight, Text.empty()) {
+		addDrawableChild(changelog = new ScrollableWidget((int)(width / 2f - clw / 2f) - 4, 4, (int)(clw + 8), (int)finalChangelogHeight, Text.empty()) {
 			@Override
 			protected int getContentsHeight() {
-				return changelogHeight;
+				return (int)changelogHeight;
 			}
 			
 			@Override
@@ -60,7 +60,7 @@ public class NewVersionScreen extends Screen {
 			protected void renderContents(DrawContext ctx, int mouseX, int mouseY, float delta) {
 				int i = 0;
 				for(String s : Updater.getChangelog().split("\n")) {
-					RenderUtil.drawString(ctx, s.replace("\t", "    ").replace("\r", ""), getX() + 4, getY() + 4 + i * (textRenderer.fontHeight + 2), 0xffffffff, true);
+					RenderUtil.drawString(ctx, s.replace("\t", "    ").replace("\r", ""), getX() + 4, getY() + 4 + i * (RenderUtil.getFontHeight() + 2), 0xffffffff, true);
 					i++;
 				}
 			}

@@ -7,7 +7,6 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.SettingContainer;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
@@ -23,7 +22,7 @@ public class SettingContainerElement extends SettingElement<Map<?, ?>> {
 	protected final SettingContainer<?, ?> setting;
 	
 	public SettingContainerElement(float x, float y, double scale, SettingContainer<?, ?> setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 22, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, null, null, null);
+		super(x, y, RenderUtil.getStringWidth(setting.getName()) + 22, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, null, null, null);
 		this.setting = setting;
 	}
 	
@@ -50,7 +49,7 @@ public class SettingContainerElement extends SettingElement<Map<?, ?>> {
 		
 		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
 		
-		RenderUtil.drawString(ctx, "Edit", x + width - (25 + mc.textRenderer.getWidth("Edit") / 2f), y + 4, ui.textColor.get().getRGB(), true);
+		RenderUtil.drawString(ctx, "Edit", x + width - (25 + RenderUtil.getStringWidth("Edit") / 2f), y + 4, ui.textColor.get().getRGB(), true);
 		
 		RenderUtil.postRender();
 		stack.pop();

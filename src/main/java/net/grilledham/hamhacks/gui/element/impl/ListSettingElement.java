@@ -6,7 +6,6 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.ListSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Quaternionf;
@@ -30,7 +29,7 @@ public class ListSettingElement extends SettingElement<List<String>> {
 	float maxWidth = 0;
 	
 	public ListSettingElement(float x, float y, double scale, ListSetting setting) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(setting.getName()) + 18, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, setting::set, setting::reset);
+		super(x, y, RenderUtil.getStringWidth(setting.getName()) + 18, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, setting::get, setting::set, setting::reset);
 		updateList();
 	}
 	
@@ -106,9 +105,9 @@ public class ListSettingElement extends SettingElement<List<String>> {
 		RenderUtil.drawHRect(stack, x + width - height, y, height, height, outlineC);
 		
 		RenderUtil.drawString(ctx, getName.get(), x + 2, y + 4, ui.textColor.get().getRGB(), true);
-		float dropDownX = x + width - height / 2f - mc.textRenderer.getWidth("<") / 2f;
-		float dropDownCenterX = dropDownX + mc.textRenderer.getWidth("<") / 2f;
-		float dropDownCenterY = y + 4 + mc.textRenderer.fontHeight / 2f;
+		float dropDownX = x + width - height / 2f - RenderUtil.getStringWidth("<") / 2f;
+		float dropDownCenterX = dropDownX + RenderUtil.getStringWidth("<") / 2f;
+		float dropDownCenterY = y + 4 + RenderUtil.getFontHeight() / 2f;
 		stack.translate(dropDownCenterX, dropDownCenterY, 0);
 		Quaternionf q = new Quaternionf();
 		q.rotateXYZ(0, 0, (float)Math.toRadians((float)selectionAnimation.get() * -90));

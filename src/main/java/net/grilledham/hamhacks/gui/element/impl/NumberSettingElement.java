@@ -8,7 +8,6 @@ import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.setting.StringSetting;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
@@ -39,7 +38,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 	}
 	
 	public NumberSettingElement(float x, float y, double scale, Get<String> getName, Get<String> getTooltip, Get<Boolean> shouldShow, Get<Double> get, Set<Double> set, Runnable reset, Get<Double> min, Get<Double> max, Get<Double> step, Get<Boolean> forceStep, boolean hasBounds) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(getName.get()) + 110 + (hasBounds ? 104 : 4), scale, getName, getTooltip, shouldShow, get, set, reset);
+		super(x, y, RenderUtil.getStringWidth(getName.get()) + 110 + (hasBounds ? 104 : 4), scale, getName, getTooltip, shouldShow, get, set, reset);
 		this.min = min;
 		this.max = max;
 		this.step = step;
@@ -72,7 +71,7 @@ public class NumberSettingElement extends SettingElement<Double> {
 			}
 		};
 		editor.drawBackground = false;
-		resize(mc.textRenderer.getWidth(getName.get()) + (hasBounds ? 200 + 8 : 4) + editor.getWidth(), 16);
+		resize(RenderUtil.getStringWidth(getName.get()) + (hasBounds ? 200 + 8 : 4) + editor.getWidth(), 16);
 	}
 	
 	@Override

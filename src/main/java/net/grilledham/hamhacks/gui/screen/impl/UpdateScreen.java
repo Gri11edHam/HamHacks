@@ -34,9 +34,9 @@ public class UpdateScreen extends Screen {
 		super.render(ctx, mouseX, mouseY, delta);
 		
 		String s = "Would you like to close Minecraft now or continue playing?";
-		RenderUtil.drawString(ctx, s, width / 2f - client.textRenderer.getWidth(s) / 2f, height / 2f - 30 - client.textRenderer.fontHeight / 2f, -1, true);
+		RenderUtil.drawString(ctx, s, width / 2f - RenderUtil.getStringWidth(s) / 2f, height / 2f - 30 - RenderUtil.getFontHeight() / 2f, -1, true);
 		String s2 = "(The mod won't be fully updated until you restart your game)";
-		RenderUtil.drawString(ctx, s2, width / 2f - client.textRenderer.getWidth(s2) / 2f, height / 2f - 20 - client.textRenderer.fontHeight / 2f, -1, true);
+		RenderUtil.drawString(ctx, s2, width / 2f - RenderUtil.getStringWidth(s2) / 2f, height / 2f - 20 - RenderUtil.getFontHeight() / 2f, -1, true);
 		
 		continueButton.render(ctx, mouseX, mouseY, 0, 0, delta);
 		exitButton.render(ctx, mouseX, mouseY, 0, 0, delta);

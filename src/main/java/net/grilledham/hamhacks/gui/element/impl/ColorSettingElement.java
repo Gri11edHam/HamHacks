@@ -99,7 +99,7 @@ public class ColorSettingElement extends SettingElement<Color> {
 			}
 		};
 		hexValPart.drawBackground = false;
-		resize(mc.textRenderer.getWidth(getName.get()) + 10 + 16, 16);
+		resize(RenderUtil.getStringWidth(getName.get()) + 10 + 16, 16);
 	}
 	
 	@Override

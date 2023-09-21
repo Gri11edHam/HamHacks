@@ -94,14 +94,14 @@ public class CategoryElement extends GuiElement {
 		float y = this.y + scrollY;
 		stack.push();
 		
-		RenderUtil.pushScissor(x + width, y, Math.max(mc.textRenderer.getWidth(category.getName()) - width + 6, 0) * (float)overflowAnimation.get(), height + 1, (float)scale);
+		RenderUtil.pushScissor(x + width, y, Math.max(RenderUtil.getStringWidth(category.getName()) - width + 6, 0) * (float)overflowAnimation.get(), height + 1, (float)scale);
 		RenderUtil.preRender();
 		
 		ClickGUI ui = PageManager.getPage(ClickGUI.class);
 		int bgC = ui.accentColor.get().getRGB();
-		RenderUtil.drawRect(stack, x, y, mc.textRenderer.getWidth(category.getName()) + 6, height, bgC);
+		RenderUtil.drawRect(stack, x, y, RenderUtil.getStringWidth(category.getName()) + 6, height, bgC);
 		
-		RenderUtil.pushScissor(x + width - 2, y + 4, Math.max(mc.textRenderer.getWidth(category.getName()) - width + 6 + 2, 0) * (float)overflowAnimation.get(), 11, (float)scale);
+		RenderUtil.pushScissor(x + width - 2, y + 4, Math.max(RenderUtil.getStringWidth(category.getName()) - width + 6 + 2, 0) * (float)overflowAnimation.get(), 11, (float)scale);
 		RenderUtil.drawString(ctx, category.getName(), x + 3, y + 5, ui.textColor.get().getRGB(), true);
 		RenderUtil.popScissor();
 		

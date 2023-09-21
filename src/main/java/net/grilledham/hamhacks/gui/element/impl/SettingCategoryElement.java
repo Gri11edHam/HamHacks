@@ -7,7 +7,6 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.RenderUtil;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Quaternionf;
@@ -31,7 +30,7 @@ public class SettingCategoryElement extends GuiElement {
 	private final float collapsedHeight = 19;
 	
 	public SettingCategoryElement(SettingCategory category, float x, float y, double scale) {
-		super(x, y, MinecraftClient.getInstance().textRenderer.getWidth(category.getName()) + 12 + 8, 0, scale);
+		super(x, y, RenderUtil.getStringWidth(category.getName()) + 12 + 8, 0, scale);
 		this.category = category;
 	}
 	
@@ -92,9 +91,9 @@ public class SettingCategoryElement extends GuiElement {
 		int bgC = ui.bgColor.get().getRGB();
 		boolean hovered = mx >= x && mx < x + width && my >= y && my < y + collapsedHeight;
 		RenderUtil.drawRect(stack, x, y, width, collapsedHeight, bgC);
-		float lineX = x + 6 + mc.textRenderer.getWidth(category.getName());
+		float lineX = x + 6 + RenderUtil.getStringWidth(category.getName());
 		float arrowWidth = 8;
-		float lineW = width - 6 - mc.textRenderer.getWidth(category.getName()) - (arrowWidth + 8);
+		float lineW = width - 6 - RenderUtil.getStringWidth(category.getName()) - (arrowWidth + 8);
 		RenderUtil.drawRect(stack, lineX - (category.getName().equals("") ? 3 : 0), y + 9, lineW + (category.getName().equals("") ? 3 : 0), 2, ui.textColor.get().getRGB());
 		
 		stack.push();

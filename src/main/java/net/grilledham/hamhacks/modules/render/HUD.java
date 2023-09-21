@@ -35,7 +35,7 @@ public class HUD extends Module {
 	
 	private static List<Module> widthSortedModules;
 	
-	private static final HashMap<String, Integer> cachedWidths = new HashMap<>();
+	private static final HashMap<String, Float> cachedWidths = new HashMap<>();
 	
 	private final SettingCategory APPEARANCE_CATEGORY = new SettingCategory("hamhacks.module.hud.category.appearance");
 	
@@ -107,7 +107,7 @@ public class HUD extends Module {
 	public void onTick(EventTick e) {
 		ticks++;
 		if((ticks %= 10) == 0) { // update widths every 0.5 seconds
-			widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getHUDText()), MinecraftClient.getInstance().textRenderer.getWidth(a.getHUDText()))).toList();
+			widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Float.compare(RenderUtil.getStringWidth(b.getHUDText()), RenderUtil.getStringWidth(a.getHUDText()))).toList();
 		}
 	}
 	
@@ -146,9 +146,9 @@ public class HUD extends Module {
 			matrices.translate(textX, textY, 0);
 			matrices.scale(2, 2, 1);
 			matrices.translate(-textX, -textY, 0);
-			RenderUtil.drawString(context, text, textX - (int)(textRenderer.getWidth(text) * (1 - animation.get())), textY, textColor, true);
+			RenderUtil.drawString(context, text, textX - (int)(RenderUtil.getStringWidth(text) * (1 - animation.get())), textY, textColor, true);
 			matrices.pop();
-			yAdd += ((textRenderer.fontHeight * 2) + 4) * animation.get();
+			yAdd += ((RenderUtil.getFontHeight() * 2) + 4) * animation.get();
 			i++;
 		}
 		animation = getAnimation(j++);
@@ -226,7 +226,7 @@ public class HUD extends Module {
 			moduleAnimations.put(m, animation);
 		}
 		if(widthSortedModules == null) {
-			widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getHUDText()), MinecraftClient.getInstance().textRenderer.getWidth(a.getHUDText()))).toList();
+			widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Float.compare(RenderUtil.getStringWidth(b.getHUDText()), RenderUtil.getStringWidth(a.getHUDText()))).toList();
 		}
 		for(Module m : widthSortedModules) {
 			animation = moduleAnimations.get(m);
@@ -307,16 +307,16 @@ public class HUD extends Module {
 		int barColor = Color.toRGB(finalBarHue, barC[1], barC[2], barC[3]);
 		int bgColor = Color.toRGB(finalBGHue, bgC[1], bgC[2], bgC[3]);
 		int textColor = Color.toRGB(finalTextHue, textC[1], textC[2], textC[3]);
-		int textWidth = cachedWidths.getOrDefault(text, fontRenderer.getWidth(text));
+		float textWidth = cachedWidths.getOrDefault(text, RenderUtil.getStringWidth(text));
 		cachedWidths.put(text, textWidth);
 		float textX = (float)(2 - ((textWidth + 7) * (1 - animation.get())));
 		float textY = yAdd + 2;
 		RenderUtil.preRender();
-		RenderUtil.drawRect(matrices, textX - 2, textY - 2, textWidth + 4, fontRenderer.fontHeight + 2, bgColor);
-		RenderUtil.drawRect(matrices, textX + textWidth + 2,  textY - 2, 3, fontRenderer.fontHeight + 2, barColor);
+		RenderUtil.drawRect(matrices, textX - 2, textY - 2, textWidth + 4, RenderUtil.getFontHeight() + 2, bgColor);
+		RenderUtil.drawRect(matrices, textX + textWidth + 2,  textY - 2, 3, RenderUtil.getFontHeight() + 2, barColor);
 		RenderUtil.postRender();
 		RenderUtil.drawString(context, text, textX, textY, textColor, true);
-		return (float)((fontRenderer.fontHeight + 2) * animation.get());
+		return (float)((RenderUtil.getFontHeight() + 2) * animation.get());
 	}
 	
 	private float drawRightAligned(DrawContext context, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
@@ -348,16 +348,16 @@ public class HUD extends Module {
 		int barColor = Color.toRGB(finalBarHue, barC[1], barC[2], barC[3]);
 		int bgColor = Color.toRGB(finalBGHue, bgC[1], bgC[2], bgC[3]);
 		int textColor = Color.toRGB(finalTextHue, textC[1], textC[2], textC[3]);
-		int textWidth = cachedWidths.getOrDefault(text, fontRenderer.getWidth(text));
+		float textWidth = cachedWidths.getOrDefault(text, RenderUtil.getStringWidth(text));
 		cachedWidths.put(text, textWidth);
 		float textX = MinecraftClient.getInstance().getWindow().getScaledWidth() - textWidth - 2 + (float)((textWidth + 7 ) * (1 - animation.get()));
 		float textY = yAdd + 2;
 		RenderUtil.preRender();
-		RenderUtil.drawRect(matrices, textX - 2, textY - 2, textWidth + 4, fontRenderer.fontHeight + 2, bgColor);
-		RenderUtil.drawRect(matrices, textX - 5, textY - 2, 3, fontRenderer.fontHeight + 2, barColor);
+		RenderUtil.drawRect(matrices, textX - 2, textY - 2, textWidth + 4, RenderUtil.getFontHeight() + 2, bgColor);
+		RenderUtil.drawRect(matrices, textX - 5, textY - 2, 3, RenderUtil.getFontHeight() + 2, barColor);
 		RenderUtil.postRender();
 		RenderUtil.drawString(context, text, textX, textY, textColor, true);
-		return (float)((fontRenderer.fontHeight + 2) * animation.get());
+		return (float)((RenderUtil.getFontHeight() + 2) * animation.get());
 	}
 	
 	private float drawCoords(DrawContext context, TextRenderer fontRenderer, String text, int i, float yAdd, Animation animation) {
@@ -370,12 +370,12 @@ public class HUD extends Module {
 			finalTextHue = textC[0];
 		}
 		int textColor = Color.toRGB(finalTextHue, textC[1], textC[2], textC[3]);
-		int textWidth = cachedWidths.getOrDefault(text, fontRenderer.getWidth(text));
+		float textWidth = cachedWidths.getOrDefault(text, RenderUtil.getStringWidth(text));
 		cachedWidths.put(text, textWidth);
 		float textX = (float)(2 - ((textWidth + 7) * (1 - animation.get())));
-		float textY = MinecraftClient.getInstance().getWindow().getScaledHeight() - yAdd - (fontRenderer.fontHeight + 2);
+		float textY = MinecraftClient.getInstance().getWindow().getScaledHeight() - yAdd - (RenderUtil.getFontHeight() + 2);
 		RenderUtil.drawString(context, text, textX, textY, textColor, true);
-		return -(float)((fontRenderer.fontHeight + 2) * animation.get());
+		return -(float)((RenderUtil.getFontHeight() + 2) * animation.get());
 	}
 	
 	private Animation getAnimation(int i) {
@@ -386,7 +386,7 @@ public class HUD extends Module {
 	}
 	
 	public void reloadResources() {
-		widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Integer.compare(MinecraftClient.getInstance().textRenderer.getWidth(b.getHUDText()), MinecraftClient.getInstance().textRenderer.getWidth(a.getHUDText()))).toList();
+		widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Float.compare(RenderUtil.getStringWidth(b.getHUDText()), RenderUtil.getStringWidth(a.getHUDText()))).toList();
 		cachedWidths.clear();
 	}
 }
