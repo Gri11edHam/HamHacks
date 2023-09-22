@@ -54,6 +54,8 @@ public class CustomTextRenderer {
 	}
 
 	private float render(MatrixStack matrices, String text, float x, float y, int color, boolean isShadow) {
+		x *= 2;
+		y *= 2;
 		float start = x;
 		float r = ((color >> 16) & 255) / 255f;
 		float g = ((color >> 8) & 255) / 255f;
@@ -224,12 +226,12 @@ public class CustomTextRenderer {
 			}
 			final boolean hasFormatColor = textColor != null;
 			float lastX = x;
-			x += font.renderGlyph(mat, obfuscate ? font.randomize((char)(text.charAt(i) - 32)) : (char)(text.charAt(i) - 32), x * 2, y * 2, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a) / 2;
+			x += font.renderGlyph(mat, obfuscate ? font.randomize(text.charAt(i)) : text.charAt(i), x, y, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
 			if(underline) {
-				font.renderGlyph(mat, (char)('_' - 32), lastX * 2, y * 2, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
+				font.renderGlyph(mat, '_', lastX, y, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
 			}
 			if(strikethrough) {
-				font.renderGlyph(mat, (char)('-' - 32), lastX * 2, y * 2, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
+				font.renderGlyph(mat, '-', lastX, y, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
 			}
 		}
 		
@@ -261,7 +263,7 @@ public class CustomTextRenderer {
 				i++;
 				if(i >= text.length()) {
 					current.append(text.charAt(i - 1));
-					continue;
+					break;
 				}
 			}
 			if(escaped) {
@@ -277,9 +279,30 @@ public class CustomTextRenderer {
 					case 'r':
 						bold = false;
 						italic = false;
-					default:
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+					case '6':
+					case '7':
+					case '8':
+					case '9':
+					case 'a':
+					case 'b':
+					case 'c':
+					case 'd':
+					case 'e':
+					case 'f':
+					case 'k':
+					case 'm':
+					case 'n':
 						escaped = false;
 						continue;
+					default:
+						escaped = false;
+						break;
 				}
 			}
 			current.append(text.charAt(i));
@@ -291,6 +314,6 @@ public class CustomTextRenderer {
 			if(font.get(section.getLeft()) == null) width += font.get(FontInfo.Type.Regular).getWidth(section.getRight());
 			else width += font.get(section.getLeft()).getWidth(section.getRight());
 		}
-		return width / 2;
+		return width / 2f;
 	}
 }

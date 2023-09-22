@@ -77,7 +77,7 @@ public class CustomFont {
 	public float getWidth(String text) {
 		float width = 0;
 		for(int i = 0; i < text.length(); i++) {
-			char c = text.charAt(i);
+			char c = (char)(text.charAt(i) - 32);
 			Glyph g = glyphs.get(c);
 			if(g == null) continue;
 			width += g.advance;
@@ -90,7 +90,7 @@ public class CustomFont {
 	}
 	
 	public float renderGlyph(Matrix4f mat, char c, float x, float y, float r, float g, float b, float a) {
-		Glyph glyph = glyphs.get(c);
+		Glyph glyph = glyphs.get((char)(c - 32));
 		if(glyph == null) return 0;
 		
 		y += ascent * this.scale;
