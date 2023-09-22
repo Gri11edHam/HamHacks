@@ -3,6 +3,7 @@ package net.grilledham.hamhacks.page.pages;
 import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventTick;
+import net.grilledham.hamhacks.gui.screen.GuiScreen;
 import net.grilledham.hamhacks.gui.screen.impl.ClickGUIScreen;
 import net.grilledham.hamhacks.gui.screen.impl.ModuleSettingsScreen;
 import net.grilledham.hamhacks.gui.screen.impl.SettingContainerScreen;
@@ -33,6 +34,8 @@ public class ClickGUI extends Page {
 			super.onChange();
 			RenderUtil.updateFont(value);
 			HamHacksClient.reloadResources();
+			Screen screen = mc.currentScreen;
+			if(screen instanceof GuiScreen) ((GuiScreen)screen).markDirty();
 		}
 	};
 	
