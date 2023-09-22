@@ -23,6 +23,8 @@ public class GuiScreen extends Screen {
 	
 	private boolean initialized = false;
 	
+	private boolean wasMouseDown = false;
+	
 	protected GuiScreen(Text title, Screen last, double scale) {
 		super(title);
 		this.last = last;
@@ -66,6 +68,7 @@ public class GuiScreen extends Screen {
 	
 	@Override
 	public boolean mouseClicked(double mx, double my, int button) {
+		wasMouseDown = true;
 		mx = (mx * client.getWindow().getScaleFactor()) / scale;
 		my = (my * client.getWindow().getScaleFactor()) / scale;
 		for(GuiElement element : elements) {
@@ -88,6 +91,8 @@ public class GuiScreen extends Screen {
 	public boolean mouseReleased(double mx, double my, int button) {
 		mx = (mx * client.getWindow().getScaleFactor()) / scale;
 		my = (my * client.getWindow().getScaleFactor()) / scale;
+		if(!wasMouseDown) return super.mouseReleased(mx, my, button);
+		wasMouseDown = false;
 		for(GuiElement element : elements.stream().toList()) {
 			if(selected != null) {
 				if(element == selected) {
