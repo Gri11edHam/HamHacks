@@ -9,7 +9,6 @@ import net.grilledham.hamhacks.mixininterface.IRenderTickCounter;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.TitleBar;
-import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.notification.Notifications;
 import net.grilledham.hamhacks.util.MouseUtil;
 import net.grilledham.hamhacks.util.Updater;
@@ -41,7 +40,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -124,11 +122,9 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 		}
 	}
 	
-	@Inject(method = "reloadResources()Ljava/util/concurrent/CompletableFuture;", at = @At("TAIL"))
+	@Inject(method = "reloadResources()Ljava/util/concurrent/CompletableFuture;", at = @At("TAIL"), cancellable = true)
 	public void onResourceReload(CallbackInfoReturnable<CompletableFuture<Void>> cir) {
-		ModuleManager.getModule(HUD.class).reloadResources();
-		
-		ModuleManager.sortModules(Comparator.comparing(Module::getName));
+		cir.setReturnValue(cir.getReturnValue().thenRun(HamHacksClient::reloadResources));
 	}
 	
 	@Inject(method = "<init>", at = @At("TAIL"))

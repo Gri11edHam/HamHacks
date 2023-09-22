@@ -17,6 +17,7 @@ import net.grilledham.hamhacks.font.FontManager;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.profile.ProfileManager;
@@ -94,6 +95,12 @@ public class HamHacksClient implements ClientModInitializer {
 		CommandManager.sortCommands(Comparator.comparing(Command::getName));
 		
 		MinecraftClient.getInstance().updateWindowTitle();
+	}
+	
+	public static void reloadResources() {
+		ModuleManager.getModule(HUD.class).reloadResources();
+		ModuleManager.sortModules(Comparator.comparing(Module::getName));
+		LOGGER.info("Resource reload complete");
 	}
 	
 	public static void shutdown() {

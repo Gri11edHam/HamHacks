@@ -1,13 +1,12 @@
 package net.grilledham.hamhacks.page.pages;
 
+import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.gui.screen.impl.ClickGUIScreen;
 import net.grilledham.hamhacks.gui.screen.impl.ModuleSettingsScreen;
 import net.grilledham.hamhacks.gui.screen.impl.SettingContainerScreen;
 import net.grilledham.hamhacks.modules.Keybind;
-import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.render.HUD;
 import net.grilledham.hamhacks.page.Page;
 import net.grilledham.hamhacks.setting.*;
 import net.grilledham.hamhacks.util.Color;
@@ -33,7 +32,7 @@ public class ClickGUI extends Page {
 		public void onChange() {
 			super.onChange();
 			RenderUtil.updateFont(value);
-			ModuleManager.getModule(HUD.class).reloadResources();
+			HamHacksClient.reloadResources();
 		}
 	};
 	
