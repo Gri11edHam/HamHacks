@@ -14,6 +14,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class SelectionSettingElement extends SettingElement<Integer> {
 	
+	private static final int PREFERED_SCROLL_HEIGHT = 200;
 	private final Animation hoverAnimation = new Animation(AnimationType.EASE, 0.25, true);
 	private final Animation selectionAnimation = new Animation(AnimationType.EASE_IN_OUT, 0.25);
 	
@@ -35,7 +36,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 		maxWidth = 40;
 		GuiElement element;
 		int i = 0;
-		scrollArea = new ScrollableElement(0, 0, 40, 200, scale);
+		scrollArea = new ScrollableElement(0, 0, 40, PREFERED_SCROLL_HEIGHT, scale);
 		for(String string : (options.get())) {
 			String s = Text.translatable(string).getString();
 			int finalI = i;
@@ -48,7 +49,7 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 			i++;
 		}
 		resize(RenderUtil.getStringWidth(getName.get()) + maxWidth + 6, 16);
-		scrollArea.resize(maxWidth, 200);
+		scrollArea.resize(maxWidth, PREFERED_SCROLL_HEIGHT);
 		scrollArea.moveTo(x + width - maxWidth, y);
 	}
 	
@@ -95,6 +96,8 @@ public class SelectionSettingElement extends SettingElement<Integer> {
 		
 		RenderUtil.postRender();
 		stack.pop();
+		
+		scrollArea.setMaxHeight((float)Math.min(PREFERED_SCROLL_HEIGHT, (mc.getWindow().getHeight() / scale) - scrollArea.getY() - scrollY));
 		
 		hoverAnimation.set(hovered);
 		hoverAnimation.update();

@@ -287,7 +287,7 @@ public class ScrollableElement extends GuiElement {
 				trueHeight += element.getHeight();
 			}
 		}
-		if(height >= maxHeight) {
+		if(height >= maxHeight && hovered) {
 			nextScroll -= delta * 10;
 			return true;
 		}
