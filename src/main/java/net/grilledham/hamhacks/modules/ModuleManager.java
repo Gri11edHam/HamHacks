@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.modules;
 
 import com.google.common.collect.Lists;
-import net.grilledham.hamhacks.HamHacksClient;
 
 import java.util.*;
 
@@ -43,20 +42,15 @@ public class ModuleManager {
 		return modules.stream().filter(module -> module.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
 	}
 	
-	public static <T extends Module> T getModule(Class<T> clazz) {
-		try {
-			return clazz.cast(modules.stream().filter(module -> module.getClass() == clazz).findFirst().orElse(null));
-		} catch(ConcurrentModificationException e) {
-			HamHacksClient.LOGGER.error("Getting module from class", e);
-			return null;
-		}
+	public static synchronized <T extends Module> T getModule(Class<T> clazz) {
+		return clazz.cast(modules.stream().filter(module -> module.getClass() == clazz).findFirst().orElse(null));
 	}
 	
 	public static void updateKeybinds() {
 		modules.forEach(Module::checkKeybind);
 	}
 	
-	public static void sortModules(Comparator<Module> comparator) {
+	public static synchronized void sortModules(Comparator<Module> comparator) {
 		modules.sort(comparator);
 	}
 }
