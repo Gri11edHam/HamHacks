@@ -42,6 +42,7 @@
     "MixinEntityVelocityUpdateS2CPacket",
     "MixinMatrix4f",
     "MixinPlayerEntity",
+    "MixinVanillaResourcePackProvider",
     "MixinVec3d",
     "MixinYggdrasilUserApiService",
     "baritone.MixinComeCommand",
