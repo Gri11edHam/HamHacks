@@ -36,7 +36,7 @@ public abstract class MixinCommandSuggestor {
 	
 	@Shadow public abstract void show(boolean narrateFirstSuggestion);
 	
-	@Inject(method = "refresh", at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/StringReader;canRead()Z"), cancellable = true, remap = false, locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "refresh", at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/StringReader;canRead()Z", remap = false), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	public void refresh(CallbackInfo ci, String string, StringReader stringReader) {
 		String prefix = PageManager.getPage(Commands.class).getPrefix();
 		int length = prefix.length();
