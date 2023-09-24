@@ -3,7 +3,7 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
-			Update 1.9.5:
+			Update 1.10:
 				- Added custom fonts
 				- Added modules:
 					: Forcefield
