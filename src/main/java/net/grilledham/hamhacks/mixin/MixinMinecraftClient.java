@@ -95,6 +95,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 			if(Updater.newVersionAvailable()) {
 				Notifications.notify("HamHacks", "New version available: " + Updater.getLatest().getVersion(0, true) + ". Click to update", () -> MinecraftClient.getInstance().setScreen(new NewVersionScreen(currentScreen)));
 			}
+			HamHacksClient.reloadResources();
 		});
 		return toReturn;
 	}
