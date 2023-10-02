@@ -1,6 +1,7 @@
 package net.grilledham.hamhacks.modules.misc;
 
 import baritone.api.BaritoneAPI;
+import net.fabricmc.loader.api.FabricLoader;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventChat;
 import net.grilledham.hamhacks.modules.Category;
@@ -114,7 +115,7 @@ public class M1337 extends Module {
 	
 	@EventListener
 	public void onChat(EventChat.EventChatSent e) {
-		if(mc.player == null || e.message.startsWith(PageManager.getPage(Commands.class).getPrefix()) || e.message.startsWith(BaritoneAPI.getSettings().prefix.value)) return;
+		if(mc.player == null || e.message.startsWith(PageManager.getPage(Commands.class).getPrefix()) || (FabricLoader.getInstance().isModLoaded("baritone") && e.message.startsWith(BaritoneAPI.getSettings().prefix.value))) return;
 		if(modify) {
 			e.canceled = true;
 			modify = false;
