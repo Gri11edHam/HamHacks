@@ -46,8 +46,8 @@
 	"hamhacks.module.aimbot.keepAiming": "Keep Aiming at Targeted Entity",
 	"hamhacks.module.aimbot.keepAiming.tooltip": "Should the Aimbot keep aiming at the entity\nyou last looked at",
 	"hamhacks.module.aimbot.targetPlayers": "Target Players",
-	"hamhacks.module.aimbot.targetPassive": "Target Hostile Mobs",
-	"hamhacks.module.aimbot.targetHostile": "Target Passive Mobs",
+	"hamhacks.module.aimbot.targetPassive": "Target Passive Mobs",
+	"hamhacks.module.aimbot.targetHostile": "Target Hostile Mobs",
 	"hamhacks.module.aimbot.targetBlocks": "Target Blocks",
 
 	"hamhacks.module.boatFly": "Boat Fly",

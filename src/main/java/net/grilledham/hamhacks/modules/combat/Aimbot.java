@@ -75,7 +75,7 @@ public class Aimbot extends Module {
 		} else {
 			extra = "None";
 		}
-		return super.getHUDText() + "\u00a77" + extra;
+		return super.getHUDText() + " \u00a77" + extra;
 	}
 	
 	@EventListener
@@ -149,17 +149,17 @@ public class Aimbot extends Module {
 		float yaw = yawPitch[0];
 		float pitch = yawPitch[1];
 		
-		boolean inFovX = MathHelper.abs(MathHelper.wrapDegrees(yaw - mc.player.headYaw)) <= fovX;
-		boolean inFovY = MathHelper.abs(MathHelper.wrapDegrees(pitch - mc.player.renderPitch)) <= fovY;
+		boolean inFovX = MathHelper.abs(MathHelper.wrapDegrees(yaw - mc.player.getYaw())) <= fovX;
+		boolean inFovY = MathHelper.abs(MathHelper.wrapDegrees(pitch - mc.player.getPitch())) <= fovY;
 		
 		if(inFovX && inFovY) {
 			float yawFinal, pitchFinal;
-			yawFinal = (float)(((MathHelper.wrapDegrees(yaw - mc.player.headYaw)) * stepX) / 100);
-			pitchFinal = (float)(((MathHelper.wrapDegrees(pitch - mc.player.renderPitch)) * stepY) / 100);
+			yawFinal = (float)(((MathHelper.wrapDegrees(yaw - mc.player.getYaw())) * stepX) / 100);
+			pitchFinal = (float)(((MathHelper.wrapDegrees(pitch - mc.player.getPitch())) * stepY) / 100);
 			
-			return new float[]{mc.player.headYaw + yawFinal, mc.player.renderPitch + pitchFinal};
+			return new float[]{mc.player.getYaw() + yawFinal, mc.player.getPitch() + pitchFinal};
 		} else {
-			return new float[]{mc.player.headYaw, mc.player.renderPitch};
+			return new float[]{mc.player.getYaw(), mc.player.getPitch()};
 		}
 	}
 	
@@ -257,8 +257,8 @@ public class Aimbot extends Module {
 		return rayTrace(
 				range,
 				mc.player.getRotationVec(1.0F),
-				mc.player.renderPitch,
-				mc.player.headYaw
+				mc.player.getPitch(),
+				mc.player.getYaw()
 		);
 	}
 	
@@ -273,8 +273,8 @@ public class Aimbot extends Module {
 			);
 			
 			// Compute the distance from the player's crosshair
-			float distYaw = MathHelper.abs(MathHelper.wrapDegrees(yawPitch[0] - mc.player.headYaw));
-			float distPitch = MathHelper.abs(MathHelper.wrapDegrees(yawPitch[1] - mc.player.renderPitch));
+			float distYaw = MathHelper.abs(MathHelper.wrapDegrees(yawPitch[0] - mc.player.getYaw()));
+			float distPitch = MathHelper.abs(MathHelper.wrapDegrees(yawPitch[1] - mc.player.getPitch()));
 			float dist = MathHelper.sqrt(distYaw * distYaw + distPitch * distPitch);
 			
 			// Get the closest entity
