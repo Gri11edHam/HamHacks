@@ -3,6 +3,12 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.10.1:
+				- Updated to Minecraft 1.20.2
+				- Fixed Aimbot transations
+				- Fixed module 1337
+				- Fixed module sorting
+			
 			Update 1.10:
 				- Added custom fonts
 				- Added modules:
