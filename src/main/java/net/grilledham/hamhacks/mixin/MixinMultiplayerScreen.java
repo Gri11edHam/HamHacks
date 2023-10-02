@@ -12,6 +12,7 @@ import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,7 +23,9 @@ public abstract class MixinMultiplayerScreen extends Screen implements IMultipla
 	@Shadow private ServerInfo selectedEntry;
 	@Shadow protected MultiplayerServerListWidget serverListWidget;
 	
+	@Unique
 	private TextFieldWidget serverTextField;
+	@Unique
 	private ButtonWidget waitToConnectButton;
 	
 	private MixinMultiplayerScreen(Text title) {
@@ -47,7 +50,7 @@ public abstract class MixinMultiplayerScreen extends Screen implements IMultipla
 				this.connect(((MultiplayerServerListWidget.ServerEntry)entry).getServer());
 			} else if (entry instanceof MultiplayerServerListWidget.LanServerEntry) {
 				LanServerInfo lanServerInfo = ((MultiplayerServerListWidget.LanServerEntry)entry).getLanServerEntry();
-				this.connect(new ServerInfo(lanServerInfo.getMotd(), lanServerInfo.getAddressPort(), true));
+				this.connect(new ServerInfo(lanServerInfo.getMotd(), lanServerInfo.getAddressPort(), ServerInfo.ServerType.LAN));
 			}
 		}
 	}

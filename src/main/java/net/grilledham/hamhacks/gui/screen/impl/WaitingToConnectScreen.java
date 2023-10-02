@@ -26,7 +26,8 @@ public class WaitingToConnectScreen extends GuiScreen {
 	
 	public WaitingToConnectScreen(Screen last, String serverIP) {
 		super(Text.translatable("hamhacks.menu.waitingToConnect"), last, PageManager.getPage(ClickGUI.class).scale.get());
-		serverInfo = new ServerInfo("", serverIP, false);
+		serverInfo = new ServerInfo("", serverIP, ServerInfo.ServerType.OTHER);
+		alwaysDrawBackground = true;
 	}
 	
 	@Override
@@ -37,7 +38,6 @@ public class WaitingToConnectScreen extends GuiScreen {
 	@Override
 	public void render(DrawContext ctx, int mx, int my, float tickDelta) {
 		MatrixStack stack = ctx.getMatrices();
-		renderBackground(ctx);
 		
 		super.render(ctx, mx, my, tickDelta);
 		
@@ -77,7 +77,7 @@ public class WaitingToConnectScreen extends GuiScreen {
 			int onlinePlayers = Integer.parseInt(splitCount[0]);
 			int maxPlayers = Integer.parseInt(splitCount[1]);
 			if(onlinePlayers < maxPlayers) {
-				serverInfo = new ServerInfo(serverInfo.name, serverInfo.address, serverInfo.isLocal());
+				serverInfo = new ServerInfo(serverInfo.name, serverInfo.address, serverInfo.isLocal() ? ServerInfo.ServerType.LAN : serverInfo.isRealm() ? ServerInfo.ServerType.REALM : ServerInfo.ServerType.OTHER);
 				ConnectScreen.connect(this, client, ServerAddress.parse(serverInfo.address), serverInfo, false);
 			}
 		} catch(Exception ignored) {}

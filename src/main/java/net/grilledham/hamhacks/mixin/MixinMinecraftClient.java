@@ -22,7 +22,7 @@ import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.Session;
+import net.minecraft.client.session.Session;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceReload;
@@ -67,8 +67,6 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	
 	@Shadow private @Nullable IntegratedServer server;
 	
-	@Shadow public abstract boolean isConnectedToRealms();
-	
 	@Shadow public abstract ServerInfo getCurrentServerEntry();
 	
 	public MixinMinecraftClient(String string) {
@@ -110,7 +108,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 			if (clientPlayNetworkHandler != null && clientPlayNetworkHandler.getConnection().isOpen()) {
 				if (server != null && !server.isRemote()) {
 					stringBuilder.append(I18n.translate("title.singleplayer"));
-				} else if (isConnectedToRealms()) {
+				} else if (getCurrentServerEntry() != null && getCurrentServerEntry().isRealm()) {
 					stringBuilder.append(I18n.translate("title.multiplayer.realms"));
 				} else if (this.server == null && (getCurrentServerEntry() == null || !getCurrentServerEntry().isLocal())) {
 					stringBuilder.append(I18n.translate("title.multiplayer.other"));

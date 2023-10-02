@@ -25,6 +25,8 @@ public class GuiScreen extends Screen {
 	
 	private boolean wasMouseDown = false;
 	
+	protected boolean alwaysDrawBackground = false;
+	
 	protected GuiScreen(Text title, Screen last, double scale) {
 		super(title);
 		this.last = last;
@@ -46,9 +48,7 @@ public class GuiScreen extends Screen {
 		if(dirty || !initialized) {
 			clearAndInit();
 		}
-		if(last != null) {
-			super.renderBackground(ctx);
-		}
+		
 		MatrixStack stack = ctx.getMatrices();
 		mx = (int)((mx * client.getWindow().getScaleFactor()) / scale);
 		my = (int)((my * client.getWindow().getScaleFactor()) / scale);
@@ -131,22 +131,22 @@ public class GuiScreen extends Screen {
 	}
 	
 	@Override
-	public boolean mouseScrolled(double mx, double my, double amount) {
+	public boolean mouseScrolled(double mx, double my, double hAmount, double vAmount) {
 		mx = (mx * client.getWindow().getScaleFactor()) / scale;
 		my = (my * client.getWindow().getScaleFactor()) / scale;
 		for(GuiElement element : elements) {
 			if(selected != null) {
 				if(element == selected) {
-					selected.scroll(mx, my, 0, 0, amount);
+					selected.scroll(mx, my, 0, 0, hAmount);
 					return true;
 				}
 			} else {
-				if(element.scroll(mx, my, 0, 0, amount)) {
+				if(element.scroll(mx, my, 0, 0, hAmount)) {
 					return true;
 				}
 			}
 		}
-		return super.mouseScrolled(mx, my, amount);
+		return super.mouseScrolled(mx, my, hAmount, vAmount);
 	}
 	
 	@Override
@@ -186,5 +186,12 @@ public class GuiScreen extends Screen {
 	@Override
 	public void close() {
 		client.setScreen(last);
+	}
+	
+	@Override
+	public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+		if(last != null || alwaysDrawBackground) {
+			super.renderBackground(context, mouseX, mouseY, delta);
+		}
 	}
 }

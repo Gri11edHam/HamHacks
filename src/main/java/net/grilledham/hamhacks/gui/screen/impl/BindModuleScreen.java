@@ -27,11 +27,11 @@ public class BindModuleScreen extends GuiScreen {
 		super(Text.translatable("hamhacks.menu.bindModule"), null, PageManager.getPage(ClickGUI.class).scale.get());
 		this.module = module;
 		module.getKey().setKey(0);
+		alwaysDrawBackground = true;
 	}
 	
 	@Override
 	public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-		renderBackground(ctx);
 		super.render(ctx, mouseX, mouseY, delta);
 		String text = module.getKey().getName().equals("None") ? "Listening..." : module.getKey().getName() + "...";
 		RenderUtil.drawString(ctx, text, width / 2f - RenderUtil.getStringWidth(text) / 2f, height / 2f - RenderUtil.getFontHeight() / 2f, -1, true);

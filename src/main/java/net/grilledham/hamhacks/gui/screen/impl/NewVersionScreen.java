@@ -73,8 +73,6 @@ public class NewVersionScreen extends Screen {
 	
 	@Override
 	public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-		renderBackground(ctx);
-		
 		super.render(ctx, mouseX, mouseY, delta);
 		
 		updateButton.render(ctx, mouseX, mouseY, 0, 0, delta);

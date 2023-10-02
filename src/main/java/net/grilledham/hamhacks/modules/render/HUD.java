@@ -112,7 +112,7 @@ public class HUD extends Module {
 	}
 	
 	public void render(DrawContext context, float tickDelta, TextRenderer textRenderer) {
-		if(MinecraftClient.getInstance().options.debugEnabled) {
+		if(MinecraftClient.getInstance().getDebugHud().shouldShowDebugHud()) {
 			return;
 		}
 		

@@ -51,7 +51,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	private boolean calledFromFreecam = false;
 	
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
+	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, boolean bl, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
 		EventRender event = new EventRender(drawContext, tickDelta);
 		event.call();
 	}

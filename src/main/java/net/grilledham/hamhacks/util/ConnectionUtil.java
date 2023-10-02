@@ -27,7 +27,7 @@ public class ConnectionUtil {
 	public static ServerInfo getServerInfo() {
 		if(MinecraftClient.getInstance().getCurrentServerEntry() != null) {
 			if(serverInfo == null || System.currentTimeMillis() - lastUpdate > 30000 || !serverInfo.address.equalsIgnoreCase(MinecraftClient.getInstance().getCurrentServerEntry().address)) {
-				serverInfo = new ServerInfo("current connection", MinecraftClient.getInstance().getCurrentServerEntry().address, MinecraftClient.getInstance().getCurrentServerEntry().isLocal());
+				serverInfo = new ServerInfo("current connection", MinecraftClient.getInstance().getCurrentServerEntry().address, MinecraftClient.getInstance().getCurrentServerEntry().isLocal() ? ServerInfo.ServerType.LAN : MinecraftClient.getInstance().getCurrentServerEntry().isRealm() ? ServerInfo.ServerType.REALM : ServerInfo.ServerType.OTHER);
 				lastUpdate = System.currentTimeMillis();
 			}
 		}

@@ -29,8 +29,6 @@ public class UpdateScreen extends Screen {
 	
 	@Override
 	public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-		renderBackground(ctx);
-		
 		super.render(ctx, mouseX, mouseY, delta);
 		
 		String s = "Would you like to close Minecraft now or continue playing?";

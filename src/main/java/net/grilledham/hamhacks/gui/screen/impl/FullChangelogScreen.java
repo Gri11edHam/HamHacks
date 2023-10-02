@@ -66,8 +66,6 @@ public class FullChangelogScreen extends Screen {
 	
 	@Override
 	public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
-		renderBackground(ctx);
-		
 		super.render(ctx, mouseX, mouseY, delta);
 		
 		backButton.render(ctx, mouseX, mouseY, 0, 0, delta);
