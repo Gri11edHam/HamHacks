@@ -10,6 +10,8 @@ import net.grilledham.hamhacks.pathfinding.PathFinder;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -141,6 +143,7 @@ public class InfiniteReach extends Module {
 				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
 			}
 			pathFinder = null;
+			mc.player.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE, SoundCategory.PLAYERS, 1, 1);
 		}).begin();
 	}
 }
