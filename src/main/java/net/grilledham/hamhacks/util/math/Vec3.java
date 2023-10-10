@@ -133,7 +133,7 @@ public class Vec3 {
 	}
 	
 	public static Vec3 center(BlockPos pos) {
-		return new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + -.5);
+		return new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
 	}
 	
 	@Override
