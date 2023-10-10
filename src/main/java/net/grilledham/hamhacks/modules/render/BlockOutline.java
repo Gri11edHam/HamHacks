@@ -45,10 +45,13 @@ public class BlockOutline extends Module {
 		double offsetX = event.pos.getX() - event.cameraX;
 		double offsetY = event.pos.getY() - event.cameraY;
 		double offsetZ = event.pos.getZ() - event.cameraZ;
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
 		if(disableDepthTest.get()) {
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
+		} else {
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
 		}
 		BufferBuilder buf = Tessellator.getInstance().getBuffer();
 		MatrixStack.Entry entry = event.matrices.peek();
@@ -57,6 +60,7 @@ public class BlockOutline extends Module {
 				RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 				RenderSystem.setShaderColor(1, 1, 1, 1);
 				
+				boolean cullFace = GL11.glIsEnabled(GL11.GL_CULL_FACE);
 				GL11.glDisable(GL11.GL_CULL_FACE);
 				
 				buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
@@ -93,7 +97,9 @@ public class BlockOutline extends Module {
 				
 				BufferRenderer.drawWithGlobalProgram(buf.end());
 				
-				GL11.glEnable(GL11.GL_CULL_FACE);
+				if(cullFace) {
+					GL11.glEnable(GL11.GL_CULL_FACE);
+				}
 			}
 		}
 		if(outlineEnabled.get()) {
@@ -102,6 +108,7 @@ public class BlockOutline extends Module {
 			
 			RenderSystem.lineWidth(lineWidth.get().floatValue());
 			
+			boolean cullFace = GL11.glIsEnabled(GL11.GL_CULL_FACE);
 			GL11.glDisable(GL11.GL_CULL_FACE);
 			
 			buf.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
@@ -113,16 +120,21 @@ public class BlockOutline extends Module {
 				k /= n;
 				l /= n;
 				m /= n;
-				buf.vertex(entry.getPositionMatrix(), (float)(minX + offsetX), (float)(minY + offsetY), (float)(minZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(k, l, m).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(maxX + offsetX), (float)(maxY + offsetY), (float)(maxZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(k, l, m).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(minX + offsetX), (float)(minY + offsetY), (float)(minZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry.getNormalMatrix(), k, l, m).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(maxX + offsetX), (float)(maxY + offsetY), (float)(maxZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry.getNormalMatrix(), k, l, m).next();
 			});
 			BufferRenderer.drawWithGlobalProgram(buf.end());
 			
-			GL11.glEnable(GL11.GL_CULL_FACE);
+			if(cullFace) {
+				GL11.glEnable(GL11.GL_CULL_FACE);
+			}
 		}
 		RenderSystem.setShaderColor(1, 1, 1, 1);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDisable(GL11.GL_BLEND);
+		if(depth) {
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+		} else {
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
+		}
 		event.matrices.pop();
 		event.canceled = true;
 	}
