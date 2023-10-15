@@ -137,11 +137,11 @@ public class GuiScreen extends Screen {
 		for(GuiElement element : elements) {
 			if(selected != null) {
 				if(element == selected) {
-					selected.scroll(mx, my, 0, 0, hAmount);
+					selected.scroll(mx, my, 0, 0, vAmount);
 					return true;
 				}
 			} else {
-				if(element.scroll(mx, my, 0, 0, hAmount)) {
+				if(element.scroll(mx, my, 0, 0, vAmount)) {
 					return true;
 				}
 			}
