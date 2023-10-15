@@ -2,8 +2,6 @@ package net.grilledham.hamhacks.modules.render;
 
 import net.grilledham.hamhacks.animation.Animation;
 import net.grilledham.hamhacks.animation.AnimationType;
-import net.grilledham.hamhacks.event.EventListener;
-import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
@@ -36,6 +34,8 @@ public class HUD extends Module {
 	private static List<Module> widthSortedModules;
 	
 	private static final HashMap<String, Float> cachedWidths = new HashMap<>();
+	private static final HashMap<Module, String> lastTexts = new HashMap<>();
+	private static boolean sort = true;
 	
 	private final SettingCategory APPEARANCE_CATEGORY = new SettingCategory("hamhacks.module.hud.category.appearance");
 	
@@ -100,16 +100,6 @@ public class HUD extends Module {
 	
 	public float leftHeight = 0;
 	public float rightHeight = 0;
-	
-	private int ticks = 0;
-	
-	@EventListener
-	public void onTick(EventTick e) {
-		ticks++;
-		if((ticks %= 10) == 0) { // update widths every 0.5 seconds
-			widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Float.compare(RenderUtil.getStringWidth(b.getHUDText()), RenderUtil.getStringWidth(a.getHUDText()))).toList();
-		}
-	}
 	
 	public void render(DrawContext context, float tickDelta, TextRenderer textRenderer) {
 		if(MinecraftClient.getInstance().getDebugHud().shouldShowDebugHud()) {
@@ -225,14 +215,20 @@ public class HUD extends Module {
 			}
 			moduleAnimations.put(m, animation);
 		}
-		if(widthSortedModules == null) {
+		if(widthSortedModules == null || sort) {
+			sort = false;
 			widthSortedModules = ModuleManager.getModules().stream().sorted((a, b) -> Float.compare(RenderUtil.getStringWidth(b.getHUDText()), RenderUtil.getStringWidth(a.getHUDText()))).toList();
 		}
 		for(Module m : widthSortedModules) {
 			animation = moduleAnimations.get(m);
 			j++;
 			if(animation.get() > 0) {
-				yAdd += drawRightAligned(context, textRenderer, m.getHUDText(), i, yAdd, animation);
+				String hudText = m.getHUDText();
+				if(!lastTexts.getOrDefault(m, "").equals(hudText)) {
+					sort = true;
+					lastTexts.put(m, hudText);
+				}
+				yAdd += drawRightAligned(context, textRenderer, hudText, i, yAdd, animation);
 				i++;
 			}
 		}
