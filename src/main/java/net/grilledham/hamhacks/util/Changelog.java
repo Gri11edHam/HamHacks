@@ -3,6 +3,14 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.10.2:
+				- Improved modules:
+					: Block Outline
+					: Infinite Reach
+					: XRay
+				- Improved performance
+				- Fixed scrolling in menus
+			
 			Update 1.10.1:
 				- Updated to Minecraft 1.20.2
 				- Fixed Aimbot transations
