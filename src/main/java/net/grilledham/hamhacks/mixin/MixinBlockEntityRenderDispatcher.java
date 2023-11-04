@@ -20,7 +20,8 @@ public class MixinBlockEntityRenderDispatcher {
 			cancellable = true
 	)
 	private <E extends BlockEntity> void renderBlockEntity(E blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo ci) {
-		if(ModuleManager.getModule(XRay.class).visibleBlocks.get(blockEntity.getCachedState().getBlock())) {
+		XRay xRay = ModuleManager.getModule(XRay.class);
+		if(xRay.isEnabled() && !xRay.visibleBlocks.get(blockEntity.getCachedState().getBlock())) {
 			ci.cancel();
 		}
 	}
