@@ -57,7 +57,7 @@ public class BowAimbot extends Module {
 			velocity = (velocity * velocity + velocity * 2) / 3;
 			if (velocity > 1) velocity = 1;
 			
-			Stream<Entity> stream = mc.world.getEntitiesByType(TypeFilter.instanceOf(Entity.class), new Box(mc.player.getBlockPos().add(-64, -64, -64), mc.player.getBlockPos().add(64, 64, 64)), Objects::nonNull).stream()
+			Stream<Entity> stream = mc.world.getEntitiesByType(TypeFilter.instanceOf(Entity.class), new Box(mc.player.getBlockPos().add(-64, -64, -64).toCenterPos(), mc.player.getBlockPos().add(64, 64, 64).toCenterPos()), Objects::nonNull).stream()
 					.filter(entity -> entity instanceof LivingEntity)
 					.filter(entity -> !entity.isRemoved() && entity.isAlive())
 					.filter(entity -> entity != mc.player)

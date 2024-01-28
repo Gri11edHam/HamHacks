@@ -67,7 +67,7 @@ public class KillAura extends Module {
 						public Class<? extends Entity> getBaseClass() {
 							return LivingEntity.class;
 						}
-					}, new Box(mc.player.getBlockPos().add(-64, -64, -64), mc.player.getBlockPos().add(64, 64, 64)), Objects::nonNull).stream()
+					}, new Box(mc.player.getBlockPos().add(-64, -64, -64).toCenterPos(), mc.player.getBlockPos().add(64, 64, 64).toCenterPos()), Objects::nonNull).stream()
 					.filter(entity -> !entity.isRemoved() && entity.isAlive())
 					.filter(entity -> entity != mc.player)
 					.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)

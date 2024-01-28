@@ -31,6 +31,7 @@ import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -46,12 +47,14 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Shadow @Final MinecraftClient client;
 	
+	@Unique
 	private boolean wasFreecamEnabled = false;
 	
+	@Unique
 	private boolean calledFromFreecam = false;
 	
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, boolean bl, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"), locals = LocalCapture.CAPTURE_FAILSOFT)
+	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, float f, boolean bl, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
 		EventRender event = new EventRender(drawContext, tickDelta);
 		event.call();
 	}
@@ -63,8 +66,8 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		instance.render(context, tickDelta);
 	}
 	
-	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=hand"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-	public void render3DEvent(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo ci, boolean bl, Camera camera, MatrixStack matrixStack, double d, float f, float g, Matrix4f matrix4f, Matrix3f matrix3f) {
+	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=hand"), locals = LocalCapture.CAPTURE_FAILSOFT)
+	public void render3DEvent(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo ci, boolean bl, Camera camera, Entity entity, MatrixStack matrixStack, double d, float f, float g, Matrix4f matrix4f, Matrix3f matrix3f) {
 		ProjectionUtil.updateMatrices(matrices, matrix4f);
 		
 		EventRender3D event = new EventRender3D(tickDelta, matrices);
@@ -97,7 +100,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		return ModuleManager.getModule(Reach.class).isEnabled() ? ModuleManager.getModule(Reach.class).entityRange.get() * ModuleManager.getModule(Reach.class).entityRange.get() : e;
 	}
 	
-	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 6)
+	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 7)
 	public boolean setAlwaysExtendedReach(boolean bl) {
 		if(ModuleManager.getModule(Reach.class) == null) {
 			return bl;

@@ -139,7 +139,7 @@ public class Nametags extends Module {
 					public Class<? extends Entity> getBaseClass() {
 						return LivingEntity.class;
 					}
-				}, new Box(mc.player.getBlockPos().add(-256, -256, -256), mc.player.getBlockPos().add(256, 256, 256)), Objects::nonNull).stream()
+				}, new Box(mc.player.getBlockPos().add(-256, -256, -256).toCenterPos(), mc.player.getBlockPos().add(256, 256, 256).toCenterPos()), Objects::nonNull).stream()
 				.filter(this::shouldRender).sorted((a, b) -> Double.compare(b.squaredDistanceTo(mc.getCameraEntity().getEyePos()), a.squaredDistanceTo(mc.getCameraEntity().getEyePos())));
 		
 		entities.addAll(stream.toList());
@@ -169,7 +169,7 @@ public class Nametags extends Module {
 			
 			String name;
 			if(entity == mc.player) {
-				name = ModuleManager.getModule(NameHider.class).modifyName(entity.getEntityName());
+				name = ModuleManager.getModule(NameHider.class).modifyName(entity.getName().getString());
 			} else {
 				name = entity.getName().getString();
 			}

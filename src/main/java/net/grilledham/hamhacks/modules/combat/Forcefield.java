@@ -38,7 +38,7 @@ public class Forcefield extends Module {
 					public Class<? extends Entity> getBaseClass() {
 						return HostileEntity.class;
 					}
-				}, new Box(mc.player.getBlockPos().add(-256, -256, -256), mc.player.getBlockPos().add(256, 256, 256)), Objects::nonNull).stream()
+				}, new Box(mc.player.getBlockPos().add(-256, -256, -256).toCenterPos(), mc.player.getBlockPos().add(256, 256, 256).toCenterPos()), Objects::nonNull).stream()
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6).toList()) {
 			if(entity.hurtTime <= 0 && entity.distanceTo(mc.player) <= 3) {

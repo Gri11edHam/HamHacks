@@ -3,6 +3,9 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.10.3:
+				- Updated to Minecraft 1.20.4
+			
 			Update 1.10.2:
 				- Improved modules:
 					: Block Outline

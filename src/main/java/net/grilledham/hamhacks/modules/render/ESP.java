@@ -163,7 +163,7 @@ public class ESP extends Module {
 					public Class<? extends Entity> getBaseClass() {
 						return LivingEntity.class;
 					}
-				}, new Box(mc.player.getBlockPos().add(-256, -256, -256), mc.player.getBlockPos().add(256, 256, 256)), Objects::nonNull).stream()
+				}, new Box(mc.player.getBlockPos().add(-256, -256, -256).toCenterPos(), mc.player.getBlockPos().add(256, 256, 256).toCenterPos()), Objects::nonNull).stream()
 				.filter(entity -> !entity.isRemoved() && entity.isAlive())
 				.filter(entity -> entity != player || ModuleManager.getModule(Freecam.class).isEnabled() || self.get())
 				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
