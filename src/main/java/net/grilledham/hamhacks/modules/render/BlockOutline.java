@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.modules.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.event.events.EventRenderBlockOverlay;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
@@ -10,10 +11,13 @@ import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.util.Color;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.shape.VoxelShape;
@@ -38,13 +42,39 @@ public class BlockOutline extends Module {
 		GENERAL_CATEGORY.add(overlayColor);
 	}
 	
+	private BlockState lastState;
+	private Entity lastEntity;
+	private double lastCameraX;
+	private double lastCameraY;
+	private double lastCameraZ;
+	private BlockPos lastPos;
+	
 	@EventListener
 	public void onRenderBlockOverlay(EventRenderBlockOverlay event) {
-		event.matrices.push();
-		VoxelShape shape = event.state.getOutlineShape(event.entity.getWorld(), event.pos, ShapeContext.of(event.entity));
-		double offsetX = event.pos.getX() - event.cameraX;
-		double offsetY = event.pos.getY() - event.cameraY;
-		double offsetZ = event.pos.getZ() - event.cameraZ;
+		lastState = event.state;
+		lastEntity = event.entity;
+		lastCameraX = event.cameraX;
+		lastCameraY = event.cameraY;
+		lastCameraZ = event.cameraZ;
+		lastPos = event.pos;
+		event.canceled = true;
+	}
+	
+	@EventListener
+	public void onRender(EventRender3D event) {
+		if(lastState == null) {
+			return;
+		}
+		renderOutline(event.matrices, lastState, lastEntity, lastCameraX, lastCameraY, lastCameraZ, lastPos);
+		lastState = null;
+	}
+	
+	private void renderOutline(MatrixStack matrices, BlockState state, Entity entity, double cameraX, double cameraY, double cameraZ, BlockPos pos) {
+		matrices.push();
+		VoxelShape shape = state.getOutlineShape(entity.getWorld(), pos, ShapeContext.of(entity));
+		double offsetX = pos.getX() - cameraX;
+		double offsetY = pos.getY() - cameraY;
+		double offsetZ = pos.getZ() - cameraZ;
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
@@ -54,7 +84,7 @@ public class BlockOutline extends Module {
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 		}
 		BufferBuilder buf = Tessellator.getInstance().getBuffer();
-		MatrixStack.Entry entry = event.matrices.peek();
+		MatrixStack.Entry entry = matrices.peek();
 		if(overlayEnabled.get()) {
 			for(Box box : shape.getBoundingBoxes()) {
 				RenderSystem.setShader(GameRenderer::getPositionColorProgram);
@@ -135,7 +165,6 @@ public class BlockOutline extends Module {
 		} else {
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 		}
-		event.matrices.pop();
-		event.canceled = true;
+		matrices.pop();
 	}
 }
