@@ -148,9 +148,8 @@ public class HUD extends Module {
 			animation.setAbsolute(showFPS.get() && isEnabled());
 		}
 		if(animation.get() > 0) {
-			String fps = MinecraftClient.getInstance().fpsDebugString;
-			fps = fps.split(" ")[0] + " " + fps.split(" ")[1];
-			yAdd += drawLeftAligned(context, textRenderer, fps, i, yAdd, animation);
+			int fps = MinecraftClient.getInstance().getCurrentFps();
+			yAdd += drawLeftAligned(context, textRenderer, fps + " fps", i, yAdd, animation);
 			i++;
 		}
 		animation = getAnimation(j++);
