@@ -6,9 +6,11 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;
+import net.grilledham.hamhacks.setting.EntityTypeSelector;
 import net.grilledham.hamhacks.util.RotationHack;
 import net.grilledham.hamhacks.util.TrajectoryUtil;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.PassiveEntity;
@@ -28,18 +30,12 @@ public class BowAimbot extends Module {
 	
 	private Entity target = null;
 	
-	private final BoolSetting targetPlayers = new BoolSetting("hamhacks.module.bowAimbot.targetPlayers", true, () -> true);
-	
-	private final BoolSetting targetPassive = new BoolSetting("hamhacks.module.bowAimbot.targetPassive", false, () -> true);
-	
-	private final BoolSetting targetHostile = new BoolSetting("hamhacks.module.bowAimbot.targetHostile", false, () -> true);
+	private final EntityTypeSelector entitySelector = new EntityTypeSelector("hamhacks.module.bowAimbot.entitySelector", () -> true, EntityType.PLAYER);
 	
 	public BowAimbot() {
 		super(Text.translatable("hamhacks.module.bowAimbot"), Category.COMBAT, new Keybind());
 		
-		GENERAL_CATEGORY.add(targetPlayers);
-		GENERAL_CATEGORY.add(targetPassive);
-		GENERAL_CATEGORY.add(targetHostile);
+		GENERAL_CATEGORY.add(entitySelector);
 	}
 	
 	@Override
@@ -62,7 +58,7 @@ public class BowAimbot extends Module {
 					.filter(entity -> !entity.isRemoved() && entity.isAlive())
 					.filter(entity -> entity != mc.player)
 					.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-					.filter(entity -> (entity instanceof PlayerEntity && targetPlayers.get()) || (entity instanceof HostileEntity && targetHostile.get()) || (entity instanceof PassiveEntity && targetPassive.get()));
+					.filter(entity -> entitySelector.get(entity.getType()));
 			
 			List<Entity> entities = stream.toList();
 			

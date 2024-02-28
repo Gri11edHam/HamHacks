@@ -7,12 +7,12 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.setting.BoolSetting;
+import net.grilledham.hamhacks.setting.EntityTypeSelector;
 import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.MouseUtil;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.passive.PassiveEntity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.HitResult;
@@ -39,11 +39,7 @@ public class Aimbot extends Module {
 	
 	private final BoolSetting keepAiming = new BoolSetting("hamhacks.module.aimbot.keepAiming", false, targetEntities::get);
 	
-	private final BoolSetting targetPlayers = new BoolSetting("hamhacks.module.aimbot.targetPlayers", true, targetEntities::get);
-	
-	private final BoolSetting targetPassive = new BoolSetting("hamhacks.module.aimbot.targetPassive", false, targetEntities::get);
-	
-	private final BoolSetting targetHostile = new BoolSetting("hamhacks.module.aimbot.targetHostile", false, targetEntities::get);
+	private final EntityTypeSelector entitySelector = new EntityTypeSelector("hamhacks.module.aimbot.entitySelector", targetEntities::get, EntityType.PLAYER);
 	
 	private final BoolSetting targetBlocks = new BoolSetting("hamhacks.module.aimbot.targetBlocks", false, () -> true);
 	
@@ -59,9 +55,7 @@ public class Aimbot extends Module {
 		settingCategories.add(1, TARGETING_CATEGORY);
 		TARGETING_CATEGORY.add(targetEntities);
 		TARGETING_CATEGORY.add(keepAiming);
-		TARGETING_CATEGORY.add(targetPlayers);
-		TARGETING_CATEGORY.add(targetPassive);
-		TARGETING_CATEGORY.add(targetHostile);
+		TARGETING_CATEGORY.add(entitySelector);
 		TARGETING_CATEGORY.add(targetBlocks);
 	}
 	
@@ -93,14 +87,14 @@ public class Aimbot extends Module {
 				mc.player.setPitch(rotation[1]);
 				mc.player.setYaw(rotation[0]);
 			} else if(MouseUtil.mouseMoved()) {
-				if((mc.targetedEntity instanceof PlayerEntity && targetPlayers.get()) || (mc.targetedEntity instanceof PassiveEntity && targetPassive.get()) || (mc.targetedEntity instanceof HostileEntity && targetHostile.get())) {
+				if(entitySelector.get(mc.targetedEntity.getType())) {
 					entityToAim = mc.targetedEntity;
 				}
 			}
 		} else {
 			Entity entity = getClosestEntityToCrosshair(Lists.newCopyOnWriteArrayList(mc.world.getEntities()).stream().filter(ent -> ent.getPos().distanceTo(mc.player.getPos()) < 6 && ent != mc.player/* && ent instanceof PlayerEntity*/).collect(Collectors.toList()));
 			if(entity != null && targetEntities.get()) {
-				if((entity instanceof PlayerEntity && targetPlayers.get()) || (entity instanceof PassiveEntity && targetPassive.get()) || (entity instanceof HostileEntity && targetHostile.get())) {
+				if(entitySelector.get(entity.getType())) {
 					this.entity = entity;
 					float[] rotation = getRotationsNeeded(entity, null, fov.get(), fov.get(), speed.get(), speed.get());
 					

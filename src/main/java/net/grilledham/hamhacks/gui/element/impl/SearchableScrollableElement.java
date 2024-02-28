@@ -33,9 +33,21 @@ public class SearchableScrollableElement extends ScrollableElement {
 		if(!searchArea.get().equals("") && dirty) {
 			dirty = false;
 			for(GuiElement element : getElements()) {
-				if(element != searchAreaElement && element instanceof SettingElement<?> settingElement) {
-					boolean enabled = settingElement.getName().toLowerCase().contains(searchArea.get().toLowerCase());
-					setEnabled(element, enabled);
+				if(element != searchAreaElement) {
+					if(element instanceof SettingElement<?> settingElement) {
+						boolean enabled = settingElement.getName().toLowerCase().contains(searchArea.get().toLowerCase());
+						setEnabled(element, enabled);
+					} else if(element instanceof SettingCategoryElement settingCategoryElement) {
+						boolean categoryEnabled = false;
+						for(GuiElement subElement : settingCategoryElement.getElements()) {
+							if(subElement instanceof SettingElement<?> settingElement) {
+								boolean enabled = settingElement.getName().toLowerCase().contains(searchArea.get().toLowerCase());
+								if(enabled) categoryEnabled = true;
+								settingCategoryElement.setEnabled(subElement, enabled);
+							}
+						}
+						setEnabled(element, categoryEnabled);
+					}
 				}
 			}
 		}

@@ -9,10 +9,7 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.setting.BoolSetting;
-import net.grilledham.hamhacks.setting.ColorSetting;
-import net.grilledham.hamhacks.setting.SelectionSetting;
-import net.grilledham.hamhacks.setting.SettingCategory;
+import net.grilledham.hamhacks.setting.*;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
@@ -22,10 +19,8 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.WaterCreatureEntity;
-import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
@@ -42,55 +37,61 @@ import java.util.stream.Stream;
 
 public class ESP extends Module {
 	
-	private final ArrayList<LivingEntity> entities = new ArrayList<>();
+	private final ArrayList<Entity> entities = new ArrayList<>();
 	
-	private final SettingCategory MODE_CATEGORY = new SettingCategory("hamhacks.module.esp.category.mode");
+	private final SettingCategory OPTIONS_CATEGORY = new SettingCategory("hamhacks.module.esp.category.options");
 	
 	private final SelectionSetting mode = new SelectionSetting("hamhacks.module.esp.mode", 1, () -> true, "hamhacks.module.esp.mode.2d", "hamhacks.module.esp.mode.3d");
 	
-	private final SettingCategory PLAYERS_CATEGORY = new SettingCategory("hamhacks.module.esp.category.players");
+	private final BoolSetting self = new BoolSetting("hamhacks.module.esp.self", true, () -> true);
 	
-	private final BoolSetting players = new BoolSetting("hamhacks.module.esp.players", true, () -> true);
+	private final EntityTypeSelector entitySelector = new EntityTypeSelector("hamhacks.module.esp.entitySelector", () -> true, EntityType.PLAYER);
 	
-	private final BoolSetting self = new BoolSetting("hamhacks.module.esp.self", true, players::get);
+	private final SettingCategory COLOR_CATEGORY = new SettingCategory("hamhacks.module.esp.category.color");
 	
-	private final ColorSetting playerOutline = new ColorSetting("hamhacks.module.esp.playerOutlineColor", new Color(0xFF00FFFF), players::get);
+	private final ColorSetting playerOutline = new ColorSetting("hamhacks.module.esp.playerOutlineColor", new Color(0xFF00FFFF), () -> true);
 	
-	private final ColorSetting playerFill = new ColorSetting("hamhacks.module.esp.playerFillColor", new Color(0x4000FFFF), players::get);
+	private final ColorSetting playerFill = new ColorSetting("hamhacks.module.esp.playerFillColor", new Color(0x4000FFFF), () -> true);
 	
-	private final SettingCategory HOSTILES_CATEGORY = new SettingCategory("hamhacks.module.esp.category.hostiles");
+	private final ColorSetting animalOutline = new ColorSetting("hamhacks.module.esp.animalOutlineColor", new Color(0xFF00FF00), () -> true);
 	
-	private final BoolSetting hostiles = new BoolSetting("hamhacks.module.esp.hostiles", false, () -> true);
+	private final ColorSetting animalFill = new ColorSetting("hamhacks.module.esp.animalFillColor", new Color(0x4000FF00), () -> true);
 	
-	private final ColorSetting hostileOutline = new ColorSetting("hamhacks.module.esp.hostileOutlineColor", new Color(0xFFFF0000), hostiles::get);
+	private final ColorSetting waterAnimalOutline = new ColorSetting("hamhacks.module.esp.waterAnimalOutlineColor", new Color(0xFF0000FF), () -> true);
 	
-	private final ColorSetting hostileFill = new ColorSetting("hamhacks.module.esp.hostileFillColor", new Color(0x40FF0000), hostiles::get);
+	private final ColorSetting waterAnimalFill = new ColorSetting("hamhacks.module.esp.waterAnimalFillColor", new Color(0x400000FF), () -> true);
 	
-	private final SettingCategory PASSIVES_CATEGORY = new SettingCategory("hamhacks.module.esp.category.passives");
+	private final ColorSetting monsterOutline = new ColorSetting("hamhacks.module.esp.monsterOutlineColor", new Color(0xFFFF0000), () -> true);
 	
-	private final BoolSetting passives = new BoolSetting("hamhacks.module.esp.passives", false, () -> true);
+	private final ColorSetting monsterFill = new ColorSetting("hamhacks.module.esp.monsterFillColor", new Color(0x40FF0000), () -> true);
 	
-	private final ColorSetting passiveOutline = new ColorSetting("hamhacks.module.esp.passiveOutlineColor", new Color(0xFF00FF00), passives::get);
+	private final ColorSetting ambientOutline = new ColorSetting("hamhacks.module.esp.ambientOutlineColor", new Color(0xFF000000), () -> true);
 	
-	private final ColorSetting passiveFill = new ColorSetting("hamhacks.module.esp.passiveFillColor", new Color(0x4000FF00), passives::get);
+	private final ColorSetting ambientFill = new ColorSetting("hamhacks.module.esp.ambientFillColor", new Color(0x40000000), () -> true);
+	
+	private final ColorSetting miscOutline = new ColorSetting("hamhacks.module.esp.miscOutlineColor", new Color(0xFFFFFFFF), () -> true);
+	
+	private final ColorSetting miscFill = new ColorSetting("hamhacks.module.esp.miscFillColor", new Color(0x40FFFFFF), () -> true);
 	
 	public ESP() {
 		super(Text.translatable("hamhacks.module.esp"), Category.RENDER, new Keybind(0));
-		settingCategories.add(0, MODE_CATEGORY);
-		MODE_CATEGORY.add(mode);
-		settingCategories.add(1, PLAYERS_CATEGORY);
-		PLAYERS_CATEGORY.add(players);
-		PLAYERS_CATEGORY.add(self);
-		PLAYERS_CATEGORY.add(playerOutline);
-		PLAYERS_CATEGORY.add(playerFill);
-		settingCategories.add(2, HOSTILES_CATEGORY);
-		HOSTILES_CATEGORY.add(hostiles);
-		HOSTILES_CATEGORY.add(hostileOutline);
-		HOSTILES_CATEGORY.add(hostileFill);
-		settingCategories.add(2, PASSIVES_CATEGORY);
-		PASSIVES_CATEGORY.add(passives);
-		PASSIVES_CATEGORY.add(passiveOutline);
-		PASSIVES_CATEGORY.add(passiveFill);
+		settingCategories.add(0, OPTIONS_CATEGORY);
+		OPTIONS_CATEGORY.add(mode);
+		OPTIONS_CATEGORY.add(self);
+		OPTIONS_CATEGORY.add(entitySelector);
+		settingCategories.add(1, COLOR_CATEGORY);
+		COLOR_CATEGORY.add(playerOutline);
+		COLOR_CATEGORY.add(playerFill);
+		COLOR_CATEGORY.add(animalOutline);
+		COLOR_CATEGORY.add(animalFill);
+		COLOR_CATEGORY.add(waterAnimalOutline);
+		COLOR_CATEGORY.add(waterAnimalFill);
+		COLOR_CATEGORY.add(monsterOutline);
+		COLOR_CATEGORY.add(monsterFill);
+		COLOR_CATEGORY.add(ambientOutline);
+		COLOR_CATEGORY.add(ambientFill);
+		COLOR_CATEGORY.add(miscOutline);
+		COLOR_CATEGORY.add(miscFill);
 	}
 	
 	@EventListener
@@ -148,26 +149,11 @@ public class ESP extends Module {
 		if(mc.world == null) {
 			return;
 		}
-		PlayerEntity player = mc.player;
 		ClientWorld world = mc.world;
 		
 		entities.clear();
-		Stream<LivingEntity> stream = world.getEntitiesByType(new TypeFilter<Entity, LivingEntity>() {
-					@Nullable
-					@Override
-					public LivingEntity downcast(Entity entity) {
-						return (LivingEntity)entity;
-					}
-					
-					@Override
-					public Class<? extends Entity> getBaseClass() {
-						return LivingEntity.class;
-					}
-				}, new Box(mc.player.getBlockPos().add(-256, -256, -256).toCenterPos(), mc.player.getBlockPos().add(256, 256, 256).toCenterPos()), Objects::nonNull).stream()
-				.filter(entity -> !entity.isRemoved() && entity.isAlive())
-				.filter(entity -> entity != player || ModuleManager.getModule(Freecam.class).isEnabled() || self.get())
-				.filter(entity -> Math.abs(entity.getY() - mc.player.getY()) <= 1e6)
-				.filter(entity -> (entity instanceof PlayerEntity && players.get()) || (entity instanceof HostileEntity && hostiles.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives.get()))
+		Stream<Entity> stream = world.getEntitiesByType(TypeFilter.instanceOf(Entity.class), new Box(mc.player.getBlockPos().add(-256, -256, -256).toCenterPos(), mc.player.getBlockPos().add(256, 256, 256).toCenterPos()), Objects::nonNull).stream()
+				.filter(this::shouldRender)
 				.sorted((a, b) -> Double.compare(b.squaredDistanceTo(mc.getCameraEntity().getEyePos()), a.squaredDistanceTo(mc.getCameraEntity().getEyePos())));
 		
 		entities.addAll(stream.toList());
@@ -181,14 +167,21 @@ public class ESP extends Module {
 		
 		matrixStack.push();
 		matrixStack.translate(0, 0, -entities.size());
-		for(LivingEntity e : entities) {
+		for(Entity e : entities) {
 			if(!shouldRender(e)) continue;
 			
 			Vec3 interpolationOffset = new Vec3(e.getX(), e.getY(), e.getZ()).sub(e.prevX, e.prevY, e.prevZ).mul(1 - partialTicks);
-			Box box = e.getBoundingBox(e.getPose());
+			Box box = e.getBoundingBox();
 			float x = (float)(e.getX() - interpolationOffset.getX());
 			float y = (float)(e.getY() - interpolationOffset.getY());
 			float z = (float)(e.getZ() - interpolationOffset.getZ());
+			if(e instanceof LivingEntity le) {
+				box = le.getBoundingBox(le.getPose());
+			} else {
+				x -= (float)getCameraPos().x;
+				y -= (float)getCameraPos().y;
+				z -= (float)getCameraPos().z;
+			}
 			
 			Vec3 pos1 = new Vec3(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
 			Vec3 pos2 = new Vec3(0, 0, 0);
@@ -208,15 +201,33 @@ public class ESP extends Module {
 			if(e instanceof PlayerEntity) {
 				oc = playerOutline.get().getRGB();
 				fc = playerFill.get().getRGB();
-			} else if(e instanceof HostileEntity) {
-				oc = hostileOutline.get().getRGB();
-				fc = hostileFill.get().getRGB();
-			} else if(e instanceof PassiveEntity || e instanceof WaterCreatureEntity) {
-				oc = passiveOutline.get().getRGB();
-				fc = passiveFill.get().getRGB();
 			} else {
-				oc = 0xFFFFFFFF;
-				fc = 0x40FFFFFF;
+				switch(e.getType().getSpawnGroup()) {
+					case CREATURE -> {
+						oc = animalOutline.get().getRGB();
+						fc = animalFill.get().getRGB();
+					}
+					case WATER_AMBIENT, WATER_CREATURE, UNDERGROUND_WATER_CREATURE, AXOLOTLS -> {
+						oc = waterAnimalOutline.get().getRGB();
+						fc = waterAnimalFill.get().getRGB();
+					}
+					case MONSTER -> {
+						oc = monsterOutline.get().getRGB();
+						fc = monsterFill.get().getRGB();
+					}
+					case AMBIENT -> {
+						oc = ambientOutline.get().getRGB();
+						fc = ambientFill.get().getRGB();
+					}
+					case MISC -> {
+						oc = miscOutline.get().getRGB();
+						fc = miscFill.get().getRGB();
+					}
+					default -> {
+						oc = 0xFFFFFFFF;
+						fc = 0x40FFFFFF;
+					}
+				}
 			}
 			
 			Matrix4f matrix = matrixStack.peek().getPositionMatrix();
@@ -269,32 +280,61 @@ public class ESP extends Module {
 		
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		
-		for(LivingEntity e : entities) {
+		for(Entity e : entities) {
 			if(!shouldRender(e)) continue;
 			
 			Vec3d interpolationOffset = new Vec3d(e.getX(), e.getY(), e.getZ()).subtract(e.prevX, e.prevY, e.prevZ).multiply(1 - partialTicks);
-			Box box = e.getBoundingBox(e.getPose());
+			Box box = e.getBoundingBox();
+			if(e instanceof LivingEntity le) {
+				box = le.getBoundingBox(le.getPose());
+			}
 			float x1 = (float)(box.minX + e.getX() - interpolationOffset.getX());
 			float y1 = (float)(box.minY + e.getY() - interpolationOffset.getY());
 			float z1 = (float)(box.minZ + e.getZ() - interpolationOffset.getZ());
 			float x2 = (float)(box.maxX + e.getX() - interpolationOffset.getX());
 			float y2 = (float)(box.maxY + e.getY() - interpolationOffset.getY());
 			float z2 = (float)(box.maxZ + e.getZ() - interpolationOffset.getZ());
+			if(!(e instanceof LivingEntity)) {
+				x1 -= (float)getCameraPos().x;
+				x2 -= (float)getCameraPos().x;
+				y1 -= (float)getCameraPos().y;
+				y2 -= (float)getCameraPos().y;
+				z1 -= (float)getCameraPos().z;
+				z2 -= (float)getCameraPos().z;
+			}
 			
 			int oc;
 			int fc;
 			if(e instanceof PlayerEntity) {
 				oc = playerOutline.get().getRGB();
 				fc = playerFill.get().getRGB();
-			} else if(e instanceof HostileEntity) {
-				oc = hostileOutline.get().getRGB();
-				fc = hostileFill.get().getRGB();
-			} else if(e instanceof PassiveEntity || e instanceof WaterCreatureEntity) {
-				oc = passiveOutline.get().getRGB();
-				fc = passiveFill.get().getRGB();
 			} else {
-				oc = 0xFFFFFFFF;
-				fc = 0x40FFFFFF;
+				switch(e.getType().getSpawnGroup()) {
+					case CREATURE -> {
+						oc = animalOutline.get().getRGB();
+						fc = animalFill.get().getRGB();
+					}
+					case WATER_AMBIENT, WATER_CREATURE, UNDERGROUND_WATER_CREATURE, AXOLOTLS -> {
+						oc = waterAnimalOutline.get().getRGB();
+						fc = waterAnimalFill.get().getRGB();
+					}
+					case MONSTER -> {
+						oc = monsterOutline.get().getRGB();
+						fc = monsterFill.get().getRGB();
+					}
+					case AMBIENT -> {
+						oc = ambientOutline.get().getRGB();
+						fc = ambientFill.get().getRGB();
+					}
+					case MISC -> {
+						oc = miscOutline.get().getRGB();
+						fc = miscFill.get().getRGB();
+					}
+					default -> {
+						oc = 0xFFFFFFFF;
+						fc = 0x40FFFFFF;
+					}
+				}
 			}
 			
 			GL11.glDisable(GL11.GL_CULL_FACE);
@@ -396,7 +436,7 @@ public class ESP extends Module {
 		boolean isAlive = !entity.isRemoved() && entity.isAlive();
 		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || (self.get() && mc.options.getPerspective() != Perspective.FIRST_PERSON);
 		boolean b = Math.abs(entity.getY() - mc.player.getY()) <= 1e6;
-		boolean shouldRender = (entity instanceof PlayerEntity && players.get()) || (entity instanceof HostileEntity && hostiles.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives.get());
+		boolean shouldRender = entitySelector.get(entity.getType());
 		return isEnabled() && isAlive && player && b && shouldRender;
 	}
 }

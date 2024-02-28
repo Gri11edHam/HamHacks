@@ -5,6 +5,7 @@ import net.grilledham.hamhacks.animation.AnimationType;
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
+import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.setting.SettingCategory;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.gui.DrawContext;
@@ -29,9 +30,32 @@ public class SettingCategoryElement extends GuiElement {
 	private float elementsHeight = 0;
 	private final float collapsedHeight = 19;
 	
+	private boolean allBooleans = true;
+	private boolean setByUser = true;
+	private final BoolSetting toggleAll = new BoolSetting("", false, () -> allBooleans) {
+		@Override
+		public void onChange() {
+			super.onChange();
+			if(!setByUser) {
+				return;
+			}
+			for(GuiElement element : subElements) {
+				if(element instanceof BoolSettingElement boolElement) {
+					boolElement.set.set(value);
+				}
+			}
+		}
+	};
+	private final BoolSettingElement toggleAllElement;
+	
+	// TODO: add toggle button if all elements are booleans
+	
 	public SettingCategoryElement(SettingCategory category, float x, float y, double scale) {
-		super(x, y, RenderUtil.getStringWidth(category.getName()) + 12 + 8, 0, scale);
+		super(x, y, RenderUtil.getStringWidth(category.getName()) + 12 + 8 + 22, 0, scale);
 		this.category = category;
+		
+		toggleAllElement = new BoolSettingElement(x + width - 22, y + 4, scale, toggleAll);
+		toggleAllElement.drawBackground = false;
 	}
 	
 	public void addElement(GuiElement element) {
@@ -64,7 +88,11 @@ public class SettingCategoryElement extends GuiElement {
 	private void updateSize() {
 		float newHeight = 0;
 		float maxWidth = 0;
+		allBooleans = true;
 		for(GuiElement element : subElements) {
+			if(!(element instanceof BoolSettingElement)) {
+				allBooleans = false;
+			}
 			if(isElementEnabled.get(element)) {
 				newHeight += element.getHeight();
 				if(element.getWidth() > maxWidth) {
@@ -93,8 +121,11 @@ public class SettingCategoryElement extends GuiElement {
 		RenderUtil.drawRect(stack, x, y, width, collapsedHeight, bgC);
 		float lineX = x + 6 + RenderUtil.getStringWidth(category.getName());
 		float arrowWidth = 8;
-		float lineW = width - 6 - RenderUtil.getStringWidth(category.getName()) - (arrowWidth + 8);
+		float lineW = width - 6 - RenderUtil.getStringWidth(category.getName()) - (arrowWidth + 8) + (allBooleans ? -16 : 0);
 		RenderUtil.drawRect(stack, lineX - (category.getName().equals("") ? 3 : 0), y + 9, lineW + (category.getName().equals("") ? 3 : 0), 2, ui.textColor.get().getRGB());
+		if(allBooleans) {
+			toggleAllElement.render(ctx, mx, my, offX, offY, tickDelta);
+		}
 		
 		stack.push();
 		stack.translate(lineX + lineW + arrowWidth / 2 + 4, y + 11, 0);
@@ -108,12 +139,25 @@ public class SettingCategoryElement extends GuiElement {
 		RenderUtil.drawString(ctx, category.getName(), x + 3, y + 7, ui.textColor.get().getRGB(), true);
 		
 		float trueHeight = 0;
+		boolean allOff = true;
 		for(GuiElement element : subElements) {
 			if(isElementEnabled.get(element)) {
+				if(allBooleans && element instanceof BoolSettingElement boolElement) {
+					if(boolElement.get.get()) {
+						allOff = false;
+					}
+				}
 				element.render(ctx, mx, my, offX, offY + collapsedHeight + trueHeight, tickDelta);
 				trueHeight += element.getHeight();
 			}
 		}
+		setByUser = false;
+		if(allOff) {
+			toggleAll.set(false);
+		} else {
+			toggleAll.set(true);
+		}
+		setByUser = true;
 		
 		RenderUtil.popScissor();
 		RenderUtil.postRender();
@@ -134,6 +178,10 @@ public class SettingCategoryElement extends GuiElement {
 		MatrixStack stack = ctx.getMatrices();
 		float x = this.x + scrollX;
 		float y = this.y + scrollY;
+		
+		if(allBooleans) {
+			toggleAllElement.renderTop(ctx, mx, my, scrollX, scrollY, partialTicks);
+		}
 		
 		stack.push();
 		stack.translate(0, 0, 1);
@@ -159,6 +207,7 @@ public class SettingCategoryElement extends GuiElement {
 		for(GuiElement element : subElements) {
 			element.moveBy(x, y);
 		}
+		toggleAllElement.moveBy(x, y);
 	}
 	
 	@Override
@@ -167,6 +216,7 @@ public class SettingCategoryElement extends GuiElement {
 		for(GuiElement element : subElements) {
 			element.moveTo(x, y);
 		}
+		toggleAllElement.moveTo(x + width - 22, y + 4);
 	}
 	
 	@Override
@@ -206,6 +256,9 @@ public class SettingCategoryElement extends GuiElement {
 	public boolean release(double mx, double my, float offX, float offY, int button) {
 		float x = this.x + offX;
 		float y = this.y + offY;
+		if(allBooleans) {
+			toggleAllElement.release(mx, my, offX, offY, button);
+		}
 		if(openCloseAnimation.get() >= 0.5) {
 			float trueHeight = 0;
 			for(GuiElement element : subElements) {
@@ -228,7 +281,7 @@ public class SettingCategoryElement extends GuiElement {
 				}
 			}
 		}
-		if(mx >= x && mx <= x + width && my >= y && my <= y + collapsedHeight) {
+		if(mx >= x && mx <= x + width + (allBooleans ? -16 : 0) && my >= y && my <= y + collapsedHeight) {
 			category.setExpanded(!category.isExpanded());
 			return false;
 		}

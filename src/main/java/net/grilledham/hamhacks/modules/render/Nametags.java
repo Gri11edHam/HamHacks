@@ -10,10 +10,7 @@ import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.misc.NameHider;
-import net.grilledham.hamhacks.setting.BoolSetting;
-import net.grilledham.hamhacks.setting.ColorSetting;
-import net.grilledham.hamhacks.setting.NumberSetting;
-import net.grilledham.hamhacks.setting.SettingCategory;
+import net.grilledham.hamhacks.setting.*;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.EnchantUtil;
 import net.grilledham.hamhacks.util.ProjectionUtil;
@@ -29,6 +26,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.WaterCreatureEntity;
@@ -49,17 +47,15 @@ import java.util.stream.Stream;
 
 public class Nametags extends Module {
 	
-	private final ArrayList<LivingEntity> entities = new ArrayList<>();
+	private final ArrayList<Entity> entities = new ArrayList<>();
 	
-	private final Map<LivingEntity, String> names = new HashMap<>();
+	private final Map<Entity, String> names = new HashMap<>();
 	
 	private final SettingCategory ENTITIES_CATEGORY = new SettingCategory("hamhacks.module.nametags.category.entities");
 	
 	private final BoolSetting self = new BoolSetting("hamhacks.module.nametags.self", true, () -> true);
 	
-	private final BoolSetting hostiles = new BoolSetting("hamhacks.module.nametags.hostiles", true, () -> true);
-	
-	private final BoolSetting passives = new BoolSetting("hamhacks.module.nametags.passives", true, () -> true);
+	private final EntityTypeSelector entitySelector = new EntityTypeSelector("hamhacks.module.nametags.entitySelector", () -> true, EntityType.PLAYER);
 	
 	private final SettingCategory ELEMENTS_CATEGORY = new SettingCategory("hamhacks.module.nametags.category.elements");
 	
@@ -89,8 +85,7 @@ public class Nametags extends Module {
 		super(Text.translatable("hamhacks.module.nametags"), Category.RENDER, new Keybind(0));
 		settingCategories.add(0, ENTITIES_CATEGORY);
 		ENTITIES_CATEGORY.add(self);
-		ENTITIES_CATEGORY.add(hostiles);
-		ENTITIES_CATEGORY.add(passives);
+		ENTITIES_CATEGORY.add(entitySelector);
 		settingCategories.add(1, ELEMENTS_CATEGORY);
 		ELEMENTS_CATEGORY.add(entityItems);
 		ELEMENTS_CATEGORY.add(enchants);
@@ -128,24 +123,13 @@ public class Nametags extends Module {
 		ClientWorld world = mc.world;
 		
 		entities.clear();
-		Stream<LivingEntity> stream = world.getEntitiesByType(new TypeFilter<Entity, LivingEntity>() {
-					@Nullable
-					@Override
-					public LivingEntity downcast(Entity entity) {
-						return (LivingEntity)entity;
-					}
-					
-					@Override
-					public Class<? extends Entity> getBaseClass() {
-						return LivingEntity.class;
-					}
-				}, new Box(mc.player.getBlockPos().add(-256, -256, -256).toCenterPos(), mc.player.getBlockPos().add(256, 256, 256).toCenterPos()), Objects::nonNull).stream()
+		Stream<Entity> stream = world.getEntitiesByType(TypeFilter.instanceOf(Entity.class), new Box(mc.player.getBlockPos().add(-256, -256, -256).toCenterPos(), mc.player.getBlockPos().add(256, 256, 256).toCenterPos()), Objects::nonNull).stream()
 				.filter(this::shouldRender).sorted((a, b) -> Double.compare(b.squaredDistanceTo(mc.getCameraEntity().getEyePos()), a.squaredDistanceTo(mc.getCameraEntity().getEyePos())));
 		
 		entities.addAll(stream.toList());
 		
 		names.clear();
-		for(LivingEntity entity : entities) {
+		for(Entity entity : entities) {
 			String gmString = "";
 			if(gamemode.get() && entity instanceof PlayerEntity p) {
 				PlayerListEntry playerListEntry = mc.getNetworkHandler().getPlayerListEntry(p.getUuid());
@@ -179,8 +163,12 @@ public class Nametags extends Module {
 			}
 			name = nameColor + name + " ";
 			
-			float hp = entity.getHealth() + entity.getAbsorptionAmount();
-			float healthPercentage = Math.round((hp / entity.getMaxHealth()) * 1000) / 10f;
+			float hp = 0;
+			float healthPercentage = 100;
+			if(entity instanceof LivingEntity living) {
+				hp = living.getHealth() + living.getAbsorptionAmount();
+				healthPercentage = Math.round((hp / living.getMaxHealth()) * 1000) / 10f;
+			}
 			String healthColor = "\u00a72";
 			if(healthPercentage <= 25) {
 				healthColor = "\u00a74";
@@ -237,7 +225,7 @@ public class Nametags extends Module {
 		
 		matrixStack.push();
 		matrixStack.translate(0, 0, -entities.size());
-		for(LivingEntity e : entities) {
+		for(Entity e : entities) {
 			if(!shouldRender(e)) continue;
 			
 			Vec3 interpolationOffset = new Vec3(e.getX(), e.getY(), e.getZ()).sub(e.prevX, e.prevY, e.prevZ).mul(1 - partialTicks);
@@ -340,17 +328,20 @@ public class Nametags extends Module {
 		matrixStack.pop();
 	}
 	
-	private ItemStack getItem(LivingEntity entity, int index) {
-		List<ItemStack> armor = Lists.newArrayList(entity.getArmorItems());
-		return switch(index) {
-			case 0 -> entity.getMainHandStack();
-			case 1 -> entity.getOffHandStack();
-			case 2 -> armor.get(3);
-			case 3 -> armor.get(2);
-			case 4 -> armor.get(1);
-			case 5 -> armor.get(0);
-			default -> ItemStack.EMPTY;
-		};
+	private ItemStack getItem(Entity entity, int index) {
+		if(entity instanceof LivingEntity living) {
+			List<ItemStack> armor = Lists.newArrayList(entity.getArmorItems());
+			return switch(index) {
+				case 0 -> living.getMainHandStack();
+				case 1 -> living.getOffHandStack();
+				case 2 -> armor.get(3);
+				case 3 -> armor.get(2);
+				case 4 -> armor.get(1);
+				case 5 -> armor.get(0);
+				default -> ItemStack.EMPTY;
+			};
+		}
+		return ItemStack.EMPTY;
 	}
 	
 	private void drawBackground(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float w, float h) {
@@ -385,7 +376,7 @@ public class Nametags extends Module {
 		boolean isAlive = !entity.isRemoved() && entity.isAlive();
 		boolean player = entity != mc.player || ModuleManager.getModule(Freecam.class).isEnabled() || (self.get() && mc.options.getPerspective() != Perspective.FIRST_PERSON);
 		boolean b = Math.abs(entity.getY() - mc.player.getY()) <= 1e6;
-		boolean shouldRender = (entity instanceof PlayerEntity) || (entity instanceof HostileEntity && hostiles.get()) || ((entity instanceof PassiveEntity || entity instanceof WaterCreatureEntity) && passives.get());
+		boolean shouldRender = entitySelector.get(entity.getType());
 		return isEnabled() && isAlive && player && b && shouldRender;
 	}
 }

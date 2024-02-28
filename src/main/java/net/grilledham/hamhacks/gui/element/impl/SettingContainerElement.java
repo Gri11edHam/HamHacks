@@ -22,7 +22,7 @@ public class SettingContainerElement extends SettingElement<Map<?, ?>> {
 	protected final SettingContainer<?, ?> setting;
 	
 	public SettingContainerElement(float x, float y, double scale, SettingContainer<?, ?> setting) {
-		super(x, y, RenderUtil.getStringWidth(setting.getName()) + 22, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, null, null, null);
+		super(x, y, RenderUtil.getStringWidth(setting.getName()) + 54, scale, setting::getName, setting.hasTooltip() ? setting::getTooltip : () -> "", setting::shouldShow, null, null, null);
 		this.setting = setting;
 	}
 	

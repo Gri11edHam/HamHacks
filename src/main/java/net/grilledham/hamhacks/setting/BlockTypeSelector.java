@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.setting;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.Registries;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -14,18 +15,13 @@ public class BlockTypeSelector extends SettingContainer<Block, Boolean> {
 		super(name, shouldShow);
 		List<Block> defaults = new ArrayList<>();
 		Collections.addAll(defaults, defaultBlocks);
-		for(Field field : Blocks.class.getFields()) {
-			try {
-				Block block = (Block)field.get(Blocks.class);
-				value.put(block, new BoolSetting(block.getTranslationKey(), defaults.contains(block), () -> true) {
-					@Override
-					public void onChange() {
-						BlockTypeSelector.this.onChange();
-					}
-				});
-			} catch(IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
+		for(Block block : Registries.BLOCK) {
+			value.put(block, new BoolSetting(block.getTranslationKey(), defaults.contains(block), () -> true) {
+				@Override
+				public void onChange() {
+					BlockTypeSelector.this.onChange();
+				}
+			});
 		}
 	}
 }
