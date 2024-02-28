@@ -48,8 +48,6 @@ public class SettingCategoryElement extends GuiElement {
 	};
 	private final BoolSettingElement toggleAllElement;
 	
-	// TODO: add toggle button if all elements are booleans
-	
 	public SettingCategoryElement(SettingCategory category, float x, float y, double scale) {
 		super(x, y, RenderUtil.getStringWidth(category.getName()) + 12 + 8 + 22, 0, scale);
 		this.category = category;
