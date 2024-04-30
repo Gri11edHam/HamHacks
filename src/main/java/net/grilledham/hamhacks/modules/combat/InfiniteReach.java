@@ -76,7 +76,7 @@ public class InfiniteReach extends Module {
 	
 	@EventListener
 	public void onClick(EventClick e) {
-		if(mc.currentScreen != null || e.button != 0 || hitResult == null || hitResult.getType() != HitResult.Type.ENTITY) {
+		if(pathFinder != null || mc.currentScreen != null || e.button != 0 || hitResult == null || hitResult.getType() != HitResult.Type.ENTITY) {
 			return;
 		}
 		
