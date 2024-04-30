@@ -386,6 +386,10 @@
 	"hamhacks.module.bowAimbot.tooltip": "Aims your bow for you",
 	"hamhacks.module.bowAimbot.entitySelector": "Targeted Entities",
 
+	"hamhacks.module.clickTP": "Click TP",
+	"hamhacks.module.clickTP.tooltip": "Teleport to where you're looking",
+	"hamhacks.module.clickTP.activate": "Activate",
+
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
 	"hamhacks.setting.defaultStringPlaceholder": "Click to enter text",
