@@ -11,16 +11,12 @@ public class EventChat extends EventCancelable {
 		
 		public Text message;
 		public MessageSignatureData signature;
-		public int ticks;
 		public MessageIndicator indicator;
-		public boolean refresh;
 		
-		public EventChatReceived(Text message, MessageSignatureData signature, int ticks, MessageIndicator indicator, boolean refresh) {
+		public EventChatReceived(Text message, MessageSignatureData signature, MessageIndicator indicator) {
 			this.message = message;
 			this.signature = signature;
-			this.ticks = ticks;
 			this.indicator = indicator;
-			this.refresh = refresh;
 		}
 	}
 	

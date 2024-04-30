@@ -7,6 +7,7 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.pathfinding.PathFinder;
+import net.grilledham.hamhacks.util.PositionHack;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
@@ -21,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Random;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -87,7 +89,7 @@ public class InfiniteReach extends Module {
 	}
 	
 	public void doAttack(HitResult hitResult) {
-		pathFinder = new PathFinder().path(mc.player.getBlockPos(), BlockPos.ofFloored(hitResult.getPos()), mc.player.clientWorld, 4).setTimeout(5000L).whenDone((initialPath) -> {
+		pathFinder = new PathFinder().path(mc.player.getBlockPos(), BlockPos.ofFloored(hitResult.getPos()), mc.player.clientWorld, 2).setTimeout(5000L).whenDone((initialPath) -> {
 			if(initialPath == null || initialPath.isEmpty()) {
 				pathFinder = null;
 				return;
@@ -97,7 +99,7 @@ public class InfiniteReach extends Module {
 			Vec3 lastVec = null;
 			Vec3 lastDir = null;
 			for(Vec3 vec : initialPath) {
-				if(vec.dist(new Vec3(hitResult.getPos())) <= 5) {
+				if(vec.dist(new Vec3(hitResult.getPos())) <= 3) {
 					path.add(vec);
 					break;
 				}
@@ -138,12 +140,11 @@ public class InfiniteReach extends Module {
 			}
 			imc.getInteractionManager().leftClickEntity(((EntityHitResult)hitResult).getEntity());
 			mc.player.swingHand(Hand.MAIN_HAND);
-			for(int i = path.size() - 1; i >= 0; i--) {
-				Vec3 pos = path.get(i);
+			for(Vec3 pos : path.reversed()) {
 				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
 			}
 			pathFinder = null;
-			mc.player.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE, SoundCategory.PLAYERS, 1, 1);
+			mc.world.playSound(mc.player, mc.player.getX(), mc.player.getY(), mc.player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE, SoundCategory.PLAYERS, 1, 1, Random.newSeed());
 		}).begin();
 	}
 }

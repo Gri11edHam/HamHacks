@@ -8,7 +8,6 @@ import net.grilledham.hamhacks.mixininterface.ICamera;
 import net.grilledham.hamhacks.mixininterface.IGameRenderer;
 import net.grilledham.hamhacks.mixininterface.IVec3d;
 import net.grilledham.hamhacks.modules.ModuleManager;
-import net.grilledham.hamhacks.modules.combat.Reach;
 import net.grilledham.hamhacks.modules.render.Bob;
 import net.grilledham.hamhacks.modules.render.Freecam;
 import net.grilledham.hamhacks.modules.render.HandRender;
@@ -26,15 +25,14 @@ import net.minecraft.resource.SynchronousResourceReloader;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -43,7 +41,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(GameRenderer.class)
 public abstract class MixinGameRenderer implements SynchronousResourceReloader, AutoCloseable, IGameRenderer {
 	
-	@Shadow public abstract void updateTargetedEntity(float tickDelta);
+	@Shadow public abstract void updateCrosshairTarget(float tickDelta);
 	
 	@Shadow @Final MinecraftClient client;
 	
@@ -53,8 +51,8 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	@Unique
 	private boolean calledFromFreecam = false;
 	
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V"), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, float f, boolean bl, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext) {
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4fStack;popMatrix()Lorg/joml/Matrix4fStack;"), locals = LocalCapture.CAPTURE_FAILSOFT)
+	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, float f, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrixStack, DrawContext drawContext) {
 		EventRender event = new EventRender(drawContext, tickDelta);
 		event.call();
 	}
@@ -67,11 +65,17 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	}
 	
 	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=hand"), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void render3DEvent(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo ci, boolean bl, Camera camera, Entity entity, MatrixStack matrixStack, double d, float f, float g, Matrix4f matrix4f, Matrix3f matrix3f) {
+	public void render3DEvent(float tickDelta, long limitTime, CallbackInfo ci, boolean bl, Camera camera, Entity entity, double d, Matrix4f matrix4f, MatrixStack matrixStack, float f, float g, Matrix4f matrix4f2) {
+		MatrixStack matrices = new MatrixStack();
+		matrices.push();
+		matrices.multiplyPositionMatrix(matrix4f2);
+		
 		ProjectionUtil.updateMatrices(matrices, matrix4f);
 		
 		EventRender3D event = new EventRender3D(tickDelta, matrices);
 		event.call();
+	
+		matrices.pop();
 		
 		RenderSystem.applyModelViewMatrix();
 	}
@@ -88,24 +92,6 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		if(ModuleManager.getModule(Bob.class).noHurtCam.get() && ModuleManager.getModule(Bob.class).isEnabled()) {
 			ci.cancel();
 		}
-	}
-	
-	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 3)
-	public double modifyBlockReach(double d) {
-		return ModuleManager.getModule(Reach.class).isEnabled() ? ModuleManager.getModule(Reach.class).blockRange.get() : d;
-	}
-	
-	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 8)
-	public double modifyEntityReach(double e) {
-		return ModuleManager.getModule(Reach.class).isEnabled() ? ModuleManager.getModule(Reach.class).entityRange.get() * ModuleManager.getModule(Reach.class).entityRange.get() : e;
-	}
-	
-	@ModifyVariable(method = "updateTargetedEntity", at = @At(value = "STORE"), index = 7)
-	public boolean setAlwaysExtendedReach(boolean bl) {
-		if(ModuleManager.getModule(Reach.class) == null) {
-			return bl;
-		}
-		return !ModuleManager.getModule(Reach.class).isEnabled() && bl;
 	}
 	
 	@Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
@@ -145,8 +131,8 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		wasFreecamEnabled = ModuleManager.getModule(Freecam.class).isEnabled();
 	}
 	
-	@Inject(method = "updateTargetedEntity", at = @At("HEAD"), cancellable = true)
-	public void updateTargetedEntity(float tickDelta, CallbackInfo ci) {
+	@Inject(method = "updateCrosshairTarget", at = @At("HEAD"), cancellable = true)
+	public void updateCrosshairTarget(float tickDelta, CallbackInfo ci) {
 		if(client.getCameraEntity() == null) {
 			return;
 		}
@@ -174,7 +160,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 			entity.prevPitch = ModuleManager.getModule(Freecam.class).prevPitch;
 			
 			calledFromFreecam = true;
-			updateTargetedEntity(tickDelta);
+			updateCrosshairTarget(tickDelta);
 			calledFromFreecam = false;
 			
 			((IVec3d)entity.getPos()).set(pos);

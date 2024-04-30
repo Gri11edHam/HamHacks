@@ -8,11 +8,14 @@ import net.grilledham.hamhacks.util.RenderUtil;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.CookieStorage;
 import net.minecraft.client.network.MultiplayerServerListPinger;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+
+import java.util.HashMap;
 
 public class WaitingToConnectScreen extends GuiScreen {
 	
@@ -78,7 +81,7 @@ public class WaitingToConnectScreen extends GuiScreen {
 			int maxPlayers = Integer.parseInt(splitCount[1]);
 			if(onlinePlayers < maxPlayers) {
 				serverInfo = new ServerInfo(serverInfo.name, serverInfo.address, serverInfo.isLocal() ? ServerInfo.ServerType.LAN : serverInfo.isRealm() ? ServerInfo.ServerType.REALM : ServerInfo.ServerType.OTHER);
-				ConnectScreen.connect(this, client, ServerAddress.parse(serverInfo.address), serverInfo, false);
+				ConnectScreen.connect(this, client, ServerAddress.parse(serverInfo.address), serverInfo, false, new CookieStorage(new HashMap<>()));
 			}
 		} catch(Exception ignored) {}
 	}
@@ -86,7 +89,7 @@ public class WaitingToConnectScreen extends GuiScreen {
 	private void pingServer() {
 		lastPingTime = System.currentTimeMillis();
 		try {
-			pinger.add(serverInfo, () -> {});
+			pinger.add(serverInfo, () -> {}, () -> {});
 		} catch(Exception e) {
 			serverInfo.label = Text.literal(e.toString());
 		}

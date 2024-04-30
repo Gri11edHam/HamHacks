@@ -23,22 +23,20 @@ import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.WaterCreatureEntity;
-import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
@@ -271,11 +269,11 @@ public class Nametags extends Module {
 						}
 						
 						if(enchants.get() && !stack.isEmpty()) {
-							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
+							ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(stack);
 							
 							int size = 0;
-							for(Enchantment enchantment : enchantments.keySet()) {
-								String enchantName = EnchantUtil.getShortName(enchantment) + " " + enchantments.get(enchantment);
+							for(Enchantment enchantment : enchantments.getEnchantments().stream().map(RegistryEntry::value).toList()) {
+								String enchantName = EnchantUtil.getShortName(enchantment) + " " + enchantments.getLevel(enchantment);
 								itemWidths[i] = Math.max(itemWidths[i], RenderUtil.getStringWidth(enchantName + " "));
 								size++;
 							}
@@ -298,15 +296,15 @@ public class Nametags extends Module {
 						RenderUtil.drawItem(ctx, stack, x + itemWidths[i] / 2, y, (float)(double)itemScale.get(), true, true);
 						
 						if(enchantCount > 0 && enchants.get() && !stack.isEmpty()) {
-							Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
+							ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(stack);
 							
 							float itemWidth = itemWidths[i];
-							float enchantY =  -itemsHeight / 2 - (enchantments.size() * RenderUtil.getFontHeight()) + 12;
+							float enchantY =  -itemsHeight / 2 - (enchantments.getSize() * RenderUtil.getFontHeight()) + 12;
 							float enchantX;
 							
-							for(Enchantment enchantment : enchantments.keySet()) {
+							for(Enchantment enchantment : enchantments.getEnchantments().stream().map(RegistryEntry::value).toList()) {
 								String enchantColor = enchantment.isCursed() ? "\u00a7c" : "\u00a7f";
-								String enchantName = enchantColor + EnchantUtil.getShortName(enchantment) + " " + enchantments.get(enchantment);
+								String enchantName = enchantColor + EnchantUtil.getShortName(enchantment) + " " + enchantments.getLevel(enchantment);
 								
 								enchantX = x + (itemWidth / 2) - (RenderUtil.getStringWidth(enchantName) / 2f) + 8;
 								
@@ -330,7 +328,7 @@ public class Nametags extends Module {
 	
 	private ItemStack getItem(Entity entity, int index) {
 		if(entity instanceof LivingEntity living) {
-			List<ItemStack> armor = Lists.newArrayList(entity.getArmorItems());
+			List<ItemStack> armor = Lists.newArrayList(((LivingEntity)entity).getArmorItems());
 			return switch(index) {
 				case 0 -> living.getMainHandStack();
 				case 1 -> living.getOffHandStack();

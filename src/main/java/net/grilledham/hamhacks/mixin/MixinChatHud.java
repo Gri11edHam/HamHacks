@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -24,29 +25,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(ChatHud.class)
-public class MixinChatHud implements IChat {
+public abstract class MixinChatHud implements IChat {
 	
 	@Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
 	
-	@Shadow protected void addMessage(Text message, @Nullable MessageSignatureData signature, int ticks, @Nullable MessageIndicator indicator, boolean refresh) {
-	
-	}
-	
 	@Shadow @Final private List<ChatHudLine> messages;
+	
+	@Shadow public abstract void addMessage(Text message, @Nullable MessageSignatureData signatureData, @Nullable MessageIndicator indicator);
+	
+	@Unique
 	private int lineIndex;
+	@Unique
 	private MessageIndicator indicator;
 	
+	@Unique
 	private boolean calledFromMixin = false;
 	
-	@Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;ILnet/minecraft/client/gui/hud/MessageIndicator;Z)V", at = @At("HEAD"), cancellable = true)
-	public void addMessage(Text message, MessageSignatureData signature, int ticks, MessageIndicator indicator, boolean refresh, CallbackInfo ci) {
+	@Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V", at = @At("HEAD"), cancellable = true)
+	public void addMessage(Text message, MessageSignatureData signature, MessageIndicator indicator, CallbackInfo ci) {
 		if(!calledFromMixin) {
-			EventChat.EventChatReceived event = new EventChat.EventChatReceived(message, signature, ticks, indicator, refresh);
+			EventChat.EventChatReceived event = new EventChat.EventChatReceived(message, signature, indicator);
 			event.call();
 			ci.cancel();
 			if(!event.canceled) {
 				calledFromMixin = true;
-				addMessage(event.message, event.signature, event.ticks, event.indicator, event.refresh);
+				addMessage(event.message, event.signature, event.indicator);
 			}
 		} else {
 			calledFromMixin = false;

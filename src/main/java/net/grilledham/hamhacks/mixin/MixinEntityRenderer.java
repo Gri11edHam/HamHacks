@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinEntityRenderer {
 	
 	@Inject(method = "renderLabelIfPresent", at = @At("HEAD"), cancellable = true)
-	public <T extends Entity> void renderNameTag(T entity, Text text, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+	public <T extends Entity> void renderNameTag(T entity, Text text, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta, CallbackInfo ci) {
 		if(ModuleManager.getModule(Nametags.class).shouldRender(entity)) {
 			ci.cancel();
 		}

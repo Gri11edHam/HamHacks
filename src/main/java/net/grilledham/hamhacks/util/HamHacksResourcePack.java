@@ -3,11 +3,9 @@ package net.grilledham.hamhacks.util;
 import com.google.common.base.Charsets;
 import net.grilledham.hamhacks.HamHacksClient;
 import net.minecraft.SharedConstants;
-import net.minecraft.resource.AbstractFileResourcePack;
-import net.minecraft.resource.InputSupplier;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.*;
 import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PathUtil;
 import org.apache.commons.io.IOUtils;
@@ -19,10 +17,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -186,19 +181,8 @@ public class HamHacksResourcePack implements ResourcePack {
 	}
 	
 	@Override
-	public String getName() {
-		return HamHacksClient.MOD_ID;
-	}
-	
-	@Override
-	public boolean isAlwaysStable() {
-		return true;
-	}
-	
-	@Override
-	protected void finalize() throws Throwable {
-		close();
-		super.finalize();
+	public ResourcePackInfo getInfo() {
+		return new ResourcePackInfo(HamHacksClient.MOD_ID, Text.literal("HamHacks"), ResourcePackSource.BUILTIN, Optional.empty());
 	}
 	
 	@Override

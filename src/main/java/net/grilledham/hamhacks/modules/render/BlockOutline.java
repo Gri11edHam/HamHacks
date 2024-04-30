@@ -150,8 +150,8 @@ public class BlockOutline extends Module {
 				k /= n;
 				l /= n;
 				m /= n;
-				buf.vertex(entry.getPositionMatrix(), (float)(minX + offsetX), (float)(minY + offsetY), (float)(minZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry.getNormalMatrix(), k, l, m).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(maxX + offsetX), (float)(maxY + offsetY), (float)(maxZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry.getNormalMatrix(), k, l, m).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(minX + offsetX), (float)(minY + offsetY), (float)(minZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry, k, l, m).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(maxX + offsetX), (float)(maxY + offsetY), (float)(maxZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry, k, l, m).next();
 			});
 			BufferRenderer.drawWithGlobalProgram(buf.end());
 			

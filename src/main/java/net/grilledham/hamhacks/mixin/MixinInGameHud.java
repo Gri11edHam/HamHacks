@@ -22,13 +22,13 @@ public abstract class MixinInGameHud {
 	}
 	
 	@Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V", shift = At.Shift.BEFORE, remap = false))
-	public void preRenderStatusEffectOverlay(DrawContext context, CallbackInfo ci) {
+	public void preRenderStatusEffectOverlay(DrawContext context, float tickDelta, CallbackInfo ci) {
 		context.getMatrices().push();
 		context.getMatrices().translate(0, ModuleManager.getModule(HUD.class).rightHeight, 0);
 	}
 	
 	@Inject(method = "renderStatusEffectOverlay", at = @At("TAIL"))
-	public void postRenderStatusEffectOverlay(DrawContext context, CallbackInfo ci) {
+	public void postRenderStatusEffectOverlay(DrawContext context, float tickDelta, CallbackInfo ci) {
 		context.getMatrices().pop();
 	}
 }

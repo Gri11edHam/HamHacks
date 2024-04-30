@@ -8,6 +8,7 @@ import net.grilledham.hamhacks.mixininterface.IMinecraftClient;
 import net.grilledham.hamhacks.mixininterface.IRenderTickCounter;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
+import net.grilledham.hamhacks.modules.misc.NoTelemetry;
 import net.grilledham.hamhacks.modules.misc.TitleBar;
 import net.grilledham.hamhacks.notification.Notifications;
 import net.grilledham.hamhacks.util.MouseUtil;
@@ -136,6 +137,13 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 		new EventTick().call();
 		MouseUtil.checkForMouseMove();
 		ModuleManager.updateKeybinds();
+	}
+	
+	@Inject(method = "isTelemetryEnabledByApi", at = @At("HEAD"), cancellable = true)
+	private void disableTelemetry(CallbackInfoReturnable<Boolean> cir) {
+		if(ModuleManager.getModule(NoTelemetry.class).isEnabled()) {
+			cir.setReturnValue(false);
+		}
 	}
 	
 	@Inject(method = "stop", at = @At("HEAD"))
