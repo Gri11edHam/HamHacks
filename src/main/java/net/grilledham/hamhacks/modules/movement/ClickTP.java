@@ -53,7 +53,7 @@ public class ClickTP extends Module {
 	
 	@EventListener
 	public void tick(EventTick e) {
-		if(pathFinder != null || mc.currentScreen != null || hitResult == null || hitResult.getType() == HitResult.Type.MISS) {
+		if(mc.currentScreen != null || hitResult == null || hitResult.getType() == HitResult.Type.MISS) {
 			return;
 		}
 		boolean pressed = false;
@@ -103,7 +103,10 @@ public class ClickTP extends Module {
 				}
 			}
 		}
-		pathFinder = new PathFinder().path(mc.player.getBlockPos(), endPos, mc.player.clientWorld, 0.1f).setTimeout(5000L).whenDone((initialPath) -> {
+		if(pathFinder != null) {
+			pathFinder.cancel();
+		}
+		pathFinder = new PathFinder().path(mc.player.getBlockPos(), endPos, mc.player.clientWorld).setTimeout(5000L).whenDone((initialPath) -> {
 			if(initialPath == null || initialPath.isEmpty()) {
 				pathFinder = null;
 				return;

@@ -23,6 +23,8 @@ public class PathFinder {
 	
 	private long timeout = -1;
 	
+	private boolean canceled = false;
+	
 	private long executionTime = 0;
 	
 	public PathFinder path(BlockPos start, BlockPos end, World world) {
@@ -68,7 +70,7 @@ public class PathFinder {
 				
 				Node node;
 				List<Node> neighbors;
-				while(!openList.isEmpty() && ((executionTime = System.currentTimeMillis() - startTime) < timeout || timeout <= -1)) {
+				while(!openList.isEmpty() && ((executionTime = System.currentTimeMillis() - startTime) < timeout || timeout <= -1) && !canceled) {
 					node = openList.get(0);
 					openList.remove(node);
 					node.closed = true;
@@ -107,6 +109,11 @@ public class PathFinder {
 		};
 		thread.setPriority(3);
 		thread.start();
+		return this;
+	}
+	
+	public PathFinder cancel() {
+		canceled = true;
 		return this;
 	}
 	

@@ -75,7 +75,7 @@ public class InfiniteReach extends Module {
 	
 	@EventListener
 	public void onClick(EventClick e) {
-		if(pathFinder != null || mc.currentScreen != null || e.button != 0 || hitResult == null || hitResult.getType() != HitResult.Type.ENTITY) {
+		if(mc.currentScreen != null || e.button != 0 || hitResult == null || hitResult.getType() != HitResult.Type.ENTITY) {
 			return;
 		}
 		
@@ -88,7 +88,10 @@ public class InfiniteReach extends Module {
 	}
 	
 	public void doAttack(HitResult hitResult) {
-		pathFinder = new PathFinder().path(mc.player.getBlockPos(), BlockPos.ofFloored(hitResult.getPos()), mc.player.clientWorld, 2).setTimeout(5000L).whenDone((initialPath) -> {
+		if(pathFinder != null) {
+			pathFinder.cancel();
+		}
+		pathFinder = new PathFinder().path(mc.player.getBlockPos(), BlockPos.ofFloored(hitResult.getPos()), mc.player.clientWorld, 3).setTimeout(5000L).whenDone((initialPath) -> {
 			if(initialPath == null || initialPath.isEmpty()) {
 				pathFinder = null;
 				return;
@@ -98,7 +101,7 @@ public class InfiniteReach extends Module {
 			Vec3 lastVec = null;
 			Vec3 lastDir = null;
 			for(Vec3 vec : initialPath) {
-				if(vec.dist(new Vec3(hitResult.getPos())) <= 3) {
+				if(vec == initialPath.getLast()) {
 					path.add(vec);
 					break;
 				}
