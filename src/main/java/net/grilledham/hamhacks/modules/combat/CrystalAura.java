@@ -111,7 +111,7 @@ public class CrystalAura extends Module {
 				if(entity instanceof EndCrystalEntity) {
 					if(entity.getPos().squaredDistanceTo(hitVec) <= 4) {
 						if(entity.isAlive()) {
-							imc.getInteractionManager().leftClickEntity(entity);
+							imc.hamHacks$getInteractionManager().hamHacks$leftClickEntity(entity);
 							return true;
 						}
 					}
@@ -123,7 +123,7 @@ public class CrystalAura extends Module {
 			}
 			
 			RotationHack.faceVectorPacket(hitVec);
-			if(imc.getInteractionManager().rightClickBlock(neighbor, side2, hitVec)) {
+			if(imc.hamHacks$getInteractionManager().hamHacks$rightClickBlock(neighbor, side2, hitVec)) {
 				mc.player.swingHand(Hand.MAIN_HAND);
 				return true;
 			}

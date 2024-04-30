@@ -7,7 +7,7 @@ import net.minecraft.util.math.Vec3d;
 
 public interface IClientPlayerInteractionManager {
 	
-	boolean rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec);
+	boolean hamHacks$rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec);
 	
-	void leftClickEntity(Entity entity);
+	void hamHacks$leftClickEntity(Entity entity);
 }

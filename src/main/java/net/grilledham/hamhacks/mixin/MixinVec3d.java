@@ -21,29 +21,29 @@ public abstract class MixinVec3d implements Position, IVec3d {
 	@Shadow @Final public double z;
 	
 	@Override
-	public void setX(double x) {
+	public void hamHacks$setX(double x) {
 		this.x = x;
 	}
 	
 	@Override
-	public void setY(double y) {
+	public void hamHacks$setY(double y) {
 		this.y = y;
 	}
 	
 	@Override
-	public void setZ(double z) {
+	public void hamHacks$setZ(double z) {
 		this.z = z;
 	}
 	
 	@Override
-	public void set(double x, double y, double z) {
+	public void hamHacks$set(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 	
 	@Override
-	public void set(Vec3d other) {
-		set(other.x, other.y, other.z);
+	public void hamHacks$set(Vec3d other) {
+		hamHacks$set(other.x, other.y, other.z);
 	}
 }

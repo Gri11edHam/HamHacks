@@ -22,17 +22,17 @@ public abstract class MixinEntityVelocityUpdateS2CPacket implements Packet<Clien
 	@Shadow @Final private int velocityZ;
 	
 	@Override
-	public void setX(int vx) {
+	public void hamHacks$setX(int vx) {
 		this.velocityX = vx;
 	}
 	
 	@Override
-	public void setY(int vy) {
+	public void hamHacks$setY(int vy) {
 		this.velocityY = vy;
 	}
 	
 	@Override
-	public void setZ(int vz) {
+	public void hamHacks$setZ(int vz) {
 		this.velocityZ = vz;
 	}
 }

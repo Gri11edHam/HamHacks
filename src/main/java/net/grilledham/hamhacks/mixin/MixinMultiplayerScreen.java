@@ -41,7 +41,7 @@ public abstract class MixinMultiplayerScreen extends Screen implements IMultipla
 	}
 	
 	@Override
-	public void reconnect() {
+	public void hamHacks$reconnect() {
 		if(selectedEntry != null) {
 			this.connect(this.selectedEntry);
 		} else {

@@ -42,7 +42,7 @@ public class MixinMatrix4f implements IMatrix4f {
 	@Shadow float m33;
 	
 	@Override
-	public void multiply(Vec4 in, Vec4 out) {
+	public void hamHacks$multiply(Vec4 in, Vec4 out) {
 		out.set(
 				m00 * in.getX() + m01 * in.getY() + m02 * in.getZ() + m03 * in.getW(),
 				m10 * in.getX() + m11 * in.getY() + m12 * in.getZ() + m13 * in.getW(),

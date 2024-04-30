@@ -4,11 +4,11 @@ import net.minecraft.util.math.Vec3d;
 
 public interface IVec3d {
 	
-	void setX(double x);
-	void setY(double y);
-	void setZ(double z);
+	void hamHacks$setX(double x);
+	void hamHacks$setY(double y);
+	void hamHacks$setZ(double z);
 	
-	void set(double x, double y, double z);
+	void hamHacks$set(double x, double y, double z);
 	
-	void set(Vec3d other);
+	void hamHacks$set(Vec3d other);
 }

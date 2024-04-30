@@ -66,7 +66,7 @@ public class Trap extends Module {
 					}
 					
 					RotationHack.faceVectorPacket(hitVec);
-					if(imc.getInteractionManager().rightClickBlock(neighbor, side2, hitVec)) {
+					if(imc.hamHacks$getInteractionManager().hamHacks$rightClickBlock(neighbor, side2, hitVec)) {
 						mc.player.swingHand(Hand.MAIN_HAND);
 						break;
 					}

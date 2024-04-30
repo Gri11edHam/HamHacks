@@ -2,5 +2,5 @@ package net.grilledham.hamhacks.mixininterface;
 
 public interface IMultiplayerScreen {
 	
-	void reconnect();
+	void hamHacks$reconnect();
 }

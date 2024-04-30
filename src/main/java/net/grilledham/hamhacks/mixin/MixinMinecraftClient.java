@@ -75,12 +75,12 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	}
 	
 	@Override
-	public IClientPlayerInteractionManager getInteractionManager() {
+	public IClientPlayerInteractionManager hamHacks$getInteractionManager() {
 		return (IClientPlayerInteractionManager)interactionManager;
 	}
 	
 	@Override
-	public IRenderTickCounter getRenderTickCounter() {
+	public IRenderTickCounter hamHacks$getRenderTickCounter() {
 		return (IRenderTickCounter)renderTickCounter;
 	}
 	

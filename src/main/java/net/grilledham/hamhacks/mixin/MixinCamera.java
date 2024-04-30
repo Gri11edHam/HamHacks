@@ -14,12 +14,12 @@ public abstract class MixinCamera implements ICamera {
 	@Shadow protected abstract void setRotation(float yaw, float pitch);
 	
 	@Override
-	public void setCamPos(Vec3d pos) {
+	public void hamHacks$setCamPos(Vec3d pos) {
 		setPos(pos);
 	}
 	
 	@Override
-	public void setCamRot(float yaw, float pitch) {
+	public void hamHacks$setCamRot(float yaw, float pitch) {
 		setRotation(yaw, pitch);
 	}
 }

@@ -26,7 +26,7 @@ public abstract class MixinIntegratedServer extends MinecraftServer implements I
 	}
 	
 	@Override
-	public boolean isOpenToLAN() {
+	public boolean hamHacks$isOpenToLAN() {
 		return lanPinger != null;
 	}
 }

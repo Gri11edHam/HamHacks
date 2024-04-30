@@ -7,7 +7,6 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.pathfinding.PathFinder;
-import net.grilledham.hamhacks.util.PositionHack;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
@@ -138,7 +137,7 @@ public class InfiniteReach extends Module {
 			for(Vec3 pos : path) {
 				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
 			}
-			imc.getInteractionManager().leftClickEntity(((EntityHitResult)hitResult).getEntity());
+			imc.hamHacks$getInteractionManager().hamHacks$leftClickEntity(((EntityHitResult)hitResult).getEntity());
 			mc.player.swingHand(Hand.MAIN_HAND);
 			for(Vec3 pos : path.reversed()) {
 				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));

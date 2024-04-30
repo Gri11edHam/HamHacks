@@ -14,12 +14,12 @@ public class MixinRenderTickCounter implements IRenderTickCounter {
 	@Shadow @Final private float tickTime;
 	
 	@Override
-	public void setTPS(float tps) {
+	public void hamHacks$setTPS(float tps) {
 		tickTime = 1000 / tps;
 	}
 	
 	@Override
-	public float getTPS() {
+	public float hamHacks$getTPS() {
 		return 1000 / tickTime;
 	}
 }

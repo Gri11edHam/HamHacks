@@ -12,7 +12,7 @@ public abstract class MixinKeyBinding implements Comparable<KeyBinding>, IKeyBin
 	@Shadow private InputUtil.Key boundKey;
 	
 	@Override
-	public InputUtil.Key getBound() {
+	public InputUtil.Key hamHacks$getBound() {
 		return boundKey;
 	}
 }

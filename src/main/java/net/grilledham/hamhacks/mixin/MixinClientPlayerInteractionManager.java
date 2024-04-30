@@ -34,7 +34,7 @@ public abstract class MixinClientPlayerInteractionManager implements IClientPlay
 	private MinecraftClient client;
 	
 	@Override
-	public boolean rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec) {
+	public boolean hamHacks$rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec) {
 		if(interactBlock(client.player, Hand.MAIN_HAND, new BlockHitResult(hitVec, side, pos, false)).isAccepted()) {
 			interactItem(client.player, Hand.MAIN_HAND);
 			return true;
@@ -51,7 +51,7 @@ public abstract class MixinClientPlayerInteractionManager implements IClientPlay
 	}
 	
 	@Override
-	public void leftClickEntity(Entity entity) {
+	public void hamHacks$leftClickEntity(Entity entity) {
 		attackEntity(client.player, entity);
 	}
 	

@@ -66,7 +66,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 	}
 	
 	@Override
-	public boolean walking() {
+	public boolean hamHacks$walking() {
 		return isWalking();
 	}
 }

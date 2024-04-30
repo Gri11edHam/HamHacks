@@ -51,7 +51,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	@Unique
 	private boolean calledFromFreecam = false;
 	
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4fStack;popMatrix()Lorg/joml/Matrix4fStack;"), locals = LocalCapture.CAPTURE_FAILSOFT)
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4fStack;popMatrix()Lorg/joml/Matrix4fStack;", remap = false), locals = LocalCapture.CAPTURE_FAILSOFT)
 	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, float f, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrixStack, DrawContext drawContext) {
 		EventRender event = new EventRender(drawContext, tickDelta);
 		event.call();
@@ -123,8 +123,8 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 			if(!wasFreecamEnabled) {
 				instance.update(area, focusedEntity, true, inverseView, tickDelta);
 			}
-			((ICamera)instance).setCamPos(ModuleManager.getModule(Freecam.class).getPos(tickDelta).add(0, focusedEntity.getEyeHeight(focusedEntity.getPose()), 0));
-			((ICamera)instance).setCamRot(ModuleManager.getModule(Freecam.class).getYaw(tickDelta), ModuleManager.getModule(Freecam.class).getPitch(tickDelta));
+			((ICamera)instance).hamHacks$setCamPos(ModuleManager.getModule(Freecam.class).getPos(tickDelta).add(0, focusedEntity.getEyeHeight(focusedEntity.getPose()), 0));
+			((ICamera)instance).hamHacks$setCamRot(ModuleManager.getModule(Freecam.class).getYaw(tickDelta), ModuleManager.getModule(Freecam.class).getPitch(tickDelta));
 		} else {
 			instance.update(area, focusedEntity, thirdPerson, inverseView, tickDelta);
 		}
@@ -150,7 +150,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 			float prevYaw = entity.prevYaw;
 			float prevPitch = entity.prevPitch;
 			
-			((IVec3d)entity.getPos()).set(ModuleManager.getModule(Freecam.class).pos);
+			((IVec3d)entity.getPos()).hamHacks$set(ModuleManager.getModule(Freecam.class).pos);
 			entity.prevX = ModuleManager.getModule(Freecam.class).prevPos.x;
 			entity.prevY = ModuleManager.getModule(Freecam.class).prevPos.y;
 			entity.prevZ = ModuleManager.getModule(Freecam.class).prevPos.z;
@@ -163,7 +163,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 			updateCrosshairTarget(tickDelta);
 			calledFromFreecam = false;
 			
-			((IVec3d)entity.getPos()).set(pos);
+			((IVec3d)entity.getPos()).hamHacks$set(pos);
 			entity.prevX = prevX;
 			entity.prevY = prevY;
 			entity.prevZ = prevZ;
@@ -175,7 +175,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	}
 	
 	@Override
-	public double getFOV(Camera camera, float tickDelta, boolean changingFov) {
+	public double hamHacks$getFOV(Camera camera, float tickDelta, boolean changingFov) {
 		return getFov(camera, tickDelta, changingFov);
 	}
 	

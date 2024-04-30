@@ -50,7 +50,7 @@ public class ConnectionUtil {
 	}
 	
 	public static long getTimeSinceLastTick() {
-		if(MinecraftClient.getInstance().isPaused() && MinecraftClient.getInstance().isInSingleplayer() && !((IIntegratedServer)MinecraftClient.getInstance().getServer()).isOpenToLAN()) {
+		if(MinecraftClient.getInstance().isPaused() && MinecraftClient.getInstance().isInSingleplayer() && !((IIntegratedServer)MinecraftClient.getInstance().getServer()).hamHacks$isOpenToLAN()) {
 			return 0;
 		}
 		long now = System.currentTimeMillis();
@@ -68,7 +68,7 @@ public class ConnectionUtil {
 			return 20;
 		}
 		
-		if(MinecraftClient.getInstance().isPaused() && MinecraftClient.getInstance().isInSingleplayer() && !((IIntegratedServer)MinecraftClient.getInstance().getServer()).isOpenToLAN()) {
+		if(MinecraftClient.getInstance().isPaused() && MinecraftClient.getInstance().isInSingleplayer() && !((IIntegratedServer)MinecraftClient.getInstance().getServer()).hamHacks$isOpenToLAN()) {
 			return tickRate;
 		}
 		

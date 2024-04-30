@@ -15,12 +15,12 @@ public class BorderlessFullscreen extends Module {
 	@Override
 	public void onEnable() {
 		super.onEnable();
-		((IWindow)(Object)mc.getWindow()).hamhacks$updateVideoMode();
+		((IWindow)(Object)mc.getWindow()).hamHacks$updateVideoMode();
 	}
 	
 	@Override
 	public void onDisable() {
 		super.onDisable();
-		((IWindow)(Object)mc.getWindow()).hamhacks$updateVideoMode();
+		((IWindow)(Object)mc.getWindow()).hamHacks$updateVideoMode();
 	}
 }

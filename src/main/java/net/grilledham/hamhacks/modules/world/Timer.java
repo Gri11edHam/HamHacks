@@ -24,12 +24,12 @@ public class Timer extends Module {
 	
 	@EventListener
 	public void onTick(EventTick e) {
-		imc.getRenderTickCounter().setTPS((float)(double)speed.get());
+		imc.hamHacks$getRenderTickCounter().hamHacks$setTPS((float)(double)speed.get());
 	}
 	
 	@Override
 	public void onDisable() {
 		super.onDisable();
-		imc.getRenderTickCounter().setTPS(20);
+		imc.hamHacks$getRenderTickCounter().hamHacks$setTPS(20);
 	}
 }

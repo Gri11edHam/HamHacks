@@ -105,13 +105,13 @@ public abstract class MixinWindow implements IWindow {
 	}
 	
 	@Override
-	public void hamhacks$updateVideoMode() {
+	public void hamHacks$updateVideoMode() {
 		videoModeDirty = true;
 		applyVideoMode();
 	}
 	
 	@Override
-	public void hamhacks$setIcon(TitleBar.IconProvider provider) throws IOException {
+	public void hamHacks$setIcon(TitleBar.IconProvider provider) throws IOException {
 		RenderSystem.assertInInitPhase();
 		if (MinecraftClient.IS_SYSTEM_MAC) {
 			MacWindowUtil.setApplicationIconImage(provider.getMacIcon());

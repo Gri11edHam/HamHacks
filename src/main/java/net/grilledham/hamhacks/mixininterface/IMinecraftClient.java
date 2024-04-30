@@ -1,7 +1,7 @@
 package net.grilledham.hamhacks.mixininterface;
 
 public interface IMinecraftClient {
-	IClientPlayerInteractionManager getInteractionManager();
+	IClientPlayerInteractionManager hamHacks$getInteractionManager();
 	
-	IRenderTickCounter getRenderTickCounter();
+	IRenderTickCounter hamHacks$getRenderTickCounter();
 }

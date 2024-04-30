@@ -23,7 +23,7 @@ public class Sprint extends Module {
 				return;
 			}
 			boolean canSprint = (float)mc.player.getHungerManager().getFoodLevel() > 6.0F || mc.player.getAbilities().allowFlying;
-			if(!mc.player.isSprinting() && (!mc.player.isTouchingWater() || mc.player.isSubmergedInWater()) && ((IClientEntityPlayer)mc.player).walking() && canSprint && !mc.player.isUsingItem() && !mc.player.hasStatusEffect(StatusEffects.BLINDNESS)) {
+			if(!mc.player.isSprinting() && (!mc.player.isTouchingWater() || mc.player.isSubmergedInWater()) && ((IClientEntityPlayer)mc.player).hamHacks$walking() && canSprint && !mc.player.isUsingItem() && !mc.player.hasStatusEffect(StatusEffects.BLINDNESS)) {
 				mc.player.setSprinting(true);
 			}
 		}

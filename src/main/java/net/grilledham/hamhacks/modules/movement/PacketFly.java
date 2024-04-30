@@ -31,7 +31,7 @@ public class PacketFly extends Module {
 		}
 		
 		if(timerMultiplier.get() > 1) {
-			imc.getRenderTickCounter().setTPS((float)(20 * timerMultiplier.get()));
+			imc.hamHacks$getRenderTickCounter().hamHacks$setTPS((float)(20 * timerMultiplier.get()));
 		}
 		
 		mc.player.setVelocity(0, 0, 0);
@@ -90,6 +90,6 @@ public class PacketFly extends Module {
 			return;
 		}
 		mc.player.noClip = false;
-		imc.getRenderTickCounter().setTPS(20);
+		imc.hamHacks$getRenderTickCounter().hamHacks$setTPS(20);
 	}
 }

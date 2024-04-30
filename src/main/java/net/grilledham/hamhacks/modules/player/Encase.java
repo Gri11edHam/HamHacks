@@ -95,7 +95,7 @@ public class Encase extends Module {
 			
 			RotationHack.faceVectorPacket(hitVec);
 			playerSafe = false;
-			if(imc.getInteractionManager().rightClickBlock(neighbor, side2, hitVec)) {
+			if(imc.hamHacks$getInteractionManager().hamHacks$rightClickBlock(neighbor, side2, hitVec)) {
 				mc.player.swingHand(Hand.MAIN_HAND);
 				playerSafe = true;
 				break;
