@@ -2,7 +2,6 @@ package net.grilledham.hamhacks.modules.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.EventListener;
-import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.event.events.EventRenderBlockOverlay;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
@@ -42,31 +41,10 @@ public class BlockOutline extends Module {
 		GENERAL_CATEGORY.add(overlayColor);
 	}
 	
-	private BlockState lastState;
-	private Entity lastEntity;
-	private double lastCameraX;
-	private double lastCameraY;
-	private double lastCameraZ;
-	private BlockPos lastPos;
-	
 	@EventListener
 	public void onRenderBlockOverlay(EventRenderBlockOverlay event) {
-		lastState = event.state;
-		lastEntity = event.entity;
-		lastCameraX = event.cameraX;
-		lastCameraY = event.cameraY;
-		lastCameraZ = event.cameraZ;
-		lastPos = event.pos;
+		renderOutline(event.matrices, event.state, event.entity, event.cameraX, event.cameraY, event.cameraZ, event.pos);
 		event.canceled = true;
-	}
-	
-	@EventListener
-	public void onRender(EventRender3D event) {
-		if(lastState == null) {
-			return;
-		}
-		renderOutline(event.matrices, lastState, lastEntity, lastCameraX, lastCameraY, lastCameraZ, lastPos);
-		lastState = null;
 	}
 	
 	private void renderOutline(MatrixStack matrices, BlockState state, Entity entity, double cameraX, double cameraY, double cameraZ, BlockPos pos) {
@@ -165,6 +143,7 @@ public class BlockOutline extends Module {
 		} else {
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 		}
+		RenderSystem.disableBlend();
 		matrices.pop();
 	}
 }
