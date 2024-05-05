@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class EventManager {
 	
 	private static final HashMap<Class<? extends Event>, HashMap<Object, ArrayList<Method>>> listeners = new HashMap<>();
-	private static boolean calling = false;
+	private static int calling = 0;
 	private static final ArrayList<Triple<Object, Method, Class<? extends Event>>> toAdd = new ArrayList<>();
 	private static final ArrayList<Triple<Object, Method, Class<? extends Event>>> toRemove = new ArrayList<>();
 	
@@ -25,7 +25,7 @@ public class EventManager {
 	}
 	
 	public static void register(Object o, Method m, Class<? extends Event> c) {
-		if(calling) {
+		if(calling > 0) {
 			toAdd.add(Triple.of(o, m, c));
 			return;
 		}
@@ -49,7 +49,7 @@ public class EventManager {
 	}
 	
 	public static void unRegister(Object o, Method m, Class<? extends Event> c) {
-		if(calling) {
+		if(calling > 0) {
 			toRemove.add(Triple.of(o, m, c));
 			return;
 		}
@@ -64,7 +64,7 @@ public class EventManager {
 		if(listeners.containsKey(e.getClass())) {
 			final HashMap<Object, ArrayList<Method>> l = EventManager.listeners.get(e.getClass());
 			if(!l.isEmpty()) {
-				calling = true;
+				calling++;
 				for(Object o : l.keySet()) {
 					for(Method m : l.get(o)) {
 						try {
@@ -75,8 +75,10 @@ public class EventManager {
 						}
 					}
 				}
-				calling = false;
-				updateListeners();
+				calling--;
+				if(calling < 1) {
+					updateListeners();
+				}
 			}
 		}
 	}
