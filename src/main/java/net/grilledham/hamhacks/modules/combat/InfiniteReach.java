@@ -7,8 +7,8 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.pathfinding.PathFinder;
+import net.grilledham.hamhacks.util.PlayerUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
-import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -18,9 +18,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 import org.joml.Random;
 import org.lwjgl.glfw.GLFW;
 
@@ -51,26 +48,7 @@ public class InfiniteReach extends Module {
 	
 	@EventListener
 	public void render(EventRender3D e) {
-		hitResult = null;
-		double d = 100;
-		hitResult = mc.player.raycast(d, e.tickDelta, false);
-		Vec3d vec3d = mc.player.getCameraPosVec(e.tickDelta);
-		double d1 = d;
-		d1 *= d1;
-		
-		Vec3d vec3d2 = mc.player.getRotationVec(1.0F);
-		Vec3d vec3d3 = vec3d.add(vec3d2.x * d, vec3d2.y * d, vec3d2.z * d);
-		Box box = mc.player.getBoundingBox().stretch(vec3d2.multiply(d)).expand(1.0, 1.0, 1.0);
-		EntityHitResult entityHitResult = ProjectileUtil.raycast(mc.player, vec3d, vec3d3, box, (entityx) -> !entityx.isSpectator() && entityx.canHit(), d1);
-		if (entityHitResult != null) {
-			Vec3d vec3d4 = entityHitResult.getPos();
-			double g = vec3d.squaredDistanceTo(vec3d4);
-			if (g > 100 * 100) {
-				hitResult = BlockHitResult.createMissed(vec3d4, Direction.getFacing(vec3d2.x, vec3d2.y, vec3d2.z), BlockPos.ofFloored(vec3d4));
-			} else if (g < d1 || hitResult == null) {
-				hitResult = entityHitResult;
-			}
-		}
+		hitResult = PlayerUtil.hitResult(100, e.tickDelta);
 	}
 	
 	@EventListener

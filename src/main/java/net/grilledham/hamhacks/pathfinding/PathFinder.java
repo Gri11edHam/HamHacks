@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public class PathFinder {
 	
-	private final Node[][][] nodes = new Node[200][200][200];
+	private final Node[][][] nodes = new Node[512][512][512];
 	private Node start;
 	private Node startNode;
 	private Node endNode;
@@ -153,14 +153,14 @@ public class PathFinder {
 	}
 	
 	private Node getStart(BlockPos pos) {
-		return nodes[100][100][100] = start = new Node(pos);
+		return nodes[256][256][256] = start = new Node(pos);
 	}
 	
 	private Node getNode(BlockPos pos) {
-		int x = pos.getX() - start.pos.getX() + 100;
-		int y = pos.getY() - start.pos.getY() + 100;
-		int z = pos.getZ() - start.pos.getZ() + 100;
-		if(x < 0 || x > 199 || y < 0 || y > 199 || z < 0 || z > 199) {
+		int x = pos.getX() - start.pos.getX() + 256;
+		int y = pos.getY() - start.pos.getY() + 256;
+		int z = pos.getZ() - start.pos.getZ() + 256;
+		if(x < 0 || x > 511 || y < 0 || y > 511 || z < 0 || z > 511) {
 			return null;
 		}
 		if(nodes[x][y][z] == null) {
