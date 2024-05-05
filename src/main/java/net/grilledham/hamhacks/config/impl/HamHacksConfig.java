@@ -15,10 +15,7 @@ import net.grilledham.hamhacks.modules.render.*;
 import net.grilledham.hamhacks.modules.world.Timer;
 import net.grilledham.hamhacks.notification.Notifications;
 import net.grilledham.hamhacks.page.PageManager;
-import net.grilledham.hamhacks.page.pages.Baritone;
-import net.grilledham.hamhacks.page.pages.ClickGUI;
-import net.grilledham.hamhacks.page.pages.Commands;
-import net.grilledham.hamhacks.page.pages.Profiles;
+import net.grilledham.hamhacks.page.pages.*;
 
 public class HamHacksConfig extends Config {
 	
@@ -34,6 +31,7 @@ public class HamHacksConfig extends Config {
 		if(FabricLoader.getInstance().isModLoaded("baritone")) {
 			PageManager.register(modId, new Baritone());
 		}
+		PageManager.register(modId, new Updates());
 		PageManager.register(modId, new Profiles());
 		
 		ModuleManager.register(modId, new Fly());

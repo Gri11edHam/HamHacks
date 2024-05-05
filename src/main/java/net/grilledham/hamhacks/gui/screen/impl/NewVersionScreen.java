@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 
 public class NewVersionScreen extends Screen {
 	
@@ -29,6 +30,9 @@ public class NewVersionScreen extends Screen {
 	protected void init() {
 		super.init();
 		updateButton = new ButtonElement("Update", width / 2f + 1, height - 30, 100, 20, (float)client.getWindow().getScaleFactor(), () -> {
+			if(Updater.isDevUpdate()) {
+				Util.getOperatingSystem().open(Updater.getDownloadURL());
+			}
 			Updater.update();
 			MinecraftClient.getInstance().setScreen(new UpdateScreen(last));
 		});

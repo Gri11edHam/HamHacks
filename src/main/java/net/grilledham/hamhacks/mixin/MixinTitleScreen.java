@@ -5,7 +5,7 @@ import net.grilledham.hamhacks.gui.element.impl.ButtonElement;
 import net.grilledham.hamhacks.gui.screen.impl.ChangelogScreen;
 import net.grilledham.hamhacks.gui.screen.impl.NewVersionScreen;
 import net.grilledham.hamhacks.page.PageManager;
-import net.grilledham.hamhacks.page.pages.ClickGUI;
+import net.grilledham.hamhacks.page.pages.Updates;
 import net.grilledham.hamhacks.util.Updater;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -45,7 +45,7 @@ public class MixinTitleScreen extends Screen {
 	
 	@Inject(method = "render", at = @At("TAIL"))
 	public void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		int showChangelogButton = PageManager.getPage(ClickGUI.class).showChangelogButton.get();
+		int showChangelogButton = PageManager.getPage(Updates.class).showChangelogButton.get();
 		int yOffset = 0;
 		if(showChangelogButton == 0 || (showChangelogButton == 1 && HamHacksClient.updated)) {
 			yOffset += changelogButton.getHeight() + 2;
@@ -63,7 +63,7 @@ public class MixinTitleScreen extends Screen {
 	
 	@Inject(method = "mouseClicked", at = @At("TAIL"), cancellable = true)
 	public void clicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-		int showChangelogButton = PageManager.getPage(ClickGUI.class).showChangelogButton.get();
+		int showChangelogButton = PageManager.getPage(Updates.class).showChangelogButton.get();
 		int yOffset = 0;
 		if((showChangelogButton == 0 || (showChangelogButton == 1 && HamHacksClient.updated))) {
 			yOffset += changelogButton.getHeight() + 2;
@@ -83,7 +83,7 @@ public class MixinTitleScreen extends Screen {
 	
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		int showChangelogButton = PageManager.getPage(ClickGUI.class).showChangelogButton.get();
+		int showChangelogButton = PageManager.getPage(Updates.class).showChangelogButton.get();
 		int yOffset = 0;
 		if((showChangelogButton == 0 || (showChangelogButton == 1 && HamHacksClient.updated))) {
 			yOffset += changelogButton.getHeight() + 2;

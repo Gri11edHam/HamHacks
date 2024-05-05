@@ -56,7 +56,6 @@ public class HamHacksClient implements ClientModInitializer {
 		}
 		initialized = true;
 		LOGGER.info("Initializing HamHacks v{}", VERSION.getVersion(0, true));
-		Updater.init();
 		RotationHack.init();
 		PositionHack.init();
 		ConnectionUtil.init();
@@ -90,6 +89,8 @@ public class HamHacksClient implements ClientModInitializer {
 		Category.init(); // set initial category positions
 		ConfigManager.initialLoad(); // load configs
 		RenderUtil.updateFont(PageManager.getPage(ClickGUI.class).font.get());
+		
+		Updater.init();
 		
 		ModuleManager.sortModules(Comparator.comparing(Module::getName));
 		CommandManager.sortCommands(Comparator.comparing(Command::getName));

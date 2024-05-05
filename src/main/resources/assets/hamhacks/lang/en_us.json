@@ -430,10 +430,6 @@
 	"hamhacks.page.clickGui.categoriesWidth": "Categories Width",
 	"hamhacks.page.clickGui.font": "Font",
 	"hamhacks.page.clickGui.openMenu": "Open Menu",
-	"hamhacks.page.clickGui.showChangelogButton": "Show Changelog Button",
-	"hamhacks.page.clickGui.showChangelogButton.always": "Always",
-	"hamhacks.page.clickGui.showChangelogButton.afterUpdate": "After Update",
-	"hamhacks.page.clickGui.showChangelogButton.never": "Never",
 
 	"hamhacks.page.command": "Commands",
 	"hamhacks.page.command.category.general": "General",
@@ -443,6 +439,16 @@
 
 	"hamhacks.page.baritone": "Baritone",
 	"hamhacks.page.baritone.tooltip": "google maps for block game",
+
+	"hamhacks.page.updates": "Updates",
+	"hamhacks.page.updates.category.general": "General",
+	"hamhacks.page.updates.branch": "Branch",
+	"hamhacks.page.updates.branch.release": "Release",
+	"hamhacks.page.updates.branch.dev": "Dev",
+	"hamhacks.page.updates.showChangelogButton": "Show Changelog Button",
+	"hamhacks.page.updates.showChangelogButton.always": "Always",
+	"hamhacks.page.updates.showChangelogButton.afterUpdate": "After Update",
+	"hamhacks.page.updates.showChangelogButton.never": "Never",
 
 	"hamhacks.page.profiles": "Profiles",
 
