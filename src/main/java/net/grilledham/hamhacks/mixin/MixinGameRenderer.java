@@ -136,7 +136,8 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		if(client.getCameraEntity() == null) {
 			return;
 		}
-		if(ModuleManager.getModule(Freecam.class).isEnabled() && !calledFromFreecam) {
+		Freecam freecam = ModuleManager.getModule(Freecam.class);
+		if(freecam.isEnabled() && freecam.targetMode.get() == 1 && !calledFromFreecam) {
 			ci.cancel();
 			
 			Entity entity = client.getCameraEntity();
@@ -150,14 +151,14 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 			float prevYaw = entity.prevYaw;
 			float prevPitch = entity.prevPitch;
 			
-			((IVec3d)entity.getPos()).hamHacks$set(ModuleManager.getModule(Freecam.class).pos);
-			entity.prevX = ModuleManager.getModule(Freecam.class).prevPos.x;
-			entity.prevY = ModuleManager.getModule(Freecam.class).prevPos.y;
-			entity.prevZ = ModuleManager.getModule(Freecam.class).prevPos.z;
-			entity.setYaw(ModuleManager.getModule(Freecam.class).yaw);
-			entity.setPitch(ModuleManager.getModule(Freecam.class).pitch);
-			entity.prevYaw = ModuleManager.getModule(Freecam.class).prevYaw;
-			entity.prevPitch = ModuleManager.getModule(Freecam.class).prevPitch;
+			((IVec3d)entity.getPos()).hamHacks$set(freecam.pos);
+			entity.prevX = freecam.prevPos.x;
+			entity.prevY = freecam.prevPos.y;
+			entity.prevZ = freecam.prevPos.z;
+			entity.setYaw(freecam.yaw);
+			entity.setPitch(freecam.pitch);
+			entity.prevYaw = freecam.prevYaw;
+			entity.prevPitch = freecam.prevPitch;
 			
 			calledFromFreecam = true;
 			updateCrosshairTarget(tickDelta);

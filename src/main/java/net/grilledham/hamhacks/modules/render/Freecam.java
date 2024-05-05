@@ -12,6 +12,7 @@ import net.grilledham.hamhacks.notification.Notifications;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.setting.SelectionSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
@@ -45,10 +46,12 @@ public class Freecam extends Module {
 	
 	private Perspective perspective = Perspective.FIRST_PERSON;
 	
+	public final SelectionSetting targetMode = new SelectionSetting("hamhacks.module.freecam.targetMode", 0, () -> true, "hamhacks.module.freecam.targetMode.player", "hamhacks.module.freecam.targetMode.camera");
 	private final NumberSetting speed = new NumberSetting("hamhacks.module.freecam.speed", 1, () -> true, 0, 10);
 	
 	public Freecam() {
 		super(Text.translatable("hamhacks.module.freecam"), Category.RENDER, new Keybind(0));
+		GENERAL_CATEGORY.add(targetMode);
 		GENERAL_CATEGORY.add(speed);
 	}
 	

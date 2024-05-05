@@ -241,6 +241,10 @@
 
 	"hamhacks.module.freecam": "Freecam",
 	"hamhacks.module.freecam.tooltip": "Allows you to explore the world from outside of your body",
+	"hamhacks.module.freecam.targetMode": "Target Mode",
+	"hamhacks.module.freecam.targetMode.tooltip": "Where the crosshair target should be chosen from",
+	"hamhacks.module.freecam.targetMode.player": "Player",
+	"hamhacks.module.freecam.targetMode.camera": "Camera",
 	"hamhacks.module.freecam.speed": "Speed",
 	"hamhacks.module.freecam.speed.tooltip": "How fast you move",
 
@@ -331,11 +335,6 @@
 	"hamhacks.module.infiniteReach": "Infinite Reach",
 	"hamhacks.module.infiniteReach.tooltip": "Allows you to reach as far as you can see",
 
-	"hamhacks.module.generic.enabled": "Enabled",
-	"hamhacks.module.generic.showModule": "HUD Text",
-	"hamhacks.module.generic.keybind": "Keybind",
-	"hamhacks.module.generic.category.general": "General",
-
 	"hamhacks.module.velocity": "Velocity",
 	"hamhacks.module.velocity.tooltip": "Modifies your knockback/velocity",
 	"hamhacks.module.velocity.horizontal": "Horizontal",
@@ -389,6 +388,11 @@
 	"hamhacks.module.clickTP": "Click TP",
 	"hamhacks.module.clickTP.tooltip": "Teleport to where you're looking",
 	"hamhacks.module.clickTP.activate": "Activate",
+
+	"hamhacks.module.generic.enabled": "Enabled",
+	"hamhacks.module.generic.showModule": "HUD Text",
+	"hamhacks.module.generic.keybind": "Keybind",
+	"hamhacks.module.generic.category.general": "General",
 
 	"hamhacks.setting.colorSettingElement.chroma": "Chroma",
 	"hamhacks.setting.colorSettingElement.chromaSpeed": "Speed",
