@@ -24,6 +24,7 @@ public class Updater {
 	private static Version latestVersion;
 	private static String changelog = "";
 	private static String downloadURL;
+	private static String commitHash;
 	
 	private static boolean hasUpdated = false;
 	
@@ -53,11 +54,13 @@ public class Updater {
 					isr.close();
 					is.close();
 					downloadURL = "https://github.com/Gri11edHam/HamHacks/actions/runs/" + obj.get("artifacts").getAsJsonArray().get(0).getAsJsonObject().get("workflow_run").getAsJsonObject().get("id").getAsLong();
+					commitHash = obj.get("artifacts").getAsJsonArray().get(0).getAsJsonObject().get("workflow_run").getAsJsonObject().get("head_sha").getAsString();
 					changelog = "\u00a7c\u00a7l### \u00a7r\u00a7c\u00a7l\u00a7nWARNING\u00a7r\u00a7c\u00a7l ###\u00a7r\nDevelopment updates may contain bugs.\nUse at your own risk.";
 					isDevUpdate = true;
 					return;
 				}
 			}
+			isDevUpdate = false;
 			InputStream is;
 			InputStreamReader isr;
 			JsonObject obj = json.fromJson(isr = new InputStreamReader(is = FileHelper.getStreamFromURL("https://api.github.com/repos/Gri11edHam/HamHacks/releases/latest")), JsonObject.class);
@@ -74,6 +77,17 @@ public class Updater {
 					break;
 				}
 			}
+			String tagName = obj.get("tag_name").getAsString();
+			JsonArray tags = json.fromJson(isr = new InputStreamReader(is = FileHelper.getStreamFromURL("https://api.github.com/repos/Gri11edHam/HamHacks/tags")), JsonArray.class);
+			isr.close();
+			is.close();
+			for(JsonElement e : tags) {
+				JsonObject tag = e.getAsJsonObject();
+				if(tag.get("name").getAsString().equals(tagName)) {
+					commitHash = tag.get("commit").getAsJsonObject().get("sha").getAsString();
+					break;
+				}
+			}
 		} catch(IOException e) {
 			HamHacksClient.LOGGER.error("Checking for updates", e);
 		}
@@ -85,6 +99,9 @@ public class Updater {
 	}
 	
 	public static boolean newVersionAvailable() {
+		if(HamHacksClient.COMMIT_HASH != null) {
+			return !commitHash.equals(HamHacksClient.COMMIT_HASH) && !hasUpdated;
+		}
 		if(latestVersion == null) {
 			latestVersion = new Version("0");
 		}
@@ -106,6 +123,10 @@ public class Updater {
 		return downloadURL;
 	}
 	
+	public static String getCommitHash() {
+		return commitHash;
+	}
+	
 	public static boolean isDevUpdate() {
 		return isDevUpdate;
 	}
@@ -116,6 +137,7 @@ public class Updater {
 			return;
 		}
 		try {
+			HamHacksClient.COMMIT_HASH = commitHash;
 			if(!isDevUpdate) {
 				File newVersion = new File(MinecraftClient.getInstance().runDirectory, "/mods/hamhacks-" + latestVersion.getVersion(0, true) + ".jar");
 				int i = 1;

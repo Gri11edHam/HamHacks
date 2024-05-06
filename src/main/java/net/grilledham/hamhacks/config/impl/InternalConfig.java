@@ -41,6 +41,7 @@ public class InternalConfig extends Config {
 			object.addProperty("config_version", HamHacksClient.CONFIG_VERSION);
 			object.addProperty("seen_version", HamHacksClient.seenVersion.getVersion(0, true));
 			object.addProperty("last_launched", HamHacksClient.VERSION.getVersion(0, true));
+			object.addProperty("commit_hash", HamHacksClient.COMMIT_HASH);
 			JsonObject categories = new JsonObject();
 			for(Category category : Category.values()) {
 				JsonObject cObj = new JsonObject();
@@ -68,6 +69,9 @@ public class InternalConfig extends Config {
 			}
 		} else {
 			HamHacksClient.updated = true;
+		}
+		if(obj.has("commit_hash")) {
+			HamHacksClient.COMMIT_HASH = obj.get("commit_hash").getAsString();
 		}
 	}
 }
