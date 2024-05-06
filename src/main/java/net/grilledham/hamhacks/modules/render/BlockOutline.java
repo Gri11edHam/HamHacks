@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.modules.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.EventListener;
+import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.event.events.EventRenderBlockOverlay;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
@@ -41,10 +42,36 @@ public class BlockOutline extends Module {
 		GENERAL_CATEGORY.add(overlayColor);
 	}
 	
+	private BlockState lastState;
+	private Entity lastEntity;
+	private double lastCameraX;
+	private double lastCameraY;
+	private double lastCameraZ;
+	private BlockPos lastPos;
+	
 	@EventListener
 	public void onRenderBlockOverlay(EventRenderBlockOverlay event) {
-		renderOutline(event.matrices, event.state, event.entity, event.cameraX, event.cameraY, event.cameraZ, event.pos);
+		lastState = event.state;
+		lastEntity = event.entity;
+		lastCameraX = event.cameraX;
+		lastCameraY = event.cameraY;
+		lastCameraZ = event.cameraZ;
+		lastPos = event.pos;
+		if(!lastState.hasBlockEntity()) {
+			renderOutline(event.matrices, lastState, lastEntity, lastCameraX, lastCameraY, lastCameraZ, lastPos);
+		}
 		event.canceled = true;
+	}
+	
+	@EventListener
+	public void onRender(EventRender3D event) {
+		if(lastState == null) {
+			return;
+		}
+		if(lastState.hasBlockEntity()) {
+			renderOutline(event.matrices, lastState, lastEntity, lastCameraX, lastCameraY, lastCameraZ, lastPos);
+		}
+		lastState = null;
 	}
 	
 	private void renderOutline(MatrixStack matrices, BlockState state, Entity entity, double cameraX, double cameraY, double cameraZ, BlockPos pos) {
