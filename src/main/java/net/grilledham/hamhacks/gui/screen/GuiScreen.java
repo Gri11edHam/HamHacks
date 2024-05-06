@@ -25,7 +25,7 @@ public class GuiScreen extends Screen {
 	
 	private boolean wasMouseDown = false;
 	
-	protected boolean alwaysDrawBackground = false;
+	protected boolean alwaysDrawBackground = true;
 	
 	protected GuiScreen(Text title, Screen last, double scale) {
 		super(title);

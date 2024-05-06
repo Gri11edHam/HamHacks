@@ -30,7 +30,6 @@ public class WaitingToConnectScreen extends GuiScreen {
 	public WaitingToConnectScreen(Screen last, String serverIP) {
 		super(Text.translatable("hamhacks.menu.waitingToConnect"), last, PageManager.getPage(ClickGUI.class).scale.get());
 		serverInfo = new ServerInfo("", serverIP, ServerInfo.ServerType.OTHER);
-		alwaysDrawBackground = true;
 	}
 	
 	@Override

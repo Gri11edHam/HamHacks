@@ -27,7 +27,6 @@ public class BindModuleScreen extends GuiScreen {
 		super(Text.translatable("hamhacks.menu.bindModule"), null, PageManager.getPage(ClickGUI.class).scale.get());
 		this.module = module;
 		module.getKey().setKey(0);
-		alwaysDrawBackground = true;
 	}
 	
 	@Override
