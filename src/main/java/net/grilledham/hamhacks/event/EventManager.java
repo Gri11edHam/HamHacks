@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class EventManager {
 	
 	private static final HashMap<Class<? extends Event>, HashMap<Object, ArrayList<Method>>> listeners = new HashMap<>();
-	private static int calling = 0;
+	private static boolean calling = false;
 	private static final ArrayList<Triple<Object, Method, Class<? extends Event>>> toAdd = new ArrayList<>();
 	private static final ArrayList<Triple<Object, Method, Class<? extends Event>>> toRemove = new ArrayList<>();
 	
@@ -25,7 +25,7 @@ public class EventManager {
 	}
 	
 	public static void register(Object o, Method m, Class<? extends Event> c) {
-		if(calling > 0) {
+		if(calling) {
 			toAdd.add(Triple.of(o, m, c));
 			return;
 		}
@@ -49,7 +49,7 @@ public class EventManager {
 	}
 	
 	public static void unRegister(Object o, Method m, Class<? extends Event> c) {
-		if(calling > 0) {
+		if(calling) {
 			toRemove.add(Triple.of(o, m, c));
 			return;
 		}
@@ -64,21 +64,23 @@ public class EventManager {
 		if(listeners.containsKey(e.getClass())) {
 			final HashMap<Object, ArrayList<Method>> l = EventManager.listeners.get(e.getClass());
 			if(!l.isEmpty()) {
-				calling++;
-				for(Object o : l.keySet()) {
-					for(Method m : l.get(o)) {
-						try {
+				calling = true;
+				try {
+					for(Object o : l.keySet()) {
+						for(Method m : l.get(o)) {
+							try {
 //							System.out.println("Calling " + o.getClass().getSimpleName() + "." + m.getName() + "(" + e.getClass().getSimpleName() + ")");
-							m.invoke(o, e);
-						} catch(IllegalAccessException | InvocationTargetException ex) {
-							HamHacksClient.LOGGER.error("Calling event", ex);
+								m.invoke(o, e);
+							} catch(IllegalAccessException | InvocationTargetException ex) {
+								HamHacksClient.LOGGER.error("Calling event", ex);
+							}
 						}
 					}
+				} catch(Exception ex) {
+					HamHacksClient.LOGGER.error("Calling event", ex);
 				}
-				calling--;
-				if(calling < 1) {
-					updateListeners();
-				}
+				calling = false;
+				updateListeners();
 			}
 		}
 	}
