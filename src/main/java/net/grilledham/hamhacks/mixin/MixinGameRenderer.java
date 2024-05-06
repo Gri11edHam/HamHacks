@@ -80,11 +80,12 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		RenderSystem.applyModelViewMatrix();
 	}
 	
-	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"))
-	public void modelBobbingOnly(GameRenderer instance, MatrixStack matrices, float tickDelta) {
-		if(!ModuleManager.getModule(Bob.class).modelBobbingOnly.get() || !ModuleManager.getModule(Bob.class).isEnabled()) {
-			bobView(matrices, tickDelta);
+	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Ljava/lang/Boolean;booleanValue()Z"))
+	public boolean modelBobbingOnly(Boolean b) {
+		if(ModuleManager.getModule(Bob.class).modelBobbingOnly.get() && ModuleManager.getModule(Bob.class).isEnabled()) {
+			return false;
 		}
+		return b;
 	}
 	
 	@Inject(method = "tiltViewWhenHurt", at = @At("HEAD"), cancellable = true)
@@ -184,6 +185,4 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Shadow
 	public abstract void close();
-	
-	@Shadow protected abstract void bobView(MatrixStack matrices, float tickDelta);
 }
