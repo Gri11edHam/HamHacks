@@ -26,10 +26,10 @@ public class AutoElytra extends Module {
 	
 	@Override
 	public void onDisable() {
+		super.onDisable();
 		if(mc.player == null) {
 			return;
 		}
 		mc.player.stopFallFlying();
-		super.onDisable();
 	}
 }
