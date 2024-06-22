@@ -1,8 +1,12 @@
 package net.grilledham.hamhacks.page.pages;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import net.grilledham.hamhacks.HamHacksClient;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventTick;
+import net.grilledham.hamhacks.gui.element.GuiElement;
+import net.grilledham.hamhacks.gui.element.impl.ButtonElement;
 import net.grilledham.hamhacks.gui.screen.GuiScreen;
 import net.grilledham.hamhacks.gui.screen.impl.ClickGUIScreen;
 import net.grilledham.hamhacks.gui.screen.impl.ModuleSettingsScreen;
@@ -38,6 +42,26 @@ public class ClickGUI extends Page {
 			if(screen instanceof GuiScreen) ((GuiScreen)screen).markDirty();
 		}
 	};
+	public final NumberSetting fontResMultiplier = new NumberSetting("hamhacks.page.clickGui.fontResMultiplier", 2, () -> true, 1, 8, 1, true);
+	public final Setting<Object> reloadFontButton = new Setting<>("hamhacks.page.clickGui.reloadFontButton", 0, () -> true) {
+		@Override
+		public GuiElement getElement(float x, float y, double scale) {
+			return new ButtonElement(getName(), x, y, RenderUtil.getStringWidth(getName()), 19, scale, () -> {
+				RenderUtil.reloadFont();
+				HamHacksClient.reloadResources();
+				Screen screen = mc.currentScreen;
+				if(screen instanceof GuiScreen) ((GuiScreen)screen).markDirty();
+			});
+		}
+		
+		@Override
+		public JsonElement save() {
+			return new JsonPrimitive(0);
+		}
+		
+		@Override
+		public void load(JsonElement e) {}
+	};
 	
 	private final SettingCategory OPTIONS_CATEGORY = new SettingCategory("hamhacks.page.clickGui.category.options");
 	
@@ -59,6 +83,8 @@ public class ClickGUI extends Page {
 		APPEARANCE_CATEGORY.add(scale);
 		APPEARANCE_CATEGORY.add(categoriesWidth);
 		APPEARANCE_CATEGORY.add(font);
+		APPEARANCE_CATEGORY.add(fontResMultiplier);
+		APPEARANCE_CATEGORY.add(reloadFontButton);
 		settingCategories.add(1, OPTIONS_CATEGORY);
 		OPTIONS_CATEGORY.add(openMenu);
 	}

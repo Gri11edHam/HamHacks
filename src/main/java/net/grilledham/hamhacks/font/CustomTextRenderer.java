@@ -1,6 +1,8 @@
 package net.grilledham.hamhacks.font;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.grilledham.hamhacks.page.PageManager;
+import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.util.Color;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
@@ -11,6 +13,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,23 +23,34 @@ public class CustomTextRenderer {
 	
 	private final HashMap<FontInfo.Type, CustomFont> font = new HashMap<>();
 	
+	private final FontFamily fontFamily;
+	private final int size;
+	private int resMultiplier;
+	
 	public CustomTextRenderer(FontFamily family, int size) {
+		this.fontFamily = family;
+		this.size = size;
+		reload();
+	}
+	
+	public void reload() {
+		resMultiplier = PageManager.getPage(ClickGUI.class).fontResMultiplier.get().intValue();
 		for(FontInfo.Type type : FontInfo.Type.values()) {
 			byte[] bytes;
-			FontFace face = family.get(type);
+			FontFace face = fontFamily.get(type);
 			if(face == null) {
 				font.put(type, null);
 				continue;
 			}
-			try {
-				bytes = face.toStream().readAllBytes();
+			try(InputStream stream = face.toStream()) {
+				bytes = stream.readAllBytes();
 			} catch(IOException e) {
 				throw new RuntimeException(e);
 			}
 			ByteBuffer buf = BufferUtils.createByteBuffer(bytes.length).put(bytes);
 			buf.flip();
 			
-			font.put(type, new CustomFont(buf, size * 2));
+			font.put(type, new CustomFont(buf, size * resMultiplier));
 		}
 	}
 	
@@ -54,8 +68,8 @@ public class CustomTextRenderer {
 	}
 
 	private float render(MatrixStack matrices, String text, float x, float y, int color, boolean isShadow) {
-		x *= 2;
-		y *= 2;
+		x *= resMultiplier;
+		y *= resMultiplier;
 		float start = x;
 		float r = ((color >> 16) & 255) / 255f;
 		float g = ((color >> 8) & 255) / 255f;
@@ -110,7 +124,7 @@ public class CustomTextRenderer {
 			text = section.getRight();
 			
 			matrices.push();
-			matrices.scale(0.5f, 0.5f, 0.5f);
+			matrices.scale(1f / resMultiplier, 1f / resMultiplier, 1f / resMultiplier);
 			
 			x = render(matrices, font, text, x, y, r, g, b, a, isShadow);
 			
@@ -119,7 +133,7 @@ public class CustomTextRenderer {
 		
 		float width = x - start;
 		
-		return width / 2f;
+		return width / resMultiplier;
 	}
 	
 	private float render(MatrixStack matrices, CustomFont font, String text, float x, float y, float r, float g, float b, float a, boolean isShadow) {
@@ -243,7 +257,7 @@ public class CustomTextRenderer {
 	}
 	
 	public float getHeight() {
-		return font.get(FontInfo.Type.Regular).getHeight() / 2;
+		return font.get(FontInfo.Type.Regular).getHeight() / resMultiplier;
 	}
 	
 	public float getWidth(String text) {
@@ -316,6 +330,6 @@ public class CustomTextRenderer {
 			if(font.get(section.getLeft()) == null) width += font.get(FontInfo.Type.Regular).getWidth(section.getRight());
 			else width += font.get(section.getLeft()).getWidth(section.getRight());
 		}
-		return width / 2f;
+		return width / resMultiplier;
 	}
 }

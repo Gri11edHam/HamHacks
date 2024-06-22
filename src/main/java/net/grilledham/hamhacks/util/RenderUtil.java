@@ -399,4 +399,8 @@ public class RenderUtil {
 		}
 		customTextRenderer = new CustomTextRenderer(family, 9);
 	}
+	
+	public static void reloadFont() {
+		customTextRenderer.reload();
+	}
 }

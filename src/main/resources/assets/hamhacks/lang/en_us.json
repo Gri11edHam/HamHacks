@@ -429,6 +429,9 @@
 	"hamhacks.page.clickGui.scale": "Scale",
 	"hamhacks.page.clickGui.categoriesWidth": "Categories Width",
 	"hamhacks.page.clickGui.font": "Font",
+	"hamhacks.page.clickGui.fontResMultiplier": "Font Resolution",
+	"hamhacks.page.clickGui.fontResMultiplier.tooltip": "Reload the font for changes to take effect",
+	"hamhacks.page.clickGui.reloadFontButton": "Reload Font",
 	"hamhacks.page.clickGui.openMenu": "Open Menu",
 
 	"hamhacks.page.command": "Commands",
