@@ -18,6 +18,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -27,6 +28,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
+import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -52,27 +54,27 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	private boolean calledFromFreecam = false;
 	
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4fStack;popMatrix()Lorg/joml/Matrix4fStack;", remap = false), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void renderEvent(float tickDelta, long startTime, boolean tick, CallbackInfo ci, float f, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrixStack, DrawContext drawContext) {
-		EventRender event = new EventRender(drawContext, tickDelta);
+	public void renderEvent(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrixStack, DrawContext drawContext) {
+		EventRender event = new EventRender(drawContext, tickCounter.getTickDelta(false));
 		event.call();
 	}
 	
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;render(Lnet/minecraft/client/gui/DrawContext;F)V"))
-	public void render2DEvent(InGameHud instance, DrawContext context, float tickDelta) {
-		EventRender2D event = new EventRender2D(context, tickDelta);
+	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"))
+	public void render2DEvent(InGameHud instance, DrawContext context, RenderTickCounter tickCounter) {
+		EventRender2D event = new EventRender2D(context, tickCounter.getTickDelta(false));
 		event.call();
-		instance.render(context, tickDelta);
+		instance.render(context, tickCounter);
 	}
 	
 	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=hand"), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void render3DEvent(float tickDelta, long limitTime, CallbackInfo ci, boolean bl, Camera camera, Entity entity, double d, Matrix4f matrix4f, MatrixStack matrixStack, float f, float g, Matrix4f matrix4f2) {
+	public void render3DEvent(RenderTickCounter tickCounter, CallbackInfo ci, float f, boolean bl, Camera camera, Entity entity, float f2, double d, Matrix4f matrix4f, MatrixStack matrixStack, float f3, float f4, Quaternionf q, Matrix4f matrix4f2) {
 		MatrixStack matrices = new MatrixStack();
 		matrices.push();
 		matrices.multiplyPositionMatrix(matrix4f2);
 		
 		ProjectionUtil.updateMatrices(matrices, matrix4f);
 		
-		EventRender3D event = new EventRender3D(tickDelta, matrices);
+		EventRender3D event = new EventRender3D(tickCounter.getTickDelta(false), matrices);
 		event.call();
 	
 		matrices.pop();

@@ -123,6 +123,7 @@ public class CustomTextRenderer {
 	}
 	
 	private float render(MatrixStack matrices, CustomFont font, String text, float x, float y, float r, float g, float b, float a, boolean isShadow) {
+		if(text.isEmpty()) return 0;
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
@@ -133,7 +134,7 @@ public class CustomTextRenderer {
 		
 		Matrix4f mat = matrices.peek().getPositionMatrix();
 		
-		Tessellator.getInstance().getBuffer().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+		BufferBuilder buffer = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
 		
 		Color textColor = null;
 		boolean underline = false;
@@ -226,16 +227,16 @@ public class CustomTextRenderer {
 			}
 			final boolean hasFormatColor = textColor != null;
 			float lastX = x;
-			x += font.renderGlyph(mat, obfuscate ? font.randomize(text.charAt(i)) : text.charAt(i), x, y, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
+			x += font.renderGlyph(buffer, mat, obfuscate ? font.randomize(text.charAt(i)) : text.charAt(i), x, y, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
 			if(underline) {
-				font.renderGlyph(mat, '_', lastX, y, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
+				font.renderGlyph(buffer, mat, '_', lastX, y, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
 			}
 			if(strikethrough) {
-				font.renderGlyph(mat, '-', lastX, y, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
+				font.renderGlyph(buffer, mat, '-', lastX, y, hasFormatColor ? textColor.getR() / 255f : r, hasFormatColor ? textColor.getG() / 255f : g, hasFormatColor ? textColor.getB() / 255f : b, hasFormatColor ? textColor.getAlpha() : a);
 			}
 		}
 		
-		BufferRenderer.drawWithGlobalProgram(Tessellator.getInstance().getBuffer().end());
+		BufferRenderer.drawWithGlobalProgram(buffer.end());
 		
 		RenderSystem.disableBlend();
 		return x;
@@ -246,6 +247,7 @@ public class CustomTextRenderer {
 	}
 	
 	public float getWidth(String text) {
+		if(text.isEmpty()) return 0;
 		final List<Pair<FontInfo.Type, String>> sections = new ArrayList<>();
 		
 		boolean escaped = false;

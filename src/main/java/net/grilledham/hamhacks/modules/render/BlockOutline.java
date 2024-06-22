@@ -88,7 +88,6 @@ public class BlockOutline extends Module {
 		} else {
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 		}
-		BufferBuilder buf = Tessellator.getInstance().getBuffer();
 		MatrixStack.Entry entry = matrices.peek();
 		if(overlayEnabled.get()) {
 			for(Box box : shape.getBoundingBoxes()) {
@@ -98,37 +97,37 @@ public class BlockOutline extends Module {
 				boolean cullFace = GL11.glIsEnabled(GL11.GL_CULL_FACE);
 				GL11.glDisable(GL11.GL_CULL_FACE);
 				
-				buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+				BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 				box = box.expand(0.0005);
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
 				
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
 				
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
 				
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
 				
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.minY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
 				
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha()).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
+				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
 				
 				BufferRenderer.drawWithGlobalProgram(buf.end());
 				
@@ -146,7 +145,7 @@ public class BlockOutline extends Module {
 			boolean cullFace = GL11.glIsEnabled(GL11.GL_CULL_FACE);
 			GL11.glDisable(GL11.GL_CULL_FACE);
 			
-			buf.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
+			BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
 			shape.forEachEdge((minX, minY, minZ, maxX, maxY, maxZ) -> {
 				float k = (float)(maxX - minX);
 				float l = (float)(maxY - minY);
@@ -155,8 +154,8 @@ public class BlockOutline extends Module {
 				k /= n;
 				l /= n;
 				m /= n;
-				buf.vertex(entry.getPositionMatrix(), (float)(minX + offsetX), (float)(minY + offsetY), (float)(minZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry, k, l, m).next();
-				buf.vertex(entry.getPositionMatrix(), (float)(maxX + offsetX), (float)(maxY + offsetY), (float)(maxZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry, k, l, m).next();
+				buf.vertex(entry.getPositionMatrix(), (float)(minX + offsetX), (float)(minY + offsetY), (float)(minZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry, k, l, m);
+				buf.vertex(entry.getPositionMatrix(), (float)(maxX + offsetX), (float)(maxY + offsetY), (float)(maxZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry, k, l, m);
 			});
 			BufferRenderer.drawWithGlobalProgram(buf.end());
 			

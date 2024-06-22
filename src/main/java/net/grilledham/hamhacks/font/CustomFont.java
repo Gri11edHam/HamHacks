@@ -1,7 +1,6 @@
 package net.grilledham.hamhacks.font;
 
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Tessellator;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -15,6 +14,9 @@ import java.nio.IntBuffer;
 import java.util.*;
 
 public class CustomFont {
+	
+	private static final int NUM_CHARS = 0x10000;
+	private static final int TEXTURE_SIZE = 2048;
 
 	private final Map<Character, Glyph> glyphs = new HashMap<>();
 	private final float fontHeight;
@@ -31,16 +33,16 @@ public class CustomFont {
 		STBTTFontinfo fontinfo = STBTTFontinfo.create();
 		STBTruetype.stbtt_InitFont(fontinfo, buf);
 		
-		STBTTPackedchar.Buffer cdata = STBTTPackedchar.create(128);
-		ByteBuffer bitmap = BufferUtils.createByteBuffer(2048 * 2048);
+		STBTTPackedchar.Buffer cdata = STBTTPackedchar.create(NUM_CHARS);
+		ByteBuffer bitmap = BufferUtils.createByteBuffer(TEXTURE_SIZE * TEXTURE_SIZE);
 		
 		STBTTPackContext packContext = STBTTPackContext.create();
-		STBTruetype.stbtt_PackBegin(packContext, bitmap, 2048, 2048, 0, 1);
+		STBTruetype.stbtt_PackBegin(packContext, bitmap, TEXTURE_SIZE, TEXTURE_SIZE, 0, 1);
 		STBTruetype.stbtt_PackSetOversampling(packContext, 2, 2);
-		STBTruetype.stbtt_PackFontRange(packContext, buf, 0, fontHeight, 32, cdata);
+		STBTruetype.stbtt_PackFontRange(packContext, buf, 0, fontHeight, 0, cdata);
 		STBTruetype.stbtt_PackEnd(packContext);
 		
-		texture = new FontTexture(2048, 2048, bitmap);
+		texture = new FontTexture(TEXTURE_SIZE, TEXTURE_SIZE, bitmap);
 		scale = STBTruetype.stbtt_ScaleForPixelHeight(fontinfo, fontHeight);
 		
 		try(MemoryStack stack = MemoryStack.stackPush()) {
@@ -49,11 +51,11 @@ public class CustomFont {
 			this.ascent = ascent.get(0);
 		}
 		
-		for(int i = 0; i < 128; i++) {
+		for(int i = 0; i < NUM_CHARS; i++) {
 			STBTTPackedchar packedchar = cdata.get(i);
 			
-			float ipw = 1 / 2048f;
-			float iph = 1 / 2048f;
+			float ipw = 1f / TEXTURE_SIZE;
+			float iph = 1f / TEXTURE_SIZE;
 			
 			glyphs.put((char)i, new Glyph(
 					packedchar.xoff(),
@@ -77,7 +79,7 @@ public class CustomFont {
 	public float getWidth(String text) {
 		float width = 0;
 		for(int i = 0; i < text.length(); i++) {
-			char c = (char)(text.charAt(i) - 32);
+			char c = text.charAt(i);
 			Glyph g = glyphs.get(c);
 			if(g == null) continue;
 			width += g.advance;
@@ -89,18 +91,16 @@ public class CustomFont {
 		return fontHeight;
 	}
 	
-	public float renderGlyph(Matrix4f mat, char c, float x, float y, float r, float g, float b, float a) {
-		Glyph glyph = glyphs.get((char)(c - 32));
+	public float renderGlyph(BufferBuilder buf, Matrix4f mat, char c, float x, float y, float r, float g, float b, float a) {
+		Glyph glyph = glyphs.get(c);
 		if(glyph == null) return 0;
 		
 		y += ascent * this.scale;
 		
-		BufferBuilder buf = Tessellator.getInstance().getBuffer();
-	
-		buf.vertex(mat, x + glyph.x0, y + glyph.y0, 0).texture(glyph.u0, glyph.v0).color(r, g, b, a).next();
-		buf.vertex(mat, x + glyph.x0, y + glyph.y1, 0).texture(glyph.u0, glyph.v1).color(r, g, b, a).next();
-		buf.vertex(mat, x + glyph.x1, y + glyph.y1, 0).texture(glyph.u1, glyph.v1).color(r, g, b, a).next();
-		buf.vertex(mat, x + glyph.x1, y + glyph.y0, 0).texture(glyph.u1, glyph.v0).color(r, g, b, a).next();
+		buf.vertex(mat, x + glyph.x0, y + glyph.y0, 0).texture(glyph.u0, glyph.v0).color(r, g, b, a);
+		buf.vertex(mat, x + glyph.x0, y + glyph.y1, 0).texture(glyph.u0, glyph.v1).color(r, g, b, a);
+		buf.vertex(mat, x + glyph.x1, y + glyph.y1, 0).texture(glyph.u1, glyph.v1).color(r, g, b, a);
+		buf.vertex(mat, x + glyph.x1, y + glyph.y0, 0).texture(glyph.u1, glyph.v0).color(r, g, b, a);
 		
 		return glyph.advance;
 	}

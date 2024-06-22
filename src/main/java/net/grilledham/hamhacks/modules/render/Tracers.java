@@ -22,7 +22,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
@@ -152,8 +151,7 @@ public class Tracers extends Module {
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		
-		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
+		BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 		
 		Vec3d start = getClientLookVec().add(getCameraPos());
 		
@@ -211,12 +209,12 @@ public class Tracers extends Module {
 			float g = (c >> 8 & 255) / 256f;
 			float b = (c & 255) / 256f;
 			
-			bufferBuilder.vertex(matrix, (float)start.x, (float)start.y, (float)start.z).color(r, g, b, a).next();
-			bufferBuilder.vertex(matrix, (float)end.x, (float)end.y, (float)end.z).color(r, g, b, a).next();
+			bufferBuilder.vertex(matrix, (float)start.x, (float)start.y, (float)start.z).color(r, g, b, a);
+			bufferBuilder.vertex(matrix, (float)end.x, (float)end.y, (float)end.z).color(r, g, b, a);
 			
 			if(drawStem.get()) {
-				bufferBuilder.vertex(matrix, (float)endTop.x, (float)endTop.y, (float)endTop.z).color(r, g, b, a).next();
-				bufferBuilder.vertex(matrix, (float)endBottom.x, (float)endBottom.y, (float)endBottom.z).color(r, g, b, a).next();
+				bufferBuilder.vertex(matrix, (float)endTop.x, (float)endTop.y, (float)endTop.z).color(r, g, b, a);
+				bufferBuilder.vertex(matrix, (float)endBottom.x, (float)endBottom.y, (float)endBottom.z).color(r, g, b, a);
 			}
 		}
 		

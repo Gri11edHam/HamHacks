@@ -32,6 +32,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
@@ -219,8 +220,6 @@ public class Nametags extends Module {
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
-		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-		
 		matrixStack.push();
 		matrixStack.translate(0, 0, -entities.size());
 		for(Entity e : entities) {
@@ -249,7 +248,7 @@ public class Nametags extends Module {
 				
 				Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 				
-				drawBackground(bufferBuilder, matrix, -xCenter - 2, -height - 2, width + 3, height + 3);
+				drawBackground(matrix, -xCenter - 2, -height - 2, width + 3, height + 3);
 				
 				RenderUtil.drawString(ctx, display, -xCenter, -height, -1, true);
 				
@@ -272,7 +271,7 @@ public class Nametags extends Module {
 							ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(stack);
 							
 							int size = 0;
-							for(Enchantment enchantment : enchantments.getEnchantments().stream().map(RegistryEntry::value).toList()) {
+							for(RegistryEntry<Enchantment> enchantment : enchantments.getEnchantments()) {
 								String enchantName = EnchantUtil.getShortName(enchantment) + " " + enchantments.getLevel(enchantment);
 								itemWidths[i] = Math.max(itemWidths[i], RenderUtil.getStringWidth(enchantName + " "));
 								size++;
@@ -302,8 +301,8 @@ public class Nametags extends Module {
 							float enchantY =  -itemsHeight / 2 - (enchantments.getSize() * RenderUtil.getFontHeight()) + 12;
 							float enchantX;
 							
-							for(Enchantment enchantment : enchantments.getEnchantments().stream().map(RegistryEntry::value).toList()) {
-								String enchantColor = enchantment.isCursed() ? "\u00a7c" : "\u00a7f";
+							for(RegistryEntry<Enchantment> enchantment : enchantments.getEnchantments()) {
+								String enchantColor = enchantment.streamTags().toList().contains(EnchantmentTags.CURSE) ? "\u00a7c" : "\u00a7f";
 								String enchantName = enchantColor + EnchantUtil.getShortName(enchantment) + " " + enchantments.getLevel(enchantment);
 								
 								enchantX = x + (itemWidth / 2) - (RenderUtil.getStringWidth(enchantName) / 2f) + 8;
@@ -342,29 +341,29 @@ public class Nametags extends Module {
 		return ItemStack.EMPTY;
 	}
 	
-	private void drawBackground(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float w, float h) {
+	private void drawBackground(Matrix4f matrix, float x, float y, float w, float h) {
 		int oc = outlineColor.get().getRGB();
 		int fc = fillColor.get().getRGB();
 		
 		RenderUtil.preRender();
 		
 		// fill
-		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		bufferBuilder.vertex(matrix, x, y, 0).color(fc).next();
-		bufferBuilder.vertex(matrix, x, y + h, 0).color(fc).next();
-		bufferBuilder.vertex(matrix, x + w, y + h, 0).color(fc).next();
-		bufferBuilder.vertex(matrix, x + w, y, 0).color(fc).next();
+		BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		bufferBuilder.vertex(matrix, x, y, 0).color(fc);
+		bufferBuilder.vertex(matrix, x, y + h, 0).color(fc);
+		bufferBuilder.vertex(matrix, x + w, y + h, 0).color(fc);
+		bufferBuilder.vertex(matrix, x + w, y, 0).color(fc);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		
 		// outline
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
-		bufferBuilder.vertex(matrix, x, y, 0).color(oc).next();
-		bufferBuilder.vertex(matrix, x, y + h, 0).color(oc).next();
-		bufferBuilder.vertex(matrix, x + w, y + h, 0).color(oc).next();
-		bufferBuilder.vertex(matrix, x + w, y, 0).color(oc).next();
-		bufferBuilder.vertex(matrix, x, y, 0).color(oc).next();
+		bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
+		bufferBuilder.vertex(matrix, x, y, 0).color(oc);
+		bufferBuilder.vertex(matrix, x, y + h, 0).color(oc);
+		bufferBuilder.vertex(matrix, x + w, y + h, 0).color(oc);
+		bufferBuilder.vertex(matrix, x + w, y, 0).color(oc);
+		bufferBuilder.vertex(matrix, x, y, 0).color(oc);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		RenderUtil.postRender();

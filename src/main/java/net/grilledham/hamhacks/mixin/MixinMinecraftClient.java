@@ -53,7 +53,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 	
 	@Shadow
 	@Final
-	private RenderTickCounter renderTickCounter;
+	private RenderTickCounter.Dynamic renderTickCounter;
 	
 	@Shadow public abstract Session getSession();
 	

@@ -104,70 +104,65 @@ public class RenderUtil {
 	}
 	
 	public static void drawRect(MatrixStack stack, float x, float y, float w, float h, int c) {
-		BufferBuilder buf = Tessellator.getInstance().getBuffer();
-		
 		Matrix4f mat = stack.peek().getPositionMatrix();
 		
-		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
-		buf.vertex(mat, x + w, y, zLevel).color(c).next();
-		buf.vertex(mat, x, y, zLevel).color(c).next();
-		buf.vertex(mat, x, y + h, zLevel).color(c).next();
-		buf.vertex(mat, x + w, y + h, zLevel).color(c).next();
+		buf.vertex(mat, x + w, y, zLevel).color(c);
+		buf.vertex(mat, x, y, zLevel).color(c);
+		buf.vertex(mat, x, y + h, zLevel).color(c);
+		buf.vertex(mat, x + w, y + h, zLevel).color(c);
 		
 		BufferRenderer.drawWithGlobalProgram(buf.end());
 	}
 	
 	public static void drawHRect(MatrixStack stack, float x, float y, float w, float h, int c) {
-		BufferBuilder buf = Tessellator.getInstance().getBuffer();
-		
 		Matrix4f mat = stack.peek().getPositionMatrix();
 		
 		// Top
-		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
-		buf.vertex(mat, x + w, y, zLevel).color(c).next();
-		buf.vertex(mat, x, y, zLevel).color(c).next();
-		buf.vertex(mat, x, y + 1, zLevel).color(c).next();
-		buf.vertex(mat, x + w, y + 1, zLevel).color(c).next();
+		buf.vertex(mat, x + w, y, zLevel).color(c);
+		buf.vertex(mat, x, y, zLevel).color(c);
+		buf.vertex(mat, x, y + 1, zLevel).color(c);
+		buf.vertex(mat, x + w, y + 1, zLevel).color(c);
 		
 		BufferRenderer.drawWithGlobalProgram(buf.end());
 		
 		// Left
-		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
-		buf.vertex(mat, x + 1, y + 1, zLevel).color(c).next();
-		buf.vertex(mat, x, y + 1, zLevel).color(c).next();
-		buf.vertex(mat, x, y + h - 1, zLevel).color(c).next();
-		buf.vertex(mat, x + 1, y + h - 1, zLevel).color(c).next();
+		buf.vertex(mat, x + 1, y + 1, zLevel).color(c);
+		buf.vertex(mat, x, y + 1, zLevel).color(c);
+		buf.vertex(mat, x, y + h - 1, zLevel).color(c);
+		buf.vertex(mat, x + 1, y + h - 1, zLevel).color(c);
 		
 		BufferRenderer.drawWithGlobalProgram(buf.end());
 		
 		// Bottom
-		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
-		buf.vertex(mat, x + w, y + h - 1, zLevel).color(c).next();
-		buf.vertex(mat, x, y + h - 1, zLevel).color(c).next();
-		buf.vertex(mat, x, y + h, zLevel).color(c).next();
-		buf.vertex(mat, x + w, y + h, zLevel).color(c).next();
+		buf.vertex(mat, x + w, y + h - 1, zLevel).color(c);
+		buf.vertex(mat, x, y + h - 1, zLevel).color(c);
+		buf.vertex(mat, x, y + h, zLevel).color(c);
+		buf.vertex(mat, x + w, y + h, zLevel).color(c);
 		
 		BufferRenderer.drawWithGlobalProgram(buf.end());
 		
 		// Right
-		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
-		buf.vertex(mat, x + w, y, zLevel).color(c).next();
-		buf.vertex(mat, x + w - 1, y, zLevel).color(c).next();
-		buf.vertex(mat, x + w - 1, y + h - 1, zLevel).color(c).next();
-		buf.vertex(mat, x + w, y + h - 1, zLevel).color(c).next();
+		buf.vertex(mat, x + w, y, zLevel).color(c);
+		buf.vertex(mat, x + w - 1, y, zLevel).color(c);
+		buf.vertex(mat, x + w - 1, y + h - 1, zLevel).color(c);
+		buf.vertex(mat, x + w, y + h - 1, zLevel).color(c);
 		
 		BufferRenderer.drawWithGlobalProgram(buf.end());
 	}
 	
 	public static void drawSBGradient(MatrixStack stack, float x, float y, float width, float height, float hue) {
-		BufferBuilder buf = Tessellator.getInstance().getBuffer();
 		Matrix4f mat = stack.peek().getPositionMatrix();
-		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		int tr = Color.toRGB(hue, 1, 1, 1);
 		float atr = (float)(tr >> 24 & 255) / 255.0F;
 		float rtr = (float)(tr >> 16 & 255) / 255.0F;
@@ -188,17 +183,16 @@ public class RenderUtil {
 		float rbl = (float)(bl >> 16 & 255) / 255.0F;
 		float gbl = (float)(bl >> 8 & 255) / 255.0F;
 		float bbl = (float)(bl & 255) / 255.0F;
-		buf.vertex(mat, x + width, y, zLevel).color(rtr, gtr, btr, atr).next();
-		buf.vertex(mat, x, y, zLevel).color(rtl, gtl, btl, atl).next();
-		buf.vertex(mat, x, y + height, zLevel).color(rbl, gbl, bbl, abl).next();
-		buf.vertex(mat, x + width, y + height, zLevel).color(rbr, gbr, bbr, abr).next();
+		buf.vertex(mat, x + width, y, zLevel).color(rtr, gtr, btr, atr);
+		buf.vertex(mat, x, y, zLevel).color(rtl, gtl, btl, atl);
+		buf.vertex(mat, x, y + height, zLevel).color(rbl, gbl, bbl, abl);
+		buf.vertex(mat, x + width, y + height, zLevel).color(rbr, gbr, bbr, abr);
 		BufferRenderer.drawWithGlobalProgram(buf.end());
 	}
 	
 	public static void drawHueGradient(MatrixStack stack, float x, float y, float width, float height) {
-		BufferBuilder buf = Tessellator.getInstance().getBuffer();
 		Matrix4f mat = stack.peek().getPositionMatrix();
-		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		int startC = Color.toRGB(0, 1, 1, 1);
 		float endY = y + (height / 6f);
 		int endC;
@@ -220,10 +214,10 @@ public class RenderUtil {
 			float er = (float)(endC >> 16 & 255) / 255.0F;
 			float eg = (float)(endC >> 8 & 255) / 255.0F;
 			float eb = (float)(endC & 255) / 255.0F;
-			buf.vertex(mat, x + width, y, zLevel).color(sr, sg, sb, sa).next();
-			buf.vertex(mat, x, y, zLevel).color(sr, sg, sb, sa).next();
-			buf.vertex(mat, x, endY, zLevel).color(er, eg, eb, ea).next();
-			buf.vertex(mat, x + width, endY, zLevel).color(er, eg, eb, ea).next();
+			buf.vertex(mat, x + width, y, zLevel).color(sr, sg, sb, sa);
+			buf.vertex(mat, x, y, zLevel).color(sr, sg, sb, sa);
+			buf.vertex(mat, x, endY, zLevel).color(er, eg, eb, ea);
+			buf.vertex(mat, x + width, endY, zLevel).color(er, eg, eb, ea);
 			y = endY;
 			endY = y + (height / 6f);
 			startC = endC;
@@ -232,9 +226,8 @@ public class RenderUtil {
 	}
 	
 	public static void drawAlphaGradient(MatrixStack stack, float x, float y, float width, float height) {
-		BufferBuilder buf = Tessellator.getInstance().getBuffer();
 		Matrix4f mat = stack.peek().getPositionMatrix();
-		buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		int startC = 0xffffffff;
 		int endC = 0x00ffffff;
 		float sa = (float)(startC >> 24 & 255) / 255.0F;
@@ -245,10 +238,10 @@ public class RenderUtil {
 		float er = (float)(endC >> 16 & 255) / 255.0F;
 		float eg = (float)(endC >> 8 & 255) / 255.0F;
 		float eb = (float)(endC & 255) / 255.0F;
-		buf.vertex(mat, x + width, y, zLevel).color(sr, sg, sb, sa).next();
-		buf.vertex(mat, x, y, zLevel).color(sr, sg, sb, sa).next();
-		buf.vertex(mat, x, y + height, zLevel).color(er, eg, eb, ea).next();
-		buf.vertex(mat, x + width, y + height, zLevel).color(er, eg, eb, ea).next();
+		buf.vertex(mat, x + width, y, zLevel).color(sr, sg, sb, sa);
+		buf.vertex(mat, x, y, zLevel).color(sr, sg, sb, sa);
+		buf.vertex(mat, x, y + height, zLevel).color(er, eg, eb, ea);
+		buf.vertex(mat, x + width, y + height, zLevel).color(er, eg, eb, ea);
 		BufferRenderer.drawWithGlobalProgram(buf.end());
 	}
 	
@@ -388,14 +381,12 @@ public class RenderUtil {
 	}
 	
 	private static void renderGuiQuad(Matrix4f mat, float x, float y, float width, float height, int red, int green, int blue, int alpha) {
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		buffer.vertex(mat, x, y, 0.0F).color(red, green, blue, alpha).next();
-		buffer.vertex(mat, x, y + height, 0.0F).color(red, green, blue, alpha).next();
-		buffer.vertex(mat, x + width, y + height, 0.0F).color(red, green, blue, alpha).next();
-		buffer.vertex(mat, x + width, y, 0.0F).color(red, green, blue, alpha).next();
+		BufferBuilder buffer = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		buffer.vertex(mat, x, y, 0.0F).color(red, green, blue, alpha);
+		buffer.vertex(mat, x, y + height, 0.0F).color(red, green, blue, alpha);
+		buffer.vertex(mat, x + width, y + height, 0.0F).color(red, green, blue, alpha);
+		buffer.vertex(mat, x + width, y, 0.0F).color(red, green, blue, alpha);
 		BufferRenderer.drawWithGlobalProgram(buffer.end());
 	}
 	
