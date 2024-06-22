@@ -3,6 +3,16 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.11:
+				- Updated to Minecraft 1.21
+				- Added Target Mode to Freecam
+				- Improved moduels:
+					: Infinite Reach
+					: Click TP
+				- Improved automatic updates
+				- Improved custom fonts
+				- Bug fixes
+			
 			Update 1.10.4:
 				- Updated to Minecraft 1.20.5/1.20.6
 				- Added module:
