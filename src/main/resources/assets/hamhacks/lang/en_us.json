@@ -145,11 +145,6 @@
 	"hamhacks.module.tracers.miscColorClose": "Miscellaneous Color (Close)",
 	"hamhacks.module.tracers.miscColorFar": "Miscellaneuos Color (Far)",
 
-	"hamhacks.module.instantKillBow": "Bow Bomb",
-	"hamhacks.module.instantKillBow.tooltip": "Makes your arrows fly at light speed\n\u00a7cWARNING: Uses a lot of saturation/hunger",
-	"hamhacks.module.instantKillBow.iterations": "Iterations",
-	"hamhacks.module.instantKillBow.iterations.tooltip": "How many times should the module update\nyour position (might cause kicks from some servers)",
-
 	"hamhacks.module.fullBright": "Fullbright",
 	"hamhacks.module.fullBright.tooltip": "Increases your brightness so you can see better",
 	"hamhacks.module.fullBright.brightness": "Brightness",

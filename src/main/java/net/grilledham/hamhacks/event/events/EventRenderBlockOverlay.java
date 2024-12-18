@@ -20,8 +20,9 @@ public class EventRenderBlockOverlay extends EventCancelable {
 	public final double cameraZ;
 	public final BlockPos pos;
 	public final BlockState state;
+	public final int color;
 	
-	public EventRenderBlockOverlay(VertexConsumerProvider.Immediate immediate, MatrixStack matrices, VertexConsumer vertexConsumer, Entity entity, double cameraX, double cameraY, double cameraZ, BlockPos pos, BlockState state) {
+	public EventRenderBlockOverlay(VertexConsumerProvider.Immediate immediate, MatrixStack matrices, VertexConsumer vertexConsumer, Entity entity, double cameraX, double cameraY, double cameraZ, BlockPos pos, BlockState state, int color) {
 		this.immediate = immediate;
 		this.matrices = matrices;
 		this.vertexConsumer = vertexConsumer;
@@ -31,5 +32,6 @@ public class EventRenderBlockOverlay extends EventCancelable {
 		this.cameraZ = cameraZ;
 		this.pos = pos;
 		this.state = state;
+		this.color = color;
 	}
 }

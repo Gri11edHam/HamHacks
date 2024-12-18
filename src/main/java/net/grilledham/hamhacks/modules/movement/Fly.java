@@ -121,7 +121,7 @@ public class Fly extends Module {
 					lastTime = System.currentTimeMillis();
 				}
 				case 2 -> {
-					mc.player.addVelocity(0, mc.player.input.jumping ? jetpackSpeed.get() : 0, 0);
+					mc.player.addVelocity(0, mc.player.input.playerInput.jump() ? jetpackSpeed.get() : 0, 0);
 					if(autoLand.get()) {
 						BlockPos pos = mc.player.getBlockPos().down();
 						for(; !mc.world.isOutOfHeightLimit(pos); pos = pos.down()) {
@@ -148,22 +148,22 @@ public class Fly extends Module {
 		float distanceForward = 0;
 		float distanceStrafe = 0;
 		float distanceVertical = 0;
-		if(mc.player.input.pressingForward) {
+		if(mc.player.input.playerInput.forward()) {
 			distanceForward += 1;
 		}
-		if(mc.player.input.pressingBack) {
+		if(mc.player.input.playerInput.backward()) {
 			distanceForward -= 1;
 		}
-		if(mc.player.input.pressingRight) {
+		if(mc.player.input.playerInput.right()) {
 			distanceStrafe -= 1;
 		}
-		if(mc.player.input.pressingLeft) {
+		if(mc.player.input.playerInput.left()) {
 			distanceStrafe += 1;
 		}
-		if(mc.player.input.jumping) {
+		if(mc.player.input.playerInput.jump()) {
 			distanceVertical += 1;
 		}
-		if(mc.player.input.sneaking) {
+		if(mc.player.input.playerInput.sneak()) {
 			distanceVertical -= 1;
 		}
 		float dx = (float)(distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));
@@ -186,22 +186,22 @@ public class Fly extends Module {
 		float distanceForward = 0;
 		float distanceStrafe = 0;
 		float distanceVertical = 0;
-		if(mc.player.input.pressingForward) {
+		if(mc.player.input.playerInput.forward()) {
 			distanceForward += 1;
 		}
-		if(mc.player.input.pressingBack) {
+		if(mc.player.input.playerInput.backward()) {
 			distanceForward -= 1;
 		}
-		if(mc.player.input.pressingRight) {
+		if(mc.player.input.playerInput.right()) {
 			distanceStrafe -= 1;
 		}
-		if(mc.player.input.pressingLeft) {
+		if(mc.player.input.playerInput.left()) {
 			distanceStrafe += 1;
 		}
-		if(mc.player.input.jumping) {
+		if(mc.player.input.playerInput.jump()) {
 			distanceVertical += 1;
 		}
-		if(mc.player.input.sneaking) {
+		if(mc.player.input.playerInput.sneak()) {
 			distanceVertical -= 1;
 		}
 		distanceForward *= speed.get();
@@ -230,7 +230,7 @@ public class Fly extends Module {
 		} else if(dz < -speed.get()) {
 			dz = -speed.get();
 		}
-		if(!mc.player.input.jumping && !mc.player.input.sneaking) {
+		if(!mc.player.input.playerInput.jump() && !mc.player.input.playerInput.sneak()) {
 			dy = 0;
 		}
 		if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {

@@ -116,12 +116,12 @@ public class InfiniteReach extends Module {
 				lastVec = vec;
 			}
 			for(Vec3 pos : path) {
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
 			}
 			imc.hamHacks$getInteractionManager().hamHacks$leftClickEntity(((EntityHitResult)hitResult).getEntity());
 			mc.player.swingHand(Hand.MAIN_HAND);
 			for(Vec3 pos : path.reversed()) {
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
 			}
 			pathFinder = null;
 			mc.world.playSound(mc.player, mc.player.getX(), mc.player.getY(), mc.player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE, SoundCategory.PLAYERS, 1, 1, Random.newSeed());

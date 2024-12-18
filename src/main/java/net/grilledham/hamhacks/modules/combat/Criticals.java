@@ -21,10 +21,10 @@ public class Criticals extends Module {
 		if(e.packet instanceof PlayerInteractEntityC2SPacket) {
 			if(e.type == EventPacket.EventPacketSent.Type.PRE) {
 				mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.STOP_SPRINTING));
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y + 1, mc.player.getPos().z, false));
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y + 0.5, mc.player.getPos().z, false));
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y + 1, mc.player.getPos().z, false, false));
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y + 0.5, mc.player.getPos().z, false, false));
 			} else {
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y, mc.player.getPos().z, mc.player.isOnGround()));
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y, mc.player.getPos().z, mc.player.isOnGround(), mc.player.horizontalCollision));
 			}
 		}
 	}

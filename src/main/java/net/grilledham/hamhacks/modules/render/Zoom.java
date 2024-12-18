@@ -90,7 +90,7 @@ public class Zoom extends Module {
 	}
 	
 	
-	public double modifyFov(double fov) {
+	public float modifyFov(float fov) {
 		if(isEnabled()) {
 			if(zoomKey.get().isPressed() && !zooming) {
 				zoom = initialZoom.get();

@@ -51,7 +51,6 @@ public class HamHacksConfig extends Config {
 		ModuleManager.register(modId, new Tracers());
 		ModuleManager.register(modId, new KillAura());
 		ModuleManager.register(modId, new Reach());
-		ModuleManager.register(modId, new InstantKillBow());
 		ModuleManager.register(modId, new Fullbright());
 		ModuleManager.register(modId, new Chat());
 		ModuleManager.register(modId, new NameHider());

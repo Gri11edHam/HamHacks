@@ -3,6 +3,12 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.11.1:
+				- Updated to Minecraft 1.21.3
+				- Removed module:
+					: Bow Bomb
+				- Bug fixes
+			
 			Update 1.11:
 				- Updated to Minecraft 1.21
 				- Added Target Mode to Freecam

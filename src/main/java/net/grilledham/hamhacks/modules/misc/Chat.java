@@ -129,7 +129,7 @@ public class Chat extends Module {
 								? msg.replaceFirst(MinecraftClient.getInstance().getSession().getUsername(), ModuleManager.getModule(NameHider.class).fakeName.get())
 								: msg
 		))) {
-			mc.getSoundManager().play(new PositionedSoundInstance(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP.getId(), SoundCategory.VOICE, 1, 1, new Random() {
+			mc.getSoundManager().play(new PositionedSoundInstance(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP.id(), SoundCategory.VOICE, 1, 1, new Random() {
 				@Override
 				public Random split() {
 					return this;

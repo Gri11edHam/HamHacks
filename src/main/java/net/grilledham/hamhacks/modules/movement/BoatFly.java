@@ -9,7 +9,6 @@ import net.grilledham.hamhacks.setting.BoolSetting;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.network.packet.c2s.play.VehicleMoveC2SPacket;
@@ -45,19 +44,19 @@ public class BoatFly extends Module {
 			float distanceForward = 0;
 			float distanceStrafe = 0;
 			float distanceVertical = 0;
-			if(mc.player.input.pressingForward) {
+			if(mc.player.input.playerInput.forward()) {
 				distanceForward += 1;
 			}
-			if(mc.player.input.pressingBack) {
+			if(mc.player.input.playerInput.backward()) {
 				distanceForward -= 1;
 			}
-			if(mc.player.input.pressingRight) {
+			if(mc.player.input.playerInput.right()) {
 				distanceStrafe -= 1;
 			}
-			if(mc.player.input.pressingLeft) {
+			if(mc.player.input.playerInput.left()) {
 				distanceStrafe += 1;
 			}
-			if(mc.player.input.jumping) {
+			if(mc.player.input.playerInput.jump()) {
 				distanceVertical += 1;
 			}
 			if(mc.options.sprintKey.isPressed()) {
@@ -65,7 +64,7 @@ public class BoatFly extends Module {
 			}
 			if(mc.options.sneakKey.isPressed()) {
 				shouldDismount = true;
-				if(autoBreak.get() && vehicle.getType() == EntityType.BOAT && vehicle.getControllingPassenger() == mc.player) {
+				if(autoBreak.get() && vehicle instanceof BoatEntity && vehicle.getControllingPassenger() == mc.player) {
 					lastBoat = (BoatEntity)vehicle;
 				}
 			}
@@ -74,8 +73,8 @@ public class BoatFly extends Module {
 			float dz = (float)(distanceForward * Math.sin(Math.toRadians(mc.player.getYaw() + 90)));
 			dx += (float)(distanceStrafe * Math.cos(Math.toRadians(mc.player.getYaw())));
 			dz += (float)(distanceStrafe * Math.sin(Math.toRadians(mc.player.getYaw())));
-			if(vehicle.getType() == EntityType.BOAT) {
-				dy += 0.04;
+			if(vehicle instanceof BoatEntity) {
+				dy += 0.04f;
 			}
 			vehicle.setVelocity(new Vec3d(dx, dy, dz));
 			vehicle.setYaw(mc.player.getYaw());

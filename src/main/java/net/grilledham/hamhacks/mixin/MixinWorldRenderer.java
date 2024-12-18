@@ -21,8 +21,8 @@ public class MixinWorldRenderer {
 	@Shadow @Final private BufferBuilderStorage bufferBuilders;
 	
 	@Inject(method = "drawBlockOutline", at = @At("HEAD"), cancellable = true)
-	public void drawBlockOutline(MatrixStack matrices, VertexConsumer vertexConsumer, Entity entity, double cameraX, double cameraY, double cameraZ, BlockPos pos, BlockState state, CallbackInfo ci) {
-		EventRenderBlockOverlay e = new EventRenderBlockOverlay(bufferBuilders.getEntityVertexConsumers(), matrices, vertexConsumer, entity, cameraX, cameraY, cameraZ, pos, state);
+	public void drawBlockOutline(MatrixStack matrices, VertexConsumer vertexConsumer, Entity entity, double cameraX, double cameraY, double cameraZ, BlockPos pos, BlockState state, int color, CallbackInfo ci) {
+		EventRenderBlockOverlay e = new EventRenderBlockOverlay(bufferBuilders.getEntityVertexConsumers(), matrices, vertexConsumer, entity, cameraX, cameraY, cameraZ, pos, state, color);
 		e.call();
 		if(e.canceled) {
 			ci.cancel();

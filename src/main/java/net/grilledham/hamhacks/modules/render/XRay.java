@@ -81,11 +81,9 @@ public class XRay extends Module {
 		mc.worldRenderer.reload();
 	}
 	
-	public boolean shouldDrawSide(BlockState selfState, BlockView view, BlockPos pos, Direction facing, boolean returnValue) {
+	public boolean shouldDrawSide(BlockState selfState, BlockState otherState, Direction facing, boolean returnValue) {
 		if(!returnValue && visibleBlocks.get(selfState.getBlock())) {
-			BlockPos newPos = pos.offset(facing);
-			BlockState newState = view.getBlockState(newPos);
-			return newState.getCullingFace(view, newPos, facing.getOpposite()) != VoxelShapes.fullCube() || newState.getBlock() != selfState.getBlock();
+			return otherState.getCullingFace(facing.getOpposite()) != VoxelShapes.fullCube() || otherState.getBlock() != selfState.getBlock();
 		}
 		return returnValue;
 	}

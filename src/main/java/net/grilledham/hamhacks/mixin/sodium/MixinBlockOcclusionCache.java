@@ -1,6 +1,6 @@
 package net.grilledham.hamhacks.mixin.sodium;
 
-import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache;
+import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.XRay;
 import net.minecraft.block.BlockState;
@@ -19,7 +19,9 @@ public class MixinBlockOcclusionCache {
 	private void shouldDrawSide(BlockState selfState, BlockView view, BlockPos pos, Direction facing, CallbackInfoReturnable<Boolean> cir) {
 		XRay xRay = ModuleManager.getModule(XRay.class);
 		if(xRay.isEnabled()) {
-			cir.setReturnValue(xRay.shouldDrawSide(selfState, view, pos, facing, cir.getReturnValueZ()));
+			BlockPos newPos = pos.offset(facing);
+			BlockState newState = view.getBlockState(newPos);
+			cir.setReturnValue(xRay.shouldDrawSide(selfState, newState, facing, cir.getReturnValueZ()));
 		}
 	}
 }

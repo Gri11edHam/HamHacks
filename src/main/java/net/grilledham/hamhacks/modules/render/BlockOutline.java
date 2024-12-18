@@ -13,6 +13,7 @@ import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.util.Color;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -91,7 +92,7 @@ public class BlockOutline extends Module {
 		MatrixStack.Entry entry = matrices.peek();
 		if(overlayEnabled.get()) {
 			for(Box box : shape.getBoundingBoxes()) {
-				RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+				RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 				RenderSystem.setShaderColor(1, 1, 1, 1);
 				
 				boolean cullFace = GL11.glIsEnabled(GL11.GL_CULL_FACE);
@@ -137,7 +138,7 @@ public class BlockOutline extends Module {
 			}
 		}
 		if(outlineEnabled.get()) {
-			RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+			RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
 			RenderSystem.setShaderColor(1, 1, 1, 1);
 			
 			RenderSystem.lineWidth(lineWidth.get().floatValue());

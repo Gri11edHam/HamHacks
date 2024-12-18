@@ -18,10 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinBaseProcessingPredicate {
 
 	@Inject(method = "shouldProcessQuad", at = @At("RETURN"), cancellable = true)
-	public void shouldProcessQuad(QuadView quad, Sprite sprite, BlockRenderView blockView, BlockState state, BlockPos pos, ProcessingDataProvider dataProvider, CallbackInfoReturnable<Boolean> cir) {
+	public void shouldProcessQuad(QuadView quad, Sprite sprite, BlockRenderView blockView, BlockState appearanceState, BlockState state, BlockPos pos, ProcessingDataProvider dataProvider, CallbackInfoReturnable<Boolean> cir) {
 		XRay xRay = ModuleManager.getModule(XRay.class);
 		if(xRay.isEnabled()) {
-			cir.setReturnValue(xRay.shouldDrawSide(state, blockView, pos, quad.cullFace(), cir.getReturnValue()));
+			BlockPos newPos = pos.offset(quad.cullFace());
+			BlockState newState = blockView.getBlockState(newPos);
+			cir.setReturnValue(xRay.shouldDrawSide(state, newState, quad.cullFace(), cir.getReturnValue()));
 		}
 	}
 }

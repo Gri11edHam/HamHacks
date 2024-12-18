@@ -45,9 +45,9 @@ public abstract class MixinWindow implements IWindow {
 	@Shadow @Final private MonitorTracker monitorTracker;
 	@Shadow private boolean fullscreen;
 	
-	@Shadow private boolean videoModeDirty;
+	@Shadow private boolean fullscreenVideoModeDirty;
 	
-	@Shadow public abstract void applyVideoMode();
+	@Shadow public abstract void applyFullscreenVideoMode();
 	
 	@Unique private int oldWindowedX = 0;
 	@Unique private int oldWindowedY = 0;
@@ -106,8 +106,8 @@ public abstract class MixinWindow implements IWindow {
 	
 	@Override
 	public void hamHacks$updateVideoMode() {
-		videoModeDirty = true;
-		applyVideoMode();
+		fullscreenVideoModeDirty = true;
+		applyFullscreenVideoMode();
 	}
 	
 	@Override
@@ -131,7 +131,7 @@ public abstract class MixinWindow implements IWindow {
 						try {
 							ByteBuffer byteBuffer = MemoryUtil.memAlloc(nativeImage.getWidth() * nativeImage.getHeight() * 4);
 							list2.add(byteBuffer);
-							byteBuffer.asIntBuffer().put(nativeImage.copyPixelsRgba());
+							byteBuffer.asIntBuffer().put(nativeImage.copyPixelsAbgr());
 							buffer.position(i);
 							buffer.width(nativeImage.getWidth());
 							buffer.height(nativeImage.getHeight());

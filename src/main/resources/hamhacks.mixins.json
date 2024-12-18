@@ -14,6 +14,7 @@
     "MixinClientPlayerInteractionManager",
     "MixinClientPlayNetworkHandler",
     "MixinCommandSuggestor",
+    "MixinDrawContext",
     "MixinEntityRenderer",
     "MixinFluidRenderer",
     "MixinGameRenderer",
@@ -36,8 +37,8 @@
   ],
   "mixins": [
     "MixinAbstractBlockState",
+    "MixinAbstractBoatEntity",
     "MixinBlock",
-    "MixinBoatEntity",
     "MixinEntityVelocityUpdateS2CPacket",
     "MixinLivingEntity",
     "MixinMatrix4f",

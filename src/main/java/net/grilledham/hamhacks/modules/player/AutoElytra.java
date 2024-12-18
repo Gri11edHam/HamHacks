@@ -19,8 +19,8 @@ public class AutoElytra extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		if(!mc.player.isFallFlying()) {
-			mc.player.startFallFlying();
+		if(!mc.player.isGliding()) {
+			mc.player.startGliding();
 		}
 	}
 	
@@ -30,6 +30,6 @@ public class AutoElytra extends Module {
 		if(mc.player == null) {
 			return;
 		}
-		mc.player.stopFallFlying();
+		mc.player.stopGliding();
 	}
 }

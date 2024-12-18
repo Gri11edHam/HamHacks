@@ -103,6 +103,8 @@ public class HUD extends Module {
 	
 	public void render(DrawContext context, float tickDelta, TextRenderer textRenderer) {
 		if(MinecraftClient.getInstance().getDebugHud().shouldShowDebugHud()) {
+			leftHeight = 0;
+			rightHeight = 0;
 			return;
 		}
 		

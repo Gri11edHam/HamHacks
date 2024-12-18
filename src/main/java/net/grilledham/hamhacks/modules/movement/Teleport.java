@@ -56,10 +56,10 @@ public class Teleport extends Module {
 		Vec3 pos = new Vec3(mc.player.getPos());
 		while(activate.get().wasPressed()) {
 			for(int j = 0; j < 8; j++) {
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), true));
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), true, false));
 			}
 			pos.add(facing);
-			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
+			mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
 			mc.player.setPosition(pos.get());
 			pos.set(mc.player.getPos());
 		}

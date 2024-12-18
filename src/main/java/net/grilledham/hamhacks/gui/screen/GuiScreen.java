@@ -49,6 +49,8 @@ public class GuiScreen extends Screen {
 			clearAndInit();
 		}
 		
+		super.render(ctx, mx, my, tickDelta);
+		
 		MatrixStack stack = ctx.getMatrices();
 		mx = (int)((mx * client.getWindow().getScaleFactor()) / scale);
 		my = (int)((my * client.getWindow().getScaleFactor()) / scale);
@@ -56,7 +58,6 @@ public class GuiScreen extends Screen {
 		float scaleFactor = (float)(scale / client.getWindow().getScaleFactor());
 		stack.scale(scaleFactor, scaleFactor, scaleFactor);
 		
-		super.render(ctx, mx, my, tickDelta);
 		for(GuiElement element : elements) {
 			element.render(ctx, mx, my, 0, 0, tickDelta);
 		}

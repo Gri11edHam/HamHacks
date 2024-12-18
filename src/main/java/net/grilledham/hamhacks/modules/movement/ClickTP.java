@@ -131,7 +131,7 @@ public class ClickTP extends Module {
 				lastVec = vec;
 			}
 			for(Vec3 pos : path) {
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
 			}
 			mc.player.setPosition(path.getLast().get());
 			pathFinder = null;

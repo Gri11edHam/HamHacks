@@ -14,6 +14,7 @@ import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -159,7 +160,7 @@ public class ESP extends Module {
 	}
 	
 	private void render2D(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		matrixStack.push();
@@ -270,7 +271,7 @@ public class ESP extends Module {
 	}
 	
 	private void render3D(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();

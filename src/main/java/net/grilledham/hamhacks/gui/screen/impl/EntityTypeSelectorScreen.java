@@ -65,6 +65,9 @@ public class EntityTypeSelectorScreen extends GuiScreen {
 		this.scrollArea = new SearchableScrollableElement(0, 0, 0, (int)(height * (2 / 3f)), scale);
 		
 		for(EntityType<?> type : Registries.ENTITY_TYPE) {
+			if(!setting.filter.test(type)) {
+				continue;
+			}
 			switch(type.getSpawnGroup()) {
 				case CREATURE -> {
 					ANIMAL.add(setting.get().get(type));

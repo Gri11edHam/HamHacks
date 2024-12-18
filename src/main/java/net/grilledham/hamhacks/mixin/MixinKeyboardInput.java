@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.Input;
 import net.minecraft.client.input.KeyboardInput;
 import net.minecraft.client.option.GameOptions;
+import net.minecraft.util.PlayerInput;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,24 +31,33 @@ public abstract class MixinKeyboardInput extends Input {
 	}
 	
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-	public void tick(boolean slowDown, float f, CallbackInfo ci) {
+	public void tick(boolean slowDown, float slowDownFactor, CallbackInfo ci) {
 		boolean forward = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.forwardKey).hamHacks$getBound().getCode()) == GLFW.GLFW_PRESS && PageManager.getPage(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
 		boolean back = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.backKey).hamHacks$getBound().getCode()) == GLFW.GLFW_PRESS && PageManager.getPage(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
 		boolean left = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.leftKey).hamHacks$getBound().getCode()) == GLFW.GLFW_PRESS && PageManager.getPage(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
 		boolean right = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.rightKey).hamHacks$getBound().getCode()) == GLFW.GLFW_PRESS && PageManager.getPage(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
 		boolean jump = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.jumpKey).hamHacks$getBound().getCode()) == GLFW.GLFW_PRESS && PageManager.getPage(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
 		boolean sneak = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.sneakKey).hamHacks$getBound().getCode()) == GLFW.GLFW_PRESS && PageManager.getPage(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
-		this.pressingForward = this.settings.forwardKey.isPressed() || forward;
-		this.pressingBack = this.settings.backKey.isPressed() || back;
-		this.pressingLeft = this.settings.leftKey.isPressed() || left;
-		this.pressingRight = this.settings.rightKey.isPressed() || right;
-		this.movementForward = getMovementMultiplier(this.pressingForward, this.pressingBack);
-		this.movementSideways = getMovementMultiplier(this.pressingLeft, this.pressingRight);
-		this.jumping = this.settings.jumpKey.isPressed() || jump;
-		this.sneaking = this.settings.sneakKey.isPressed() || sneak;
+		this.settings.forwardKey.setPressed(this.settings.forwardKey.isPressed() || forward);
+		this.settings.backKey.setPressed(this.settings.backKey.isPressed() || back);
+		this.settings.leftKey.setPressed(this.settings.leftKey.isPressed() || left);
+		this.settings.rightKey.setPressed(this.settings.rightKey.isPressed() || right);
+		this.settings.jumpKey.setPressed(this.settings.jumpKey.isPressed() || jump);
+		this.settings.sneakKey.setPressed(this.settings.sneakKey.isPressed() || sneak);
+		this.playerInput = new PlayerInput(
+				this.settings.forwardKey.isPressed(),
+				this.settings.backKey.isPressed(),
+				this.settings.leftKey.isPressed(),
+				this.settings.rightKey.isPressed(),
+				this.settings.jumpKey.isPressed(),
+				this.settings.sneakKey.isPressed(),
+				this.settings.sprintKey.isPressed()
+		);
+		this.movementForward = getMovementMultiplier(this.playerInput.forward(), this.playerInput.backward());
+		this.movementSideways = getMovementMultiplier(this.playerInput.left(), this.playerInput.right());
 		if (slowDown) {
-			this.movementSideways = (float)((double)this.movementSideways * f);
-			this.movementForward = (float)((double)this.movementForward * f);
+			this.movementSideways *= slowDownFactor;
+			this.movementForward *= slowDownFactor;
 		}
 		ci.cancel();
 	}

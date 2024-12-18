@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.mixin;
 
-import net.grilledham.hamhacks.event.events.EventJump;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.combat.Reach;
 import net.grilledham.hamhacks.modules.movement.BoatFly;
@@ -11,7 +10,6 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
@@ -43,12 +41,5 @@ public abstract class MixinPlayerEntity extends LivingEntity {
 		if(boatFly.isEnabled()) {
 			cir.setReturnValue(boatFly.shouldDismount());
 		}
-	}
-	
-	@Inject(method = "jump", at = @At("HEAD"), cancellable = true)
-	public void jump(CallbackInfo ci) {
-		EventJump e = new EventJump();
-		e.call();
-		if(e.canceled) ci.cancel();
 	}
 }

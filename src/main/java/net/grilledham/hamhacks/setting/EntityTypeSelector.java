@@ -2,6 +2,7 @@ package net.grilledham.hamhacks.setting;
 
 import net.grilledham.hamhacks.gui.element.GuiElement;
 import net.grilledham.hamhacks.gui.element.impl.EntityTypeSelectorElement;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.registry.Registries;
 
@@ -12,12 +13,16 @@ import java.util.function.Predicate;
 
 public class EntityTypeSelector extends SettingContainer<EntityType<?>, Boolean> {
 	
+	public final Predicate<EntityType<?>> filter;
+	
 	public EntityTypeSelector(String name, ShouldShow shouldShow, EntityType<?>... defaultEntities) {
 		this(name, shouldShow, (type) -> true, defaultEntities);
 	}
 	
 	public EntityTypeSelector(String name, ShouldShow shouldShow, Predicate<EntityType<?>> filter, EntityType<?>... defaultEntities) {
 		super(name, shouldShow);
+		
+		this.filter = filter;
 		
 		List<EntityType<?>> defaults = new ArrayList<>();
 		Collections.addAll(defaults, defaultEntities);

@@ -17,6 +17,7 @@ import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.option.Perspective;
@@ -217,7 +218,7 @@ public class Nametags extends Module {
 	
 	private void render(DrawContext ctx, double partialTicks) {
 		MatrixStack matrixStack = ctx.getMatrices();
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		matrixStack.push();

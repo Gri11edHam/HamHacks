@@ -42,22 +42,22 @@ public class PacketFly extends Module {
 		float distanceForward = 0;
 		float distanceStrafe = 0;
 		float distanceVertical = 0;
-		if(mc.player.input.pressingForward) {
+		if(mc.player.input.playerInput.forward()) {
 			distanceForward += 1;
 		}
-		if(mc.player.input.pressingBack) {
+		if(mc.player.input.playerInput.backward()) {
 			distanceForward -= 1;
 		}
-		if(mc.player.input.pressingRight) {
+		if(mc.player.input.playerInput.left()) {
 			distanceStrafe -= 1;
 		}
-		if(mc.player.input.pressingLeft) {
+		if(mc.player.input.playerInput.right()) {
 			distanceStrafe += 1;
 		}
-		if(mc.player.input.jumping) {
+		if(mc.player.input.playerInput.jump()) {
 			distanceVertical += 1;
 		}
-		if(mc.player.input.sneaking) {
+		if(mc.player.input.playerInput.sneak()) {
 			distanceVertical -= 1;
 		}
 		float dx = (float)(distanceForward * Math.cos(Math.toRadians(mc.player.getYaw() + 90)));
@@ -78,8 +78,8 @@ public class PacketFly extends Module {
 		Vec3 pos = new Vec3(mc.player.getPos());
 		pos.add(dx, dy, dz);
 		
-		mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround()));
-		mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY() - 1337, pos.getZ(), mc.player.isOnGround()));
+		mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
+		mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY() - 1337, pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
 		mc.player.setPosition(pos.get());
 	}
 	

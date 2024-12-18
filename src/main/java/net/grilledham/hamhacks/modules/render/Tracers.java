@@ -10,6 +10,8 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.setting.*;
 import net.grilledham.hamhacks.util.Color;
+import net.minecraft.client.gl.ShaderProgramKeys;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
@@ -101,9 +103,9 @@ public class Tracers extends Module {
 		matrixStack.push();
 		matrixStack.loadIdentity();
 		if(mc.options.getBobView().getValue() && !(ModuleManager.getModule(Bob.class).isEnabled() && ModuleManager.getModule(Bob.class).modelBobbingOnly.get())) {
-			PlayerEntity playerEntity = (PlayerEntity)mc.getCameraEntity();
-			float f = playerEntity.horizontalSpeed - playerEntity.prevHorizontalSpeed;
-			float g = -(playerEntity.horizontalSpeed + f * partialTicks);
+			AbstractClientPlayerEntity playerEntity = (AbstractClientPlayerEntity)mc.getCameraEntity();
+			float f = playerEntity.distanceMoved - playerEntity.lastDistanceMoved;
+			float g = -(playerEntity.distanceMoved + f * partialTicks);
 			
 			float start = playerEntity.prevStrideDistance;
 			float end = playerEntity.strideDistance;
@@ -146,7 +148,7 @@ public class Tracers extends Module {
 	}
 	
 	private void renderTracers(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();

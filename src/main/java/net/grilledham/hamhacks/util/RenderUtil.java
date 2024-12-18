@@ -5,16 +5,18 @@ import net.grilledham.hamhacks.font.CustomTextRenderer;
 import net.grilledham.hamhacks.font.FontFamily;
 import net.grilledham.hamhacks.font.FontInfo;
 import net.grilledham.hamhacks.font.FontManager;
+import net.grilledham.hamhacks.mixininterface.IDrawContext;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.text.Text;
 import org.joml.Matrix4f;
 
@@ -248,7 +250,7 @@ public class RenderUtil {
 	public static void preRender() {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 	}
 	
@@ -304,7 +306,7 @@ public class RenderUtil {
 		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null) {
 			customTextRenderer.render(ctx, s, x, y, color, shadow);
 		} else {
-			mc.textRenderer.draw(s, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
+			mc.textRenderer.draw(s, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ((IDrawContext)ctx).hamHacks$getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
 			ctx.draw();
 		}
 	}
@@ -313,7 +315,7 @@ public class RenderUtil {
 		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null) {
 			customTextRenderer.render(ctx, t, x, y, color, shadow);
 		} else {
-			mc.textRenderer.draw(t, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ctx.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
+			mc.textRenderer.draw(t, x, y, color, shadow, ctx.getMatrices().peek().getPositionMatrix(), ((IDrawContext)ctx).hamHacks$getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 15728880);
 			ctx.draw();
 		}
 	}
@@ -381,7 +383,7 @@ public class RenderUtil {
 	}
 	
 	private static void renderGuiQuad(Matrix4f mat, float x, float y, float width, float height, int red, int green, int blue, int alpha) {
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		BufferBuilder buffer = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		buffer.vertex(mat, x, y, 0.0F).color(red, green, blue, alpha);
 		buffer.vertex(mat, x, y + height, 0.0F).color(red, green, blue, alpha);

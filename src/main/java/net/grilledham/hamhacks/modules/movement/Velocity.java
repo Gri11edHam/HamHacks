@@ -30,7 +30,7 @@ public class Velocity extends Module {
 	public void onPacket(EventPacket.EventPacketReceived e) {
 		if(e.packet instanceof EntityVelocityUpdateS2CPacket packet) {
 			if(mc.player == null) return;
-			if(packet.getId() == mc.player.getId()) {
+			if(packet.getEntityId() == mc.player.getId()) {
 				double vx = packet.getVelocityX();
 				double vy = packet.getVelocityY();
 				double vz = packet.getVelocityZ();

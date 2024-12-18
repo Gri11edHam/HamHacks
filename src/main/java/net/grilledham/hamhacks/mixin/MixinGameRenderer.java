@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.mixin;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.events.EventRender;
 import net.grilledham.hamhacks.event.events.EventRender2D;
 import net.grilledham.hamhacks.event.events.EventRender3D;
@@ -25,6 +24,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.resource.SynchronousResourceReloader;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.BlockView;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
@@ -45,7 +45,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	
 	@Shadow public abstract void updateCrosshairTarget(float tickDelta);
 	
-	@Shadow @Final MinecraftClient client;
+	@Shadow @Final private MinecraftClient client;
 	
 	@Unique
 	private boolean wasFreecamEnabled = false;
@@ -54,7 +54,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	private boolean calledFromFreecam = false;
 	
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4fStack;popMatrix()Lorg/joml/Matrix4fStack;", remap = false), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void renderEvent(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrixStack, DrawContext drawContext) {
+	public void renderEvent(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, Profiler profiler, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrix4fStack, DrawContext drawContext) {
 		EventRender event = new EventRender(drawContext, tickCounter.getTickDelta(false));
 		event.call();
 	}
@@ -67,19 +67,17 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	}
 	
 	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=hand"), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void render3DEvent(RenderTickCounter tickCounter, CallbackInfo ci, float f, boolean bl, Camera camera, Entity entity, float f2, double d, Matrix4f matrix4f, MatrixStack matrixStack, float f3, float f4, Quaternionf q, Matrix4f matrix4f2) {
+	public void render3DEvent(RenderTickCounter renderTickCounter, CallbackInfo ci, float f, Profiler profiler, boolean bl, Camera camera, Entity entity, float g, float h, Matrix4f matrix4f, MatrixStack matrixStack, float i, float j, float n, Matrix4f matrix4f2, Quaternionf quaternionf, Matrix4f matrix4f3) {
 		MatrixStack matrices = new MatrixStack();
 		matrices.push();
-		matrices.multiplyPositionMatrix(matrix4f2);
+		matrices.multiplyPositionMatrix(matrix4f3);
 		
 		ProjectionUtil.updateMatrices(matrices, matrix4f);
 		
-		EventRender3D event = new EventRender3D(tickCounter.getTickDelta(false), matrices);
+		EventRender3D event = new EventRender3D(renderTickCounter.getTickDelta(false), matrices);
 		event.call();
 	
 		matrices.pop();
-		
-		RenderSystem.applyModelViewMatrix();
 	}
 	
 	@Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Ljava/lang/Boolean;booleanValue()Z"))
@@ -98,16 +96,16 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	}
 	
 	@Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
-	public void modifyFov(Camera camera, float tickDelta, boolean changingFov, CallbackInfoReturnable<Double> cir) {
-		double d = cir.getReturnValueD();
+	public void modifyFov(Camera camera, float tickDelta, boolean changingFov, CallbackInfoReturnable<Float> cir) {
+		float f = cir.getReturnValueF();
 		HandRender handRender = ModuleManager.getModule(HandRender.class);
 		if(!changingFov && handRender.isEnabled()) {
-			d *= handRender.fovMultiplier.get();
+			f *= handRender.fovMultiplier.get();
 		}
 		if(changingFov || !ModuleManager.getModule(Zoom.class).renderHand.get()) {
-			d = ModuleManager.getModule(Zoom.class).modifyFov(d);
+			f = ModuleManager.getModule(Zoom.class).modifyFov(f);
 		}
-		cir.setReturnValue(d);
+		cir.setReturnValue(f);
 	}
 	
 	@Redirect(method = "bobView", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F"))
@@ -183,7 +181,7 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 		return getFov(camera, tickDelta, changingFov);
 	}
 	
-	@Shadow protected abstract double getFov(Camera camera, float tickDelta, boolean changingFov);
+	@Shadow protected abstract float getFov(Camera camera, float tickDelta, boolean changingFov);
 	
 	@Shadow
 	public abstract void close();

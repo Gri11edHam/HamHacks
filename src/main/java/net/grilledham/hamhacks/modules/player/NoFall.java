@@ -31,7 +31,7 @@ public class NoFall extends Module {
 			switch(mode.get()) {
 				case 0 -> {
 					if(mc.player.fallDistance >= 2) {
-						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true, mc.player.horizontalCollision));
 					}
 				}
 				case 1 -> {
@@ -44,7 +44,7 @@ public class NoFall extends Module {
 						if(mc.player.fallDistance >= 3) {
 							yAdd = (int)mc.player.fallDistance;
 						}
-						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y + yAdd, mc.player.getPos().z, mc.player.isOnGround()));
+						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getPos().x, mc.player.getPos().y + yAdd, mc.player.getPos().z, mc.player.isOnGround(), mc.player.horizontalCollision));
 						mc.player.fallDistance /= 2;
 					}
 				}

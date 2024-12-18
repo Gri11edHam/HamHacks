@@ -19,7 +19,7 @@ public class MixinLightmapTextureManager {
 		this.delta = delta;
 	}
 	
-	@ModifyVariable(method = "update", at = @At(value = "STORE", ordinal = 1), index = 21)
+	@ModifyVariable(method = "update", at = @At(value = "STORE"), index = 15)
 	private float overwriteGamma(float original) {
 		return ModuleManager.getModule(Fullbright.class).getBrightness(original, delta);
 	}

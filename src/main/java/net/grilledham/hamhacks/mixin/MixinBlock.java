@@ -22,10 +22,10 @@ public abstract class MixinBlock extends AbstractBlock implements ItemConvertibl
 	}
 	
 	@Inject(method = "shouldDrawSide", at = @At("RETURN"), cancellable = true)
-	private static void shouldDrawSide(BlockState state, BlockView world, BlockPos pos, Direction side, BlockPos otherPos, CallbackInfoReturnable<Boolean> cir) {
+	private static void shouldDrawSide(BlockState state, BlockState otherState, Direction side, CallbackInfoReturnable<Boolean> cir) {
 		XRay xRay = ModuleManager.getModule(XRay.class);
 		if(xRay.isEnabled()) {
-			cir.setReturnValue(xRay.shouldDrawSide(state, world, pos, side, cir.getReturnValue()));
+			cir.setReturnValue(xRay.shouldDrawSide(state, otherState, side, cir.getReturnValue()));
 		}
 	}
 }

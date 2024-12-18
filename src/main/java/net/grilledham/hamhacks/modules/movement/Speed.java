@@ -57,21 +57,21 @@ public class Speed extends Module {
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
-			if(mc.player.getPose() == EntityPose.FALL_FLYING && disableWithElytra.get()) {
+			if(mc.player.getPose() == EntityPose.GLIDING && disableWithElytra.get()) {
 				return;
 			}
 			float distanceForward = 0;
 			float distanceStrafe = 0;
-			if(mc.player.input.pressingForward) {
+			if(mc.player.input.playerInput.forward()) {
 				distanceForward += 1;
 			}
-			if(mc.player.input.pressingBack) {
+			if(mc.player.input.playerInput.backward()) {
 				distanceForward -= 1;
 			}
-			if(mc.player.input.pressingRight) {
+			if(mc.player.input.playerInput.right()) {
 				distanceStrafe -= 1;
 			}
-			if(mc.player.input.pressingLeft) {
+			if(mc.player.input.playerInput.left()) {
 				distanceStrafe += 1;
 			}
 			if(distanceForward != 0 && distanceStrafe != 0) {
