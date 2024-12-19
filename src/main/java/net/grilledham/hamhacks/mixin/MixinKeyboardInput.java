@@ -31,7 +31,7 @@ public abstract class MixinKeyboardInput extends Input {
 	}
 	
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-	public void tick(boolean slowDown, float slowDownFactor, CallbackInfo ci) {
+	public void tick(CallbackInfo ci) {
 		boolean forward = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.forwardKey).hamHacks$getBound().getCode()) == GLFW.GLFW_PRESS && PageManager.getPage(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
 		boolean back = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.backKey).hamHacks$getBound().getCode()) == GLFW.GLFW_PRESS && PageManager.getPage(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
 		boolean left = GLFW.glfwGetKey(MinecraftClient.getInstance().getWindow().getHandle(), ((IKeyBinding)settings.leftKey).hamHacks$getBound().getCode()) == GLFW.GLFW_PRESS && PageManager.getPage(ClickGUI.class).moveInScreen(MinecraftClient.getInstance().currentScreen) && !ModuleManager.getModule(Freecam.class).isEnabled();
@@ -55,10 +55,6 @@ public abstract class MixinKeyboardInput extends Input {
 		);
 		this.movementForward = getMovementMultiplier(this.playerInput.forward(), this.playerInput.backward());
 		this.movementSideways = getMovementMultiplier(this.playerInput.left(), this.playerInput.right());
-		if (slowDown) {
-			this.movementSideways *= slowDownFactor;
-			this.movementForward *= slowDownFactor;
-		}
 		ci.cancel();
 	}
 }

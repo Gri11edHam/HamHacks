@@ -97,7 +97,7 @@ public class BoatFly extends Module {
 					} else {
 						vehicle.setPosition(vehicle.getX(), vehicle.getY() - 0.05, vehicle.getZ());
 					}
-					mc.player.networkHandler.sendPacket(new VehicleMoveC2SPacket(vehicle));
+					mc.player.networkHandler.sendPacket(VehicleMoveC2SPacket.fromVehicle(vehicle));
 					vehicle.setPosition(prevPos.get());
 				}
 			}

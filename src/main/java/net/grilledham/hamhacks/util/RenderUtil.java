@@ -13,7 +13,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
-import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ModelTransformationMode;
@@ -342,20 +341,12 @@ public class RenderUtil {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		
-		BakedModel model = mc.getItemRenderer().getModel(itemStack, null, null, 0);
-		if(!model.isSideLit()) {
-			DiffuseLighting.disableGuiDepthLighting();
-		}
 		matrices.peek().getNormalMatrix().set(1, 1, 1);
 		
 		mc.getItemRenderer().renderItem(itemStack, ModelTransformationMode.GUI, 0xF000F0,
 				OverlayTexture.DEFAULT_UV, matrices, mc.getBufferBuilders().getEntityVertexConsumers(), mc.world, 0);
 		
 		mc.getBufferBuilders().getEntityVertexConsumers().draw();
-		
-		if(!model.isSideLit()) {
-			DiffuseLighting.enableGuiDepthLighting();
-		}
 		
 		RenderSystem.disableBlend();
 		

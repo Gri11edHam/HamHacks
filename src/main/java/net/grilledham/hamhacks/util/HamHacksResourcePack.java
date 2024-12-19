@@ -4,7 +4,7 @@ import com.google.common.base.Charsets;
 import net.grilledham.hamhacks.HamHacksClient;
 import net.minecraft.SharedConstants;
 import net.minecraft.resource.*;
-import net.minecraft.resource.metadata.ResourceMetadataReader;
+import net.minecraft.resource.metadata.ResourceMetadataSerializer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PathUtil;
@@ -174,7 +174,7 @@ public class HamHacksResourcePack implements ResourcePack {
 	
 	@Nullable
 	@Override
-	public <T> T parseMetadata(ResourceMetadataReader<T> metaReader) throws IOException {
+	public <T> T parseMetadata(ResourceMetadataSerializer<T> metaReader) throws IOException {
 		try(InputStream is = openFile("pack.mcmeta").get()) {
 			return AbstractFileResourcePack.parseMetadata(metaReader, is);
 		}

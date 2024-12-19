@@ -46,7 +46,7 @@ public class NewVersionScreen extends Screen {
 		boolean overflows = changelogHeight + 8 > height - 38;
 		addDrawableChild(changelog = new ScrollableWidget((int)(width / 2f - clw / 2f) - 4, 4, (int)(clw + 8), (int)finalChangelogHeight, Text.empty()) {
 			@Override
-			protected int getContentsHeight() {
+			protected int getContentsHeightWithPadding() {
 				return (int)changelogHeight;
 			}
 			
@@ -61,7 +61,7 @@ public class NewVersionScreen extends Screen {
 			}
 			
 			@Override
-			protected void renderContents(DrawContext ctx, int mouseX, int mouseY, float delta) {
+			protected void renderWidget(DrawContext ctx, int mouseX, int mouseY, float delta) {
 				int i = 0;
 				for(String s : Updater.getChangelog().split("\n")) {
 					RenderUtil.drawString(ctx, s.replace("\t", "    ").replace("\r", ""), getX() + 4, getY() + 4 + i * (RenderUtil.getFontHeight() + 2), 0xffffffff, true);

@@ -2,8 +2,8 @@ package net.grilledham.hamhacks.mixin;
 
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.modules.render.Overlays;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameOverlayRenderer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinInGameOverlayRenderer {
 	
 	@Inject(method = "renderFireOverlay", at = @At("HEAD"))
-	private static void renderFireOverlay(MinecraftClient client, MatrixStack matrices, CallbackInfo ci) {
+	private static void renderFireOverlay(MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo ci) {
 		ModuleManager.getModule(Overlays.class).applyFireTransform(matrices);
 	}
 	
@@ -24,7 +24,7 @@ public class MixinInGameOverlayRenderer {
 		return (float)ModuleManager.getModule(Overlays.class).getOverlayTransparency(original);
 	}
 	
-	@ModifyArg(method = "renderUnderwaterOverlay", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderColor(FFFF)V"), index = 3, remap = false)
+	@ModifyArg(method = "renderUnderwaterOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/ColorHelper;fromFloats(FFFF)I"), index = 0, remap = false)
 	private static float renderWaterOverlay(float original) {
 		return (float)ModuleManager.getModule(Overlays.class).getOverlayTransparency(original);
 	}

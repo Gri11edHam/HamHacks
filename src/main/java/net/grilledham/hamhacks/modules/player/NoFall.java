@@ -15,6 +15,9 @@ public class NoFall extends Module {
 	
 	private final SelectionSetting mode = new SelectionSetting("hamhacks.module.noFall.mode", 0, () -> true, "hamhacks.module.noFall.mode.packet", "hamhacks.module.noFall.mode.flySpoof");
 	
+	private double fallStart;
+	private float fallDistance;
+	
 	public NoFall() {
 		super(Text.translatable("hamhacks.module.noFall"), Category.PLAYER, new Keybind(GLFW.GLFW_KEY_N));
 		GENERAL_CATEGORY.add(mode);
@@ -28,14 +31,19 @@ public class NoFall extends Module {
 	@EventListener
 	public void onMove(EventMotion e) {
 		if(e.type == EventMotion.Type.PRE) {
+			if(mc.player.getVelocity().getY() >= 0) {
+				fallStart = mc.player.getPos().getY();
+			} else {
+				fallDistance = (float)(fallStart - mc.player.getPos().getY());
+			}
 			switch(mode.get()) {
 				case 0 -> {
-					if(mc.player.fallDistance >= 2) {
+					if(fallDistance >= 2) {
 						mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true, mc.player.horizontalCollision));
 					}
 				}
 				case 1 -> {
-					if(mc.player.fallDistance >= 2) {
+					if(fallDistance >= 2) {
 						boolean wasFlying = mc.player.getAbilities().flying;
 						mc.player.getAbilities().flying = true;
 						mc.player.networkHandler.sendPacket(new UpdatePlayerAbilitiesC2SPacket(mc.player.getAbilities()));
