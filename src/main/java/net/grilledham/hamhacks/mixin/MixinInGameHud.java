@@ -22,13 +22,13 @@ public abstract class MixinInGameHud {
 		ModuleManager.getModule(HUD.class).render(context, tickCounter.getTickDelta(false), getTextRenderer());
 	}
 	
-	@Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"))
+	@Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getStatusEffectSpriteManager()Lnet/minecraft/client/texture/StatusEffectSpriteManager;"))
 	public void preRenderStatusEffectOverlay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
 		context.getMatrices().push();
 		context.getMatrices().translate(0, ModuleManager.getModule(HUD.class).rightHeight, 0);
 	}
 	
-	@Inject(method = "renderStatusEffectOverlay", at = @At("TAIL"))
+	@Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER))
 	public void postRenderStatusEffectOverlay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
 		context.getMatrices().pop();
 	}
