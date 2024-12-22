@@ -220,7 +220,10 @@ public class Tracers extends Module {
 			}
 		}
 		
-		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+		BuiltBuffer buf = bufferBuilder.endNullable();
+		if(buf != null) {
+			BufferRenderer.drawWithGlobalProgram(buf);
+		}
 	}
 	
 	private void applyCameraOffset(MatrixStack matrixStack) {
