@@ -251,7 +251,10 @@ public class CustomTextRenderer {
 			}
 		}
 		
-		BufferRenderer.drawWithGlobalProgram(buffer.end());
+		BuiltBuffer buf = buffer.endNullable();
+		if(buf != null) {
+			BufferRenderer.drawWithGlobalProgram(buf);
+		}
 		
 		RenderSystem.disableBlend();
 		return x;

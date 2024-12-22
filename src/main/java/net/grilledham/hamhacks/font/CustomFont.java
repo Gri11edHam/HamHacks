@@ -16,7 +16,7 @@ import java.util.*;
 public class CustomFont {
 	
 	private static final int NUM_CHARS = 0x10000;
-	private static final int TEXTURE_SIZE = 2048;
+	private static final int TEXTURE_SIZE = 4096;
 
 	private final Map<Character, Glyph> glyphs = new HashMap<>();
 	private final float fontHeight;
