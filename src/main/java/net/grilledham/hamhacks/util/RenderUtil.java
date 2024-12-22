@@ -13,6 +13,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ModelTransformationMode;
@@ -37,7 +38,8 @@ public class RenderUtil {
 	
 	public static CustomTextRenderer customTextRenderer;
 	
-	private RenderUtil() {}
+	private RenderUtil() {
+	}
 	
 	public static void translateScissor(float x, float y) {
 		SCISSOR_TRANSLATION_X += x;
@@ -45,7 +47,7 @@ public class RenderUtil {
 	}
 	
 	public static void pushScissor(float x, float y, float width, float height, float scale) {
-		scissorStack.add(0, new Float[] {x + SCISSOR_TRANSLATION_X, y + SCISSOR_TRANSLATION_Y, width, height, scale});
+		scissorStack.add(0, new Float[]{x + SCISSOR_TRANSLATION_X, y + SCISSOR_TRANSLATION_Y, width, height, scale});
 		applyScissor();
 	}
 	
@@ -58,7 +60,7 @@ public class RenderUtil {
 			width = x1 - x;
 			height = y1 - y;
 		}
-		scissorStack.add(0, new Float[] {x + SCISSOR_TRANSLATION_X, y + SCISSOR_TRANSLATION_Y, width, height, scale});
+		scissorStack.add(0, new Float[]{x + SCISSOR_TRANSLATION_X, y + SCISSOR_TRANSLATION_Y, width, height, scale});
 		applyScissor();
 	}
 	
@@ -320,12 +322,14 @@ public class RenderUtil {
 	}
 	
 	public static float getFontHeight() {
-		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null) return customTextRenderer.getHeight();
+		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null)
+			return customTextRenderer.getHeight();
 		return mc.textRenderer.fontHeight;
 	}
 	
 	public static float getStringWidth(String s) {
-		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null) return customTextRenderer.getWidth(s);
+		if(PageManager.getPage(ClickGUI.class).font.get() != 0 && customTextRenderer != null)
+			return customTextRenderer.getWidth(s);
 		return mc.textRenderer.getWidth(s);
 	}
 	
@@ -336,19 +340,21 @@ public class RenderUtil {
 		matrices.scale(16, -16, 16);
 		matrices.scale(scale, scale, 1);
 		
-		mc.getBufferBuilders().getEntityVertexConsumers().draw();
+		ItemRenderState state = ((IDrawContext)ctx).hamHacks$getItemRenderState();
+		mc.getItemModelManager().update(state, itemStack, ModelTransformationMode.GUI, false, mc.world, mc.player, 0);
 		
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
+		boolean sideLit = state.isSideLit();
+		if(!sideLit) {
+			ctx.draw();
+			DiffuseLighting.disableGuiDepthLighting();
+		}
 		
-		matrices.peek().getNormalMatrix().set(1, 1, 1);
+		state.render(matrices, mc.getBufferBuilders().getEntityVertexConsumers(), 0xF000F0, OverlayTexture.DEFAULT_UV);
+		ctx.draw();
 		
-		mc.getItemRenderer().renderItem(itemStack, ModelTransformationMode.GUI, 0xF000F0,
-				OverlayTexture.DEFAULT_UV, matrices, mc.getBufferBuilders().getEntityVertexConsumers(), mc.world, 0);
-		
-		mc.getBufferBuilders().getEntityVertexConsumers().draw();
-		
-		RenderSystem.disableBlend();
+		if(!sideLit) {
+			DiffuseLighting.enableGuiDepthLighting();
+		}
 		
 		matrices.pop();
 		
