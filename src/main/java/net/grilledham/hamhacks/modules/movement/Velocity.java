@@ -31,13 +31,14 @@ public class Velocity extends Module {
 		if(e.packet instanceof EntityVelocityUpdateS2CPacket packet) {
 			if(mc.player == null) return;
 			if(packet.getEntityId() == mc.player.getId()) {
-				double vx = packet.getVelocityX();
-				double vy = packet.getVelocityY();
-				double vz = packet.getVelocityZ();
+				IEntityVelocityUpdateS2CPacket p = (IEntityVelocityUpdateS2CPacket)packet;
+				int vx = p.hamHacks$getX();
+				int vy = p.hamHacks$getY();
+				int vz = p.hamHacks$getZ();
 				vx *= horizontal.get();
 				vy *= vertical.get();
 				vz *= horizontal.get();
-				((IEntityVelocityUpdateS2CPacket)packet).set((int)vx, (int)vy, (int)vz);
+				p.set(vx, vy, vz);
 			}
 		}
 	}

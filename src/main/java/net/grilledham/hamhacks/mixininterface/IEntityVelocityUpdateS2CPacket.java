@@ -11,4 +11,8 @@ public interface IEntityVelocityUpdateS2CPacket {
 		hamHacks$setY(vy);
 		hamHacks$setZ(vz);
 	}
+	
+	int hamHacks$getX();
+	int hamHacks$getY();
+	int hamHacks$getZ();
 }
