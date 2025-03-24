@@ -329,6 +329,9 @@
 
 	"hamhacks.module.infiniteReach": "Infinite Reach",
 	"hamhacks.module.infiniteReach.tooltip": "Allows you to reach as far as you can see",
+	"hamhacks.module.infiniteReach.pathPreview": "Path Preview",
+	"hamhacks.module.infiniteReach.previewColor": "Preview Color",
+	"hamhacks.module.infiniteReach.timeout": "Timeout",
 
 	"hamhacks.module.velocity": "Velocity",
 	"hamhacks.module.velocity.tooltip": "Modifies your knockback/velocity",
@@ -382,6 +385,9 @@
 
 	"hamhacks.module.clickTP": "Click TP",
 	"hamhacks.module.clickTP.tooltip": "Teleport to where you're looking",
+	"hamhacks.module.clickTP.pathPreview": "Path Preview",
+	"hamhacks.module.clickTP.previewColor": "Preview Color",
+	"hamhacks.module.clickTP.timeout": "Timeout",
 	"hamhacks.module.clickTP.activate": "Activate",
 
 	"hamhacks.module.generic.enabled": "Enabled",

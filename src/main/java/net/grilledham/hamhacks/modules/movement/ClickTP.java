@@ -8,7 +8,11 @@ import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.pathfinding.PathFinder;
+import net.grilledham.hamhacks.setting.BoolSetting;
+import net.grilledham.hamhacks.setting.ColorSetting;
 import net.grilledham.hamhacks.setting.KeySetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.PlayerUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.gl.ShaderProgramKeys;
@@ -35,10 +39,21 @@ public class ClickTP extends Module {
 	
 	private PathFinder pathFinder;
 	
+	private final List<Vec3> pathRemaining = new ArrayList<>();
+	
+	public final BoolSetting pathPreview = new BoolSetting("hamhacks.module.clickTP.pathPreview", true, () -> true);
+	
+	public final ColorSetting previewColor = new ColorSetting("hamhacks.module.clickTP.previewColor", new Color(0x80FF0000), pathPreview::get);
+	
+	public final NumberSetting timeout = new NumberSetting("hamhacks.module.clickTP.timeout", 5, () -> true, 0, 60, 1, false);
+	
 	public final KeySetting activate = new KeySetting("hamhacks.module.clickTP.activate", new Keybind(GLFW.GLFW_MOUSE_BUTTON_RIGHT - Keybind.MOUSE_SHIFT), () -> true);
 	
 	public ClickTP() {
 		super(Text.translatable("hamhacks.module.clickTP"), Category.MOVEMENT, new Keybind());
+		GENERAL_CATEGORY.add(pathPreview);
+		GENERAL_CATEGORY.add(previewColor);
+		GENERAL_CATEGORY.add(timeout);
 		GENERAL_CATEGORY.add(activate);
 	}
 	
@@ -58,6 +73,23 @@ public class ClickTP extends Module {
 	
 	@EventListener
 	public void tick(EventTick e) {
+		if(!pathRemaining.isEmpty()) {
+			Vec3 lastPos = null;
+			Vec3 startPos = pathRemaining.getFirst();
+			Vec3 pos;
+			while(!pathRemaining.isEmpty()) {
+				pos = pathRemaining.getFirst();
+				if(lastPos != null) {
+					if(startPos.dist(pos) >= 12) {
+						break;
+					}
+				}
+				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
+				pathRemaining.remove(pos);
+				lastPos = pos;
+			}
+			mc.player.setPosition(lastPos.get());
+		}
 		if(mc.currentScreen != null || hitResult == null || hitResult.getType() == HitResult.Type.MISS) {
 			return;
 		}
@@ -72,7 +104,7 @@ public class ClickTP extends Module {
 	public void render(EventRender3D e) {
 		hitResult = PlayerUtil.hitResult(100, e.tickDelta);
 		
-		if(pathFinder != null) {
+		if(pathFinder != null && pathPreview.get()) {
 			PathFinder.Node node = pathFinder.getPath();
 			if(node == null || node.parent == null) {
 				return;
@@ -105,7 +137,7 @@ public class ClickTP extends Module {
 			
 			while(node != null) {
 				BlockPos pos = node.pos;
-				bufferBuilder.vertex(matrix, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F).color(0xFFFF0000);
+				bufferBuilder.vertex(matrix, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F).color(previewColor.get().getRGB());
 				node = node.parent;
 			}
 			
@@ -139,7 +171,7 @@ public class ClickTP extends Module {
 		if(pathFinder != null) {
 			pathFinder.cancel();
 		}
-		pathFinder = new PathFinder().path(mc.player.getBlockPos(), endPos, mc.player.clientWorld).setTimeout(5000L).whenDone((initialPath) -> {
+		pathFinder = new PathFinder().path(mc.player.getBlockPos(), endPos, mc.player.clientWorld).setTimeout((long)(timeout.get() * 1000)).whenDone((initialPath) -> {
 			if(initialPath == null || initialPath.isEmpty()) {
 				pathFinder = null;
 				return;
@@ -185,10 +217,8 @@ public class ClickTP extends Module {
 				lastDir = dir;
 				lastVec = vec;
 			}
-			for(Vec3 pos : path) {
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
-			}
-			mc.player.setPosition(path.getLast().get());
+			pathRemaining.clear();
+			pathRemaining.addAll(path);
 			pathFinder = null;
 		}).begin();
 	}

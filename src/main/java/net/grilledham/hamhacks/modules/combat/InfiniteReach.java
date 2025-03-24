@@ -4,18 +4,21 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventClick;
 import net.grilledham.hamhacks.event.events.EventRender3D;
+import net.grilledham.hamhacks.event.events.EventTick;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.pathfinding.PathFinder;
+import net.grilledham.hamhacks.setting.BoolSetting;
+import net.grilledham.hamhacks.setting.ColorSetting;
+import net.grilledham.hamhacks.setting.NumberSetting;
+import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.PlayerUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -25,7 +28,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Random;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -38,8 +40,21 @@ public class InfiniteReach extends Module {
 	
 	private PathFinder pathFinder;
 	
+	private final List<Vec3> pathRemaining = new ArrayList<>();
+	private final List<Vec3> returnPathRemaining = new ArrayList<>();
+	private int pathState = 0;
+	
+	public final BoolSetting pathPreview = new BoolSetting("hamhacks.module.infiniteReach.pathPreview", true, () -> true);
+	
+	public final ColorSetting previewColor = new ColorSetting("hamhacks.module.infiniteReach.previewColor", new Color(0x80FF0000), pathPreview::get);
+	
+	public final NumberSetting timeout = new NumberSetting("hamhacks.module.infiniteReach.timeout", 5, () -> true, 0, 60, 1, false);
+	
 	public InfiniteReach() {
 		super(Text.translatable("hamhacks.module.infiniteReach"), Category.COMBAT, new Keybind());
+		GENERAL_CATEGORY.add(pathPreview);
+		GENERAL_CATEGORY.add(previewColor);
+		GENERAL_CATEGORY.add(timeout);
 	}
 	
 	@Override
@@ -55,9 +70,57 @@ public class InfiniteReach extends Module {
 	}
 	
 	@EventListener
+	public void tick(EventTick e) {
+		if(!pathRemaining.isEmpty() || !returnPathRemaining.isEmpty()) {
+			Vec3 lastPos = null;
+			Vec3 startPos = pathState == 0 ? pathRemaining.getFirst() : returnPathRemaining.getFirst();
+			Vec3 pos;
+			if(pathState == 0) {
+				pathState = 1;
+				while(!pathRemaining.isEmpty()) {
+					pos = pathRemaining.getFirst();
+					if(lastPos != null) {
+						if(startPos.dist(pos) >= 12) {
+							pathState = 0;
+							break;
+						}
+					}
+					mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
+					pathRemaining.remove(pos);
+					lastPos = pos;
+				}
+				mc.player.setPosition(lastPos.get());
+			}
+			if(pathState == 1) {
+				imc.hamHacks$getInteractionManager().hamHacks$leftClickEntity(((EntityHitResult)hitResult).getEntity());
+				mc.player.swingHand(Hand.MAIN_HAND);
+//				mc.world.playSound(mc.player, mc.player.getX(), mc.player.getY(), mc.player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE, SoundCategory.PLAYERS, 1, 1, Random.newSeed());
+				pathState = 2;
+			}
+			if(pathState == 2) {
+				while(!returnPathRemaining.isEmpty()) {
+					pos = returnPathRemaining.getFirst();
+					if(lastPos != null) {
+						if(startPos.dist(pos) >= 12) {
+							break;
+						}
+					}
+					mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
+					returnPathRemaining.remove(pos);
+					lastPos = pos;
+				}
+				mc.player.setPosition(lastPos.get());
+			}
+		}
+	}
+	
+	@EventListener
 	public void render(EventRender3D e) {
+		if(!pathRemaining.isEmpty()) {
+			return;
+		}
 		hitResult = PlayerUtil.hitResult(100, e.tickDelta);
-		if(pathFinder != null) {
+		if(pathFinder != null && pathPreview.get()) {
 			PathFinder.Node node = pathFinder.getPath();
 			if(node == null || node.parent == null) {
 				return;
@@ -90,7 +153,7 @@ public class InfiniteReach extends Module {
 			
 			while(node != null) {
 				BlockPos pos = node.pos;
-				bufferBuilder.vertex(matrix, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F).color(0xFFFF0000);
+				bufferBuilder.vertex(matrix, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F).color(previewColor.get().getRGB());
 				node = node.parent;
 			}
 			
@@ -123,7 +186,7 @@ public class InfiniteReach extends Module {
 		if(pathFinder != null) {
 			pathFinder.cancel();
 		}
-		pathFinder = new PathFinder().path(mc.player.getBlockPos(), BlockPos.ofFloored(hitResult.getPos()), mc.player.clientWorld, 3).setTimeout(5000L).whenDone((initialPath) -> {
+		pathFinder = new PathFinder().path(mc.player.getBlockPos(), BlockPos.ofFloored(hitResult.getPos()), mc.player.clientWorld, 3).setTimeout((long)(timeout.get() * 1000)).whenDone((initialPath) -> {
 			if(initialPath == null || initialPath.isEmpty()) {
 				pathFinder = null;
 				return;
@@ -169,16 +232,12 @@ public class InfiniteReach extends Module {
 				lastDir = dir;
 				lastVec = vec;
 			}
-			for(Vec3 pos : path) {
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
-			}
-			imc.hamHacks$getInteractionManager().hamHacks$leftClickEntity(((EntityHitResult)hitResult).getEntity());
-			mc.player.swingHand(Hand.MAIN_HAND);
-			for(Vec3 pos : path.reversed()) {
-				mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(pos.getX(), pos.getY(), pos.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
-			}
+			pathRemaining.clear();
+			pathRemaining.addAll(path);
+			returnPathRemaining.clear();
+			returnPathRemaining.addAll(path.reversed());
+			pathState = 0;
 			pathFinder = null;
-			mc.world.playSound(mc.player, mc.player.getX(), mc.player.getY(), mc.player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE, SoundCategory.PLAYERS, 1, 1, Random.newSeed());
 		}).begin();
 	}
 }
