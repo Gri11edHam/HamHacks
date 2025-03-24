@@ -3,6 +3,14 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
+			Update 1.11.2
+				- Updated to Minecraft 1.21.4
+				- Improved modules:
+					: Infinite Reach
+					: Click TP
+				- Fixed Velocity module
+				- Buf fixes
+			
 			Update 1.11.1:
 				- Updated to Minecraft 1.21.3
 				- Removed module:
