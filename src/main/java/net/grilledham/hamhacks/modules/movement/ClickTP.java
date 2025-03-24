@@ -1,5 +1,6 @@
 package net.grilledham.hamhacks.modules.movement;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventRender3D;
 import net.grilledham.hamhacks.event.events.EventTick;
@@ -10,13 +11,20 @@ import net.grilledham.hamhacks.pathfinding.PathFinder;
 import net.grilledham.hamhacks.setting.KeySetting;
 import net.grilledham.hamhacks.util.PlayerUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
+import net.minecraft.client.gl.ShaderProgramKeys;
+import net.minecraft.client.render.*;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +46,14 @@ public class ClickTP extends Module {
 	public String getHUDText() {
 		String extra = "";
 		if(hitResult.getType() == HitResult.Type.ENTITY && hitResult != null && mc.world != null) {
-			extra = "(" + ((EntityHitResult)hitResult).getEntity().getName().getString() + "|" + String.format("%.2f", Math.sqrt(hitResult.squaredDistanceTo(mc.player))) + ") ";
+			extra = "(" + ((EntityHitResult)hitResult).getEntity().getName().getString() + "|" + String.format("%.2f", Math.sqrt(hitResult.squaredDistanceTo(mc.player))) + ")";
 		} else if(hitResult.getType() == HitResult.Type.BLOCK && hitResult != null && mc.world != null) {
-			extra = "(" + mc.world.getBlockState(((BlockHitResult)hitResult).getBlockPos()).getBlock().getName().getString() + "|" + String.format("%.2f", Math.sqrt(hitResult.squaredDistanceTo(mc.player))) + ") ";
+			extra = "(" + mc.world.getBlockState(((BlockHitResult)hitResult).getBlockPos()).getBlock().getName().getString() + "|" + String.format("%.2f", Math.sqrt(hitResult.squaredDistanceTo(mc.player))) + ")";
 		}
 		if(pathFinder != null) {
-			extra += String.format("Pathing(%.2f)", pathFinder.getExecutionTime() / 1000D);
+			extra += String.format(" Pathing(%.2f)", pathFinder.getExecutionTime() / 1000D);
 		}
-		return super.getHUDText() + " \u00a77" + hitResult.getType().name() + extra.trim();
+		return super.getHUDText() + " \u00a77" + hitResult.getType().name() + extra;
 	}
 	
 	@EventListener
@@ -63,6 +71,53 @@ public class ClickTP extends Module {
 	@EventListener
 	public void render(EventRender3D e) {
 		hitResult = PlayerUtil.hitResult(100, e.tickDelta);
+		
+		if(pathFinder != null) {
+			PathFinder.Node node = pathFinder.getPath();
+			if(node == null || node.parent == null) {
+				return;
+			}
+			
+			MatrixStack matrixStack = e.matrices;
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GL11.glEnable(GL11.GL_LINE_SMOOTH);
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
+			
+			matrixStack.push();
+			
+			matrixStack.loadIdentity();
+			
+			Vec3d camPos = mc.getBlockEntityRenderDispatcher().camera.getPos();
+			Quaternionf q = new Quaternionf();
+			q.rotateXYZ((float)Math.toRadians(mc.getBlockEntityRenderDispatcher().camera.getPitch()), (float)Math.toRadians((mc.getBlockEntityRenderDispatcher().camera.getYaw()) % 360 + 180), 0);
+			matrixStack.peek().getPositionMatrix().rotate(q);
+			matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
+			
+			RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+			RenderSystem.setShaderColor(1, 1, 1, 1);
+			
+			Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+			
+			GL11.glDisable(GL11.GL_CULL_FACE);
+			
+			BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
+			
+			while(node != null) {
+				BlockPos pos = node.pos;
+				bufferBuilder.vertex(matrix, pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F).color(0xFFFF0000);
+				node = node.parent;
+			}
+			
+			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+			
+			matrixStack.pop();
+			
+			RenderSystem.setShaderColor(1, 1, 1, 1);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		}
 	}
 	
 	private void doTeleport(HitResult hitResult) {

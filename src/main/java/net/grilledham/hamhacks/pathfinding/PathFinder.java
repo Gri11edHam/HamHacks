@@ -6,18 +6,20 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 public class PathFinder {
 	
-	private final Node[][][] nodes = new Node[512][512][512];
+	private final HashMap<BlockPos, Node> visitedNodes = new HashMap<>();
 	private Node start;
 	private Node startNode;
 	private Node endNode;
 	private World world;
 	private float endDist;
+	private Node node;
 	
 	private Consumer<List<Vec3>> whenDone;
 	
@@ -68,7 +70,6 @@ public class PathFinder {
 				openList.add(startNode);
 				startNode.opened = true;
 				
-				Node node;
 				List<Node> neighbors;
 				while(!openList.isEmpty() && ((executionTime = System.currentTimeMillis() - startTime) < timeout || timeout <= -1) && !canceled) {
 					node = openList.get(0);
@@ -121,6 +122,10 @@ public class PathFinder {
 		return executionTime;
 	}
 	
+	public Node getPath() {
+		return node;
+	}
+	
 	private List<Vec3> backtrace(Node endNode) {
 		List<Vec3> path = new ArrayList<>();
 		Node node = endNode;
@@ -153,23 +158,19 @@ public class PathFinder {
 	}
 	
 	private Node getStart(BlockPos pos) {
-		return nodes[256][256][256] = start = new Node(pos);
+		start = new Node(pos);
+		visitedNodes.put(pos, start);
+		return start;
 	}
 	
 	private Node getNode(BlockPos pos) {
-		int x = pos.getX() - start.pos.getX() + 256;
-		int y = pos.getY() - start.pos.getY() + 256;
-		int z = pos.getZ() - start.pos.getZ() + 256;
-		if(x < 0 || x > 511 || y < 0 || y > 511 || z < 0 || z > 511) {
-			return null;
+		if(!visitedNodes.containsKey(pos)) {
+			visitedNodes.put(pos, new Node(pos));
 		}
-		if(nodes[x][y][z] == null) {
-			nodes[x][y][z] = new Node(pos);
-		}
-		return nodes[x][y][z];
+		return visitedNodes.get(pos);
 	}
 	
-	private static class Node {
+	public static class Node {
 		
 		public Node parent = null;
 		
@@ -180,7 +181,7 @@ public class PathFinder {
 		public float h = Float.POSITIVE_INFINITY;
 		public float f = Float.POSITIVE_INFINITY;
 		
-		private final BlockPos pos;
+		public final BlockPos pos;
 		
 		public Node(BlockPos pos) {
 			this.pos = pos;
