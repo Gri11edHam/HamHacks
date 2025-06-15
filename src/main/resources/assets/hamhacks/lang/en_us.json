@@ -144,6 +144,7 @@
 	"hamhacks.module.tracers.ambientColorFar": "Ambient Color (Far)",
 	"hamhacks.module.tracers.miscColorClose": "Miscellaneous Color (Close)",
 	"hamhacks.module.tracers.miscColorFar": "Miscellaneuos Color (Far)",
+	"hamhacks.module.tracers.lineWidth": "Line Width",
 
 	"hamhacks.module.fullBright": "Fullbright",
 	"hamhacks.module.fullBright.tooltip": "Increases your brightness so you can see better",
@@ -264,6 +265,7 @@
 	"hamhacks.module.esp.ambientFillColor": "Ambient Fill Color",
 	"hamhacks.module.esp.miscOutlineColor": "Miscellaneous Outline Color",
 	"hamhacks.module.esp.miscFillColor": "Miscellaneous Fill Color",
+	"hamhacks.module.esp.lineWidth": "Line Width",
 
 	"hamhacks.module.nametags": "Nametags",
 	"hamhacks.module.nametags.tooltips": "Improves nametags",
@@ -282,6 +284,7 @@
 	"hamhacks.module.nametags.scaleWithZoom": "Scale with Zoom",
 	"hamhacks.module.nametags.outlineColor": "Outline Color",
 	"hamhacks.module.nametags.fillColor": "Fill Color",
+	"hamhacks.module.nametags.lineWidth": "Line Width",
 
 	"hamhacks.module.autoTotem": "Auto Totem",
 	"hamhacks.module.autoTotem.tooltip": "Automatically refills your offhand with totems",

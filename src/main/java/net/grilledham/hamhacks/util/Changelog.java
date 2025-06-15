@@ -3,13 +3,17 @@ package net.grilledham.hamhacks.util;
 public class Changelog {
 	
 	private static final String CHANGELOG = """
-			Update 1.11.2
+			Update 1.11.3:
+				- Updated to Minecraft 1.21.5
+				- Added Line Width option to some render modules
+			
+			Update 1.11.2:
 				- Updated to Minecraft 1.21.4
 				- Improved modules:
 					: Infinite Reach
 					: Click TP
 				- Fixed Velocity module
-				- Buf fixes
+				- Bug fixes
 			
 			Update 1.11.1:
 				- Updated to Minecraft 1.21.3
@@ -20,7 +24,7 @@ public class Changelog {
 			Update 1.11:
 				- Updated to Minecraft 1.21
 				- Added Target Mode to Freecam
-				- Improved moduels:
+				- Improved modules:
 					: Infinite Reach
 					: Click TP
 				- Improved automatic updates

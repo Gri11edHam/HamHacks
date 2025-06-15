@@ -46,6 +46,8 @@ public class Tracers extends Module {
 	
 	private final EntityTypeSelector entitySelector = new EntityTypeSelector("hamhacks.module.tracers.entitySelector", () -> true, EntityType.PLAYER);
 	
+	public final NumberSetting lineWidth = new NumberSetting("hamhacks.module.tracers.lineWidth", 1, () -> true, 1, 20, 1, false);
+	
 	private final SettingCategory COLOR_CATEGORY = new SettingCategory("hamhacks.module.tracers.category.color");
 	
 	private final ColorSetting playerClose = new ColorSetting("hamhacks.module.tracers.playerColorClose", new Color(0xFF00FFFF), () -> true);
@@ -78,6 +80,7 @@ public class Tracers extends Module {
 		OPTIONS_CATEGORY.add(drawStem);
 		OPTIONS_CATEGORY.add(endPos);
 		OPTIONS_CATEGORY.add(entitySelector);
+		OPTIONS_CATEGORY.add(lineWidth);
 		settingCategories.add(1, COLOR_CATEGORY);
 		COLOR_CATEGORY.add(playerClose);
 		COLOR_CATEGORY.add(playerFar);
@@ -153,7 +156,7 @@ public class Tracers extends Module {
 		MatrixStack.Entry entry = matrixStack.peek();
 		
 		VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
-		VertexConsumer bufferBuilder = vcp.getBuffer(RenderLayer.getDebugCrosshair(1));
+		VertexConsumer bufferBuilder = vcp.getBuffer(RenderLayer.getDebugCrosshair(lineWidth.get()));
 //		BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 		
 		Vec3d start = getClientLookVec().add(getCameraPos());

@@ -50,6 +50,8 @@ public class ESP extends Module {
 	
 	private final EntityTypeSelector entitySelector = new EntityTypeSelector("hamhacks.module.esp.entitySelector", () -> true, EntityType.PLAYER);
 	
+	public final NumberSetting lineWidth = new NumberSetting("hamhacks.module.esp.lineWidth", 1, () -> true, 1, 20, 1, false);
+	
 	private final SettingCategory COLOR_CATEGORY = new SettingCategory("hamhacks.module.esp.category.color");
 	
 	private final ColorSetting playerOutline = new ColorSetting("hamhacks.module.esp.playerOutlineColor", new Color(0xFF00FFFF), () -> true);
@@ -82,6 +84,7 @@ public class ESP extends Module {
 		OPTIONS_CATEGORY.add(mode);
 		OPTIONS_CATEGORY.add(self);
 		OPTIONS_CATEGORY.add(entitySelector);
+		OPTIONS_CATEGORY.add(lineWidth);
 		settingCategories.add(1, COLOR_CATEGORY);
 		COLOR_CATEGORY.add(playerOutline);
 		COLOR_CATEGORY.add(playerFill);
@@ -244,7 +247,7 @@ public class ESP extends Module {
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			
 			// outline
-			bufferBuilder = vcp.getBuffer(RenderLayer.getDebugLineStrip(1));
+			bufferBuilder = vcp.getBuffer(RenderLayer.getDebugLineStrip(lineWidth.get()));
 //			bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos1.getY(), 0).color(oc);
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos2.getY(), 0).color(oc);
@@ -372,7 +375,7 @@ public class ESP extends Module {
 			bufferBuilder.vertex(matrix, x2, y1, z2).color(fc);
 			
 			// outline
-			bufferBuilder = vcp.getBuffer(RenderLayer.getDebugCrosshair(1));
+			bufferBuilder = vcp.getBuffer(RenderLayer.getDebugCrosshair(lineWidth.get()));
 //			bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 			// faces
 			// top

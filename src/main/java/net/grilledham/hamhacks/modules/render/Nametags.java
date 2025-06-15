@@ -85,6 +85,8 @@ public class Nametags extends Module {
 	
 	private final ColorSetting fillColor = new ColorSetting("hamhacks.module.nametags.fillColor", new Color(0x80000000), () -> true);
 	
+	public final NumberSetting lineWidth = new NumberSetting("hamhacks.module.nametags.lineWidth", 1, () -> true, 1, 20, 1, false);
+	
 	public Nametags() {
 		super(Text.translatable("hamhacks.module.nametags"), Category.RENDER, new Keybind(0));
 		settingCategories.add(0, ENTITIES_CATEGORY);
@@ -102,6 +104,7 @@ public class Nametags extends Module {
 		APPEARANCE_CATEGORY.add(scaleWithZoom);
 		APPEARANCE_CATEGORY.add(outlineColor);
 		APPEARANCE_CATEGORY.add(fillColor);
+		APPEARANCE_CATEGORY.add(lineWidth);
 	}
 	
 	@EventListener
@@ -362,7 +365,7 @@ public class Nametags extends Module {
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		
 		// outline
-		bufferBuilder = vcp.getBuffer(RenderLayer.getDebugLineStrip(1));
+		bufferBuilder = vcp.getBuffer(RenderLayer.getDebugLineStrip(lineWidth.get()));
 //		bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
 		bufferBuilder.vertex(matrix, x, y, 0).color(oc);
 		bufferBuilder.vertex(matrix, x, y + h, 0).color(oc);
