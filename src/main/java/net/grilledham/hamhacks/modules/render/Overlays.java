@@ -7,9 +7,9 @@ import net.grilledham.hamhacks.setting.NumberSetting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.text.Text;
 
 public class Overlays extends Module {
@@ -27,7 +27,7 @@ public class Overlays extends Module {
 		GENERAL_CATEGORY.add(overlayTransparency);
 	}
 	
-	public void applyShieldTransform(LivingEntity entity, ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+	public void applyShieldTransform(LivingEntity entity, ItemStack stack, ItemDisplayContext renderMode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
 		if(isEnabled()) {
 			if(entity == mc.getCameraEntity() && mc.options.getPerspective().isFirstPerson()) {
 				if(stack.getItem() == Items.SHIELD) {

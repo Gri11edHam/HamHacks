@@ -48,7 +48,7 @@ public class CrystalAura extends Module {
 		}
 		if(p != null) {
 			int slot = -1;
-			int oldSlot = mc.player.getInventory().selectedSlot;
+			int oldSlot = mc.player.getInventory().getSelectedSlot();
 			for(int i = 0; i < 9; i++) {
 				ItemStack stack = mc.player.getInventory().getStack(i);
 				
@@ -60,7 +60,7 @@ public class CrystalAura extends Module {
 				setEnabled(false);
 				return;
 			}
-			mc.player.getInventory().selectedSlot = slot;
+			mc.player.getInventory().setSelectedSlot(slot);
 			Vec3d eyesPos = new Vec3d(mc.player.getX(), mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
 			
 			List<Vec3i> possiblePositions = Lists.newArrayList();
@@ -84,7 +84,7 @@ public class CrystalAura extends Module {
 					break;
 				}
 			}
-			mc.player.getInventory().selectedSlot = oldSlot;
+			mc.player.getInventory().setSelectedSlot(oldSlot);
 		}
 	}
 	

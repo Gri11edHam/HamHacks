@@ -1,6 +1,5 @@
 package net.grilledham.hamhacks.modules.render;
 
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventRender2D;
@@ -17,11 +16,12 @@ import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.option.Perspective;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
@@ -29,6 +29,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -42,7 +43,10 @@ import net.minecraft.world.GameMode;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Nametags extends Module {
@@ -218,7 +222,6 @@ public class Nametags extends Module {
 	
 	private void render(DrawContext ctx, double partialTicks) {
 		MatrixStack matrixStack = ctx.getMatrices();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		matrixStack.push();
@@ -226,7 +229,7 @@ public class Nametags extends Module {
 		for(Entity e : entities) {
 			if(!shouldRender(e)) continue;
 			
-			Vec3 interpolationOffset = new Vec3(e.getX(), e.getY(), e.getZ()).sub(e.prevX, e.prevY, e.prevZ).mul(1 - partialTicks);
+			Vec3 interpolationOffset = new Vec3(e.getX(), e.getY(), e.getZ()).sub(e.lastX, e.lastY, e.lastZ).mul(1 - partialTicks);
 			float ex = (float)(e.getX() - interpolationOffset.getX());
 			float ey = (float)(e.getY() - interpolationOffset.getY());
 			float ez = (float)(e.getZ() - interpolationOffset.getZ());
@@ -328,14 +331,13 @@ public class Nametags extends Module {
 	
 	private ItemStack getItem(Entity entity, int index) {
 		if(entity instanceof LivingEntity living) {
-			List<ItemStack> armor = Lists.newArrayList(((LivingEntity)entity).getArmorItems());
 			return switch(index) {
 				case 0 -> living.getMainHandStack();
 				case 1 -> living.getOffHandStack();
-				case 2 -> armor.get(3);
-				case 3 -> armor.get(2);
-				case 4 -> armor.get(1);
-				case 5 -> armor.get(0);
+				case 2 -> living.getEquippedStack(EquipmentSlot.HEAD);
+				case 3 -> living.getEquippedStack(EquipmentSlot.BODY);
+				case 4 -> living.getEquippedStack(EquipmentSlot.LEGS);
+				case 5 -> living.getEquippedStack(EquipmentSlot.FEET);
 				default -> ItemStack.EMPTY;
 			};
 		}
@@ -348,24 +350,27 @@ public class Nametags extends Module {
 		
 		RenderUtil.preRender();
 		
+		VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
 		// fill
-		BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		VertexConsumer bufferBuilder = vcp.getBuffer(RenderLayer.getDebugQuads());
+//		BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		bufferBuilder.vertex(matrix, x, y, 0).color(fc);
 		bufferBuilder.vertex(matrix, x, y + h, 0).color(fc);
 		bufferBuilder.vertex(matrix, x + w, y + h, 0).color(fc);
 		bufferBuilder.vertex(matrix, x + w, y, 0).color(fc);
-		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		
 		// outline
-		bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
+		bufferBuilder = vcp.getBuffer(RenderLayer.getDebugLineStrip(1));
+//		bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
 		bufferBuilder.vertex(matrix, x, y, 0).color(oc);
 		bufferBuilder.vertex(matrix, x, y + h, 0).color(oc);
 		bufferBuilder.vertex(matrix, x + w, y + h, 0).color(oc);
 		bufferBuilder.vertex(matrix, x + w, y, 0).color(oc);
 		bufferBuilder.vertex(matrix, x, y, 0).color(oc);
-		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+		
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 		
 		RenderUtil.postRender();
 	}

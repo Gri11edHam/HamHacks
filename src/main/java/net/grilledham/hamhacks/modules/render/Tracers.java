@@ -10,9 +10,11 @@ import net.grilledham.hamhacks.modules.Module;
 import net.grilledham.hamhacks.modules.ModuleManager;
 import net.grilledham.hamhacks.setting.*;
 import net.grilledham.hamhacks.util.Color;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -95,8 +97,6 @@ public class Tracers extends Module {
 	public void onRender3D(EventRender3D e) {
 		MatrixStack matrixStack = e.matrices;
 		float partialTicks = e.tickDelta;
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
@@ -107,7 +107,7 @@ public class Tracers extends Module {
 			float f = playerEntity.distanceMoved - playerEntity.lastDistanceMoved;
 			float g = -(playerEntity.distanceMoved + f * partialTicks);
 			
-			float start = playerEntity.prevStrideDistance;
+			float start = playerEntity.lastStrideDistance;
 			float end = playerEntity.strideDistance;
 			if(ModuleManager.getModule(Zoom.class).isEnabled()) {
 				double divisor = Math.sqrt(ModuleManager.getModule(Zoom.class).getZoomAmount());
@@ -129,7 +129,6 @@ public class Tracers extends Module {
 		// GL resets
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 	}
 	
@@ -148,19 +147,21 @@ public class Tracers extends Module {
 	}
 	
 	private void renderTracers(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+		MatrixStack.Entry entry = matrixStack.peek();
 		
-		BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
+		VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+		VertexConsumer bufferBuilder = vcp.getBuffer(RenderLayer.getDebugCrosshair(1));
+//		BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 		
 		Vec3d start = getClientLookVec().add(getCameraPos());
 		
 		for(Entity e : entities) {
 			if(!shouldRender(e)) continue;
 			
-			Vec3d interpolationOffset = new Vec3d(e.getX(), e.getY(), e.getZ()).subtract(e.prevX, e.prevY, e.prevZ).multiply(1 - partialTicks);
+			Vec3d interpolationOffset = new Vec3d(e.getX(), e.getY(), e.getZ()).subtract(e.lastX, e.lastY, e.lastZ).multiply(1 - partialTicks);
 			Vec3d endTop = e.getBoundingBox().getCenter().add(0, e.getEyeHeight(e.getPose()) / 2, 0).subtract(interpolationOffset);
 			Vec3d endCenter = e.getBoundingBox().getCenter().subtract(interpolationOffset);
 			Vec3d endBottom = e.getBoundingBox().getCenter().subtract(0, e.getEyeHeight(e.getPose()) / 2, 0).subtract(interpolationOffset);
@@ -211,19 +212,31 @@ public class Tracers extends Module {
 			float g = (c >> 8 & 255) / 256f;
 			float b = (c & 255) / 256f;
 			
-			bufferBuilder.vertex(matrix, (float)start.x, (float)start.y, (float)start.z).color(r, g, b, a);
-			bufferBuilder.vertex(matrix, (float)end.x, (float)end.y, (float)end.z).color(r, g, b, a);
+			float k = (float)(end.x - start.x);
+			float l = (float)(end.y - start.y);
+			float m = (float)(end.z - start.z);
+			float n = MathHelper.sqrt(k * k + l * l + m * m);
+			k /= n;
+			l /= n;
+			m /= n;
+			
+			bufferBuilder.vertex(matrix, (float)start.x, (float)start.y, (float)start.z).color(r, g, b, a).normal(entry, k, l, m);
+			bufferBuilder.vertex(matrix, (float)end.x, (float)end.y, (float)end.z).color(r, g, b, a).normal(entry, k, l, m);
 			
 			if(drawStem.get()) {
-				bufferBuilder.vertex(matrix, (float)endTop.x, (float)endTop.y, (float)endTop.z).color(r, g, b, a);
-				bufferBuilder.vertex(matrix, (float)endBottom.x, (float)endBottom.y, (float)endBottom.z).color(r, g, b, a);
+				k = (float)(endTop.x - endBottom.x);
+				l = (float)(endTop.y - endBottom.y);
+				m = (float)(endTop.z - endBottom.z);
+				n = MathHelper.sqrt(k * k + l * l + m * m);
+				k /= n;
+				l /= n;
+				m /= n;
+				bufferBuilder.vertex(matrix, (float)endTop.x, (float)endTop.y, (float)endTop.z).color(r, g, b, a).normal(entry, k, l, m);
+				bufferBuilder.vertex(matrix, (float)endBottom.x, (float)endBottom.y, (float)endBottom.z).color(r, g, b, a).normal(entry, k, l, m);
 			}
 		}
 		
-		BuiltBuffer buf = bufferBuilder.endNullable();
-		if(buf != null) {
-			BufferRenderer.drawWithGlobalProgram(buf);
-		}
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 	}
 	
 	private void applyCameraOffset(MatrixStack matrixStack) {

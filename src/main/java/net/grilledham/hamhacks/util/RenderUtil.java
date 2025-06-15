@@ -10,13 +10,12 @@ import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.text.Text;
 import org.joml.Matrix4f;
 
@@ -109,63 +108,65 @@ public class RenderUtil {
 	public static void drawRect(MatrixStack stack, float x, float y, float w, float h, int c) {
 		Matrix4f mat = stack.peek().getPositionMatrix();
 		
-		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+		
+		VertexConsumer buf = vcp.getBuffer(RenderLayer.getDebugQuads());
+//		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
 		buf.vertex(mat, x + w, y, zLevel).color(c);
 		buf.vertex(mat, x, y, zLevel).color(c);
 		buf.vertex(mat, x, y + h, zLevel).color(c);
 		buf.vertex(mat, x + w, y + h, zLevel).color(c);
 		
-		BufferRenderer.drawWithGlobalProgram(buf.end());
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 	}
 	
 	public static void drawHRect(MatrixStack stack, float x, float y, float w, float h, int c) {
 		Matrix4f mat = stack.peek().getPositionMatrix();
 		
+		VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+		
 		// Top
-		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		VertexConsumer buf = vcp.getBuffer(RenderLayer.getDebugQuads());
+//		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
 		buf.vertex(mat, x + w, y, zLevel).color(c);
 		buf.vertex(mat, x, y, zLevel).color(c);
 		buf.vertex(mat, x, y + 1, zLevel).color(c);
 		buf.vertex(mat, x + w, y + 1, zLevel).color(c);
 		
-		BufferRenderer.drawWithGlobalProgram(buf.end());
-		
 		// Left
-		buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+//		buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
 		buf.vertex(mat, x + 1, y + 1, zLevel).color(c);
 		buf.vertex(mat, x, y + 1, zLevel).color(c);
 		buf.vertex(mat, x, y + h - 1, zLevel).color(c);
 		buf.vertex(mat, x + 1, y + h - 1, zLevel).color(c);
 		
-		BufferRenderer.drawWithGlobalProgram(buf.end());
-		
 		// Bottom
-		buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+//		buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
 		buf.vertex(mat, x + w, y + h - 1, zLevel).color(c);
 		buf.vertex(mat, x, y + h - 1, zLevel).color(c);
 		buf.vertex(mat, x, y + h, zLevel).color(c);
 		buf.vertex(mat, x + w, y + h, zLevel).color(c);
 		
-		BufferRenderer.drawWithGlobalProgram(buf.end());
-		
 		// Right
-		buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+//		buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		
 		buf.vertex(mat, x + w, y, zLevel).color(c);
 		buf.vertex(mat, x + w - 1, y, zLevel).color(c);
 		buf.vertex(mat, x + w - 1, y + h - 1, zLevel).color(c);
 		buf.vertex(mat, x + w, y + h - 1, zLevel).color(c);
 		
-		BufferRenderer.drawWithGlobalProgram(buf.end());
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 	}
 	
 	public static void drawSBGradient(MatrixStack stack, float x, float y, float width, float height, float hue) {
 		Matrix4f mat = stack.peek().getPositionMatrix();
-		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+		VertexConsumer buf = vcp.getBuffer(RenderLayer.getDebugQuads());
+//		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		int tr = Color.toRGB(hue, 1, 1, 1);
 		float atr = (float)(tr >> 24 & 255) / 255.0F;
 		float rtr = (float)(tr >> 16 & 255) / 255.0F;
@@ -190,12 +191,15 @@ public class RenderUtil {
 		buf.vertex(mat, x, y, zLevel).color(rtl, gtl, btl, atl);
 		buf.vertex(mat, x, y + height, zLevel).color(rbl, gbl, bbl, abl);
 		buf.vertex(mat, x + width, y + height, zLevel).color(rbr, gbr, bbr, abr);
-		BufferRenderer.drawWithGlobalProgram(buf.end());
+		
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 	}
 	
 	public static void drawHueGradient(MatrixStack stack, float x, float y, float width, float height) {
 		Matrix4f mat = stack.peek().getPositionMatrix();
-		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+		VertexConsumer buf = vcp.getBuffer(RenderLayer.getDebugQuads());
+//		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		int startC = Color.toRGB(0, 1, 1, 1);
 		float endY = y + (height / 6f);
 		int endC;
@@ -225,12 +229,15 @@ public class RenderUtil {
 			endY = y + (height / 6f);
 			startC = endC;
 		}
-		BufferRenderer.drawWithGlobalProgram(buf.end());
+		
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 	}
 	
 	public static void drawAlphaGradient(MatrixStack stack, float x, float y, float width, float height) {
 		Matrix4f mat = stack.peek().getPositionMatrix();
-		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+		VertexConsumer buf = vcp.getBuffer(RenderLayer.getDebugQuads());
+//		BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		int startC = 0xffffffff;
 		int endC = 0x00ffffff;
 		float sa = (float)(startC >> 24 & 255) / 255.0F;
@@ -245,18 +252,19 @@ public class RenderUtil {
 		buf.vertex(mat, x, y, zLevel).color(sr, sg, sb, sa);
 		buf.vertex(mat, x, y + height, zLevel).color(er, eg, eb, ea);
 		buf.vertex(mat, x + width, y + height, zLevel).color(er, eg, eb, ea);
-		BufferRenderer.drawWithGlobalProgram(buf.end());
+		
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 	}
 	
 	public static void preRender() {
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+//		RenderSystem.enableBlend();
+//		RenderSystem.defaultBlendFunc();
+//		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 	}
 	
 	public static void postRender() {
-		RenderSystem.disableBlend();
+//		RenderSystem.disableBlend();
 	}
 	
 	public static void drawToolTip(DrawContext ctx, String title, String tooltip, double mx, double my, double scale) {
@@ -341,7 +349,7 @@ public class RenderUtil {
 		matrices.scale(scale, scale, 1);
 		
 		ItemRenderState state = ((IDrawContext)ctx).hamHacks$getItemRenderState();
-		mc.getItemModelManager().update(state, itemStack, ModelTransformationMode.GUI, false, mc.world, mc.player, 0);
+		mc.getItemModelManager().update(state, itemStack, ItemDisplayContext.GUI, mc.world, mc.player, 0);
 		
 		boolean sideLit = state.isSideLit();
 		if(!sideLit) {
@@ -362,7 +370,7 @@ public class RenderUtil {
 			matrices.push();
 			matrices.translate(x + 8, y + 8, zLevel + 100);
 			matrices.scale(scale, scale, 1);
-			RenderSystem.disableBlend();
+//			RenderSystem.disableBlend();
 			int i = itemStack.getItemBarStep();
 			int j = itemStack.getItemBarColor();
 			renderGuiQuad(matrices.peek().getPositionMatrix(), -6, 5, 13, 2, 0, 0, 0, 255);
@@ -380,13 +388,14 @@ public class RenderUtil {
 	}
 	
 	private static void renderGuiQuad(Matrix4f mat, float x, float y, float width, float height, int red, int green, int blue, int alpha) {
-		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
-		BufferBuilder buffer = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+//		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+		VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+		VertexConsumer buffer = vcp.getBuffer(RenderLayer.getDebugQuads());
+//		BufferBuilder buffer = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		buffer.vertex(mat, x, y, 0.0F).color(red, green, blue, alpha);
 		buffer.vertex(mat, x, y + height, 0.0F).color(red, green, blue, alpha);
 		buffer.vertex(mat, x + width, y + height, 0.0F).color(red, green, blue, alpha);
 		buffer.vertex(mat, x + width, y, 0.0F).color(red, green, blue, alpha);
-		BufferRenderer.drawWithGlobalProgram(buffer.end());
 	}
 	
 	public static void updateFont(int option) {

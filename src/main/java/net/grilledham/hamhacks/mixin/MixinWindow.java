@@ -112,7 +112,7 @@ public abstract class MixinWindow implements IWindow {
 	
 	@Override
 	public void hamHacks$setIcon(TitleBar.IconProvider provider) throws IOException {
-		RenderSystem.assertOnRenderThreadOrInit();
+		RenderSystem.assertOnRenderThread();
 		if (MinecraftClient.IS_SYSTEM_MAC) {
 			MacWindowUtil.setApplicationIconImage(provider.getMacIcon());
 		} else {

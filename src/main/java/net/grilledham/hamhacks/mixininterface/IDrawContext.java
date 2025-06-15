@@ -5,7 +5,7 @@ import net.minecraft.client.render.item.ItemRenderState;
 
 public interface IDrawContext {
 	
-	VertexConsumerProvider hamHacks$getVertexConsumers();
+	VertexConsumerProvider.Immediate hamHacks$getVertexConsumers();
 	
 	ItemRenderState hamHacks$getItemRenderState();
 }

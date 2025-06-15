@@ -1,6 +1,8 @@
 package net.grilledham.hamhacks.font;
 
-import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -22,12 +24,23 @@ public class CustomFont {
 	private final float fontHeight;
 	private final float scale;
 	private final float ascent;
+	public Identifier textureId;
 	public FontTexture texture;
 	
 	private final Map<Integer, List<Character>> sortedWidths = new HashMap<>();
 	private final Random random = new Random();
 	
-	public CustomFont(ByteBuffer buf, int size) {
+	public CustomFont(String name, ByteBuffer buf, int size) {
+		textureId = Identifier.of("hamhacks", "fonts/" + name.toLowerCase().replaceAll(" ", "_").transform(s -> {
+			char[] c = s.toCharArray();
+			StringBuilder newString = new StringBuilder();
+			for(char value : c) {
+				if(Identifier.isCharValid(value)) {
+					newString.append(value);
+				}
+			}
+			return newString.toString();
+		}));
 		this.fontHeight = size;
 		
 		STBTTFontinfo fontinfo = STBTTFontinfo.create();
@@ -42,8 +55,10 @@ public class CustomFont {
 		STBTruetype.stbtt_PackFontRange(packContext, buf, 0, fontHeight, 0, cdata);
 		STBTruetype.stbtt_PackEnd(packContext);
 		
-		texture = new FontTexture(TEXTURE_SIZE, TEXTURE_SIZE, bitmap);
+		texture = new FontTexture(name, TEXTURE_SIZE, TEXTURE_SIZE, bitmap);
 		scale = STBTruetype.stbtt_ScaleForPixelHeight(fontinfo, fontHeight);
+		
+		MinecraftClient.getInstance().getTextureManager().registerTexture(textureId, texture);
 		
 		try(MemoryStack stack = MemoryStack.stackPush()) {
 			IntBuffer ascent = stack.mallocInt(1);
@@ -91,16 +106,16 @@ public class CustomFont {
 		return fontHeight;
 	}
 	
-	public float renderGlyph(BufferBuilder buf, Matrix4f mat, char c, float x, float y, float r, float g, float b, float a) {
+	public float renderGlyph(VertexConsumer buf, Matrix4f mat, char c, float x, float y, float r, float g, float b, float a) {
 		Glyph glyph = glyphs.get(c);
 		if(glyph == null) return 0;
 		
 		y += ascent * this.scale;
 		
-		buf.vertex(mat, x + glyph.x0, y + glyph.y0, 0).texture(glyph.u0, glyph.v0).color(r, g, b, a);
-		buf.vertex(mat, x + glyph.x0, y + glyph.y1, 0).texture(glyph.u0, glyph.v1).color(r, g, b, a);
-		buf.vertex(mat, x + glyph.x1, y + glyph.y1, 0).texture(glyph.u1, glyph.v1).color(r, g, b, a);
-		buf.vertex(mat, x + glyph.x1, y + glyph.y0, 0).texture(glyph.u1, glyph.v0).color(r, g, b, a);
+		buf.vertex(mat, x + glyph.x0, y + glyph.y0, 0).texture(glyph.u0, glyph.v0).color(r, g, b, a).light(0xF000F0);
+		buf.vertex(mat, x + glyph.x0, y + glyph.y1, 0).texture(glyph.u0, glyph.v1).color(r, g, b, a).light(0xF000F0);
+		buf.vertex(mat, x + glyph.x1, y + glyph.y1, 0).texture(glyph.u1, glyph.v1).color(r, g, b, a).light(0xF000F0);
+		buf.vertex(mat, x + glyph.x1, y + glyph.y0, 0).texture(glyph.u1, glyph.v0).color(r, g, b, a).light(0xF000F0);
 		
 		return glyph.advance;
 	}

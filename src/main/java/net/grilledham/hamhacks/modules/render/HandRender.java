@@ -7,8 +7,8 @@ import net.grilledham.hamhacks.setting.NumberSetting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.text.Text;
 
 public class HandRender extends Module {
@@ -22,7 +22,7 @@ public class HandRender extends Module {
 		GENERAL_CATEGORY.add(itemScale);
 	}
 	
-	public void applyItemTransform(LivingEntity entity, ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+	public void applyItemTransform(LivingEntity entity, ItemStack stack, ItemDisplayContext renderMode, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
 		if(isEnabled()) {
 			if(entity == mc.getCameraEntity() && mc.options.getPerspective().isFirstPerson()) {
 				float scale = itemScale.get().floatValue();

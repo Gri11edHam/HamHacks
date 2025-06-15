@@ -15,8 +15,9 @@ import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.PlayerUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
-import net.minecraft.client.gl.ShaderProgramKeys;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.text.Text;
@@ -142,14 +143,16 @@ public class InfiniteReach extends Module {
 			matrixStack.peek().getPositionMatrix().rotate(q);
 			matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 			
-			RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+//			RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 			RenderSystem.setShaderColor(1, 1, 1, 1);
 			
 			Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 			
 			GL11.glDisable(GL11.GL_CULL_FACE);
 			
-			BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
+			VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+			VertexConsumer bufferBuilder = vcp.getBuffer(RenderLayer.getDebugLineStrip(1));
+//			BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
 			
 			while(node != null) {
 				BlockPos pos = node.pos;
@@ -157,7 +160,7 @@ public class InfiniteReach extends Module {
 				node = node.parent;
 			}
 			
-			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+			mc.getBufferBuilders().getEntityVertexConsumers().draw();
 			
 			matrixStack.pop();
 			

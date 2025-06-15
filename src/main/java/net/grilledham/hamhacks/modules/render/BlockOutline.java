@@ -13,8 +13,9 @@ import net.grilledham.hamhacks.setting.NumberSetting;
 import net.grilledham.hamhacks.util.Color;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.client.gl.ShaderProgramKeys;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
@@ -76,13 +77,14 @@ public class BlockOutline extends Module {
 	}
 	
 	private void renderOutline(MatrixStack matrices, BlockState state, Entity entity, double cameraX, double cameraY, double cameraZ, BlockPos pos) {
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 		matrices.push();
 		VoxelShape shape = state.getOutlineShape(entity.getWorld(), pos, ShapeContext.of(entity));
 		double offsetX = pos.getX() - cameraX;
 		double offsetY = pos.getY() - cameraY;
 		double offsetZ = pos.getZ() - cameraZ;
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
+//		RenderSystem.enableBlend();
+//		RenderSystem.defaultBlendFunc();
 		boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
 		if(disableDepthTest.get()) {
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -92,13 +94,14 @@ public class BlockOutline extends Module {
 		MatrixStack.Entry entry = matrices.peek();
 		if(overlayEnabled.get()) {
 			for(Box box : shape.getBoundingBoxes()) {
-				RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 				RenderSystem.setShaderColor(1, 1, 1, 1);
 				
 				boolean cullFace = GL11.glIsEnabled(GL11.GL_CULL_FACE);
 				GL11.glDisable(GL11.GL_CULL_FACE);
 				
-				BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+				VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+				VertexConsumer buf = vcp.getBuffer(RenderLayer.getDebugQuads());
+//				BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 				box = box.expand(0.0005);
 				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.minY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
 				buf.vertex(entry.getPositionMatrix(), (float)(box.minX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
@@ -130,7 +133,7 @@ public class BlockOutline extends Module {
 				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.minZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
 				buf.vertex(entry.getPositionMatrix(), (float)(box.maxX + offsetX), (float)(box.maxY + offsetY), (float)(box.maxZ + offsetZ)).color(overlayColor.get().getR() / 255f, overlayColor.get().getG() / 255f, overlayColor.get().getB() / 255f, overlayColor.get().getAlpha());
 				
-				BufferRenderer.drawWithGlobalProgram(buf.end());
+				mc.getBufferBuilders().getEntityVertexConsumers().draw();
 				
 				if(cullFace) {
 					GL11.glEnable(GL11.GL_CULL_FACE);
@@ -138,15 +141,14 @@ public class BlockOutline extends Module {
 			}
 		}
 		if(outlineEnabled.get()) {
-			RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
 			RenderSystem.setShaderColor(1, 1, 1, 1);
-			
-			RenderSystem.lineWidth(lineWidth.get().floatValue());
 			
 			boolean cullFace = GL11.glIsEnabled(GL11.GL_CULL_FACE);
 			GL11.glDisable(GL11.GL_CULL_FACE);
 			
-			BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
+			VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
+			VertexConsumer buf = vcp.getBuffer(RenderLayer.getDebugCrosshair(lineWidth.get()));
+//			BufferBuilder buf = Tessellator.getInstance().begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR_NORMAL);
 			shape.forEachEdge((minX, minY, minZ, maxX, maxY, maxZ) -> {
 				float k = (float)(maxX - minX);
 				float l = (float)(maxY - minY);
@@ -158,7 +160,7 @@ public class BlockOutline extends Module {
 				buf.vertex(entry.getPositionMatrix(), (float)(minX + offsetX), (float)(minY + offsetY), (float)(minZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry, k, l, m);
 				buf.vertex(entry.getPositionMatrix(), (float)(maxX + offsetX), (float)(maxY + offsetY), (float)(maxZ + offsetZ)).color(outlineColor.get().getR() / 255f, outlineColor.get().getG() / 255f, outlineColor.get().getB() / 255f, outlineColor.get().getAlpha()).normal(entry, k, l, m);
 			});
-			BufferRenderer.drawWithGlobalProgram(buf.end());
+			mc.getBufferBuilders().getEntityVertexConsumers().draw();
 			
 			if(cullFace) {
 				GL11.glEnable(GL11.GL_CULL_FACE);
@@ -170,7 +172,7 @@ public class BlockOutline extends Module {
 		} else {
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 		}
-		RenderSystem.disableBlend();
+//		RenderSystem.disableBlend();
 		matrices.pop();
 	}
 }

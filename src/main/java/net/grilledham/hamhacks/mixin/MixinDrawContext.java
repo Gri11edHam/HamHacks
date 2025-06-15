@@ -16,7 +16,7 @@ public class MixinDrawContext implements IDrawContext {
 	@Shadow @Final private ItemRenderState itemRenderState;
 	
 	@Override
-	public VertexConsumerProvider hamHacks$getVertexConsumers() {
+	public VertexConsumerProvider.Immediate hamHacks$getVertexConsumers() {
 		return vertexConsumers;
 	}
 	

@@ -37,7 +37,6 @@ public class KillAura extends Module {
 					&& type != EntityType.SPECTRAL_ARROW
 					&& type != EntityType.ENDER_PEARL
 					&& type != EntityType.EXPERIENCE_BOTTLE
-					&& type != EntityType.POTION
 					&& type != EntityType.TRIDENT
 					&& type != EntityType.LIGHTNING_BOLT
 					&& type != EntityType.FISHING_BOBBER

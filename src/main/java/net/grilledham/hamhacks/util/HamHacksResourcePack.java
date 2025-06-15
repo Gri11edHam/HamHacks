@@ -7,7 +7,7 @@ import net.minecraft.resource.*;
 import net.minecraft.resource.metadata.ResourceMetadataSerializer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PathUtil;
+import net.minecraft.util.path.PathUtil;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
 

@@ -10,6 +10,7 @@ import net.minecraft.client.input.Input;
 import net.minecraft.client.input.KeyboardInput;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.util.PlayerInput;
+import net.minecraft.util.math.Vec2f;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,8 +54,7 @@ public abstract class MixinKeyboardInput extends Input {
 				this.settings.sneakKey.isPressed(),
 				this.settings.sprintKey.isPressed()
 		);
-		this.movementForward = getMovementMultiplier(this.playerInput.forward(), this.playerInput.backward());
-		this.movementSideways = getMovementMultiplier(this.playerInput.left(), this.playerInput.right());
+		this.movementVector = new Vec2f(getMovementMultiplier(this.playerInput.left(), this.playerInput.right()), getMovementMultiplier(this.playerInput.forward(), this.playerInput.backward()));
 		ci.cancel();
 	}
 }

@@ -13,8 +13,10 @@ import net.grilledham.hamhacks.modules.render.HandRender;
 import net.grilledham.hamhacks.modules.render.Zoom;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
@@ -54,27 +56,27 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 	private boolean calledFromFreecam = false;
 	
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4fStack;popMatrix()Lorg/joml/Matrix4fStack;", remap = false), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void renderEvent(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, Profiler profiler, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrix4fStack, DrawContext drawContext) {
-		EventRender event = new EventRender(drawContext, tickCounter.getTickDelta(false));
+	public void renderEvent(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, Profiler profiler, boolean bl, int i, int j, Window window, Framebuffer framebuffer, Matrix4f matrix4f, Matrix4fStack matrix4fStack, DrawContext drawContext) {
+		EventRender event = new EventRender(drawContext, tickCounter.getTickProgress(false));
 		event.call();
 	}
 	
 	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"))
 	public void render2DEvent(InGameHud instance, DrawContext context, RenderTickCounter tickCounter) {
-		EventRender2D event = new EventRender2D(context, tickCounter.getTickDelta(false));
+		EventRender2D event = new EventRender2D(context, tickCounter.getTickProgress(false));
 		event.call();
 		instance.render(context, tickCounter);
 	}
 	
 	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=hand"), locals = LocalCapture.CAPTURE_FAILSOFT)
-	public void render3DEvent(RenderTickCounter renderTickCounter, CallbackInfo ci, float f, Profiler profiler, boolean bl, Camera camera, Entity entity, float g, float h, Matrix4f matrix4f, MatrixStack matrixStack, float i, float j, float n, Matrix4f matrix4f2, Quaternionf quaternionf, Matrix4f matrix4f3) {
+	public void render3DEvent(RenderTickCounter renderTickCounter, CallbackInfo ci, float f, ClientPlayerEntity player, Profiler profiler, boolean bl, Camera camera, Entity entity, float g, float h, Matrix4f matrix4f, MatrixStack matrixStack, float i, float j, float n, float m, float p, Matrix4f matrix4f2, Quaternionf quaternionf, Matrix4f matrix4f3) {
 		MatrixStack matrices = new MatrixStack();
 		matrices.push();
 		matrices.multiplyPositionMatrix(matrix4f3);
 		
 		ProjectionUtil.updateMatrices(matrices, matrix4f);
 		
-		EventRender3D event = new EventRender3D(renderTickCounter.getTickDelta(false), matrices);
+		EventRender3D event = new EventRender3D(renderTickCounter.getTickProgress(false), matrices);
 		event.call();
 	
 		matrices.pop();
@@ -144,35 +146,35 @@ public abstract class MixinGameRenderer implements SynchronousResourceReloader, 
 			Entity entity = client.getCameraEntity();
 			
 			Vec3d pos = entity.getPos().multiply(1);
-			double prevX = entity.prevX;
-			double prevY = entity.prevY;
-			double prevZ = entity.prevZ;
+			double lastX = entity.lastX;
+			double lastY = entity.lastY;
+			double lastZ = entity.lastZ;
 			float yaw = entity.getYaw();
 			float pitch = entity.getPitch();
-			float prevYaw = entity.prevYaw;
-			float prevPitch = entity.prevPitch;
+			float lastYaw = entity.lastYaw;
+			float lastPitch = entity.lastPitch;
 			
 			((IVec3d)entity.getPos()).hamHacks$set(freecam.pos);
-			entity.prevX = freecam.prevPos.x;
-			entity.prevY = freecam.prevPos.y;
-			entity.prevZ = freecam.prevPos.z;
+			entity.lastX = freecam.prevPos.x;
+			entity.lastY = freecam.prevPos.y;
+			entity.lastZ = freecam.prevPos.z;
 			entity.setYaw(freecam.yaw);
 			entity.setPitch(freecam.pitch);
-			entity.prevYaw = freecam.prevYaw;
-			entity.prevPitch = freecam.prevPitch;
+			entity.lastYaw = freecam.prevYaw;
+			entity.lastPitch = freecam.prevPitch;
 			
 			calledFromFreecam = true;
 			updateCrosshairTarget(tickDelta);
 			calledFromFreecam = false;
 			
 			((IVec3d)entity.getPos()).hamHacks$set(pos);
-			entity.prevX = prevX;
-			entity.prevY = prevY;
-			entity.prevZ = prevZ;
+			entity.lastX = lastX;
+			entity.lastY = lastY;
+			entity.lastZ = lastZ;
 			entity.setYaw(yaw);
 			entity.setPitch(pitch);
-			entity.prevYaw = prevYaw;
-			entity.prevPitch = prevPitch;
+			entity.lastYaw = lastYaw;
+			entity.lastPitch = lastPitch;
 		}
 	}
 	

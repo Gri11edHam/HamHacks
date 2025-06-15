@@ -233,7 +233,7 @@ public class Fly extends Module {
 		if(!mc.player.input.playerInput.jump() && !mc.player.input.playerInput.sneak()) {
 			dy = 0;
 		}
-		if(mc.player.input.movementForward == 0 && mc.player.input.movementSideways == 0) {
+		if(mc.player.input.getMovementInput().y == 0 && mc.player.input.getMovementInput().x == 0) {
 			dx = 0;
 			dz = 0;
 		}

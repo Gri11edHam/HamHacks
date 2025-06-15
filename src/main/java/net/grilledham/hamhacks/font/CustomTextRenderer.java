@@ -1,12 +1,14 @@
 package net.grilledham.hamhacks.font;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.grilledham.hamhacks.mixininterface.IDrawContext;
 import net.grilledham.hamhacks.page.PageManager;
 import net.grilledham.hamhacks.page.pages.ClickGUI;
 import net.grilledham.hamhacks.util.Color;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
@@ -51,7 +53,7 @@ public class CustomTextRenderer {
 			ByteBuffer buf = BufferUtils.createByteBuffer(bytes.length).put(bytes);
 			buf.flip();
 			
-			font.put(type, new CustomFont(buf, size * resMultiplier));
+			font.put(type, new CustomFont(face.info.family() + "-" + face.info.type(), buf, size * resMultiplier));
 		}
 	}
 	
@@ -59,16 +61,16 @@ public class CustomTextRenderer {
 		if(shadow) {
 			Color c = new Color(color);
 			c.setBrightness(c.getBrightness() / 4f);
-			render(ctx.getMatrices(), text, x + 1, y + 1, c.getRGB(), true);
+			render(ctx.getMatrices(), text, ((IDrawContext)ctx).hamHacks$getVertexConsumers(), x + 1, y + 1, c.getRGB(), true);
 		}
-		return render(ctx.getMatrices(), text, x, y, color, false);
+		return render(ctx.getMatrices(), text, ((IDrawContext)ctx).hamHacks$getVertexConsumers(), x, y, color, false);
 	}
 	
 	public float render(DrawContext ctx, Text text, float x, float y, int color, boolean shadow) {
 		return render(ctx, text.getString(), x, y, color, shadow);
 	}
 
-	private float render(MatrixStack matrices, String text, float x, float y, int color, boolean isShadow) {
+	private float render(MatrixStack matrices, String text, VertexConsumerProvider.Immediate vertexConsumers, float x, float y, int color, boolean isShadow) {
 		x *= resMultiplier;
 		y *= resMultiplier;
 		float start = x;
@@ -127,7 +129,7 @@ public class CustomTextRenderer {
 			matrices.push();
 			matrices.scale(1f / resMultiplier, 1f / resMultiplier, 1f / resMultiplier);
 			
-			x = render(matrices, font, text, x, y, r, g, b, a, isShadow);
+			x = render(matrices, font, text, vertexConsumers, x, y, r, g, b, a, isShadow);
 			
 			matrices.pop();
 		}
@@ -137,19 +139,16 @@ public class CustomTextRenderer {
 		return width / resMultiplier;
 	}
 	
-	private float render(MatrixStack matrices, CustomFont font, String text, float x, float y, float r, float g, float b, float a, boolean isShadow) {
+	private float render(MatrixStack matrices, CustomFont font, String text, VertexConsumerProvider.Immediate vertexConsumers, float x, float y, float r, float g, float b, float a, boolean isShadow) {
 		if(text.isEmpty()) return 0;
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX_COLOR);
-		RenderSystem.setShaderTexture(0, font.texture.getGlId());
-		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		
-		font.texture.bindTexture();
+//		RenderSystem.setShaderTexture(0, font.texture.getGlTexture());
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		
 		Matrix4f mat = matrices.peek().getPositionMatrix();
 		
-		BufferBuilder buffer = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+		VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getText(font.textureId));
+//		BufferBuilder buffer = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
 		
 		Color textColor = null;
 		boolean underline = false;
@@ -251,12 +250,8 @@ public class CustomTextRenderer {
 			}
 		}
 		
-		BuiltBuffer buf = buffer.endNullable();
-		if(buf != null) {
-			BufferRenderer.drawWithGlobalProgram(buf);
-		}
+		vertexConsumers.draw();
 		
-		RenderSystem.disableBlend();
 		return x;
 	}
 	

@@ -19,7 +19,7 @@ public abstract class MixinInGameHud {
 	
 	@Inject(method = "render", at = @At("TAIL"))
 	public void render(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-		ModuleManager.getModule(HUD.class).render(context, tickCounter.getTickDelta(false), getTextRenderer());
+		ModuleManager.getModule(HUD.class).render(context, tickCounter.getTickProgress(false), getTextRenderer());
 	}
 	
 	@Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getStatusEffectSpriteManager()Lnet/minecraft/client/texture/StatusEffectSpriteManager;"))

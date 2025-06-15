@@ -25,33 +25,33 @@ public class PlayerUtil {
 			Entity entity = mc.getCameraEntity();
 			
 			Vec3d pos = entity.getPos().multiply(1);
-			double prevX = entity.prevX;
-			double prevY = entity.prevY;
-			double prevZ = entity.prevZ;
+			double lastX = entity.lastX;
+			double lastY = entity.lastY;
+			double lastZ = entity.lastZ;
 			float yaw = entity.getYaw();
 			float pitch = entity.getPitch();
-			float prevYaw = entity.prevYaw;
-			float prevPitch = entity.prevPitch;
+			float lastYaw = entity.lastYaw;
+			float lastPitch = entity.lastPitch;
 			
 			((IVec3d)entity.getPos()).hamHacks$set(freecam.pos);
-			entity.prevX = freecam.prevPos.x;
-			entity.prevY = freecam.prevPos.y;
-			entity.prevZ = freecam.prevPos.z;
+			entity.lastX = freecam.prevPos.x;
+			entity.lastY = freecam.prevPos.y;
+			entity.lastZ = freecam.prevPos.z;
 			entity.setYaw(freecam.yaw);
 			entity.setPitch(freecam.pitch);
-			entity.prevYaw = freecam.prevYaw;
-			entity.prevPitch = freecam.prevPitch;
+			entity.lastYaw = freecam.prevYaw;
+			entity.lastPitch = freecam.prevPitch;
 			
 			result = raycast(distance, tickDelta);
 			
 			((IVec3d)entity.getPos()).hamHacks$set(pos);
-			entity.prevX = prevX;
-			entity.prevY = prevY;
-			entity.prevZ = prevZ;
+			entity.lastX = lastX;
+			entity.lastY = lastY;
+			entity.lastZ = lastZ;
 			entity.setYaw(yaw);
 			entity.setPitch(pitch);
-			entity.prevYaw = prevYaw;
-			entity.prevPitch = prevPitch;
+			entity.lastYaw = lastYaw;
+			entity.lastPitch = lastPitch;
 		} else {
 			result = raycast(distance, tickDelta);
 		}

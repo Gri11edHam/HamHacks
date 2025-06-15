@@ -62,7 +62,7 @@ public class Encase extends Module {
 			return;
 		}
 		int slot = -1;
-		int oldSlot = mc.player.getInventory().selectedSlot;
+		int oldSlot = mc.player.getInventory().getSelectedSlot();
 		for(int i = 0; i < 9; i++) {
 			ItemStack stack = mc.player.getInventory().getStack(i);
 			
@@ -75,7 +75,7 @@ public class Encase extends Module {
 			setEnabled(false);
 			return;
 		}
-		mc.player.getInventory().selectedSlot = slot;
+		mc.player.getInventory().setSelectedSlot(slot);
 		if(anchorPos == null) {
 			anchorPos = new Vec3();
 		}
@@ -101,7 +101,7 @@ public class Encase extends Module {
 				break;
 			}
 		}
-		mc.player.getInventory().selectedSlot = oldSlot;
+		mc.player.getInventory().setSelectedSlot(oldSlot);
 	}
 	
 	@EventListener

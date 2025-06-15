@@ -2,7 +2,6 @@ package net.grilledham.hamhacks.modules.movement;
 
 import net.grilledham.hamhacks.event.EventListener;
 import net.grilledham.hamhacks.event.events.EventMotion;
-import net.grilledham.hamhacks.mixininterface.IClientEntityPlayer;
 import net.grilledham.hamhacks.modules.Category;
 import net.grilledham.hamhacks.modules.Keybind;
 import net.grilledham.hamhacks.modules.Module;
@@ -22,8 +21,8 @@ public class Sprint extends Module {
 			if(mc.player == null) {
 				return;
 			}
-			boolean canSprint = (float)mc.player.getHungerManager().getFoodLevel() > 6.0F || mc.player.getAbilities().allowFlying;
-			if(!mc.player.isSprinting() && (!mc.player.isTouchingWater() || mc.player.isSubmergedInWater()) && ((IClientEntityPlayer)mc.player).hamHacks$walking() && canSprint && !mc.player.isUsingItem() && !mc.player.hasStatusEffect(StatusEffects.BLINDNESS)) {
+			boolean canSprint = !mc.player.isSprinting() && mc.player.input.hasForwardMovement() && (mc.player.hasVehicle() || (float)mc.player.getHungerManager().getFoodLevel() > 6.0F || mc.player.getAbilities().allowFlying) && !mc.player.isUsingItem() && !mc.player.hasStatusEffect(StatusEffects.BLINDNESS) && (!mc.player.hasVehicle() || (mc.player.getVehicle().canSprintAsVehicle() && mc.player.getVehicle().isLogicalSideForUpdatingMovement()) && (!mc.player.isGliding() || mc.player.isSubmergedInWater()) && (!mc.player.shouldSlowDown() || mc.player.isSubmergedInWater()) && (!mc.player.isTouchingWater() || mc.player.isSubmergedInWater()));
+			if(canSprint && !mc.player.isSneaking()) {
 				mc.player.setSprinting(true);
 			}
 		}

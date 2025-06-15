@@ -14,9 +14,10 @@ import net.grilledham.hamhacks.util.Color;
 import net.grilledham.hamhacks.util.ProjectionUtil;
 import net.grilledham.hamhacks.util.RenderUtil;
 import net.grilledham.hamhacks.util.math.Vec3;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.option.Perspective;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -26,7 +27,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.shape.*;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
@@ -106,6 +109,7 @@ public class ESP extends Module {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_CULL_FACE);
 		
 		matrixStack.push();
 		
@@ -118,9 +122,6 @@ public class ESP extends Module {
 		
 		// GL resets
 		RenderSystem.setShaderColor(1, 1, 1, 1);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 	}
 	
 	@EventListener
@@ -160,7 +161,6 @@ public class ESP extends Module {
 	}
 	
 	private void render2D(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		matrixStack.push();
@@ -168,7 +168,7 @@ public class ESP extends Module {
 		for(Entity e : entities) {
 			if(!shouldRender(e)) continue;
 			
-			Vec3 interpolationOffset = new Vec3(e.getX(), e.getY(), e.getZ()).sub(e.prevX, e.prevY, e.prevZ).mul(1 - partialTicks);
+			Vec3 interpolationOffset = new Vec3(e.getX(), e.getY(), e.getZ()).sub(e.lastX, e.lastY, e.lastZ).mul(1 - partialTicks);
 			Box box = e.getBoundingBox();
 			float x = (float)(e.getX() - interpolationOffset.getX());
 			float y = (float)(e.getY() - interpolationOffset.getY());
@@ -232,24 +232,28 @@ public class ESP extends Module {
 			
 			GL11.glDisable(GL11.GL_CULL_FACE);
 			
+			VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
 			// fill
-			BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+			VertexConsumer bufferBuilder = vcp.getBuffer(RenderLayer.getDebugQuads());
+//			BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos1.getY(), 0).color(fc);
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos2.getY(), 0).color(fc);
 			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos2.getY(), 0).color(fc);
 			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos1.getY(), 0).color(fc);
-			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 			
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			
 			// outline
-			bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
+			bufferBuilder = vcp.getBuffer(RenderLayer.getDebugLineStrip(1));
+//			bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos1.getY(), 0).color(oc);
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos2.getY(), 0).color(oc);
 			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos2.getY(), 0).color(oc);
 			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos1.getY(), 0).color(oc);
 			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos1.getY(), 0).color(oc);
-			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+			
+			mc.getBufferBuilders().getEntityVertexConsumers().draw();
+			
 			matrixStack.translate(0, 0, 1);
 		}
 		matrixStack.pop();
@@ -271,7 +275,6 @@ public class ESP extends Module {
 	}
 	
 	private void render3D(MatrixStack matrixStack, double partialTicks) {
-		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
@@ -279,7 +282,7 @@ public class ESP extends Module {
 		for(Entity e : entities) {
 			if(!shouldRender(e)) continue;
 			
-			Vec3d interpolationOffset = new Vec3d(e.getX(), e.getY(), e.getZ()).subtract(e.prevX, e.prevY, e.prevZ).multiply(1 - partialTicks);
+			Vec3d interpolationOffset = new Vec3d(e.getX(), e.getY(), e.getZ()).subtract(e.lastX, e.lastY, e.lastZ).multiply(1 - partialTicks);
 			Box box = e.getBoundingBox();
 			if(e instanceof LivingEntity le) {
 				box = le.getBoundingBox(le.getPose());
@@ -333,10 +336,10 @@ public class ESP extends Module {
 				}
 			}
 			
-			GL11.glDisable(GL11.GL_CULL_FACE);
-			
+			VertexConsumerProvider vcp = mc.getBufferBuilders().getEntityVertexConsumers();
 			// fill
-			BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+			VertexConsumer bufferBuilder = vcp.getBuffer(RenderLayer.getDebugQuads());
+//			BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 			// top
 			bufferBuilder.vertex(matrix, x1, y1, z1).color(fc);
 			bufferBuilder.vertex(matrix, x1, y1, z2).color(fc);
@@ -368,51 +371,27 @@ public class ESP extends Module {
 			bufferBuilder.vertex(matrix, x2, y2, z2).color(fc);
 			bufferBuilder.vertex(matrix, x2, y1, z2).color(fc);
 			
-			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-			
-			GL11.glEnable(GL11.GL_CULL_FACE);
-			
 			// outline
-			bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
+			bufferBuilder = vcp.getBuffer(RenderLayer.getDebugCrosshair(1));
+//			bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 			// faces
 			// top
-			bufferBuilder.vertex(matrix, x1, y1, z1).color(oc);
-			bufferBuilder.vertex(matrix, x1, y1, z2).color(oc);
+			VoxelShape shape = VoxelShapes.cuboid(x1, y1, z1, x2, y2, z2);
+			VertexConsumer buf = bufferBuilder;
+			MatrixStack.Entry entry = matrixStack.peek();
+			shape.forEachEdge((minX, minY, minZ, maxX, maxY, maxZ) -> {
+				float k = (float)(maxX - minX);
+				float l = (float)(maxY - minY);
+				float m = (float)(maxZ - minZ);
+				float n = MathHelper.sqrt(k * k + l * l + m * m);
+				k /= n;
+				l /= n;
+				m /= n;
+				buf.vertex(entry.getPositionMatrix(), (float)minX, (float)minY, (float)minZ).color(oc).normal(entry, k, l, m);
+				buf.vertex(entry.getPositionMatrix(), (float)maxX, (float)maxY, (float)maxZ).color(oc).normal(entry, k, l, m);
+			});
 			
-			bufferBuilder.vertex(matrix, x1, y1, z2).color(oc);
-			bufferBuilder.vertex(matrix, x2, y1, z2).color(oc);
-			
-			bufferBuilder.vertex(matrix, x2, y1, z2).color(oc);
-			bufferBuilder.vertex(matrix, x2, y1, z1).color(oc);
-			
-			bufferBuilder.vertex(matrix, x2, y1, z1).color(oc);
-			bufferBuilder.vertex(matrix, x1, y1, z1).color(oc);
-			// bottom
-			bufferBuilder.vertex(matrix, x1, y2, z1).color(oc);
-			bufferBuilder.vertex(matrix, x1, y2, z2).color(oc);
-			
-			bufferBuilder.vertex(matrix, x1, y2, z2).color(oc);
-			bufferBuilder.vertex(matrix, x2, y2, z2).color(oc);
-			
-			bufferBuilder.vertex(matrix, x2, y2, z2).color(oc);
-			bufferBuilder.vertex(matrix, x2, y2, z1).color(oc);
-			
-			bufferBuilder.vertex(matrix, x2, y2, z1).color(oc);
-			bufferBuilder.vertex(matrix, x1, y2, z1).color(oc);
-			// edges
-			bufferBuilder.vertex(matrix, x1, y1, z1).color(oc);
-			bufferBuilder.vertex(matrix, x1, y2, z1).color(oc);
-			
-			bufferBuilder.vertex(matrix, x1, y1, z2).color(oc);
-			bufferBuilder.vertex(matrix, x1, y2, z2).color(oc);
-			
-			bufferBuilder.vertex(matrix, x2, y1, z2).color(oc);
-			bufferBuilder.vertex(matrix, x2, y2, z2).color(oc);
-			
-			bufferBuilder.vertex(matrix, x2, y1, z1).color(oc);
-			bufferBuilder.vertex(matrix, x2, y2, z1).color(oc);
-			
-			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+			mc.getBufferBuilders().getEntityVertexConsumers().draw();
 		}
 	}
 	
