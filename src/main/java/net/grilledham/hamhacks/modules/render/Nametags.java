@@ -268,7 +268,7 @@ public class Nametags extends Module {
 						ItemStack stack = getItem(e, i);
 						
 						if(!stack.isEmpty()) {
-							itemWidths[i] = (16 + (i < 5 ? 2 : 0)) * (float)(double)itemScale.get();
+							itemWidths[i] = (18) * (float)(double)itemScale.get();
 							hasItems = true;
 						} else {
 							itemWidths[i] = 0;
@@ -338,7 +338,7 @@ public class Nametags extends Module {
 				case 0 -> living.getMainHandStack();
 				case 1 -> living.getOffHandStack();
 				case 2 -> living.getEquippedStack(EquipmentSlot.HEAD);
-				case 3 -> living.getEquippedStack(EquipmentSlot.BODY);
+				case 3 -> living.getEquippedStack(EquipmentSlot.CHEST);
 				case 4 -> living.getEquippedStack(EquipmentSlot.LEGS);
 				case 5 -> living.getEquippedStack(EquipmentSlot.FEET);
 				default -> ItemStack.EMPTY;

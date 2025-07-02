@@ -13,7 +13,7 @@ public class EnchantUtil {
 				case "minecraft.bane_of_arthropods" -> "Bane";
 				case "minecraft.knockback" -> "KB";
 				case "minecraft.fire_aspect" -> "Fire";
-				case "minecraft.sweeping" -> "Sweep";
+				case "minecraft.sweeping_edge" -> "Sweep";
 				case "minecraft.protection" -> "Prot";
 				case "minecraft.fire_protection" -> "FProt";
 				case "minecraft.feather_falling" -> "FFall";

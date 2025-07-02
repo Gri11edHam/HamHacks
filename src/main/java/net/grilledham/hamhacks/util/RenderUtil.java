@@ -349,7 +349,7 @@ public class RenderUtil {
 		matrices.scale(scale, scale, 1);
 		
 		ItemRenderState state = ((IDrawContext)ctx).hamHacks$getItemRenderState();
-		mc.getItemModelManager().update(state, itemStack, ItemDisplayContext.GUI, mc.world, mc.player, 0);
+		mc.getItemModelManager().clearAndUpdate(state, itemStack, ItemDisplayContext.GUI, mc.world, mc.player, 0);
 		
 		boolean sideLit = state.isSideLit();
 		if(!sideLit) {
@@ -396,6 +396,7 @@ public class RenderUtil {
 		buffer.vertex(mat, x, y + height, 0.0F).color(red, green, blue, alpha);
 		buffer.vertex(mat, x + width, y + height, 0.0F).color(red, green, blue, alpha);
 		buffer.vertex(mat, x + width, y, 0.0F).color(red, green, blue, alpha);
+		mc.getBufferBuilders().getEntityVertexConsumers().draw();
 	}
 	
 	public static void updateFont(int option) {

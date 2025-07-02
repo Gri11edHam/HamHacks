@@ -6,6 +6,7 @@ public class Changelog {
 			Update 1.11.3:
 				- Updated to Minecraft 1.21.5
 				- Added Line Width option to some render modules
+				- Fixed Nametags module
 			
 			Update 1.11.2:
 				- Updated to Minecraft 1.21.4
