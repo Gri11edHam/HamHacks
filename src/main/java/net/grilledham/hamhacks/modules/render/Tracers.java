@@ -46,7 +46,7 @@ public class Tracers extends Module {
 	
 	private final EntityTypeSelector entitySelector = new EntityTypeSelector("hamhacks.module.tracers.entitySelector", () -> true, EntityType.PLAYER);
 	
-	public final NumberSetting lineWidth = new NumberSetting("hamhacks.module.tracers.lineWidth", 1, () -> true, 1, 20, 1, false);
+	public final NumberSetting lineWidth = new NumberSetting("hamhacks.module.tracers.lineWidth", 2, () -> true, 1, 20, 1, false);
 	
 	private final SettingCategory COLOR_CATEGORY = new SettingCategory("hamhacks.module.tracers.category.color");
 	

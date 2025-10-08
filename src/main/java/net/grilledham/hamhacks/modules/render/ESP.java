@@ -50,7 +50,7 @@ public class ESP extends Module {
 	
 	private final EntityTypeSelector entitySelector = new EntityTypeSelector("hamhacks.module.esp.entitySelector", () -> true, EntityType.PLAYER);
 	
-	public final NumberSetting lineWidth = new NumberSetting("hamhacks.module.esp.lineWidth", 1, () -> true, 1, 20, 1, false);
+	public final NumberSetting lineWidth = new NumberSetting("hamhacks.module.esp.lineWidth", 2, () -> true, 1, 20, 1, false);
 	
 	private final SettingCategory COLOR_CATEGORY = new SettingCategory("hamhacks.module.esp.category.color");
 	
@@ -247,13 +247,19 @@ public class ESP extends Module {
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			
 			// outline
-			bufferBuilder = vcp.getBuffer(RenderLayer.getDebugLineStrip(lineWidth.get()));
+			bufferBuilder = vcp.getBuffer(RenderLayer.getDebugCrosshair(lineWidth.get()));
 //			bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
-			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos1.getY(), 0).color(oc);
-			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos2.getY(), 0).color(oc);
-			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos2.getY(), 0).color(oc);
-			bufferBuilder.vertex(matrix, (float)pos2.getX(), (float)pos1.getY(), 0).color(oc);
-			bufferBuilder.vertex(matrix, (float)pos1.getX(), (float)pos1.getY(), 0).color(oc);
+			bufferBuilder.vertex(matrix, (float)pos1.getX() + 4, (float)pos1.getY(), 0).color(oc).normal(1, 1, 1);
+			bufferBuilder.vertex(matrix, (float)pos1.getX() + 4, (float)pos2.getY(), 0).color(oc).normal(-1, -1, 1);
+			
+			bufferBuilder.vertex(matrix, (float)pos1.getX() + 4, (float)pos2.getY(), 0).color(oc).normal(-1, -1, 1);
+			bufferBuilder.vertex(matrix, (float)pos2.getX() + 4, (float)pos2.getY(), 0).color(oc).normal(-1, -1, 1);
+			
+			bufferBuilder.vertex(matrix, (float)pos2.getX() + 4, (float)pos1.getY(), 0).color(oc).normal(-1, -1, 1);
+			bufferBuilder.vertex(matrix, (float)pos2.getX() + 4, (float)pos2.getY(), 0).color(oc).normal(1, 1, 1);
+			
+			bufferBuilder.vertex(matrix, (float)pos1.getX() + 4, (float)pos1.getY(), 0).color(oc).normal(1, 1, 1);
+			bufferBuilder.vertex(matrix, (float)pos2.getX() + 4, (float)pos1.getY(), 0).color(oc).normal(1, 1, 1);
 			
 			mc.getBufferBuilders().getEntityVertexConsumers().draw();
 			
